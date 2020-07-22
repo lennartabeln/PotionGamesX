@@ -399,16 +399,9 @@ public class PotionGames extends JavaPlugin {
                         setJoinable(true);
                         if (arenaAmount.get() < minPlayers) {
                             for (Player all : pgPlayers) {
-//                                if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                if (!added.contains(all.getName())) {
-                                    arenaAmount.getAndIncrement();
-                                    added.add(all.getName());
-//                                  }
-                                    all.setLevel(0);
-                                    all.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                                            TextComponent.fromLegacyText(prefix + chat.get(0) + " " + "[" + ChatColor.AQUA + arenaAmount.get() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
-
-                                }
+                                all.setLevel(0);
+                                all.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                                        TextComponent.fromLegacyText(prefix + chat.get(0) + " " + "[" + ChatColor.AQUA + arenaAmount.get() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
                             }
                         } else {
                             setGamestate(GameStates.PREPARING);
