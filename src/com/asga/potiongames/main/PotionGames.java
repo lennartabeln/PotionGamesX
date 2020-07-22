@@ -310,367 +310,357 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void tick() {
-        for (String a : arenas) {
-            ArrayList<String> added = new ArrayList<>();
-            setGamestate(GameStates.WAITING);
-            if (startOnJoin) {
-                countdown = getConfig().getInt("pg.countdown");
-            } else {
-                countdown = getConfig().getInt("pg.arenas." + a + ".countdown");
-            }
-            AtomicInteger arenaCountdown = new AtomicInteger();
-            arenaCountdown.set(countdown);
-            AtomicInteger arenaRestart = new AtomicInteger();
-            int restart = 10;
-            arenaRestart.set(restart);
-            AtomicInteger arenaAmount = new AtomicInteger();
-            arenaAmount.set(playerAmount);
-            AtomicInteger arenaTick = new AtomicInteger();
-            int tick = 0;
-            arenaTick.set(tick);
-            Bukkit.broadcastMessage("Tick: " + arenas.size() + " " + a.length());
-            arenaTick.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-                Bukkit.broadcastMessage("Scheduler: " + arenas.size() + " " + a.length());
-                if (!isPause()) {
-                    switch (gamestate) {
-                        case WAITING:
-                            Bukkit.broadcastMessage("Test: WAITING");
-                            //specPlayers.clear();
-                            setMove(true);
-                            setJoinable(true);
-                            if (startOnJoin) {
-                                if (getConfig().contains("pg.Lobby.world")) {
-                                    Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
-                                    Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
-                                }
-                                int gamerule = 1;
-                                while (getConfig().contains("pg.arenas." + gamerule)) {
-                                    String name = getConfig().getString("pg.arenas." + gamerule + ".world");
-                                    setGameRules(name);
-                                    gamerule++;
-                                }
-                                if (!voteallowed) {
-                                    BukkitCloudNetHelper.setExtra(chat.get(14));
-                                    voteallowed = true;
-                                    int arena = 1;
-                                    while (getConfig().contains("pg.arenas." + arena)) {
-                                        String name = getConfig().getString("pg.arenas." + arena + ".name");
-                                        arenas.add(name);
-                                        arena++;
-                                    }
-                                    votes.put(chat.get(42), 0);
-                                    for (String all : arenas) {
-                                        votes.put(all, 0);
-                                    }
-                                }
-                            }
-                            if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-                                int ii = 0;
-                                try {
-                                    while (rs.next()) {
-                                        ii++;
-                                        rank.put(ii, rs.getString("UUID"));
-                                    }
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                }
-                                rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                                rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                                rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                                ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                                ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                                ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                                for (int iii = 0; iii < rank.size(); iii++) {
-                                    int id = iii + 1;
-                                    Skull s = (Skull) rankhead.get(iii).getBlock().getState();
-                                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                    s.setOwningPlayer(name);
-                                    s.update();
-                                }
-                                for (int iii = 0; iii < rank.size(); iii++) {
-                                    int id = iii + 1;
-                                    BlockState b = ranksign.get(iii).getBlock().getState();
-                                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                    Sign sign = (Sign) b;
-                                    sign.setLine(0, chat.get(33) + " #" + id);
-                                    sign.setLine(1, Objects.requireNonNull(name.getName()));
-                                    sign.setLine(2, "Wins: " + getWins(rank.get(id)));
-                                    sign.setLine(3, "K/D: " + getKD(rank.get(id)));
-                                    sign.update();
-                                }
-                            }
-                            setJoinable(true);
-                            Bukkit.broadcastMessage("2. " + arenas.size() + " " + a.length());
-                            if (arenaAmount.get() < minPlayers) {
-                                Bukkit.broadcastMessage("2.1 " + arenas.size() + " " + a.length());
-                                for (Player all : pgPlayers) {
-                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                        if (!added.contains(all.getName())) {
-                                            Bukkit.broadcastMessage("2.2 " + arenas.size() + " " + a.length());
-                                            arenaAmount.getAndIncrement();
-                                            Bukkit.broadcastMessage("2.3 " + arenas.size() + " " + a.length());
-                                            added.add(all.getName());
-                                        }
-                                        all.setLevel(0);
-                                        all.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                                                TextComponent.fromLegacyText(prefix + chat.get(0) + " " + "[" + ChatColor.AQUA + arenaAmount.get() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
-
-                                    }
-                                }
-                            } else {
-                                setGamestate(GameStates.PREPARING);
-                            }
-                            break;
-                        case PREPARING:
-                            Bukkit.broadcastMessage("3. " + arenas.size() + " " + a.length());
-                            if (arenaAmount.get() >= minPlayers) {
-                                for (Player all : pgPlayers) {
-                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                        all.setLevel(arenaCountdown.get());
-                                    }
-                                }
-                                if (arenaCountdown.get() == 20) {
-                                    for (Player all : pgPlayers) {
-                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                            all.setLevel(arenaCountdown.get());
-                                        }
-                                    }
-                                    if (startOnJoin) {
-                                        voteResults();
-                                    }
-                                }
-                                if (arenaCountdown.get() < 20) {
-                                    for (Player all : pgPlayers) {
-                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                            all.setLevel(arenaCountdown.get());
-                                        }
-                                    }
-                                }
-                                if (arenaCountdown.get() == 0) {
-                                    for (Player all : pgPlayers) {
-                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                            all.setLevel(arenaCountdown.get());
-                                        }
-                                    }
-                                    arenaID = a;
-                                    teleportAndStart();
-                                    arenaCountdown.set(11);
-                                    setGamestate(GameStates.INGAME);
-                                    setMove(false);
-                                }
-                                arenaCountdown.getAndDecrement();
-                            } else {
-                                setGamestate(GameStates.WAITING);
-                            }
-                            break;
-                        case INGAME:
-                            int setting = 1;
-                            while (getConfig().contains("pg.arenas." + setting)) {
-                                String name = getConfig().getString("pg.arenas." + setting + ".world");
-                                assert name != null;
-                                Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
-                                Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
-                                setting++;
-                            }
-                            setJoinable(false);
-                            if (arenaAmount.get() != 0) {
-                                if (arenaCountdown.get() == 10) {
-                                    for (Player all : pgPlayers) {
-                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                            all.getInventory().clear();
-                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(1) + " " + ChatColor.AQUA + arenaCountdown.get());
-                                            ItemStack playercompass = new ItemStack(Material.COMPASS);
-                                            ItemMeta playercompassmeta = playercompass.getItemMeta();
-                                            assert playercompassmeta != null;
-                                            playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
-                                            playercompass.setItemMeta(playercompassmeta);
-                                            all.getInventory().setItem(8, playercompass);
-                                        }
-                                    }
-                                    arenaCountdown.getAndDecrement();
-                                } else if (arenaCountdown.get() <= 9 && arenaCountdown.get() > 5) {
-                                    arenaCountdown.getAndDecrement();
-                                } else if (arenaCountdown.get() <= 5 && arenaCountdown.get() > 0) {
-                                    for (Player all : pgPlayers) {
-                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(1) + " " + ChatColor.AQUA + arenaCountdown.get());
-                                            all.playSound(all.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
-                                        }
-                                    }
-                                    arenaCountdown.getAndDecrement();
-                                } else if (arenaCountdown.get() == 0) {
-                                    setMove(true);
-                                    for (Player all : pgPlayers) {
-                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(3));
-                                            all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
-                                            all.setGameMode(GameMode.SURVIVAL);
-                                        }
-                                    }
-                                    arenaCountdown.set(-1);
-                                } else if (arenaCountdown.get() == -1) {
-                                    if (a.length() <= 1) {
-                                        for (int i = 0; i < pgPlayers.size(); i++) {
-                                            Player winner = pgPlayers.get(i);
-                                            for (Player all : pgPlayers) {
-                                                if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                                    all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
-                                                }
-                                            }
-                                            for (Player all : specPlayers) {
-                                                if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                                    all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
-                                                }
-                                            }
-                                            spawnFireworks(winner.getLocation(), 1);
-                                            addWins(winner.getUniqueId().toString(), 1);
-                                            arenaCountdown.set(-2);
-                                        }
-                                    }
-                                } else if (arenaCountdown.get() == -2) {
-                                    if (arenaRestart.get() == 10) {
-                                        for (Player all : pgPlayers) {
-                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
-                                            }
-                                        }
-                                        for (Player all : specPlayers) {
-                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
-                                            }
-                                        }
-                                        arenaRestart.getAndDecrement();
-                                    } else if (arenaRestart.get() <= 9 && arenaRestart.get() > 5) {
-                                        arenaRestart.getAndDecrement();
-                                    } else if (arenaRestart.get() <= 5 && arenaRestart.get() > 0) {
-                                        for (Player all : pgPlayers) {
-                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
-                                            }
-                                        }
-                                        for (Player all : specPlayers) {
-                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
-                                            }
-                                        }
-                                        arenaRestart.getAndDecrement();
-                                    } else if (arenaRestart.get() == 0) {
-                                        for (Player all : pgPlayers) {
-                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(6));
-                                            }
-                                        }
-                                        for (Player all : specPlayers) {
-                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(6));
-                                            }
-                                        }
-                                        setGamestate(GameStates.RESET);
-                                    }
-                                }
-                            } else {
-                                setGamestate(GameStates.RESET);
-                            }
-                            break;
-                        case RESET:
-                            setMove(true);
-                            setJoinable(true);
-                            arenaRestart.set(10);
-                            if (startOnJoin) {
-                                arenaCountdown.set(getConfig().getInt("pg.countdown"));
-                            } else {
-                                arenaCountdown.set(getConfig().getInt("pg.arenas." + a + ".countdown"));
-                            }
-                            for (Player all : specPlayers) {
-                                if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                    pgPlayers.add(all);
-                                }
-                            }
-                            for (Player all : pgPlayers) {
-                                if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                    Location loc = (Location) getConfig().get("pg.Lobby.coords");
-                                    assert loc != null;
-                                    all.teleport(loc);
-                                    all.setGameMode(GameMode.ADVENTURE);
-                                    PlayerInventory inv = all.getInventory();
-                                    inv.clear();
-                                    inv.setHelmet(null);
-                                    inv.setChestplate(null);
-                                    inv.setLeggings(null);
-                                    inv.setBoots(null);
-                                    all.setHealth(20);
-                                    all.setFoodLevel(20);
-                                    clearEffects(all);
-                                    if (startOnJoin) {
-                                        ItemStack votepaper = new ItemStack(Material.PAPER);
-                                        ItemMeta votepapaermeta = votepaper.getItemMeta();
-                                        assert votepapaermeta != null;
-                                        votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
-                                        votepaper.setItemMeta(votepapaermeta);
-                                        inv.setItem(8, votepaper);
-                                    }
-                                }
-                            }
-                            //specPlayers.clear();
-                            chests.clear();
-                            if (startOnJoin) {
-                                voted.clear();
-                                voteallowed = false;
-                                forcearena = false;
+        ArrayList<String> added = new ArrayList<>();
+        setGamestate(GameStates.WAITING);
+        if (startOnJoin) {
+            countdown = getConfig().getInt("pg.countdown");
+        } else {
+//            countdown = getConfig().getInt("pg.arenas." + a + ".countdown");
+        }
+        AtomicInteger arenaCountdown = new AtomicInteger();
+        arenaCountdown.set(countdown);
+        AtomicInteger arenaRestart = new AtomicInteger();
+        int restart = 10;
+        arenaRestart.set(restart);
+        AtomicInteger arenaAmount = new AtomicInteger();
+        arenaAmount.set(playerAmount);
+        AtomicInteger arenaTick = new AtomicInteger();
+        int tick = 0;
+        arenaTick.set(tick);
+        arenaTick.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            if (!isPause()) {
+                switch (gamestate) {
+                    case WAITING:
+                        specPlayers.clear();
+                        setMove(true);
+                        setJoinable(true);
+                        if (startOnJoin) {
+                            if (getConfig().contains("pg.Lobby.world")) {
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
-                                int gamerule = 1;
-                                while (getConfig().contains("pg.arenas." + gamerule)) {
-                                    String name = getConfig().getString("pg.arenas." + gamerule + ".world");
-                                    setGameRules(name);
-                                    gamerule++;
+                            }
+                            int gamerule = 1;
+                            while (getConfig().contains("pg.arenas." + gamerule)) {
+                                String name = getConfig().getString("pg.arenas." + gamerule + ".world");
+                                setGameRules(name);
+                                gamerule++;
+                            }
+                            if (!voteallowed) {
+                                BukkitCloudNetHelper.setExtra(chat.get(14));
+                                voteallowed = true;
+                                int arena = 1;
+                                while (getConfig().contains("pg.arenas." + arena)) {
+                                    String name = getConfig().getString("pg.arenas." + arena + ".name");
+                                    arenas.add(name);
+                                    arena++;
                                 }
-                                if (!voteallowed) {
-                                    voteallowed = true;
-                                    votes.put(chat.get(42), 0);
-                                    for (String all : arenas) {
-                                        votes.put(all, 0);
-                                    }
+                                votes.put(chat.get(42), 0);
+                                for (String all : arenas) {
+                                    votes.put(all, 0);
                                 }
                             }
-                            for (Entry<Location, Block> entry : liquidPlaced.entrySet()) {
-                                Location loc = entry.getKey();
-                                loc.getBlock().setType(Material.AIR);
-                            }
-                            for (Entry<Location, Material> entry : placedBlocks.entrySet()) {
-                                Location loc = entry.getKey();
-                                loc.getBlock().setType(Material.AIR);
-                            }
-                            for (Entry<Location, Material> entry : breakedBlocks.entrySet()) {
-                                Location loc = entry.getKey();
-                                Material mat = entry.getValue();
-                                loc.getBlock().setType(mat);
-                            }
-                            int worldName = 1;
-                            while (getConfig().contains("pg.arenas." + worldName)) {
-                                String name = getConfig().getString("pg.arenas." + worldName + ".world");
-                                assert name != null;
-                                World world = getServer().getWorld(name);
-                                assert world != null;
-                                List<Entity> entList = world.getEntities();
-                                for (Entity current : entList) {
-                                    if (current != null) {
-                                        current.remove();
-                                    }
+                        }
+                        if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
+                            ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
+                            int ii = 0;
+                            try {
+                                while (rs.next()) {
+                                    ii++;
+                                    rank.put(ii, rs.getString("UUID"));
                                 }
-                                worldName++;
+                            } catch (SQLException e) {
+                                e.printStackTrace();
                             }
+                            rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                            rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                            rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                            ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                            ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                            ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                            for (int iii = 0; iii < rank.size(); iii++) {
+                                int id = iii + 1;
+                                Skull s = (Skull) rankhead.get(iii).getBlock().getState();
+                                OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                s.setOwningPlayer(name);
+                                s.update();
+                            }
+                            for (int iii = 0; iii < rank.size(); iii++) {
+                                int id = iii + 1;
+                                BlockState b = ranksign.get(iii).getBlock().getState();
+                                OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                Sign sign = (Sign) b;
+                                sign.setLine(0, chat.get(33) + " #" + id);
+                                sign.setLine(1, Objects.requireNonNull(name.getName()));
+                                sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                                sign.setLine(3, "K/D: " + getKD(rank.get(id)));
+                                sign.update();
+                            }
+                        }
+                        setJoinable(true);
+                        if (arenaAmount.get() < minPlayers) {
+                            for (Player all : pgPlayers) {
+//                                if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                if (!added.contains(all.getName())) {
+                                    arenaAmount.getAndIncrement();
+                                    added.add(all.getName());
+//                                  }
+                                    all.setLevel(0);
+                                    all.spigot().sendMessage(ChatMessageType.ACTION_BAR,
+                                            TextComponent.fromLegacyText(prefix + chat.get(0) + " " + "[" + ChatColor.AQUA + arenaAmount.get() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
+
+                                }
+                            }
+                        } else {
+                            setGamestate(GameStates.PREPARING);
+                        }
+                        break;
+                    case PREPARING:
+                        if (arenaAmount.get() >= minPlayers) {
+                            for (Player all : pgPlayers) {
+//                               if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                all.setLevel(arenaCountdown.get());
+//                                }
+                            }
+                            if (arenaCountdown.get() == 20) {
+                                for (Player all : pgPlayers) {
+//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                    all.setLevel(arenaCountdown.get());
+//                                    }
+                                }
+                                if (startOnJoin) {
+                                    voteResults();
+                                }
+                            }
+                            if (arenaCountdown.get() < 20) {
+                                for (Player all : pgPlayers) {
+//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                    all.setLevel(arenaCountdown.get());
+//                                    }
+                                }
+                            }
+                            if (arenaCountdown.get() == 0) {
+                                for (Player all : pgPlayers) {
+//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                    all.setLevel(arenaCountdown.get());
+//                                    }
+                                }
+//                                arenaID = a;
+                                teleportAndStart();
+                                arenaCountdown.set(11);
+                                setGamestate(GameStates.INGAME);
+                                setMove(false);
+                            }
+                            arenaCountdown.getAndDecrement();
+                        } else {
                             setGamestate(GameStates.WAITING);
-                            break;
-                        default:
-                            Bukkit.getScheduler().cancelTask(arenaTick.get());
-                            Bukkit.shutdown();
-                            break;
-                    }
+                        }
+                        break;
+                    case INGAME:
+                        int setting = 1;
+                        while (getConfig().contains("pg.arenas." + setting)) {
+                            String name = getConfig().getString("pg.arenas." + setting + ".world");
+                            assert name != null;
+                            Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
+                            Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
+                            setting++;
+                        }
+                        setJoinable(false);
+                        if (arenaAmount.get() != 0) {
+                            if (arenaCountdown.get() == 10) {
+                                for (Player all : pgPlayers) {
+//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                    all.getInventory().clear();
+                                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(1) + " " + ChatColor.AQUA + arenaCountdown.get());
+                                    ItemStack playercompass = new ItemStack(Material.COMPASS);
+                                    ItemMeta playercompassmeta = playercompass.getItemMeta();
+                                    assert playercompassmeta != null;
+                                    playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
+                                    playercompass.setItemMeta(playercompassmeta);
+                                    all.getInventory().setItem(8, playercompass);
+//                                    }
+                                }
+                                arenaCountdown.getAndDecrement();
+                            } else if (arenaCountdown.get() <= 9 && arenaCountdown.get() > 5) {
+                                arenaCountdown.getAndDecrement();
+                            } else if (arenaCountdown.get() <= 5 && arenaCountdown.get() > 0) {
+                                for (Player all : pgPlayers) {
+//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(1) + " " + ChatColor.AQUA + arenaCountdown.get());
+                                    all.playSound(all.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+//                                    }
+                                }
+                                arenaCountdown.getAndDecrement();
+                            } else if (arenaCountdown.get() == 0) {
+                                setMove(true);
+                                for (Player all : pgPlayers) {
+//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(3));
+                                    all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
+                                    all.setGameMode(GameMode.SURVIVAL);
+//                                    }
+                                }
+                                arenaCountdown.set(-1);
+                            } else if (arenaCountdown.get() == -1) {
+//                                if (a.length() <= 1) {
+                                for (int i = 0; i < pgPlayers.size(); i++) {
+                                    Player winner = pgPlayers.get(i);
+                                    for (Player all : pgPlayers) {
+//                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
+//                                            }
+                                    }
+                                    for (Player all : specPlayers) {
+//                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
+//                                            }
+                                    }
+                                    spawnFireworks(winner.getLocation(), 1);
+                                    addWins(winner.getUniqueId().toString(), 1);
+                                    arenaCountdown.set(-2);
+                                }
+//                                }
+                            } else if (arenaCountdown.get() == -2) {
+                                if (arenaRestart.get() == 10) {
+                                    for (Player all : pgPlayers) {
+//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
+//                                        }
+                                    }
+                                    for (Player all : specPlayers) {
+//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
+//                                        }
+                                    }
+                                    arenaRestart.getAndDecrement();
+                                } else if (arenaRestart.get() <= 9 && arenaRestart.get() > 5) {
+                                    arenaRestart.getAndDecrement();
+                                } else if (arenaRestart.get() <= 5 && arenaRestart.get() > 0) {
+                                    for (Player all : pgPlayers) {
+//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
+//                                        }
+                                    }
+                                    for (Player all : specPlayers) {
+//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
+//                                        }
+                                    }
+                                    arenaRestart.getAndDecrement();
+                                } else if (arenaRestart.get() == 0) {
+                                    for (Player all : pgPlayers) {
+//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(6));
+//                                        }
+                                    }
+                                    for (Player all : specPlayers) {
+//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(6));
+//                                        }
+                                    }
+                                    setGamestate(GameStates.RESET);
+                                }
+                            }
+                        } else {
+                            setGamestate(GameStates.RESET);
+                        }
+                        break;
+                    case RESET:
+                        setMove(true);
+                        setJoinable(true);
+                        arenaRestart.set(10);
+                        if (startOnJoin) {
+                            arenaCountdown.set(getConfig().getInt("pg.countdown"));
+                        } else {
+//                            arenaCountdown.set(getConfig().getInt("pg.arenas." + a + ".countdown"));
+                        }
+                        for (Player all : specPlayers) {
+//                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                            pgPlayers.add(all);
+//                            }
+                        }
+                        for (Player all : pgPlayers) {
+//                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
+                            Location loc = (Location) getConfig().get("pg.Lobby.coords");
+                            assert loc != null;
+                            all.teleport(loc);
+                            all.setGameMode(GameMode.ADVENTURE);
+                            PlayerInventory inv = all.getInventory();
+                            inv.clear();
+                            inv.setHelmet(null);
+                            inv.setChestplate(null);
+                            inv.setLeggings(null);
+                            inv.setBoots(null);
+                            all.setHealth(20);
+                            all.setFoodLevel(20);
+                            clearEffects(all);
+                            if (startOnJoin) {
+                                ItemStack votepaper = new ItemStack(Material.PAPER);
+                                ItemMeta votepapaermeta = votepaper.getItemMeta();
+                                assert votepapaermeta != null;
+                                votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
+                                votepaper.setItemMeta(votepapaermeta);
+                                inv.setItem(8, votepaper);
+                            }
+//                            }
+                        }
+                        specPlayers.clear();
+                        chests.clear();
+                        if (startOnJoin) {
+                            voted.clear();
+                            voteallowed = false;
+                            forcearena = false;
+                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
+                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
+                            int gamerule = 1;
+                            while (getConfig().contains("pg.arenas." + gamerule)) {
+                                String name = getConfig().getString("pg.arenas." + gamerule + ".world");
+                                setGameRules(name);
+                                gamerule++;
+                            }
+                            if (!voteallowed) {
+                                voteallowed = true;
+                                votes.put(chat.get(42), 0);
+                                for (String all : arenas) {
+                                    votes.put(all, 0);
+                                }
+                            }
+                        }
+                        for (Entry<Location, Block> entry : liquidPlaced.entrySet()) {
+                            Location loc = entry.getKey();
+                            loc.getBlock().setType(Material.AIR);
+                        }
+                        for (Entry<Location, Material> entry : placedBlocks.entrySet()) {
+                            Location loc = entry.getKey();
+                            loc.getBlock().setType(Material.AIR);
+                        }
+                        for (Entry<Location, Material> entry : breakedBlocks.entrySet()) {
+                            Location loc = entry.getKey();
+                            Material mat = entry.getValue();
+                            loc.getBlock().setType(mat);
+                        }
+                        int worldName = 1;
+                        while (getConfig().contains("pg.arenas." + worldName)) {
+                            String name = getConfig().getString("pg.arenas." + worldName + ".world");
+                            assert name != null;
+                            World world = getServer().getWorld(name);
+                            assert world != null;
+                            List<Entity> entList = world.getEntities();
+                            for (Entity current : entList) {
+                                if (current != null) {
+                                    current.remove();
+                                }
+                            }
+                            worldName++;
+                        }
+                        setGamestate(GameStates.WAITING);
+                        break;
+                    default:
+                        Bukkit.getScheduler().cancelTask(arenaTick.get());
+                        Bukkit.shutdown();
+                        break;
                 }
-            }, 0, 20));
-        }
+            }
+        }, 0, 20));
     }
 
     public void clearEffects(Player all) {
