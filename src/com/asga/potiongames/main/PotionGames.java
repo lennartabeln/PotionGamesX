@@ -328,13 +328,10 @@ public class PotionGames extends JavaPlugin {
             AtomicInteger arenaTick = new AtomicInteger();
             int tick = 0;
             arenaTick.set(tick);
-            Bukkit.broadcastMessage("Tick: " + arenas.size() + " " + a.length());
             arenaTick.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-                Bukkit.broadcastMessage("Scheduler: " + arenas.size() + " " + a.length());
                 if (!isPause()) {
                     switch (gamestate) {
                         case WAITING:
-                            Bukkit.broadcastMessage("Test: WAITING");
                             //specPlayers.clear();
                             setMove(true);
                             setJoinable(true);
@@ -401,15 +398,11 @@ public class PotionGames extends JavaPlugin {
                                 }
                             }
                             setJoinable(true);
-                            Bukkit.broadcastMessage("2. " + arenas.size() + " " + a.length());
                             if (arenaAmount.get() < minPlayers) {
-                                Bukkit.broadcastMessage("2.1 " + arenas.size() + " " + a.length());
                                 for (Player all : pgPlayers) {
                                     if (arenas.contains(a) && arenaplayers.containsValue(all)) {
                                         if (!added.contains(all.getName())) {
-                                            Bukkit.broadcastMessage("2.2 " + arenas.size() + " " + a.length());
                                             arenaAmount.getAndIncrement();
-                                            Bukkit.broadcastMessage("2.3 " + arenas.size() + " " + a.length());
                                             added.add(all.getName());
                                         }
                                         all.setLevel(0);
@@ -423,7 +416,6 @@ public class PotionGames extends JavaPlugin {
                             }
                             break;
                         case PREPARING:
-                            Bukkit.broadcastMessage("3. " + arenas.size() + " " + a.length());
                             if (arenaAmount.get() >= minPlayers) {
                                 for (Player all : pgPlayers) {
                                     if (arenas.contains(a) && arenaplayers.containsValue(all)) {
