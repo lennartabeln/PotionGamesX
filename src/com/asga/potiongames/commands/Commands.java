@@ -134,25 +134,6 @@ public class Commands implements CommandExecutor {
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("join")) {
                 if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                        int arenaNumber = 1;
-                        try {
-                            int i = 1;
-                            boolean arenaName = false;
-                            while (!arenaName) {
-                                if (args[1].matches(Objects.requireNonNull(pg.getConfig().getString("pg.arenas." + i + ".name")))) {
-                                    arenaNumber = i;
-                                    arenaName = true;
-                                } else {
-                                    i++;
-                                }
-                            }
-                            p.sendMessage(pg.prefix + "Test:true");
-                        } catch (Exception ex) {
-                            p.sendMessage(pg.prefix + "Test:false");
-                        }
-                    pg.setArenaID(String.valueOf(arenaNumber));
-                    //pg.arenas.put(String.valueOf(arenaNumber), p);
-                    pg.arenaplayers.put(String.valueOf(arenaNumber), p);
                     pg.onJoin(p);
                 }
             } else if (args[0].equalsIgnoreCase("arena")) {

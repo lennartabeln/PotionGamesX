@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PotionGames extends JavaPlugin {
     public String prefixNoColor = "[PotionGames]";
@@ -59,7 +58,9 @@ public class PotionGames extends JavaPlugin {
     public HashMap<String, GameMode> gm = new HashMap<>();
     public HashMap<String, ArrayList<Player>> channels = new HashMap<>();
     public HashMap<Player, String> playerChannel = new HashMap<>();
+    private int tick;
     private int countdown = 60;
+    private int reset = 10;
     private int maxPlayers = 24;
     private int minPlayers = maxPlayers / 2;
     private int playerAmount = 0;
@@ -294,6 +295,7 @@ public class PotionGames extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Events(this), this);
         Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
+        setGamestate(GameStates.WAITING);
     }
 
     @Override
@@ -310,24 +312,10 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void tick() {
-        ArrayList<String> added = new ArrayList<>();
-        setGamestate(GameStates.WAITING);
         if (startOnJoin) {
-            countdown = getConfig().getInt("pg.countdown");
-        } else {
-//            countdown = getConfig().getInt("pg.arenas." + a + ".countdown");
+            setCountdown(getConfig().getInt("pg.countdown"));
         }
-        AtomicInteger arenaCountdown = new AtomicInteger();
-        arenaCountdown.set(countdown);
-        AtomicInteger arenaRestart = new AtomicInteger();
-        int restart = 10;
-        arenaRestart.set(restart);
-        AtomicInteger arenaAmount = new AtomicInteger();
-        arenaAmount.set(playerAmount);
-        AtomicInteger arenaTick = new AtomicInteger();
-        int tick = 0;
-        arenaTick.set(tick);
-        arenaTick.set(Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+        tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if (!isPause()) {
                 switch (gamestate) {
                     case WAITING:
@@ -397,53 +385,45 @@ public class PotionGames extends JavaPlugin {
                             }
                         }
                         setJoinable(true);
-                        if (arenaAmount.get() < minPlayers) {
+                        if (getPlayerAmount() < minPlayers) {
                             for (Player all : pgPlayers) {
                                 all.setLevel(0);
                                 all.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                                        TextComponent.fromLegacyText(prefix + chat.get(0) + " " + "[" + ChatColor.AQUA + arenaAmount.get() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
+                                        TextComponent.fromLegacyText(prefix + chat.get(0) + " " + "[" + ChatColor.AQUA + getPlayerAmount() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
                             }
+                            setCountdown(getConfig().getInt("pg.countdown"));
                         } else {
                             setGamestate(GameStates.PREPARING);
                         }
                         break;
                     case PREPARING:
-                        if (arenaAmount.get() >= minPlayers) {
+                        if (getPlayerAmount() >= minPlayers) {
                             for (Player all : pgPlayers) {
-//                               if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                all.setLevel(arenaCountdown.get());
-//                                }
+                                all.setLevel(countdown);
                             }
-                            if (arenaCountdown.get() == 20) {
+                            if (countdown == 20) {
                                 for (Player all : pgPlayers) {
-//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                    all.setLevel(arenaCountdown.get());
-//                                    }
+                                    all.setLevel(countdown);
                                 }
                                 if (startOnJoin) {
                                     voteResults();
                                 }
                             }
-                            if (arenaCountdown.get() < 20) {
+                            if (countdown < 20) {
                                 for (Player all : pgPlayers) {
-//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                    all.setLevel(arenaCountdown.get());
-//                                    }
+                                    all.setLevel(countdown);
                                 }
                             }
-                            if (arenaCountdown.get() == 0) {
+                            if (countdown == 0) {
                                 for (Player all : pgPlayers) {
-//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                    all.setLevel(arenaCountdown.get());
-//                                    }
+                                    all.setLevel(countdown);
                                 }
-//                                arenaID = a;
                                 teleportAndStart();
-                                arenaCountdown.set(11);
+                                setCountdown(11);
                                 setGamestate(GameStates.INGAME);
                                 setMove(false);
                             }
-                            arenaCountdown.getAndDecrement();
+                            countdown--;
                         } else {
                             setGamestate(GameStates.WAITING);
                         }
@@ -458,97 +438,73 @@ public class PotionGames extends JavaPlugin {
                             setting++;
                         }
                         setJoinable(false);
-                        if (arenaAmount.get() != 0) {
-                            if (arenaCountdown.get() == 10) {
+                        if (getPlayerAmount() != 0) {
+                            if (countdown == 10) {
                                 for (Player all : pgPlayers) {
-//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
                                     all.getInventory().clear();
-                                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(1) + " " + ChatColor.AQUA + arenaCountdown.get());
+                                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(1) + " " + ChatColor.AQUA + countdown);
                                     ItemStack playercompass = new ItemStack(Material.COMPASS);
                                     ItemMeta playercompassmeta = playercompass.getItemMeta();
                                     assert playercompassmeta != null;
                                     playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
                                     playercompass.setItemMeta(playercompassmeta);
                                     all.getInventory().setItem(8, playercompass);
-//                                    }
                                 }
-                                arenaCountdown.getAndDecrement();
-                            } else if (arenaCountdown.get() <= 9 && arenaCountdown.get() > 5) {
-                                arenaCountdown.getAndDecrement();
-                            } else if (arenaCountdown.get() <= 5 && arenaCountdown.get() > 0) {
+                                countdown--;
+                            } else if (countdown <= 9 && countdown > 5) {
+                                countdown--;
+                            } else if (countdown <= 5 && countdown > 0) {
                                 for (Player all : pgPlayers) {
-//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(1) + " " + ChatColor.AQUA + arenaCountdown.get());
+                                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(1) + " " + ChatColor.AQUA + countdown);
                                     all.playSound(all.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
-//                                    }
                                 }
-                                arenaCountdown.getAndDecrement();
-                            } else if (arenaCountdown.get() == 0) {
+                                countdown--;
+                            } else if (countdown == 0) {
                                 setMove(true);
                                 for (Player all : pgPlayers) {
-//                                    if (arenas.contains(a) && arenaplayers.containsValue(all)) {
                                     all.sendMessage(prefix + ChatColor.GREEN + chat.get(3));
                                     all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
                                     all.setGameMode(GameMode.SURVIVAL);
-//                                    }
                                 }
-                                arenaCountdown.set(-1);
-                            } else if (arenaCountdown.get() == -1) {
-//                                if (a.length() <= 1) {
+                                setCountdown(-1);
+                            } else if (countdown == -1) {
                                 for (int i = 0; i < pgPlayers.size(); i++) {
                                     Player winner = pgPlayers.get(i);
                                     for (Player all : pgPlayers) {
-//                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
                                         all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
-//                                            }
                                     }
                                     for (Player all : specPlayers) {
-//                                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
                                         all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
-//                                            }
                                     }
                                     spawnFireworks(winner.getLocation(), 1);
                                     addWins(winner.getUniqueId().toString(), 1);
-                                    arenaCountdown.set(-2);
+                                    setCountdown(-2);
                                 }
-//                                }
-                            } else if (arenaCountdown.get() == -2) {
-                                if (arenaRestart.get() == 10) {
+                            } else if (countdown == -2) {
+                                if (getReset() == 10) {
                                     for (Player all : pgPlayers) {
-//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
-//                                        }
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + getReset());
                                     }
                                     for (Player all : specPlayers) {
-//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
-//                                        }
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + getReset());
                                     }
-                                    arenaRestart.getAndDecrement();
-                                } else if (arenaRestart.get() <= 9 && arenaRestart.get() > 5) {
-                                    arenaRestart.getAndDecrement();
-                                } else if (arenaRestart.get() <= 5 && arenaRestart.get() > 0) {
+                                    reset--;
+                                } else if (getReset() <= 9 && getReset() > 5) {
+                                    reset--;
+                                } else if (getReset() <= 5 && getReset() > 0) {
                                     for (Player all : pgPlayers) {
-//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
-//                                        }
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + getReset());
                                     }
                                     for (Player all : specPlayers) {
-//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + arenaRestart.get());
-//                                        }
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + getReset());
                                     }
-                                    arenaRestart.getAndDecrement();
-                                } else if (arenaRestart.get() == 0) {
+                                    reset--;
+                                } else if (getReset() == 0) {
                                     for (Player all : pgPlayers) {
-//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
                                         all.sendMessage(prefix + ChatColor.GREEN + chat.get(6));
-//                                        }
                                     }
                                     for (Player all : specPlayers) {
-//                                        if (arenas.contains(a) && arenaplayers.containsValue(all)) {
                                         all.sendMessage(prefix + ChatColor.GREEN + chat.get(6));
-//                                        }
                                     }
                                     setGamestate(GameStates.RESET);
                                 }
@@ -560,19 +516,12 @@ public class PotionGames extends JavaPlugin {
                     case RESET:
                         setMove(true);
                         setJoinable(true);
-                        arenaRestart.set(10);
+                        setReset(10);
                         if (startOnJoin) {
-                            arenaCountdown.set(getConfig().getInt("pg.countdown"));
-                        } else {
-//                            arenaCountdown.set(getConfig().getInt("pg.arenas." + a + ".countdown"));
+                            setCountdown(getConfig().getInt("pg.countdown"));
                         }
-                        for (Player all : specPlayers) {
-//                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
-                            pgPlayers.add(all);
-//                            }
-                        }
+                        pgPlayers.addAll(specPlayers);
                         for (Player all : pgPlayers) {
-//                            if (arenas.contains(a) && arenaplayers.containsValue(all)) {
                             Location loc = (Location) getConfig().get("pg.Lobby.coords");
                             assert loc != null;
                             all.teleport(loc);
@@ -594,7 +543,6 @@ public class PotionGames extends JavaPlugin {
                                 votepaper.setItemMeta(votepapaermeta);
                                 inv.setItem(8, votepaper);
                             }
-//                            }
                         }
                         specPlayers.clear();
                         chests.clear();
@@ -648,12 +596,12 @@ public class PotionGames extends JavaPlugin {
                         setGamestate(GameStates.WAITING);
                         break;
                     default:
-                        Bukkit.getScheduler().cancelTask(arenaTick.get());
+                        Bukkit.getScheduler().cancelTask(tick);
                         Bukkit.shutdown();
                         break;
                 }
             }
-        }, 0, 20));
+        }, 0, 20);
     }
 
     public void clearEffects(Player all) {
@@ -827,7 +775,7 @@ public class PotionGames extends JavaPlugin {
         clearEffects(p);
         pgPlayers.add(p);
         addPlayerAmount();
-        if (joinable && startOnJoin) {
+        if (joinable) {
             try {
                 Location loc = (Location) getConfig().get("pg.Lobby.coords");
                 assert loc != null;
@@ -897,7 +845,6 @@ public class PotionGames extends JavaPlugin {
             pgPlayers.remove(p);
             specPlayers.remove(p);
             setPlayerAmount(getPlayerAmount() - 1);
-            //arenas.remove();
         }
     }
 
@@ -1138,6 +1085,14 @@ public class PotionGames extends JavaPlugin {
 
     public void setCountdown(int countdown) {
         this.countdown = countdown;
+    }
+
+    public int getReset() {
+        return reset;
+    }
+
+    public void setReset(int reset) {
+        this.reset = reset;
     }
 
     public void changePause() {

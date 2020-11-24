@@ -133,21 +133,23 @@ public class Events implements Listener {
     public void onBlockPlace(BlockPlaceEvent e) {
         if (pg.pgPlayers.contains(e.getPlayer())) {
             if (!pg.isBuild()) {
-                if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
-                        || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
-                        || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
-                        || e.getBlock().getType() == Material.ACACIA_LEAVES
-                        || e.getBlock().getType() == Material.BIRCH_LEAVES
-                        || e.getBlock().getType() == Material.DARK_OAK_LEAVES
-                        || e.getBlock().getType() == Material.JUNGLE_LEAVES
-                        || e.getBlock().getType() == Material.OAK_LEAVES
-                        || e.getBlock().getType() == Material.SPRUCE_LEAVES
-//						|| e.getBlock().getType() == Material.WARPED_FUNGUS
-//						|| e.getBlock().getType() == Material.CRIMSON_FUNGUS
-                        || e.getBlock().getType() == Material.BROWN_MUSHROOM
-                        || e.getBlock().getType() == Material.RED_MUSHROOM) {
-                    pg.getPlacedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
-                    e.setCancelled(false);
+                if (pg.getGamestate() == GameStates.INGAME) {
+                    if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
+                            || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
+                            || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
+                            || e.getBlock().getType() == Material.ACACIA_LEAVES
+                            || e.getBlock().getType() == Material.BIRCH_LEAVES
+                            || e.getBlock().getType() == Material.DARK_OAK_LEAVES
+                            || e.getBlock().getType() == Material.JUNGLE_LEAVES
+                            || e.getBlock().getType() == Material.OAK_LEAVES
+                            || e.getBlock().getType() == Material.SPRUCE_LEAVES
+                            || e.getBlock().getType() == Material.WARPED_FUNGUS
+                            || e.getBlock().getType() == Material.CRIMSON_FUNGUS
+                            || e.getBlock().getType() == Material.BROWN_MUSHROOM
+                            || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                        pg.getPlacedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
+                        e.setCancelled(false);
+                    }
                 } else {
                     e.setCancelled(true);
                 }
@@ -159,21 +161,23 @@ public class Events implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
         if (pg.pgPlayers.contains(e.getPlayer())) {
             if (!pg.isBuild()) {
-                if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
-                        || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
-                        || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
-                        || e.getBlock().getType() == Material.ACACIA_LEAVES
-                        || e.getBlock().getType() == Material.BIRCH_LEAVES
-                        || e.getBlock().getType() == Material.DARK_OAK_LEAVES
-                        || e.getBlock().getType() == Material.JUNGLE_LEAVES
-                        || e.getBlock().getType() == Material.OAK_LEAVES
-                        || e.getBlock().getType() == Material.SPRUCE_LEAVES
-//						|| e.getBlock().getType() == Material.WARPED_FUNGUS
-//						|| e.getBlock().getType() == Material.CRIMSON_FUNGUS
-                        || e.getBlock().getType() == Material.BROWN_MUSHROOM
-                        || e.getBlock().getType() == Material.RED_MUSHROOM) {
-                    pg.getBreakedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
-                    e.setCancelled(false);
+                if (pg.getGamestate() == GameStates.INGAME) {
+                    if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
+                            || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
+                            || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
+                            || e.getBlock().getType() == Material.ACACIA_LEAVES
+                            || e.getBlock().getType() == Material.BIRCH_LEAVES
+                            || e.getBlock().getType() == Material.DARK_OAK_LEAVES
+                            || e.getBlock().getType() == Material.JUNGLE_LEAVES
+                            || e.getBlock().getType() == Material.OAK_LEAVES
+                            || e.getBlock().getType() == Material.SPRUCE_LEAVES
+                            || e.getBlock().getType() == Material.WARPED_FUNGUS
+                            || e.getBlock().getType() == Material.CRIMSON_FUNGUS
+                            || e.getBlock().getType() == Material.BROWN_MUSHROOM
+                            || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                        pg.getBreakedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
+                        e.setCancelled(false);
+                    }
                 } else {
                     e.setCancelled(true);
                 }
@@ -258,7 +262,6 @@ public class Events implements Listener {
                                     if (line2.matches(Objects.requireNonNull(pg.getConfig().getString("pg.arenas." + i + ".name")))) {
                                         arenaNumber = i;
                                         pg.setArenaID(String.valueOf(arenaNumber));
-                                        //pg.arenas.put(String.valueOf(arenaNumber), p);
                                         pg.arenaplayers.put(String.valueOf(arenaNumber), p);
                                         pg.onJoin(p);
                                         arenaName = true;
@@ -359,31 +362,31 @@ public class Events implements Listener {
                                     tries--;
                                     int slot = rnd.nextInt(27);
                                     int roll = rnd.nextInt(100);
-                                    if (roll >= 0 && roll < 20) {
+                                    if (roll < 20) {
                                         int item1 = rnd.nextInt(food1.size());
                                         inv.setItem(slot, food1.get(item1));
-                                    } else if (roll >= 20 && roll < 30) {
+                                    } else if (roll < 30) {
                                         int item2 = rnd.nextInt(food2.size());
                                         inv.setItem(slot, food2.get(item2));
-                                    } else if (roll >= 30 && roll < 45) {
+                                    } else if (roll < 45) {
                                         int item3 = rnd.nextInt(armour1.size());
                                         inv.setItem(slot, armour1.get(item3));
-                                    } else if (roll >= 45 && roll < 60) {
+                                    } else if (roll < 60) {
                                         int item4 = rnd.nextInt(armour2.size());
                                         inv.setItem(slot, armour2.get(item4));
-                                    } else if (roll >= 60 && roll < 67) {
+                                    } else if (roll < 67) {
                                         int item5 = rnd.nextInt(armour3.size());
                                         inv.setItem(slot, armour3.get(item5));
-                                    } else if (roll >= 67 && roll < 72) {
+                                    } else if (roll < 72) {
                                         int item6 = rnd.nextInt(armour4.size());
                                         inv.setItem(slot, armour4.get(item6));
-                                    } else if (roll >= 72 && roll < 75) {
+                                    } else if (roll < 75) {
                                         int item7 = rnd.nextInt(armour5.size());
                                         inv.setItem(slot, armour5.get(item7));
-                                    } else if (roll >= 75 && roll < 95) {
+                                    } else if (roll < 95) {
                                         int item8 = rnd.nextInt(weapons1.size());
                                         inv.setItem(slot, weapons1.get(item8));
-                                    } else if (roll >= 95 && roll < 100) {
+                                    } else {
                                         int item9 = rnd.nextInt(weapons2.size());
                                         inv.setItem(slot, weapons2.get(item9));
                                     }
