@@ -24,6 +24,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -33,6 +34,8 @@ import java.util.Random;
 
 public class Events implements Listener {
     private final PotionGames pg;
+    private int amount;
+    private int bottle;
 
     public Events(PotionGames pg) {
         this.pg = pg;
@@ -149,6 +152,8 @@ public class Events implements Listener {
                             || e.getBlock().getType() == Material.RED_MUSHROOM) {
                         pg.getPlacedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
                         e.setCancelled(false);
+                    } else {
+                        e.setCancelled(true);
                     }
                 } else {
                     e.setCancelled(true);
@@ -177,6 +182,8 @@ public class Events implements Listener {
                             || e.getBlock().getType() == Material.RED_MUSHROOM) {
                         pg.getBreakedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
                         e.setCancelled(false);
+                    } else {
+                        e.setCancelled(true);
                     }
                 } else {
                     e.setCancelled(true);
@@ -200,12 +207,24 @@ public class Events implements Listener {
             e.setKeepLevel(true);
             pg.pgPlayers.remove(p);
             pg.specPlayers.add(p);
+            String teamname = "";
+            for (int i = 0; i < 12; i++) {
+                if (pg.teamplayernames.containsValue(p)) {
+                    teamname = String.valueOf(i);
+                }
+            }
+            pg.teamplayernames.remove(teamname, p);
+            if (pg.teamplayers.isEmpty()) {
+                pg.teams.remove(teamname);
+            }
             int amountPlayers = pg.getPlayerAmount();
             int player = pg.pgPlayers.size();
             try {
                 Player killer = p.getKiller();
                 assert killer != null;
                 killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
+                for (int i = 0; i < 5; i++)
+                    killer.getInventory().addItem(pg.getCoin());
                 e.setDeathMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
             } catch (Exception ex) {
                 e.setDeathMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
@@ -262,7 +281,6 @@ public class Events implements Listener {
                                     if (line2.matches(Objects.requireNonNull(pg.getConfig().getString("pg.arenas." + i + ".name")))) {
                                         arenaNumber = i;
                                         pg.setArenaID(String.valueOf(arenaNumber));
-                                        pg.arenaplayers.put(String.valueOf(arenaNumber), p);
                                         pg.onJoin(p);
                                         arenaName = true;
                                     } else {
@@ -352,6 +370,10 @@ public class Events implements Listener {
                                 weapons2.add(new ItemStack(Material.IRON_AXE, 1));
                                 weapons2.add(new ItemStack(Material.DIAMOND_SWORD, 1));
                                 weapons2.add(new ItemStack(Material.DIAMOND_AXE, 1));
+                                ArrayList<ItemStack> potions1 = new ArrayList<>();
+                                potions1.add(new ItemStack(Material.GLASS_BOTTLE, 1));
+                                ArrayList<ItemStack> potions2 = new ArrayList<>();
+                                potions2.add(pg.getCoin());
                                 Random rnd = new Random();
                                 int max = 6;
                                 int min = 2;
@@ -363,8 +385,17 @@ public class Events implements Listener {
                                     int slot = rnd.nextInt(27);
                                     int roll = rnd.nextInt(100);
                                     if (roll < 20) {
-                                        int item1 = rnd.nextInt(food1.size());
-                                        inv.setItem(slot, food1.get(item1));
+                                        int item = rnd.nextInt(5);
+                                        if (item < 3) {
+                                            int item1 = rnd.nextInt(food1.size());
+                                            inv.setItem(slot, food1.get(item1));
+                                        } else if (item < 4) {
+                                            int item1 = rnd.nextInt(potions1.size());
+                                            inv.setItem(slot, potions1.get(item1));
+                                        } else {
+                                            int item1 = rnd.nextInt(potions2.size());
+                                            inv.setItem(slot, potions2.get(item1));
+                                        }
                                     } else if (roll < 30) {
                                         int item2 = rnd.nextInt(food2.size());
                                         inv.setItem(slot, food2.get(item2));
@@ -452,6 +483,44 @@ public class Events implements Listener {
                             }
                         }
                     }
+                    if (e.getClickedBlock().getType() == Material.CAULDRON) {
+                        if (pg.getGamestate() == GameStates.INGAME) {
+                            if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
+                                Inventory inv;
+                                inv = Bukkit.createInventory(p, 9 * 4, pg.prefix + ChatColor.DARK_AQUA + "Shop");
+                                pg.chests.put(e.getClickedBlock().getLocation(), inv);
+                                ItemStack randombarrier = new ItemStack(Material.POTION);
+                                ItemMeta randombarriermeta = randombarrier.getItemMeta();
+                                assert randombarriermeta != null;
+                                randombarriermeta.setDisplayName("JUMP");
+                                ArrayList<String> lore = new ArrayList<>();
+                                lore.add("60s");
+                                lore.add("Cost: 3");
+                                randombarriermeta.setLore(lore);
+                                randombarrier.setItemMeta(randombarriermeta);
+                                inv.setItem(0, randombarrier);
+                                ItemStack randombarrier2 = new ItemStack(Material.POTION);
+                                ItemMeta randombarriermeta2 = randombarrier2.getItemMeta();
+                                assert randombarriermeta2 != null;
+                                randombarriermeta2.setDisplayName("DAMAGE_RESISTANCE");
+                                ArrayList<String> lore2 = new ArrayList<>();
+                                lore2.add("60s");
+                                lore2.add("Cost: 5");
+                                randombarriermeta2.setLore(lore2);
+                                randombarrier2.setItemMeta(randombarriermeta2);
+                                inv.setItem(1, randombarrier2);
+                            }
+                            p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
+                            for (ItemStack item : p.getInventory().getContents()) {
+                                if (item != null) {
+                                    if (item.getType() == pg.getCoin().getType())
+                                        amount = item.getAmount();
+                                    if (item.getType() == Material.GLASS_BOTTLE)
+                                        bottle = item.getAmount();
+                                }
+                            }
+                        }
+                    }
                 }
             }
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
@@ -530,6 +599,31 @@ public class Events implements Listener {
                         p.openInventory(inv);
                     }
                 }
+                if (p.getInventory().getItemInMainHand().getType() == Material.ENDER_CHEST) {
+                    if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
+                        Inventory inv = Bukkit.createInventory(null, 9 * 2, pg.prefix + ChatColor.DARK_AQUA + "Teamwahl");
+                        ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
+                        ItemMeta randombarriermeta = randombarrier.getItemMeta();
+                        assert randombarriermeta != null;
+                        randombarriermeta.setDisplayName(pg.chat.get(42));
+                        randombarrier.setItemMeta(randombarriermeta);
+                        inv.setItem(0, randombarrier);
+                        int slot = 1;
+                        for (String i : pg.teams) {
+                            ArrayList<String> arenalore = new ArrayList<>();
+                            arenalore.add(0, ChatColor.GREEN + "Spieler: " + ChatColor.AQUA + pg.teamplayers.get(i).toString());
+                            ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
+                            ItemMeta arenamapmeta = arenamap.getItemMeta();
+                            assert arenamapmeta != null;
+                            arenamapmeta.setDisplayName(i);
+                            arenamapmeta.setLore(arenalore);
+                            arenamap.setItemMeta(arenamapmeta);
+                            inv.setItem(slot, arenamap);
+                            slot++;
+                        }
+                        p.openInventory(inv);
+                    }
+                }
             }
         }
     }
@@ -558,6 +652,149 @@ public class Events implements Listener {
                             p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(17));
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
                         }
+                    }
+                }
+            }
+            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Teamwahl")) {
+                if (e.getCurrentItem() != null) {
+                    if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
+                        String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
+                        int maxteamplayers = 2;
+                        if (!pg.teamed.contains(p.getName())) {
+                            if (displayname.equals(pg.chat.get(42))) {
+                                boolean teamfound = false;
+                                while (!teamfound) {
+                                    Random rnd = new Random();
+                                    int rndTeam = rnd.nextInt(pg.teams.size() + 1);
+                                    if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
+                                        teamfound = true;
+                                        p.closeInventory();
+                                        int players = pg.teamplayers.get(Integer.toString(rndTeam));
+                                        players++;
+                                        pg.teamplayers.put(Integer.toString(rndTeam), players);
+                                        p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + "Du bist jetzt in Team" + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + "Spieleranzahl" + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                        p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                                        pg.teamed.add(e.getWhoClicked().getName());
+                                        pg.teamplayernames.put(Integer.toString(rndTeam), p);
+                                    }
+                                }
+                            } else {
+                                if (pg.teamplayers.get(displayname) < maxteamplayers) {
+                                    p.closeInventory();
+                                    int players = pg.teamplayers.get(displayname);
+                                    players++;
+                                    pg.teamplayers.put(displayname, players);
+                                    p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + "Du bist jetzt in Team" + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + "Spieleranzahl" + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                    p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                                    pg.teamed.add(e.getWhoClicked().getName());
+                                    pg.teamplayernames.put(displayname, p);
+                                } else {
+                                    p.closeInventory();
+                                    p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                                    p.sendMessage(pg.prefix + ChatColor.RED + "Das Team ist bereits voll!");
+                                    p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                                }
+                            }
+                        } else {
+                            p.closeInventory();
+                            p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                            p.sendMessage(pg.prefix + ChatColor.RED + "Du bist bereits in einem Team!");
+                            p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                        }
+                    }
+                }
+            }
+            e.setCancelled(true);
+        } else {
+            e.setCancelled(false);
+        }
+        // Shop im Spieler Inventar
+        /*if (e.getView().getTitle().equalsIgnoreCase("Crafting")) {
+            if (Objects.requireNonNull(Objects.requireNonNull(e.getCurrentItem()).getItemMeta()).getDisplayName().equals(Objects.requireNonNull(pg.getCoin().getItemMeta()).getDisplayName())) {
+                if (e.getClick().equals(ClickType.SHIFT_RIGHT)) {
+                    amount = e.getCurrentItem().getAmount();
+                    p.sendMessage(String.valueOf(amount));
+                    Inventory inv = Bukkit.createInventory(null, 9 * 4, pg.prefix + ChatColor.DARK_AQUA + "Shop");
+                    ItemStack randombarrier = new ItemStack(Material.POTION);
+                    ItemMeta randombarriermeta = randombarrier.getItemMeta();
+                    assert randombarriermeta != null;
+                    randombarriermeta.setDisplayName("Potion1");
+                    randombarrier.setItemMeta(randombarriermeta);
+                    inv.setItem(0, randombarrier);
+                    ItemStack randombarrier2 = new ItemStack(Material.POTION);
+                    ItemMeta randombarriermeta2 = randombarrier2.getItemMeta();
+                    assert randombarriermeta2 != null;
+                    randombarriermeta2.setDisplayName("Potion2");
+                    randombarrier2.setItemMeta(randombarriermeta2);
+                    inv.setItem(1, randombarrier2);
+                    p.openInventory(inv);
+                }
+            }
+        }*/
+        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Shop")) {
+            if (e.getCurrentItem() != null) {
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("JUMP")) {
+                    int cost = 3;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            p.sendMessage(String.valueOf(amount));
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.JUMP, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + "Du hast nicht genug Coins!");
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + "Du hast keine leere Flasche!");
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DAMAGE_RESISTANCE")) {
+                    int cost = 5;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            p.sendMessage(String.valueOf(amount));
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + "Du hast nicht genug Coins!");
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + "Du hast keine leere Flasche!");
                     }
                 }
             }

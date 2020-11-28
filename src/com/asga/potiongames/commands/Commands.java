@@ -1,12 +1,12 @@
 package com.asga.potiongames.commands;
 
 import com.asga.potiongames.main.PotionGames;
+import com.sun.istack.internal.NotNull;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -73,8 +73,8 @@ public class Commands implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase("start")) {
                 if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
                     if (pg.pgPlayers.size() >= pg.getMinPlayers()) {
-                        if (pg.getCountdown() >= 20) {
-                            pg.setCountdown(20);
+                        if (pg.getCountdown() >= 10) {
+                            pg.setCountdown(10);
                             for (Player all : pg.pgPlayers) {
                                 all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
                             }
