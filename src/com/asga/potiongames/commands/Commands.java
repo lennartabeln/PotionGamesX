@@ -54,13 +54,13 @@ public class Commands implements CommandExecutor {
                 int kills = pg.getKills(p.getUniqueId().toString());
                 int deaths = pg.getDeaths(p.getUniqueId().toString());
                 double kd = pg.getKD(p.getUniqueId().toString());
-                p.sendMessage(pg.prefix + "--------------Stats--------------");
-                p.sendMessage(pg.prefix + "Won: " + ChatColor.AQUA + wins);
-                p.sendMessage(pg.prefix + "Lost: " + ChatColor.AQUA + losts);
-                p.sendMessage(pg.prefix + "Kills: " + ChatColor.AQUA + kills);
-                p.sendMessage(pg.prefix + "Deaths: " + ChatColor.AQUA + deaths);
-                p.sendMessage(pg.prefix + "K/D: " + ChatColor.AQUA + kd);
-                p.sendMessage(pg.prefix + "--------------Stats--------------");
+                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
+                p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
+                p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
+                p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
+                p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
+                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
             }
             if (args[0].equalsIgnoreCase("join")) {
                 if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {

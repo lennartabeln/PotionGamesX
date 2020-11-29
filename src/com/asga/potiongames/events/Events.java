@@ -487,15 +487,15 @@ public class Events implements Listener {
                         if (pg.getGamestate() == GameStates.INGAME) {
                             if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
                                 Inventory inv;
-                                inv = Bukkit.createInventory(p, 9 * 4, pg.prefix + ChatColor.DARK_AQUA + "Shop");
+                                inv = Bukkit.createInventory(p, 9 * 4, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
                                 pg.chests.put(e.getClickedBlock().getLocation(), inv);
                                 ItemStack randombarrier = new ItemStack(Material.POTION);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
                                 randombarriermeta.setDisplayName("JUMP");
                                 ArrayList<String> lore = new ArrayList<>();
-                                lore.add("60s");
-                                lore.add("Cost: 3");
+                                lore.add(pg.chat.get(50) + ": " + "60s");
+                                lore.add(pg.chat.get(51) + ": " + "3" + pg.chat.get(52));
                                 randombarriermeta.setLore(lore);
                                 randombarrier.setItemMeta(randombarriermeta);
                                 inv.setItem(0, randombarrier);
@@ -504,8 +504,8 @@ public class Events implements Listener {
                                 assert randombarriermeta2 != null;
                                 randombarriermeta2.setDisplayName("DAMAGE_RESISTANCE");
                                 ArrayList<String> lore2 = new ArrayList<>();
-                                lore2.add("60s");
-                                lore2.add("Cost: 5");
+                                lore2.add(pg.chat.get(50) + ": " + "60s");
+                                lore2.add(pg.chat.get(51) + ": " + "5" + pg.chat.get(52));
                                 randombarriermeta2.setLore(lore2);
                                 randombarrier2.setItemMeta(randombarriermeta2);
                                 inv.setItem(1, randombarrier2);
@@ -601,7 +601,7 @@ public class Events implements Listener {
                 }
                 if (p.getInventory().getItemInMainHand().getType() == Material.ENDER_CHEST) {
                     if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                        Inventory inv = Bukkit.createInventory(null, 9 * 2, pg.prefix + ChatColor.DARK_AQUA + "Teamwahl");
+                        Inventory inv = Bukkit.createInventory(null, 9 * 2, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43));
                         ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                         ItemMeta randombarriermeta = randombarrier.getItemMeta();
                         assert randombarriermeta != null;
@@ -611,7 +611,7 @@ public class Events implements Listener {
                         int slot = 1;
                         for (String i : pg.teams) {
                             ArrayList<String> arenalore = new ArrayList<>();
-                            arenalore.add(0, ChatColor.GREEN + "Spieler: " + ChatColor.AQUA + pg.teamplayers.get(i).toString());
+                            arenalore.add(0, ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(i).toString());
                             ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                             ItemMeta arenamapmeta = arenamap.getItemMeta();
                             assert arenamapmeta != null;
@@ -655,7 +655,7 @@ public class Events implements Listener {
                     }
                 }
             }
-            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Teamwahl")) {
+            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43))) {
                 if (e.getCurrentItem() != null) {
                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                         String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
@@ -672,10 +672,10 @@ public class Events implements Listener {
                                         int players = pg.teamplayers.get(Integer.toString(rndTeam));
                                         players++;
                                         pg.teamplayers.put(Integer.toString(rndTeam), players);
-                                        p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + "Du bist jetzt in Team" + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + "Spieleranzahl" + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                        p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                         pg.teamed.add(e.getWhoClicked().getName());
                                         pg.teamplayernames.put(Integer.toString(rndTeam), p);
                                     }
@@ -686,24 +686,24 @@ public class Events implements Listener {
                                     int players = pg.teamplayers.get(displayname);
                                     players++;
                                     pg.teamplayers.put(displayname, players);
-                                    p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
-                                    p.sendMessage(pg.prefix + ChatColor.GREEN + "Du bist jetzt in Team" + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                    p.sendMessage(pg.prefix + ChatColor.GREEN + "Spieleranzahl" + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                    p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                     pg.teamed.add(e.getWhoClicked().getName());
                                     pg.teamplayernames.put(displayname, p);
                                 } else {
                                     p.closeInventory();
-                                    p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
-                                    p.sendMessage(pg.prefix + ChatColor.RED + "Das Team ist bereits voll!");
-                                    p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(47));
+                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                 }
                             }
                         } else {
                             p.closeInventory();
-                            p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
-                            p.sendMessage(pg.prefix + ChatColor.RED + "Du bist bereits in einem Team!");
-                            p.sendMessage(pg.prefix + "--------------" + "Teamwahl" + "--------------");
+                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(48));
+                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                         }
                     }
                 }
@@ -718,7 +718,7 @@ public class Events implements Listener {
                 if (e.getClick().equals(ClickType.SHIFT_RIGHT)) {
                     amount = e.getCurrentItem().getAmount();
                     p.sendMessage(String.valueOf(amount));
-                    Inventory inv = Bukkit.createInventory(null, 9 * 4, pg.prefix + ChatColor.DARK_AQUA + "Shop");
+                    Inventory inv = Bukkit.createInventory(null, 9 * 4, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
                     ItemStack randombarrier = new ItemStack(Material.POTION);
                     ItemMeta randombarriermeta = randombarrier.getItemMeta();
                     assert randombarriermeta != null;
@@ -735,7 +735,7 @@ public class Events implements Listener {
                 }
             }
         }*/
-        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Shop")) {
+        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
             if (e.getCurrentItem() != null) {
                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("JUMP")) {
                     int cost = 3;
@@ -761,10 +761,10 @@ public class Events implements Listener {
                             for (int i = 0; i < 1; i++)
                                 p.getInventory().removeItem(pg.getBottle());
                         } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + "Du hast nicht genug Coins!");
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
                         }
                     } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + "Du hast keine leere Flasche!");
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
                     }
                 }
                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DAMAGE_RESISTANCE")) {
@@ -791,10 +791,10 @@ public class Events implements Listener {
                             for (int i = 0; i < 1; i++)
                                 p.getInventory().removeItem(pg.getBottle());
                         } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + "Du hast nicht genug Coins!");
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
                         }
                     } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + "Du hast keine leere Flasche!");
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
                     }
                 }
             }

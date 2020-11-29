@@ -172,7 +172,7 @@ public class PotionGames extends JavaPlugin {
     public void onEnable() {
         chat.add("Waiting for players!");
         chat.add("The game starts in");
-        chat.add("Player Finder");
+        chat.add("Player-Finder");
         chat.add("The game starts now!");
         chat.add("has won the game!");
         chat.add("Teleporting to lobby in");
@@ -184,7 +184,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("I'm on fire!");
         chat.add("Blocks away from next player");
         chat.add("No player found!");
-        chat.add("Arena Voting");
+        chat.add("Arena-Selector");
         chat.add("Votes");
         chat.add("You have voted for");
         chat.add("You have already voted!");
@@ -213,6 +213,25 @@ public class PotionGames extends JavaPlugin {
         chat.add("started successfully!");
         chat.add("stopped successfully!");
         chat.add("Random");
+        chat.add("Team-Selector");
+        chat.add("Player");
+        chat.add("You are now in team");
+        chat.add("Player amount");
+        chat.add("This team is already full!");
+        chat.add("You are already in a team!");
+        chat.add("Shop");
+        chat.add("Duration");
+        chat.add("Price");
+        chat.add("Coins");
+        chat.add("You not have enough Coins!");
+        chat.add("You not have an empty bottle!");
+        chat.add("Coin");
+        chat.add("Stats");
+        chat.add("Won");
+        chat.add("Lost");
+        chat.add("Kills");
+        chat.add("Deaths");
+        chat.add("K/D");
         File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
         FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
         if (getConfig().get("pg.countdown") == null) {
@@ -303,10 +322,7 @@ public class PotionGames extends JavaPlugin {
         setGamestate(GameStates.WAITING);
         ItemMeta coinmeta = coin.getItemMeta();
         assert coinmeta != null;
-        coinmeta.setDisplayName(ChatColor.DARK_AQUA + "Coin");
-        //ArrayList<String> lore = new ArrayList<>();
-        //lore.add("Shop: SHIFT+RIGHT");
-        //coinmeta.setLore(lore);
+        coinmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(55));
         coin.setItemMeta(coinmeta);
     }
 
@@ -574,7 +590,7 @@ public class PotionGames extends JavaPlugin {
                                 ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
                                 ItemMeta kitselectormeta = kitselector.getItemMeta();
                                 assert kitselectormeta != null;
-                                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + "Teamwahl");
+                                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                                 kitselector.setItemMeta(kitselectormeta);
                                 inv.setItem(0, kitselector);
                             }
@@ -705,10 +721,10 @@ public class PotionGames extends JavaPlugin {
                         int players = teamplayers.get(Integer.toString(rndTeam));
                         players++;
                         teamplayers.put(Integer.toString(rndTeam), players);
-                        all.sendMessage(prefix + "--------------" + "Teamwahl" + "--------------");
-                        all.sendMessage(prefix + ChatColor.GREEN + "Du bist jetzt in Team" + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                        all.sendMessage(prefix + ChatColor.GREEN + "Spieleranzahl" + ": " + ChatColor.AQUA + teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                        all.sendMessage(prefix + "--------------" + "Teamwahl" + "--------------");
+                        all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
+                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.AQUA + teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                        all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
                         teamed.add(all.getName());
                         teamplayernames.put(Integer.toString(rndTeam), all);
                     }
@@ -859,7 +875,7 @@ public class PotionGames extends JavaPlugin {
             ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
             ItemMeta kitselectormeta = kitselector.getItemMeta();
             assert kitselectormeta != null;
-            kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + "Teamwahl");
+            kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
             kitselector.setItemMeta(kitselectormeta);
             p.getInventory().setItem(0, kitselector);
         } else if (!startOnJoin) {
