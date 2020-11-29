@@ -359,6 +359,8 @@ public class PotionGames extends JavaPlugin {
                             while (getConfig().contains("pg.arenas." + gamerule)) {
                                 String name = getConfig().getString("pg.arenas." + gamerule + ".world");
                                 setGameRules(name);
+                                assert name != null;
+                                Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                                 gamerule++;
                             }
                             if (!voteallowed) {
@@ -607,6 +609,8 @@ public class PotionGames extends JavaPlugin {
                             while (getConfig().contains("pg.arenas." + gamerule)) {
                                 String name = getConfig().getString("pg.arenas." + gamerule + ".world");
                                 setGameRules(name);
+                                assert name != null;
+                                Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                                 gamerule++;
                             }
                             if (!voteallowed) {
@@ -704,7 +708,6 @@ public class PotionGames extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_MOB_SPAWNING, false);
         Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.MOB_GRIEFING, false);
         Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
-        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
         Objects.requireNonNull(Bukkit.getWorld(name)).setTime(0);
     }
 
@@ -866,6 +869,8 @@ public class PotionGames extends JavaPlugin {
             }
             String name = getConfig().getString("pg.Lobby.world");
             setGameRules(name);
+            assert name != null;
+            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
             ItemStack votepaper = new ItemStack(Material.PAPER);
             ItemMeta votepapaermeta = votepaper.getItemMeta();
             assert votepapaermeta != null;
@@ -897,6 +902,8 @@ public class PotionGames extends JavaPlugin {
             }
             String name = getConfig().getString("pg.Lobby.world");
             setGameRules(name);
+            assert name != null;
+            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
         } else {
             p.kickPlayer(prefix + chat.get(21));
         }

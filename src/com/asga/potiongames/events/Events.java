@@ -483,7 +483,7 @@ public class Events implements Listener {
                             }
                         }
                     }
-                    if (e.getClickedBlock().getType() == Material.CAULDRON) {
+                    if (e.getClickedBlock().getType() == Material.COMPOSTER) {
                         if (pg.getGamestate() == GameStates.INGAME) {
                             if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
                                 Inventory inv;
