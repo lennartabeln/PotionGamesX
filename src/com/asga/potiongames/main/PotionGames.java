@@ -40,20 +40,24 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<Player> pgPlayers = new ArrayList<>();
     public ArrayList<Player> specPlayers = new ArrayList<>();
     public ArrayList<String> arenas = new ArrayList<>();
+    public ArrayList<String> voted = new ArrayList<>();
     public ArrayList<String> teams = new ArrayList<>();
     public ArrayList<String> teamed = new ArrayList<>();
-    public ArrayList<String> voted = new ArrayList<>();
+    public ArrayList<String> kits = new ArrayList<>();
+    public ArrayList<String> kited = new ArrayList<>();
     public ArrayList<String> chat = new ArrayList<>();
     public ArrayList<Location> rankhead = new ArrayList<>();
     public ArrayList<Location> ranksign = new ArrayList<>();
     public HashMap<Integer, String> rank = new HashMap<>();
     public HashMap<String, Integer> votes = new HashMap<>();
+    public HashMap<String, Integer> teamplayers = new HashMap<>();
+    public HashMap<String, Player> teamplayernames = new HashMap<>();
+    public HashMap<String, Integer> kitplayers = new HashMap<>();
+    public HashMap<String, Player> kitplayernames = new HashMap<>();
     public HashMap<Location, Inventory> chests = new HashMap<>();
     public HashMap<Location, Material> placedBlocks = new HashMap<>();
     public HashMap<Location, Material> breakedBlocks = new HashMap<>();
     public HashMap<Location, Block> liquidPlaced = new HashMap<>();
-    public HashMap<String, Integer> teamplayers = new HashMap<>();
-    public HashMap<String, Player> teamplayernames = new HashMap<>();
     public HashMap<String, ItemStack[]> inv = new HashMap<>();
     public HashMap<String, ItemStack[]> armor = new HashMap<>();
     public HashMap<String, Integer> lvl = new HashMap<>();
@@ -84,6 +88,7 @@ public class PotionGames extends JavaPlugin {
     private boolean move = true;
     private boolean voteallowed = false;
     private boolean teamallowed = false;
+    private boolean kitallowed = false;
     private boolean forcearena = false;
     private boolean startOnJoin = false;
     private boolean tickStarted = false;
@@ -216,7 +221,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Team-Selector");
         chat.add("Player");
         chat.add("You are now in team");
-        chat.add("Player amount");
+        chat.add("You now have the kit");
         chat.add("This team is already full!");
         chat.add("You are already in a team!");
         chat.add("Shop");
@@ -232,6 +237,8 @@ public class PotionGames extends JavaPlugin {
         chat.add("Kills");
         chat.add("Deaths");
         chat.add("K/D");
+        chat.add("Kit Selector");
+        chat.add("You already have a kit!");
         File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
         FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
         if (getConfig().get("pg.countdown") == null) {
@@ -389,6 +396,20 @@ public class PotionGames extends JavaPlugin {
                                 teamplayers.put(chat.get(42), 0);
                                 for (String all : teams) {
                                     teamplayers.put(all, 0);
+                                }
+                            }
+                            if (!kitallowed) {
+                                //BukkitCloudNetHelper.setExtra(chat.get(14));
+                                kitallowed = true;
+                                kits.add("Rich Kid");
+                                kits.add("Fighter");
+                                kits.add("Healer");
+                                kits.add("Looter");
+                                kits.add("Ghost");
+                                kits.add("Tank");
+                                kitplayers.put(chat.get(42), 0);
+                                for (String all : kits) {
+                                    kitplayers.put(all, 0);
                                 }
                             }
                         }
@@ -583,18 +604,24 @@ public class PotionGames extends JavaPlugin {
                             all.setFoodLevel(20);
                             clearEffects(all);
                             if (startOnJoin) {
+                                ItemStack teamselector = new ItemStack(Material.CLOCK);
+                                ItemMeta teamselectormeta = teamselector.getItemMeta();
+                                assert teamselectormeta != null;
+                                teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
+                                teamselector.setItemMeta(teamselectormeta);
+                                inv.setItem(0, teamselector);
+                                ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
+                                ItemMeta kitselectormeta = kitselector.getItemMeta();
+                                assert kitselectormeta != null;
+                                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
+                                kitselector.setItemMeta(kitselectormeta);
+                                inv.setItem(4, kitselector);
                                 ItemStack votepaper = new ItemStack(Material.PAPER);
                                 ItemMeta votepapaermeta = votepaper.getItemMeta();
                                 assert votepapaermeta != null;
                                 votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
                                 votepaper.setItemMeta(votepapaermeta);
                                 inv.setItem(8, votepaper);
-                                ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
-                                ItemMeta kitselectormeta = kitselector.getItemMeta();
-                                assert kitselectormeta != null;
-                                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
-                                kitselector.setItemMeta(kitselectormeta);
-                                inv.setItem(0, kitselector);
                             }
                         }
                         specPlayers.clear();
@@ -603,6 +630,12 @@ public class PotionGames extends JavaPlugin {
                             voted.clear();
                             voteallowed = false;
                             forcearena = false;
+                            teamed.clear();
+                            teamallowed = false;
+                            teamplayernames.clear();
+                            kited.clear();
+                            kitallowed = false;
+                            kitplayernames.clear();
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
                             int gamerule = 1;
@@ -618,6 +651,20 @@ public class PotionGames extends JavaPlugin {
                                 votes.put(chat.get(42), 0);
                                 for (String all : arenas) {
                                     votes.put(all, 0);
+                                }
+                            }
+                            if (!teamallowed) {
+                                teamallowed = true;
+                                teamplayers.put(chat.get(42), 0);
+                                for (String all : teams) {
+                                    teamplayers.put(all, 0);
+                                }
+                            }
+                            if (!kitallowed) {
+                                kitallowed = true;
+                                kitplayers.put(chat.get(42), 0);
+                                for (String all : kits) {
+                                    kitplayers.put(all, 0);
                                 }
                             }
                         }
@@ -712,27 +759,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void voteResults() {
-        int maxteamplayers = 2;
-        boolean teamfound = false;
-        for (Player all : pgPlayers) {
-            if (!teamed.contains(all.getName()))
-                while (!teamfound) {
-                    Random rnd = new Random();
-                    int rndTeam = rnd.nextInt(teams.size() + 1);
-                    if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
-                        teamfound = true;
-                        int players = teamplayers.get(Integer.toString(rndTeam));
-                        players++;
-                        teamplayers.put(Integer.toString(rndTeam), players);
-                        all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
-                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.AQUA + teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                        all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
-                        teamed.add(all.getName());
-                        teamplayernames.put(Integer.toString(rndTeam), all);
-                    }
-                }
-        }
         int max = 0;
         for (int i : votes.values()) {
             if (i > max) {
@@ -805,6 +831,37 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void teleportAndStart() {
+        int maxteamplayers = 2;
+        boolean teamfound = false;
+        for (Player all : pgPlayers) {
+            if (!teamed.contains(all.getName())) {
+                while (!teamfound) {
+                    Random rnd = new Random();
+                    int rndTeam = rnd.nextInt(teams.size() + 1);
+                    if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
+                        teamfound = true;
+                        int players = teamplayers.get(Integer.toString(rndTeam));
+                        players++;
+                        teamplayers.put(Integer.toString(rndTeam), players);
+                        all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
+                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                        all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
+                        teamed.add(all.getName());
+                        teamplayernames.put(Integer.toString(rndTeam), all);
+                    }
+                }
+            }
+            if (!kited.contains(all.getName())) {
+                Random rnd = new Random();
+                int rndKit = rnd.nextInt(kits.size() + 1);
+                all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
+                all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                kited.add(all.getName());
+                kitplayernames.put(Integer.toString(rndKit), all);
+            }
+        }
         for (int i = 1; i <= pgPlayers.size(); i++) {
             Player p = pgPlayers.get(i - 1);
             try {
@@ -871,18 +928,25 @@ public class PotionGames extends JavaPlugin {
             setGameRules(name);
             assert name != null;
             Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
+            ItemStack teamselector = new ItemStack(Material.CLOCK);
+            ItemMeta teamselectormeta = teamselector.getItemMeta();
+            assert teamselectormeta != null;
+            teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
+            teamselector.setItemMeta(teamselectormeta);
+            p.getInventory().setItem(0, teamselector);
+            ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
+            ItemMeta kitselectormeta = kitselector.getItemMeta();
+            assert kitselectormeta != null;
+            kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
+            kitselector.setItemMeta(kitselectormeta);
+            p.getInventory().setItem(4, kitselector);
             ItemStack votepaper = new ItemStack(Material.PAPER);
             ItemMeta votepapaermeta = votepaper.getItemMeta();
             assert votepapaermeta != null;
             votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
             votepaper.setItemMeta(votepapaermeta);
             p.getInventory().setItem(8, votepaper);
-            ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
-            ItemMeta kitselectormeta = kitselector.getItemMeta();
-            assert kitselectormeta != null;
-            kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
-            kitselector.setItemMeta(kitselectormeta);
-            p.getInventory().setItem(0, kitselector);
+
         } else if (!startOnJoin) {
             try {
                 Location loc = (Location) getConfig().get("pg.arenas." + arenaID + ".Lobby");

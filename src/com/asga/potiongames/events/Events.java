@@ -485,32 +485,6 @@ public class Events implements Listener {
                     }
                     if (e.getClickedBlock().getType() == Material.COMPOSTER) {
                         if (pg.getGamestate() == GameStates.INGAME) {
-                            if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
-                                Inventory inv;
-                                inv = Bukkit.createInventory(p, 9 * 4, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
-                                pg.chests.put(e.getClickedBlock().getLocation(), inv);
-                                ItemStack randombarrier = new ItemStack(Material.POTION);
-                                ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName("JUMP");
-                                ArrayList<String> lore = new ArrayList<>();
-                                lore.add(pg.chat.get(50) + ": " + "60s");
-                                lore.add(pg.chat.get(51) + ": " + "3" + pg.chat.get(52));
-                                randombarriermeta.setLore(lore);
-                                randombarrier.setItemMeta(randombarriermeta);
-                                inv.setItem(0, randombarrier);
-                                ItemStack randombarrier2 = new ItemStack(Material.POTION);
-                                ItemMeta randombarriermeta2 = randombarrier2.getItemMeta();
-                                assert randombarriermeta2 != null;
-                                randombarriermeta2.setDisplayName("DAMAGE_RESISTANCE");
-                                ArrayList<String> lore2 = new ArrayList<>();
-                                lore2.add(pg.chat.get(50) + ": " + "60s");
-                                lore2.add(pg.chat.get(51) + ": " + "5" + pg.chat.get(52));
-                                randombarriermeta2.setLore(lore2);
-                                randombarrier2.setItemMeta(randombarriermeta2);
-                                inv.setItem(1, randombarrier2);
-                            }
-                            p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                             for (ItemStack item : p.getInventory().getContents()) {
                                 if (item != null) {
                                     if (item.getType() == pg.getCoin().getType())
@@ -519,7 +493,264 @@ public class Events implements Listener {
                                         bottle = item.getAmount();
                                 }
                             }
+                            Inventory inv;
+                            int cost;
+                            inv = Bukkit.createInventory(p, 9 * 2, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            pg.chests.put(e.getClickedBlock().getLocation(), inv);
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta = randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.setDisplayName("JUMP");
+                            ArrayList<String> lore = new ArrayList<>();
+                            lore.add(pg.chat.get(50) + ": " + "60s");
+                            lore.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta.setLore(lore);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            inv.setItem(0, randombarrier);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier2 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta2 = randombarrier2.getItemMeta();
+                            assert randombarriermeta2 != null;
+                            randombarriermeta2.setDisplayName("DAMAGE_RESISTANCE");
+                            ArrayList<String> lore2 = new ArrayList<>();
+                            lore2.add(pg.chat.get(50) + ": " + "60s");
+                            lore2.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta2.setLore(lore2);
+                            randombarrier2.setItemMeta(randombarriermeta2);
+                            inv.setItem(1, randombarrier2);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier3 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta3 = randombarrier3.getItemMeta();
+                            assert randombarriermeta3 != null;
+                            randombarriermeta3.setDisplayName("SPEED");
+                            ArrayList<String> lore3 = new ArrayList<>();
+                            lore3.add(pg.chat.get(50) + ": " + "60s");
+                            lore3.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta3.setLore(lore3);
+                            randombarrier3.setItemMeta(randombarriermeta3);
+                            inv.setItem(2, randombarrier3);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier4 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta4 = randombarrier4.getItemMeta();
+                            assert randombarriermeta4 != null;
+                            randombarriermeta4.setDisplayName("ABSORPTION");
+                            ArrayList<String> lore4 = new ArrayList<>();
+                            lore4.add(pg.chat.get(50) + ": " + "60s");
+                            lore4.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta4.setLore(lore4);
+                            randombarrier4.setItemMeta(randombarriermeta4);
+                            inv.setItem(3, randombarrier4);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier5 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta5 = randombarrier5.getItemMeta();
+                            assert randombarriermeta5 != null;
+                            randombarriermeta5.setDisplayName("FIRE_RESISTANCE");
+                            ArrayList<String> lore5 = new ArrayList<>();
+                            lore5.add(pg.chat.get(50) + ": " + "60s");
+                            lore5.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta5.setLore(lore5);
+                            randombarrier5.setItemMeta(randombarriermeta5);
+                            inv.setItem(4, randombarrier5);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier6 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta6 = randombarrier6.getItemMeta();
+                            assert randombarriermeta6 != null;
+                            randombarriermeta6.setDisplayName("HEAL");
+                            ArrayList<String> lore6 = new ArrayList<>();
+                            lore6.add(pg.chat.get(50) + ": " + "60s");
+                            lore6.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta6.setLore(lore6);
+                            randombarrier6.setItemMeta(randombarriermeta6);
+                            inv.setItem(5, randombarrier6);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier7 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta7 = randombarrier7.getItemMeta();
+                            assert randombarriermeta7 != null;
+                            randombarriermeta7.setDisplayName("HEALTH_BOOST");
+                            ArrayList<String> lore7 = new ArrayList<>();
+                            lore7.add(pg.chat.get(50) + ": " + "60s");
+                            lore7.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta7.setLore(lore7);
+                            randombarrier7.setItemMeta(randombarriermeta7);
+                            inv.setItem(6, randombarrier7);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier8 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta8 = randombarrier8.getItemMeta();
+                            assert randombarriermeta8 != null;
+                            randombarriermeta8.setDisplayName("INVISIBILITY");
+                            ArrayList<String> lore8 = new ArrayList<>();
+                            lore8.add(pg.chat.get(50) + ": " + "60s");
+                            lore8.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta8.setLore(lore8);
+                            randombarrier8.setItemMeta(randombarriermeta8);
+                            inv.setItem(7, randombarrier8);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier9 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta9 = randombarrier9.getItemMeta();
+                            assert randombarriermeta9 != null;
+                            randombarriermeta9.setDisplayName("REGENERATION");
+                            ArrayList<String> lore9 = new ArrayList<>();
+                            lore9.add(pg.chat.get(50) + ": " + "60s");
+                            lore9.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta9.setLore(lore9);
+                            randombarrier9.setItemMeta(randombarriermeta9);
+                            inv.setItem(8, randombarrier9);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier10 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta10 = randombarrier10.getItemMeta();
+                            assert randombarriermeta10 != null;
+                            randombarriermeta10.setDisplayName("SATURATION");
+                            ArrayList<String> lore10 = new ArrayList<>();
+                            lore10.add(pg.chat.get(50) + ": " + "60s");
+                            lore10.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta10.setLore(lore10);
+                            randombarrier10.setItemMeta(randombarriermeta10);
+                            inv.setItem(9, randombarrier10);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier11 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta11 = randombarrier11.getItemMeta();
+                            assert randombarriermeta11 != null;
+                            randombarriermeta11.setDisplayName("INCREASE_DAMAGE");
+                            ArrayList<String> lore11 = new ArrayList<>();
+                            lore11.add(pg.chat.get(50) + ": " + "60s");
+                            lore11.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta11.setLore(lore11);
+                            randombarrier11.setItemMeta(randombarriermeta11);
+                            inv.setItem(10, randombarrier11);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier12 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta12 = randombarrier12.getItemMeta();
+                            assert randombarriermeta12 != null;
+                            randombarriermeta12.setDisplayName("DOLPHINS_GRACE");
+                            ArrayList<String> lore12 = new ArrayList<>();
+                            lore12.add(pg.chat.get(50) + ": " + "60s");
+                            lore12.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta12.setLore(lore12);
+                            randombarrier12.setItemMeta(randombarriermeta12);
+                            inv.setItem(11, randombarrier12);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier13 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta13 = randombarrier13.getItemMeta();
+                            assert randombarriermeta13 != null;
+                            randombarriermeta13.setDisplayName("NIGHT_VISION");
+                            ArrayList<String> lore13 = new ArrayList<>();
+                            lore13.add(pg.chat.get(50) + ": " + "60s");
+                            lore13.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta13.setLore(lore13);
+                            randombarrier13.setItemMeta(randombarriermeta13);
+                            inv.setItem(12, randombarrier13);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier14 = new ItemStack(Material.POTION);
+                            ItemMeta randombarriermeta14 = randombarrier14.getItemMeta();
+                            assert randombarriermeta14 != null;
+                            randombarriermeta14.setDisplayName("WATER_BREATHING");
+                            ArrayList<String> lore14 = new ArrayList<>();
+                            lore14.add(pg.chat.get(50) + ": " + "60s");
+                            lore14.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta14.setLore(lore14);
+                            randombarrier14.setItemMeta(randombarriermeta14);
+                            inv.setItem(13, randombarrier14);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier15 = new ItemStack(Material.SPLASH_POTION);
+                            ItemMeta randombarriermeta15 = randombarrier15.getItemMeta();
+                            assert randombarriermeta15 != null;
+                            randombarriermeta15.setDisplayName("DAMAGE_RESISTANCE");
+                            ArrayList<String> lore15 = new ArrayList<>();
+                            lore15.add(pg.chat.get(50) + ": " + "60s");
+                            lore15.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta15.setLore(lore15);
+                            randombarrier15.setItemMeta(randombarriermeta15);
+                            inv.setItem(14, randombarrier15);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier16 = new ItemStack(Material.SPLASH_POTION);
+                            ItemMeta randombarriermeta16 = randombarrier16.getItemMeta();
+                            assert randombarriermeta16 != null;
+                            randombarriermeta16.setDisplayName("DAMAGE_RESISTANCE");
+                            ArrayList<String> lore16 = new ArrayList<>();
+                            lore16.add(pg.chat.get(50) + ": " + "60s");
+                            lore16.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta16.setLore(lore16);
+                            randombarrier16.setItemMeta(randombarriermeta16);
+                            inv.setItem(15, randombarrier16);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier17 = new ItemStack(Material.SPLASH_POTION);
+                            ItemMeta randombarriermeta17 = randombarrier17.getItemMeta();
+                            assert randombarriermeta17 != null;
+                            randombarriermeta17.setDisplayName("DAMAGE_RESISTANCE");
+                            ArrayList<String> lore17 = new ArrayList<>();
+                            lore17.add(pg.chat.get(50) + ": " + "60s");
+                            lore17.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta17.setLore(lore17);
+                            randombarrier17.setItemMeta(randombarriermeta17);
+                            inv.setItem(16, randombarrier17);
+
+                            cost = 3;
+                            if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                                cost = 1;
+                            ItemStack randombarrier18 = new ItemStack(Material.SPLASH_POTION);
+                            ItemMeta randombarriermeta18 = randombarrier18.getItemMeta();
+                            assert randombarriermeta18 != null;
+                            randombarriermeta18.setDisplayName("DAMAGE_RESISTANCE");
+                            ArrayList<String> lore18 = new ArrayList<>();
+                            lore18.add(pg.chat.get(50) + ": " + "60s");
+                            lore18.add(pg.chat.get(51) + ": " + cost + " " + pg.chat.get(52));
+                            randombarriermeta18.setLore(lore18);
+                            randombarrier18.setItemMeta(randombarriermeta18);
+                            inv.setItem(17, randombarrier18);
                         }
+                        p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                     }
                 }
             }
@@ -599,7 +830,7 @@ public class Events implements Listener {
                         p.openInventory(inv);
                     }
                 }
-                if (p.getInventory().getItemInMainHand().getType() == Material.ENDER_CHEST) {
+                if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
                     if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
                         Inventory inv = Bukkit.createInventory(null, 9 * 2, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43));
                         ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
@@ -617,6 +848,28 @@ public class Events implements Listener {
                             assert arenamapmeta != null;
                             arenamapmeta.setDisplayName(i);
                             arenamapmeta.setLore(arenalore);
+                            arenamap.setItemMeta(arenamapmeta);
+                            inv.setItem(slot, arenamap);
+                            slot++;
+                        }
+                        p.openInventory(inv);
+                    }
+                }
+                if (p.getInventory().getItemInMainHand().getType() == Material.ENDER_CHEST) {
+                    if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
+                        Inventory inv = Bukkit.createInventory(null, 9 * 2, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(62));
+                        ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
+                        ItemMeta randombarriermeta = randombarrier.getItemMeta();
+                        assert randombarriermeta != null;
+                        randombarriermeta.setDisplayName(pg.chat.get(42));
+                        randombarrier.setItemMeta(randombarriermeta);
+                        inv.setItem(0, randombarrier);
+                        int slot = 1;
+                        for (String i : pg.kits) {
+                            ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
+                            ItemMeta arenamapmeta = arenamap.getItemMeta();
+                            assert arenamapmeta != null;
+                            arenamapmeta.setDisplayName(i);
                             arenamap.setItemMeta(arenamapmeta);
                             inv.setItem(slot, arenamap);
                             slot++;
@@ -674,7 +927,7 @@ public class Events implements Listener {
                                         pg.teamplayers.put(Integer.toString(rndTeam), players);
                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                         pg.teamed.add(e.getWhoClicked().getName());
                                         pg.teamplayernames.put(Integer.toString(rndTeam), p);
@@ -688,7 +941,7 @@ public class Events implements Listener {
                                     pg.teamplayers.put(displayname, players);
                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                     pg.teamed.add(e.getWhoClicked().getName());
                                     pg.teamplayernames.put(displayname, p);
@@ -704,6 +957,37 @@ public class Events implements Listener {
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                             p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(48));
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                        }
+                    }
+                }
+            }
+            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(62))) {
+                if (e.getCurrentItem() != null) {
+                    if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
+                        String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
+                        if (!pg.kited.contains(p.getName())) {
+                            if (displayname.equals(pg.chat.get(42))) {
+                                Random rnd = new Random();
+                                int rndKit = rnd.nextInt(pg.kits.size() + 1);
+                                p.closeInventory();
+                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
+                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                pg.kited.add(e.getWhoClicked().getName());
+                                pg.kitplayernames.put(Integer.toString(rndKit), p);
+                            } else {
+                                p.closeInventory();
+                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                pg.kited.add(e.getWhoClicked().getName());
+                                pg.kitplayernames.put(displayname, p);
+                            }
+                        } else {
+                            p.closeInventory();
+                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63));
+                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                         }
                     }
                 }
@@ -737,13 +1021,15 @@ public class Events implements Listener {
         }*/
         if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
             if (e.getCurrentItem() != null) {
+                int cost;
                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("JUMP")) {
-                    int cost = 3;
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
                     if (bottle >= 1) {
                         if (amount >= cost) {
                             amount = amount - cost;
                             bottle = bottle - 1;
-                            p.sendMessage(String.valueOf(amount));
                             ItemStack randombarrier = new ItemStack(Material.POTION);
                             PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
                             assert randombarriermeta != null;
@@ -768,13 +1054,510 @@ public class Events implements Listener {
                     }
                 }
                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DAMAGE_RESISTANCE")) {
-                    int cost = 5;
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
                     if (bottle >= 1) {
                         if (amount >= cost) {
                             amount = amount - cost;
                             bottle = bottle - 1;
-                            p.sendMessage(String.valueOf(amount));
                             ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("SPEED")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.SPEED, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("ABSORPTION")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.ABSORPTION, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("FIRE_RESISTANCE")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("HEAL")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.HEAL, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("HEALTH_BOOST")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.HEALTH_BOOST, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("INVISIBILITY")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("REGENERATION")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.REGENERATION, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("SATURATION")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.SATURATION, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("INCREASE_DAMAGE")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DOLPHINS_GRACE")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("NIGHT_VISION")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("WATER_BREATHING")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DAMAGE_RESISTANCE")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.SPLASH_POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DAMAGE_RESISTANCE")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.SPLASH_POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DAMAGE_RESISTANCE")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.SPLASH_POTION);
+                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                            assert randombarriermeta != null;
+                            randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60 * 20, 2), true);
+                            randombarriermeta.setDisplayName(String.valueOf(randombarriermeta.getCustomEffects()));
+                            String s1 = randombarriermeta.getDisplayName();
+                            String[] _arr = s1.split(":");
+                            String s2 = _arr[0];
+                            s2 = s2.replaceAll("[^a-zA-Z_]", "");
+                            randombarriermeta.setDisplayName(s2);
+                            randombarrier.setItemMeta(randombarriermeta);
+                            p.getInventory().addItem(randombarrier);
+                            for (int i = 0; i < cost; i++)
+                                p.getInventory().removeItem(pg.getCoin());
+                            for (int i = 0; i < 1; i++)
+                                p.getInventory().removeItem(pg.getBottle());
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                        }
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                    }
+                }
+                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DAMAGE_RESISTANCE")) {
+                    cost = 3;
+                    if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
+                        cost = 1;
+                    if (bottle >= 1) {
+                        if (amount >= cost) {
+                            amount = amount - cost;
+                            bottle = bottle - 1;
+                            ItemStack randombarrier = new ItemStack(Material.SPLASH_POTION);
                             PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
                             assert randombarriermeta != null;
                             randombarriermeta.addCustomEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 60 * 20, 2), true);
