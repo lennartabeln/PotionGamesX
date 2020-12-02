@@ -223,8 +223,13 @@ public class Events implements Listener {
                 Player killer = p.getKiller();
                 assert killer != null;
                 killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
-                for (int i = 0; i < 5; i++)
-                    killer.getInventory().addItem(pg.getCoin());
+                if (pg.kitplayernames.containsKey("Rich Kid") && pg.kitplayernames.containsValue(p)) {
+                    for (int i = 0; i < 10; i++)
+                        killer.getInventory().addItem(pg.getCoin());
+                } else {
+                    for (int i = 0; i < 5; i++)
+                        killer.getInventory().addItem(pg.getCoin());
+                }
                 e.setDeathMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
             } catch (Exception ex) {
                 e.setDeathMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
@@ -996,29 +1001,6 @@ public class Events implements Listener {
         } else {
             e.setCancelled(false);
         }
-        // Shop im Spieler Inventar
-        /*if (e.getView().getTitle().equalsIgnoreCase("Crafting")) {
-            if (Objects.requireNonNull(Objects.requireNonNull(e.getCurrentItem()).getItemMeta()).getDisplayName().equals(Objects.requireNonNull(pg.getCoin().getItemMeta()).getDisplayName())) {
-                if (e.getClick().equals(ClickType.SHIFT_RIGHT)) {
-                    amount = e.getCurrentItem().getAmount();
-                    p.sendMessage(String.valueOf(amount));
-                    Inventory inv = Bukkit.createInventory(null, 9 * 4, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
-                    ItemStack randombarrier = new ItemStack(Material.POTION);
-                    ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                    assert randombarriermeta != null;
-                    randombarriermeta.setDisplayName("Potion1");
-                    randombarrier.setItemMeta(randombarriermeta);
-                    inv.setItem(0, randombarrier);
-                    ItemStack randombarrier2 = new ItemStack(Material.POTION);
-                    ItemMeta randombarriermeta2 = randombarrier2.getItemMeta();
-                    assert randombarriermeta2 != null;
-                    randombarriermeta2.setDisplayName("Potion2");
-                    randombarrier2.setItemMeta(randombarriermeta2);
-                    inv.setItem(1, randombarrier2);
-                    p.openInventory(inv);
-                }
-            }
-        }*/
         if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
             if (e.getCurrentItem() != null) {
                 int cost;

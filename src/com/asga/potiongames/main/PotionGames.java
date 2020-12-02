@@ -514,6 +514,10 @@ public class PotionGames extends JavaPlugin {
                                     playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
                                     playercompass.setItemMeta(playercompassmeta);
                                     all.getInventory().setItem(8, playercompass);
+                                    if (kitplayernames.containsKey("Rich Kid") && kitplayernames.containsValue(all)) {
+                                        for (int i = 0; i < 5; i++)
+                                            all.getInventory().addItem(coin);
+                                    }
                                 }
                                 countdown--;
                             } else if (countdown <= 9 && countdown > 5) {
@@ -994,6 +998,16 @@ public class PotionGames extends JavaPlugin {
             pgPlayers.remove(p);
             specPlayers.remove(p);
             setPlayerAmount(getPlayerAmount() - 1);
+            String teamname = "";
+            for (int i = 0; i < 12; i++) {
+                if (teamplayernames.containsValue(p)) {
+                    teamname = String.valueOf(i);
+                }
+            }
+            teamplayernames.remove(teamname, p);
+            if (teamplayers.isEmpty()) {
+                teams.remove(teamname);
+            }
         }
     }
 
