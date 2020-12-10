@@ -1047,7 +1047,6 @@ public class PotionGames extends JavaPlugin {
                     }
                 }
                 teamplayernames.remove(teamname, p);
-                p.sendMessage(String.valueOf(teamplayers.get(teamname)));
                 int teamamount = teamplayers.get(teamname) - 1;
                 teamplayers.put(teamname, teamamount);
                 if (getGamestate() == GameStates.INGAME) {

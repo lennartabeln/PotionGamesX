@@ -215,7 +215,6 @@ public class Events implements Listener {
                     }
                 }
                 pg.teamplayernames.remove(teamname, p);
-                p.sendMessage(String.valueOf(pg.teamplayers.get(teamname)));
                 int teamamount = pg.teamplayers.get(teamname) - 1;
                 pg.teamplayers.put(teamname, teamamount);
                 if (pg.teamplayers.get(teamname) == 0) {
@@ -278,6 +277,7 @@ public class Events implements Listener {
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_WALL_SIGN
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
+                    // TODO
                     if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
                         Sign sign = (Sign) e.getClickedBlock().getState();
                         String line1 = sign.getLine(0);
@@ -904,7 +904,6 @@ public class Events implements Listener {
                         if (!pg.voted.contains(p.getName())) {
                             p.closeInventory();
                             int votes = pg.votes.get(displayname);
-                            p.sendMessage(displayname);
                             votes++;
                             pg.votes.put(displayname, votes);
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
