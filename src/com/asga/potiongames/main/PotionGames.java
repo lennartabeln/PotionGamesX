@@ -73,7 +73,7 @@ public class PotionGames extends JavaPlugin {
     private int maxPlayers = 24;
     private int minPlayers = maxPlayers / 2;
     private int playerAmount = 0;
-    private final int teamAmount = maxPlayers / teamSize;
+    private int teamAmount = maxPlayers / teamSize;
     private String language = "en_US";
     private String vote = "";
     private String votedArena = "";
@@ -265,13 +265,6 @@ public class PotionGames extends JavaPlugin {
         } else {
             activateTeams = getConfig().getBoolean("pg.activateTeams");
         }
-        if (getConfig().get("pg.teamSize") == null) {
-            getConfig().addDefault("pg.teamSize", teamSize);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            teamSize = getConfig().getInt("pg.teamSize");
-        }
         if (getConfig().get("pg.maxPlayers") == null) {
             getConfig().addDefault("pg.maxPlayers", maxPlayers);
             getConfig().options().copyDefaults(true);
@@ -285,6 +278,14 @@ public class PotionGames extends JavaPlugin {
             saveConfig();
         } else {
             minPlayers = getConfig().getInt("pg.minPlayers");
+        }
+        if (getConfig().get("pg.teamSize") == null) {
+            getConfig().addDefault("pg.teamSize", teamSize);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            teamSize = getConfig().getInt("pg.teamSize");
+            teamAmount = maxPlayers / teamSize;
         }
         if (getConfig().get("pg.language") == null) {
             getConfig().addDefault("pg.language", language);
