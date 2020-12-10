@@ -208,13 +208,16 @@ public class Events implements Listener {
             pg.pgPlayers.remove(p);
             pg.specPlayers.add(p);
             String teamname = "";
-            for (int i = 0; i < 12; i++) {
-                if (pg.teamplayernames.containsValue(p)) {
+            for (int i = 1; i <= 12; i++) {
+                if (pg.teamplayernames.containsKey(Integer.toString(i)) && pg.teamplayernames.containsValue(p)) {
                     teamname = String.valueOf(i);
                 }
             }
             pg.teamplayernames.remove(teamname, p);
-            if (pg.teamplayers.isEmpty()) {
+            p.sendMessage(String.valueOf(pg.teamplayers.get(teamname)));
+            int teamamount = pg.teamplayers.get(teamname) - 1;
+            pg.teamplayers.put(teamname, teamamount);
+            if (pg.teamplayers.get(teamname) == 0) {
                 pg.teams.remove(teamname);
             }
             int amountPlayers = pg.getPlayerAmount();
@@ -897,6 +900,7 @@ public class Events implements Listener {
                         if (!pg.voted.contains(p.getName())) {
                             p.closeInventory();
                             int votes = pg.votes.get(displayname);
+                            p.sendMessage(displayname);
                             votes++;
                             pg.votes.put(displayname, votes);
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");

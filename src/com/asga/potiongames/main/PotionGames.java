@@ -537,6 +537,7 @@ public class PotionGames extends JavaPlugin {
                                     setCountdown(-1);
                                 }
                             } else if (countdown == -1) {
+                                // DEBUG
                                 if (pgPlayers.size() == 1 || teams.size() == 1)
                                     setCountdown(-2);
                             } else if (countdown == -2) {
@@ -659,6 +660,13 @@ public class PotionGames extends JavaPlugin {
                             }
                             if (!teamallowed) {
                                 teamallowed = true;
+                                int team = 1;
+                                while (team <= 12) {
+                                    String name = Integer.toString(team);
+                                    teams.remove(name);
+                                    teams.add(name);
+                                    team++;
+                                }
                                 teamplayers.put(chat.get(42), 0);
                                 for (String all : teams) {
                                     teamplayers.put(all, 0);
@@ -866,6 +874,13 @@ public class PotionGames extends JavaPlugin {
                 kitplayernames.put(Integer.toString(rndKit), all);
             }
         }
+        String teamname;
+        for (int i = 1; i <= 12; i++) {
+            teamname = String.valueOf(i);
+            if (teamplayers.get(teamname) == 0) {
+                teams.remove(teamname);
+            }
+        }
         for (int i = 1; i <= pgPlayers.size(); i++) {
             Player p = pgPlayers.get(i - 1);
             try {
@@ -999,13 +1014,16 @@ public class PotionGames extends JavaPlugin {
             specPlayers.remove(p);
             setPlayerAmount(getPlayerAmount() - 1);
             String teamname = "";
-            for (int i = 0; i < 12; i++) {
-                if (teamplayernames.containsValue(p)) {
+            for (int i = 1; i <= 12; i++) {
+                if (teamplayernames.containsKey(Integer.toString(i)) && teamplayernames.containsValue(p)) {
                     teamname = String.valueOf(i);
                 }
             }
             teamplayernames.remove(teamname, p);
-            if (teamplayers.isEmpty()) {
+            p.sendMessage(String.valueOf(teamplayers.get(teamname)));
+            int teamamount = teamplayers.get(teamname) - 1;
+            teamplayers.put(teamname, teamamount);
+            if (teamplayers.get(teamname) == 0) {
                 teams.remove(teamname);
             }
         }
