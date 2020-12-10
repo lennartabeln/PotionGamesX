@@ -209,7 +209,7 @@ public class Events implements Listener {
             pg.specPlayers.add(p);
             if (pg.isActivateTeams()) {
                 String teamname = "";
-                for (int i = 1; i <= 12; i++) {
+                for (int i = 1; i <= pg.getTeamAmount(); i++) {
                     if (pg.teamplayernames.containsKey(Integer.toString(i)) && pg.teamplayernames.containsValue(p)) {
                         teamname = String.valueOf(i);
                     }
@@ -926,7 +926,7 @@ public class Events implements Listener {
                     if (e.getCurrentItem() != null) {
                         if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                             String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
-                            int maxteamplayers = 2;
+                            int maxteamplayers = pg.getTeamSize();
                             if (!pg.teamed.contains(p.getName())) {
                                 if (displayname.equals(pg.chat.get(42))) {
                                     boolean teamfound = false;

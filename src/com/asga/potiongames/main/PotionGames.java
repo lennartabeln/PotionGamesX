@@ -69,9 +69,11 @@ public class PotionGames extends JavaPlugin {
     private int tick;
     private int countdown = 60;
     private int reset = 10;
+    private int teamSize = 2;
     private int maxPlayers = 24;
     private int minPlayers = maxPlayers / 2;
     private int playerAmount = 0;
+    private final int teamAmount = maxPlayers / teamSize;
     private String language = "en_US";
     private String vote = "";
     private String votedArena = "";
@@ -263,6 +265,13 @@ public class PotionGames extends JavaPlugin {
         } else {
             activateTeams = getConfig().getBoolean("pg.activateTeams");
         }
+        if (getConfig().get("pg.teamSize") == null) {
+            getConfig().addDefault("pg.teamSize", teamSize);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            teamSize = getConfig().getInt("pg.teamSize");
+        }
         if (getConfig().get("pg.maxPlayers") == null) {
             getConfig().addDefault("pg.maxPlayers", maxPlayers);
             getConfig().options().copyDefaults(true);
@@ -395,7 +404,7 @@ public class PotionGames extends JavaPlugin {
                                 if (!teamallowed) {
                                     teamallowed = true;
                                     int team = 1;
-                                    while (team <= 12) {
+                                    while (team <= teamAmount) {
                                         String name = Integer.toString(team);
                                         teams.add(name);
                                         team++;
@@ -675,7 +684,7 @@ public class PotionGames extends JavaPlugin {
                             if (!teamallowed) {
                                 teamallowed = true;
                                 int team = 1;
-                                while (team <= 12) {
+                                while (team <= teamAmount) {
                                     String name = Integer.toString(team);
                                     teams.remove(name);
                                     teams.add(name);
@@ -853,7 +862,7 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void teleportAndStart() {
-        int maxteamplayers = 2;
+        int maxteamplayers = teamSize;
         boolean teamfound = false;
         for (Player all : pgPlayers) {
             if (activateTeams) {
@@ -888,7 +897,7 @@ public class PotionGames extends JavaPlugin {
         }
         if (activateTeams) {
             String teamname;
-            for (int i = 1; i <= 12; i++) {
+            for (int i = 1; i <= teamAmount; i++) {
                 teamname = String.valueOf(i);
                 if (teamplayers.get(teamname) == 0) {
                     teams.remove(teamname);
@@ -1031,7 +1040,7 @@ public class PotionGames extends JavaPlugin {
             setPlayerAmount(getPlayerAmount() - 1);
             if (activateTeams) {
                 String teamname = "";
-                for (int i = 1; i <= 12; i++) {
+                for (int i = 1; i <= teamAmount; i++) {
                     if (teamplayernames.containsKey(Integer.toString(i)) && teamplayernames.containsValue(p)) {
                         teamname = String.valueOf(i);
                     }
@@ -1287,6 +1296,14 @@ public class PotionGames extends JavaPlugin {
 
     public void setJoinable(boolean joinable) {
         this.joinable = joinable;
+    }
+
+    public int getTeamSize() {
+        return teamSize;
+    }
+
+    public int getTeamAmount() {
+        return teamAmount;
     }
 
     public int getCountdown() {
