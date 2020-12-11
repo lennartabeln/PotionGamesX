@@ -1518,7 +1518,7 @@ public class Events implements Listener {
                         p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
                     }
                 }
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DAMAGE_RESISTANCE")) {
+                /*if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals("DAMAGE_RESISTANCE")) {
                     cost = 3;
                     if (pg.kitplayernames.containsKey("Looter") && pg.kitplayernames.containsValue(p))
                         cost = 1;
@@ -1641,7 +1641,7 @@ public class Events implements Listener {
                     } else {
                         p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
                     }
-                }
+                }*/
             }
             e.setCancelled(true);
         } else {

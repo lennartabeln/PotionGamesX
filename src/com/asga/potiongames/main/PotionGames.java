@@ -768,6 +768,14 @@ public class PotionGames extends JavaPlugin {
             all.removePotionEffect(PotionEffectType.GLOWING);
         if (all.hasPotionEffect(PotionEffectType.HEALTH_BOOST))
             all.removePotionEffect(PotionEffectType.HEALTH_BOOST);
+        if (all.hasPotionEffect(PotionEffectType.DOLPHINS_GRACE))
+            all.removePotionEffect(PotionEffectType.DOLPHINS_GRACE);
+        if (all.hasPotionEffect(PotionEffectType.SATURATION))
+            all.removePotionEffect(PotionEffectType.SATURATION);
+        if (all.hasPotionEffect(PotionEffectType.NIGHT_VISION))
+            all.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        if (all.hasPotionEffect(PotionEffectType.WATER_BREATHING))
+            all.removePotionEffect(PotionEffectType.WATER_BREATHING);
     }
 
     public void setGameRules(String name) {
