@@ -26,17 +26,17 @@ PotionGames is a mingames plugin that works like SurvivalGames but with Potions 
 3. Add arena spawns `/pg addspawn [arena]`
 4. Add chests to your arena
 
-* Chest-Types
-    * End Portal Frame: Normal chest like in SurivalGames
-    * Honeycomb Block: Special chest with flame bow and arrows
-    * Composter: Shop with potions (Build a Beacon under the Composter to make it shown on the whole map)
+#### Chest-Types
+* End Portal Frame: Normal chest like in SurivalGames
+* Honeycomb Block: Special chest with flame bow and arrows
+* Composter: Shop with potions (Build a Beacon under the Composter to make it shown on the whole map)
     
-* Create Stats-Wall
-    1. Place 3 Player Heads on a block next to each other
-    2. Place 3 Signs at the front of the block
-    3. Now use the commands listed below to create a podium
-      1. Look at the head of the 1(2;3) player on the podium and do: `/pg head1(2;3)`
-      2. Look at the sign of the 1(2;3) player on the podium and do: `/pg sign1(2;3)`
+#### Create Stats-Wall
+1. Place 3 Player Heads on a block next to each other
+2. Place 3 Signs at the front of the block
+3. Now use the commands listed below to create a podium
+    * Look at the head of the 1(2;3) player on the podium and do: `/pg head1(2;3)`
+    * Look at the sign of the 1(2;3) player on the podium and do: `/pg sign1(2;3)`
     
 ### Commands
 `/pg setlobby`
