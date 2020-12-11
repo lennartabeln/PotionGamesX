@@ -23,15 +23,15 @@ PotionGames is a mingames plugin that works like SurvivalGames but with Potions 
 ## Release History
 
 * 0.5
-    * ADD: Teams, Kits, Shop
+    * ADD: Teams
 * 0.4
-    * ADD: 
+    * ADD: Kits
 * 0.3
-    * ADD: 
+    * ADD: Shop
 * 0.2
-    * ADD:
+    * ADD: ArenaVote-System
 * 0.1
-    * ADD: SurvivalGames-System with Potioneffects when opening chest
+    * ADD: SurvivalGames-System with chests giving PotionEffects
 
 ## Meta
 
