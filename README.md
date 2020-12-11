@@ -20,7 +20,7 @@ PotionGames is a mingames plugin that works like SurvivalGames but with Potions 
 
 //TODO
 
-# Setup
+### Setup
 1. Create lobby
 2. Create arena
 3. Add arena spawns
