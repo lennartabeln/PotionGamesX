@@ -64,7 +64,12 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 * `teamSize: 2` - Set amount of players in one team
 * `activateTeams: false` - Teams allowed `false` or `true`
 * `startOnJoin: false` - Automatically joining the lobby when joining the server `false` or `true` (Example: BungeeCord)
-* `language: en_US` - Change language to one of the defined ones in the messages.yml file
+* `language: en_US` - Change language to one of the defined ones in the `messages.yml` file
+
+### Messages
+
+To change a massege just change the text in the language you use.
+To add a language copy the existing lines and paste them below it and change the `en_US` to your language.
 
 ### Permissions
 
