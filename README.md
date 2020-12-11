@@ -7,32 +7,18 @@ PotionGames is a mingames plugin that works like SurvivalGames but with Potions 
 
 ## Installation
 
-OS X & Linux:
-
-```sh
-npm install my-crazy-module --save
-```
-
-Windows:
-
-```sh
-edit autoexec.bat
-```
+1. Download the plugin
+2. Put the .jar in your plugins folder
+3. Download Multiverse-Core
+4. Put the .jar in your plugins folder
+5. Add `mv.bypass.gamemode.*: true` to your permissions.yml
+5. Start your server
+6. Change the config.yml in the PotionGames folder like you want it
+7. (Optional) Change or add languages to the messages.yml in the PotionGames folder
 
 ## Usage example
 
-A few motivating and useful examples of how your product can be used. Spice this up with code blocks and potentially more screenshots.
-
-_For more examples and usage, please refer to the [Wiki][wiki]._
-
-## Development setup
-
-Describe how to install all development dependencies and how to run an automated test-suite of some kind. Potentially do this for multiple platforms.
-
-```sh
-make install
-npm test
-```
+//TODO
 
 ## Release History
 
