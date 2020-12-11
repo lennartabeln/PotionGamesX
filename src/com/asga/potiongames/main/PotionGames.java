@@ -50,6 +50,7 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<Location> ranksign = new ArrayList<>();
     public HashMap<Integer, String> rank = new HashMap<>();
     public HashMap<String, Integer> votes = new HashMap<>();
+    public HashMap<String, Player> voteplayernames = new HashMap<>();
     public HashMap<String, Integer> teamplayers = new HashMap<>();
     public HashMap<String, Player> teamplayernames = new HashMap<>();
     public HashMap<String, Integer> kitplayers = new HashMap<>();
@@ -82,7 +83,6 @@ public class PotionGames extends JavaPlugin {
     private String database = "potiongames";
     private String user = "root";
     private String password = "";
-    private String arenaID = "";
     private GameStates gamestate;
     private boolean joinable = true;
     private boolean pause = false;
@@ -365,69 +365,65 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void tick() {
-        if (startOnJoin) {
-            setCountdown(getConfig().getInt("pg.countdown"));
-        }
+        setCountdown(getConfig().getInt("pg.countdown"));
         tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if (!isPause()) {
+                int gamerule = 1;
                 switch (gamestate) {
                     case WAITING:
                         specPlayers.clear();
                         setMove(true);
                         setJoinable(true);
-                        if (startOnJoin) {
-                            if (getConfig().contains("pg.Lobby.world")) {
-                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
-                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
+                        if (getConfig().contains("pg.Lobby.world")) {
+                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
+                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
+                        }
+                        while (getConfig().contains("pg.arenas." + gamerule)) {
+                            String name = getConfig().getString("pg.arenas." + gamerule + ".world");
+                            setGameRules(name);
+                            assert name != null;
+                            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                            gamerule++;
+                        }
+                        if (!voteallowed) {
+                            voteallowed = true;
+                            int arena = 1;
+                            while (getConfig().contains("pg.arenas." + arena)) {
+                                String name = getConfig().getString("pg.arenas." + arena + ".name");
+                                arenas.add(name);
+                                arena++;
                             }
-                            int gamerule = 1;
-                            while (getConfig().contains("pg.arenas." + gamerule)) {
-                                String name = getConfig().getString("pg.arenas." + gamerule + ".world");
-                                setGameRules(name);
-                                assert name != null;
-                                Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
-                                gamerule++;
+                            votes.put(chat.get(42), 0);
+                            for (String all : arenas) {
+                                votes.put(all, 0);
                             }
-                            if (!voteallowed) {
-                                voteallowed = true;
-                                int arena = 1;
-                                while (getConfig().contains("pg.arenas." + arena)) {
-                                    String name = getConfig().getString("pg.arenas." + arena + ".name");
-                                    arenas.add(name);
-                                    arena++;
+                        }
+                        if (activateTeams) {
+                            if (!teamallowed) {
+                                teamallowed = true;
+                                int team = 1;
+                                while (team <= teamAmount) {
+                                    String name = Integer.toString(team);
+                                    teams.add(name);
+                                    team++;
                                 }
-                                votes.put(chat.get(42), 0);
-                                for (String all : arenas) {
-                                    votes.put(all, 0);
-                                }
-                            }
-                            if (activateTeams) {
-                                if (!teamallowed) {
-                                    teamallowed = true;
-                                    int team = 1;
-                                    while (team <= teamAmount) {
-                                        String name = Integer.toString(team);
-                                        teams.add(name);
-                                        team++;
-                                    }
-                                    teamplayers.put(chat.get(42), 0);
-                                    for (String all : teams) {
-                                        teamplayers.put(all, 0);
-                                    }
+                                teamplayers.put(chat.get(42), 0);
+                                for (String all : teams) {
+                                    teamplayers.put(all, 0);
                                 }
                             }
-                            if (!kitallowed) {
-                                kitallowed = true;
-                                kits.add("Rich Kid");
-                                kits.add("Fighter");
-                                kits.add("Healer");
-                                kits.add("Looter");
-                                kits.add("Ghost");
-                                kits.add("Tank");
-                                kitplayers.put(chat.get(42), 0);
-                                for (String all : kits) {
-                                    kitplayers.put(all, 0);
-                                }
+                        }
+                        if (!kitallowed) {
+                            kitallowed = true;
+                            kits.add("Rich Kid");
+                            kits.add("Fighter");
+                            kits.add("Healer");
+                            kits.add("Looter");
+                            kits.add("Ghost");
+                            kits.add("Tank");
+                            kitplayers.put(chat.get(42), 0);
+                            for (String all : kits) {
+                                kitplayers.put(all, 0);
                             }
                         }
                         if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
@@ -487,9 +483,7 @@ public class PotionGames extends JavaPlugin {
                                 for (Player all : pgPlayers) {
                                     all.setLevel(countdown);
                                 }
-                                if (startOnJoin) {
-                                    voteResults();
-                                }
+                                voteResults();
                             }
                             if (countdown < 10) {
                                 for (Player all : pgPlayers) {
@@ -611,9 +605,7 @@ public class PotionGames extends JavaPlugin {
                         setMove(true);
                         setJoinable(true);
                         setReset(10);
-                        if (startOnJoin) {
-                            setCountdown(getConfig().getInt("pg.countdown"));
-                        }
+                        setCountdown(getConfig().getInt("pg.countdown"));
                         pgPlayers.addAll(specPlayers);
                         for (Player all : pgPlayers) {
                             Location loc = (Location) getConfig().get("pg.Lobby.coords");
@@ -629,79 +621,74 @@ public class PotionGames extends JavaPlugin {
                             all.setHealth(20);
                             all.setFoodLevel(20);
                             clearEffects(all);
-                            if (startOnJoin) {
-                                if (activateTeams) {
-                                    ItemStack teamselector = new ItemStack(Material.CLOCK);
-                                    ItemMeta teamselectormeta = teamselector.getItemMeta();
-                                    assert teamselectormeta != null;
-                                    teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
-                                    teamselector.setItemMeta(teamselectormeta);
-                                    inv.setItem(4, teamselector);
-                                }
-                                ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
-                                ItemMeta kitselectormeta = kitselector.getItemMeta();
-                                assert kitselectormeta != null;
-                                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
-                                kitselector.setItemMeta(kitselectormeta);
-                                inv.setItem(0, kitselector);
-                                ItemStack votepaper = new ItemStack(Material.PAPER);
-                                ItemMeta votepapaermeta = votepaper.getItemMeta();
-                                assert votepapaermeta != null;
-                                votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
-                                votepaper.setItemMeta(votepapaermeta);
-                                inv.setItem(8, votepaper);
+                            if (activateTeams) {
+                                ItemStack teamselector = new ItemStack(Material.CLOCK);
+                                ItemMeta teamselectormeta = teamselector.getItemMeta();
+                                assert teamselectormeta != null;
+                                teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
+                                teamselector.setItemMeta(teamselectormeta);
+                                inv.setItem(4, teamselector);
                             }
+                            ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
+                            ItemMeta kitselectormeta = kitselector.getItemMeta();
+                            assert kitselectormeta != null;
+                            kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
+                            kitselector.setItemMeta(kitselectormeta);
+                            inv.setItem(0, kitselector);
+                            ItemStack votepaper = new ItemStack(Material.PAPER);
+                            ItemMeta votepapaermeta = votepaper.getItemMeta();
+                            assert votepapaermeta != null;
+                            votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
+                            votepaper.setItemMeta(votepapaermeta);
+                            inv.setItem(8, votepaper);
                         }
                         specPlayers.clear();
                         chests.clear();
-                        if (startOnJoin) {
-                            voted.clear();
-                            voteallowed = false;
-                            forcearena = false;
-                            if (activateTeams)
-                                teamed.clear();
-                            teamallowed = false;
-                            teamplayernames.clear();
-                            kited.clear();
-                            kitallowed = false;
-                            kitplayernames.clear();
-                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
-                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
-                            int gamerule = 1;
-                            while (getConfig().contains("pg.arenas." + gamerule)) {
-                                String name = getConfig().getString("pg.arenas." + gamerule + ".world");
-                                setGameRules(name);
-                                assert name != null;
-                                Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
-                                gamerule++;
+                        voted.clear();
+                        voteallowed = false;
+                        forcearena = false;
+                        if (activateTeams)
+                            teamed.clear();
+                        teamallowed = false;
+                        teamplayernames.clear();
+                        kited.clear();
+                        kitallowed = false;
+                        kitplayernames.clear();
+                        Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
+                        Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
+                        while (getConfig().contains("pg.arenas." + gamerule)) {
+                            String name = getConfig().getString("pg.arenas." + gamerule + ".world");
+                            setGameRules(name);
+                            assert name != null;
+                            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                            gamerule++;
+                        }
+                        if (!voteallowed) {
+                            voteallowed = true;
+                            votes.put(chat.get(42), 0);
+                            for (String all : arenas) {
+                                votes.put(all, 0);
                             }
-                            if (!voteallowed) {
-                                voteallowed = true;
-                                votes.put(chat.get(42), 0);
-                                for (String all : arenas) {
-                                    votes.put(all, 0);
-                                }
+                        }
+                        if (!teamallowed) {
+                            teamallowed = true;
+                            int team = 1;
+                            while (team <= teamAmount) {
+                                String name = Integer.toString(team);
+                                teams.remove(name);
+                                teams.add(name);
+                                team++;
                             }
-                            if (!teamallowed) {
-                                teamallowed = true;
-                                int team = 1;
-                                while (team <= teamAmount) {
-                                    String name = Integer.toString(team);
-                                    teams.remove(name);
-                                    teams.add(name);
-                                    team++;
-                                }
-                                teamplayers.put(chat.get(42), 0);
-                                for (String all : teams) {
-                                    teamplayers.put(all, 0);
-                                }
+                            teamplayers.put(chat.get(42), 0);
+                            for (String all : teams) {
+                                teamplayers.put(all, 0);
                             }
-                            if (!kitallowed) {
-                                kitallowed = true;
-                                kitplayers.put(chat.get(42), 0);
-                                for (String all : kits) {
-                                    kitplayers.put(all, 0);
-                                }
+                        }
+                        if (!kitallowed) {
+                            kitallowed = true;
+                            kitplayers.put(chat.get(42), 0);
+                            for (String all : kits) {
+                                kitplayers.put(all, 0);
                             }
                         }
                         for (Entry<Location, Block> entry : liquidPlaced.entrySet()) {
@@ -908,16 +895,10 @@ public class PotionGames extends JavaPlugin {
         for (int i = 1; i <= pgPlayers.size(); i++) {
             Player p = pgPlayers.get(i - 1);
             try {
-                if (startOnJoin) {
-                    String vote = getVote();
-                    Location loc = getConfig().getLocation("pg.arenas." + vote + ".spawns." + i);
-                    assert loc != null;
-                    p.teleport(loc);
-                } else {
-                    Location loc = getConfig().getLocation("pg.arenas." + arenaID + ".spawns." + i);
-                    assert loc != null;
-                    p.teleport(loc);
-                }
+                String vote = getVote();
+                Location loc = getConfig().getLocation("pg.arenas." + vote + ".spawns." + i);
+                assert loc != null;
+                p.teleport(loc);
             } catch (Exception e) {
                 for (Player all : pgPlayers) {
                     if (all.isOp()) {
@@ -948,9 +929,9 @@ public class PotionGames extends JavaPlugin {
         p.setExp(0);
         p.setGameMode(GameMode.ADVENTURE);
         clearEffects(p);
-        pgPlayers.add(p);
         addPlayerAmount();
         if (joinable) {
+            pgPlayers.add(p);
             try {
                 Location loc = (Location) getConfig().get("pg.Lobby.coords");
                 assert loc != null;
@@ -991,30 +972,31 @@ public class PotionGames extends JavaPlugin {
             votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
             votepaper.setItemMeta(votepapaermeta);
             p.getInventory().setItem(8, votepaper);
-
-        } else if (!startOnJoin) {
+        }
+        if (!joinable) {
+            specPlayers.add(p);
             try {
-                Location loc = (Location) getConfig().get("pg.arenas." + arenaID + ".Lobby");
+                String vote = getVote();
+                Location loc = getConfig().getLocation("pg.arenas." + vote + ".spawns." + 1);
                 assert loc != null;
                 p.teleport(loc);
-                setGamestate(GameStates.WAITING);
-                if (!tickStarted) {
-                    tick();
-                    tickStarted = true;
-                }
-            } catch (Exception ex) {
+            } catch (Exception e) {
                 for (Player all : pgPlayers) {
                     if (all.isOp()) {
-                        all.sendMessage(prefix + p.getName() + ChatColor.RED + " " + chat.get(18));
+                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
                     }
                 }
             }
-            String name = getConfig().getString("pg.Lobby.world");
-            setGameRules(name);
-            assert name != null;
-            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
-        } else {
-            p.kickPlayer(prefix + chat.get(21));
+            p.setGameMode(GameMode.SPECTATOR);
+            p.setAllowFlight(true);
+            p.setFlying(true);
+            p.setLevel(0);
+            p.setExp(0);
+            p.setFireTicks(0);
+            p.setHealth(20);
+            p.setFoodLevel(20);
+            p.setCanPickupItems(false);
+            p.setCollidable(false);
         }
     }
 
@@ -1040,21 +1022,23 @@ public class PotionGames extends JavaPlugin {
             specPlayers.remove(p);
             setPlayerAmount(getPlayerAmount() - 1);
             if (activateTeams) {
-                String teamname = "";
-                for (int i = 1; i <= teamAmount; i++) {
-                    if (teamplayernames.containsKey(Integer.toString(i)) && teamplayernames.containsValue(p)) {
-                        teamname = String.valueOf(i);
+                if (teamed.contains(p.getName())) {
+                    String teamname = "";
+                    for (int i = 1; i <= teamAmount; i++) {
+                        if (teamplayernames.containsKey(Integer.toString(i)) && teamplayernames.containsValue(p)) {
+                            teamname = String.valueOf(i);
+                        }
                     }
-                }
-                teamplayernames.remove(teamname, p);
-                int teamamount = teamplayers.get(teamname) - 1;
-                teamplayers.put(teamname, teamamount);
-                if (getGamestate() == GameStates.INGAME) {
-                    if (teamplayers.get(teamname) == 0) {
-                        teams.remove(teamname);
+                    teamplayernames.remove(teamname, p);
+                    int teamamount = teamplayers.get(teamname) - 1;
+                    teamplayers.put(teamname, teamamount);
+                    if (getGamestate() == GameStates.INGAME) {
+                        if (teamplayers.get(teamname) == 0) {
+                            teams.remove(teamname);
+                        }
                     }
+                    teamed.remove(p.getName());
                 }
-                teamed.remove(p.getName());
             }
         }
     }
@@ -1409,10 +1393,6 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<Player> getChannel(Player player) {
         String channelName = playerChannel.get(player);
         return channels.get(channelName);
-    }
-
-    public void setArenaID(String arenaID) {
-        this.arenaID = arenaID;
     }
 
 }

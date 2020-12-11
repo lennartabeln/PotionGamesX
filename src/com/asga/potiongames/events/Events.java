@@ -277,29 +277,12 @@ public class Events implements Listener {
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_WALL_SIGN
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
-                    // TODO
                     if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
                         Sign sign = (Sign) e.getClickedBlock().getState();
                         String line1 = sign.getLine(0);
-                        String line2 = sign.getLine(1);
                         if (line1.matches("PotionGames")) {
-                            int arenaNumber;
-                            try {
-                                int i = 1;
-                                boolean arenaName = false;
-                                while (!arenaName) {
-                                    if (line2.matches(Objects.requireNonNull(pg.getConfig().getString("pg.arenas." + i + ".name")))) {
-                                        arenaNumber = i;
-                                        pg.setArenaID(String.valueOf(arenaNumber));
-                                        pg.onJoin(p);
-                                        arenaName = true;
-                                    } else {
-                                        i++;
-                                    }
-                                }
-                                p.sendMessage(pg.prefix + "Test:true");
-                            } catch (Exception ex) {
-                                p.sendMessage(pg.prefix + "Test:false");
+                            if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
+                                pg.onJoin(p);
                             }
                         }
                     }
@@ -911,11 +894,33 @@ public class Events implements Listener {
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.votes.get(displayname));
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
                             pg.voted.add(e.getWhoClicked().getName());
+                            pg.voteplayernames.put(displayname, p);
                         } else {
                             p.closeInventory();
+                            String arenaname = "";
+                            for (int i = 0; i <= pg.arenas.size(); i++) {
+                                if (pg.getConfig().contains("pg.arenas." + i)) {
+                                    String name = pg.getConfig().getString("pg.arenas." + i + ".name");
+                                    if (pg.voteplayernames.containsKey(name) && pg.voteplayernames.containsValue(p)) {
+                                        arenaname = name;
+                                    }
+                                } else {
+                                    arenaname = pg.chat.get(42);
+                                }
+                            }
+                            pg.voteplayernames.remove(arenaname, p);
+                            int votes = pg.votes.get(arenaname) - 1;
+                            pg.votes.put(arenaname, votes);
+                            pg.voted.remove(p.getName());
+                            votes = pg.votes.get(displayname);
+                            votes++;
+                            pg.votes.put(displayname, votes);
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(17));
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.votes.get(displayname));
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
+                            pg.voted.add(e.getWhoClicked().getName());
+                            pg.voteplayernames.put(displayname, p);
                         }
                     }
                 }
@@ -967,9 +972,54 @@ public class Events implements Listener {
                                 }
                             } else {
                                 p.closeInventory();
-                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(48));
-                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                String teamname = "";
+                                for (int i = 1; i <= pg.getTeamAmount(); i++) {
+                                    if (pg.teamplayernames.containsKey(Integer.toString(i)) && pg.teamplayernames.containsValue(p)) {
+                                        teamname = String.valueOf(i);
+                                    }
+                                }
+                                pg.teamplayernames.remove(teamname, p);
+                                int teamamount = pg.teamplayers.get(teamname) - 1;
+                                pg.teamplayers.put(teamname, teamamount);
+                                pg.teamed.remove(p.getName());
+                                if (displayname.equals(pg.chat.get(42))) {
+                                    boolean teamfound = false;
+                                    while (!teamfound) {
+                                        Random rnd = new Random();
+                                        int rndTeam = rnd.nextInt(pg.teams.size() + 1);
+                                        if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
+                                            teamfound = true;
+                                            p.closeInventory();
+                                            int players = pg.teamplayers.get(Integer.toString(rndTeam));
+                                            players++;
+                                            pg.teamplayers.put(Integer.toString(rndTeam), players);
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                            pg.teamed.add(e.getWhoClicked().getName());
+                                            pg.teamplayernames.put(Integer.toString(rndTeam), p);
+                                        }
+                                    }
+                                } else {
+                                    if (pg.teamplayers.get(displayname) < maxteamplayers) {
+                                        p.closeInventory();
+                                        int players = pg.teamplayers.get(displayname);
+                                        players++;
+                                        pg.teamplayers.put(displayname, players);
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                        pg.teamed.add(e.getWhoClicked().getName());
+                                        pg.teamplayernames.put(displayname, p);
+                                    } else {
+                                        p.closeInventory();
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(47));
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                    }
+                                }
                             }
                         }
                     }
@@ -999,9 +1049,30 @@ public class Events implements Listener {
                             }
                         } else {
                             p.closeInventory();
-                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63));
-                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                            String kitname = "";
+                            for (int i = 0; i <= pg.kits.size(); i++) {
+                                if (pg.kitplayernames.containsKey(Integer.toString(i)) && pg.kitplayernames.containsValue(p)) {
+                                    kitname = String.valueOf(i);
+                                }
+                            }
+                            pg.teamplayernames.remove(kitname, p);
+                            if (displayname.equals(pg.chat.get(42))) {
+                                Random rnd = new Random();
+                                int rndKit = rnd.nextInt(pg.kits.size() + 1);
+                                p.closeInventory();
+                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
+                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                pg.kited.add(e.getWhoClicked().getName());
+                                pg.kitplayernames.put(Integer.toString(rndKit), p);
+                            } else {
+                                p.closeInventory();
+                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                pg.kited.add(e.getWhoClicked().getName());
+                                pg.kitplayernames.put(displayname, p);
+                            }
                         }
                     }
                 }
