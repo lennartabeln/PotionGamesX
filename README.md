@@ -39,20 +39,20 @@ PotionGames is a mingames plugin that works like SurvivalGames but with Potions 
     * Look at the sign of the 1(2;3) player on the podium and do: `/pg signp1(2;3)`
     
 ### Commands
-* `/pg setlobby`
-* `/pg addarena [name]`
-* `/pg addspawn [arena]`
-* `/pg delarena [arena]`
-* `/pg delspawn [arena]`
-* `/pg build`
-* `/pg pause`
-* `/pg arena`
-* `/pg start`
-* `/pg join`
-* `/pg leave`
-* `/pg stats`
-* `/pg headp1(2;3)`
-* `/pg signp1(2;3)`
+* `/pg setlobby` - Set waiting lobby
+* `/pg addarena [arenaname]` - Add arena
+* `/pg addspawn [arenaname]` - Add spawn
+* `/pg delarena [arenaname]` - Remove arena
+* `/pg delspawn [arenaname]` - Remove last added spawn
+* `/pg build` - Activate build mode
+* `/pg pause` - Pause timer/countdwon
+* `/pg arena [arenaname]` - Force arena 
+* `/pg start` - Set lobby countdown to 10
+* `/pg join` - When `startOnJoin = false` join the game 
+* `/pg leave` - When `startOnJoin = false` leave the game 
+* `/pg stats` - Show your stats
+* `/pg headp1(2;3)` - Add Player Head to Stats-Wall
+* `/pg signp1(2;3)` - Add Player Sign to Stats-Wall
 
 ### Config
 
