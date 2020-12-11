@@ -1,4 +1,5 @@
 # PotionGames
+
 > A Minecraft Minigames Plugin for Bukkit Servers!
 
 PotionGames is a mingames plugin that works like SurvivalGames but with potions and effects!
@@ -16,20 +17,21 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 
 ## Usage
 
-//TODO
-
 ### Setup
+
 1. Create lobby `/pg setlobby`
 2. Create arena `/pg addarena [arenaname]`
 3. Add arena spawns `/pg addspawn [arenaname]`
 4. Add chests to your arena
 
 #### Chest-Types
+
 * End Portal Frame: Normal chest like in SurivalGames
 * Honeycomb Block: Special chest with flame bow and arrows
 * Composter: Shop with potions (Build a Beacon under the Composter to make it shown on the whole map)
     
 #### Create Stats-Wall
+
 1. Place 3 Player Heads on a block next to each other
 2. Place 3 Signs at the front of the block
 3. Now use the commands listed below to create a podium
@@ -37,6 +39,7 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
     * Look at the sign of the 1(2;3) player on the podium and do: `/pg signp1(2;3)`
     
 ### Commands
+
 * `/pg setlobby` - Set waiting lobby
 * `/pg addarena [arenaname]` - Add arena
 * `/pg addspawn [arenaname]` - Add spawn
@@ -57,6 +60,7 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 
 ### Permissions
 
+//TODO
 
 ## Release History
 
