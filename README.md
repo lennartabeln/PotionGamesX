@@ -48,8 +48,8 @@ PotionGames is a mingames plugin that works like SurvivalGames but with Potions 
 * `/pg pause` - Pause timer/countdwon
 * `/pg arena [arenaname]` - Force arena 
 * `/pg start` - Set lobby countdown to 10
-* `/pg join` - When `startOnJoin = false` join the game 
-* `/pg leave` - When `startOnJoin = false` leave the game 
+* `/pg join` - Join the game - When `startOnJoin = false`  
+* `/pg leave` - Leave the game - When `startOnJoin = false`  
 * `/pg stats` - Show your stats
 * `/pg headp1(2;3)` - Add Player Head to Stats-Wall
 * `/pg signp1(2;3)` - Add Player Sign to Stats-Wall
