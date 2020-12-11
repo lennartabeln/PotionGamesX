@@ -68,8 +68,8 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 
 ### Messages
 
-To change a massege just change the text in the language you use.
-To add a language copy the existing lines and paste them below it and change the `en_US` to your language.
+* To change a massege just change the text in the language you use.
+* To add a language copy the existing lines and paste them below it and change the `en_US` to your language.
 
 ### Permissions
 
@@ -91,3 +91,4 @@ To add a language copy the existing lines and paste them below it and change the
 ## TO DO
 
 * ADD: Option to deactivate mysql
+* ADD: Permissions
