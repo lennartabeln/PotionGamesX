@@ -20,8 +20,8 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 
 ### Setup
 1. Create lobby `/pg setlobby`
-2. Create arena `/pg addarena [name]`
-3. Add arena spawns `/pg addspawn [arena]`
+2. Create arena `/pg addarena [arenaname]`
+3. Add arena spawns `/pg addspawn [arenaname]`
 4. Add chests to your arena
 
 #### Chest-Types
