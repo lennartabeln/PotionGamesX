@@ -161,27 +161,6 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + ChatColor.RED + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("setlobby")) {
-                if (p.isOp()) {
-                    int arenaNumber = 1;
-                    try {
-                        int i = 1;
-                        boolean arenaName = false;
-                        while (!arenaName) {
-                            if (args[1].matches(Objects.requireNonNull(pg.getConfig().getString("pg.arenas." + i + ".name")))) {
-                                arenaNumber = i;
-                                arenaName = true;
-                            } else {
-                                i++;
-                            }
-                        }
-                        pg.getConfig().set("pg.arenas." + arenaNumber + ".Lobby", p.getLocation());
-                        pg.saveConfig();
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24));
-                    } catch (Exception e) {
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
-                    }
-                }
             } else if (args[0].equalsIgnoreCase("delarena")) {
                 if (p.isOp()) {
                     int arenaNumber = 1;
@@ -274,30 +253,8 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31));
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("setcountdown")) {
-                if (p.isOp()) {
-                    int arenaNumber = 1;
-                    try {
-                        int i = 1;
-                        boolean arenaName = false;
-                        while (!arenaName) {
-                            if (args[1].matches(Objects.requireNonNull(pg.getConfig().getString("pg.arenas." + i + ".name")))) {
-                                arenaNumber = i;
-                                arenaName = true;
-                            } else {
-                                i++;
-                            }
-                        }
-                        pg.getConfig().set("pg.arenas." + arenaNumber + ".countdown", Integer.valueOf(args[2]));
-                        pg.saveConfig();
-                        p.sendMessage(pg.prefix + ChatColor.GRAY + "Countdown für Arena" + " " + ChatColor.AQUA + args[1] + ChatColor.GRAY + ": " + ChatColor.LIGHT_PURPLE + args[2]);
-                    } catch (Exception e) {
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31));
-                    }
-                }
             }
         }
         return false;
     }
-
 }
