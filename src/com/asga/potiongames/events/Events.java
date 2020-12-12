@@ -908,7 +908,7 @@ public class Events implements Listener {
                 }
                 if (p.getInventory().getItemInMainHand().getType() == Material.PAPER) {
                     if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                        Inventory inv = Bukkit.createInventory(null, 9 * 4, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(14));
+                        Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(14));
                         ArrayList<String> randomlore = new ArrayList<>();
                         randomlore.add(0, ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.votes.get(pg.chat.get(42)).toString());
                         ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
@@ -937,7 +937,7 @@ public class Events implements Listener {
                 if (pg.isActivateTeams()) {
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
                         if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                            Inventory inv = Bukkit.createInventory(null, 9 * 2, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43));
+                            Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43));
                             ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                             ItemMeta randombarriermeta = randombarrier.getItemMeta();
                             assert randombarriermeta != null;
@@ -963,7 +963,7 @@ public class Events implements Listener {
                 }
                 if (p.getInventory().getItemInMainHand().getType() == Material.ENDER_CHEST) {
                     if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                        Inventory inv = Bukkit.createInventory(null, 9 * 2, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(62));
+                        Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(62));
                         ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                         ItemMeta randombarriermeta = randombarrier.getItemMeta();
                         assert randombarriermeta != null;
