@@ -92,3 +92,6 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 
 * ADD: Option to deactivate mysql
 * ADD: Permissions
+* ADD: Kits in config (remove, add, deactivate)
+* ADD: Shop items in config
+* ADD: Multiple arenas per Server (Version 2.0)
