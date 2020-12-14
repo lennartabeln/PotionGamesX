@@ -27,7 +27,8 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 #### Chest-Types
 
 * End Portal Frame: Normal chest like in SurivalGames
-* Honeycomb Block: Special chest with flame bow and arrows
+* Target: Special chest with Flame-Bow and Arrows
+* Netherite Block: Special chest with Netherite Ingots
 * Composter: Shop with potions (Build a Beacon under the Composter to make it shown on the whole map)
     
 #### Create Stats-Wall
