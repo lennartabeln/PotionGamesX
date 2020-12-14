@@ -570,7 +570,7 @@ public class Events implements Listener {
                             }
                         }
                     }
-                    if (e.getClickedBlock().getType() == Material.HONEYCOMB_BLOCK) {
+                    if (e.getClickedBlock().getType() == Material.TARGET) {
                         if (pg.getGamestate() == GameStates.INGAME) {
                             if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
                                 Inventory inv;
@@ -589,6 +589,23 @@ public class Events implements Listener {
                                 inv.setItem(6, arrow);
                                 inv.setItem(7, arrow);
                                 inv.setItem(4, firebow);
+                            } else {
+                                p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
+                            }
+                        }
+                    }
+                    if (e.getClickedBlock().getType() == Material.NETHERITE_BLOCK) {
+                        if (pg.getGamestate() == GameStates.INGAME) {
+                            if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
+                                Inventory inv;
+                                inv = Bukkit.createInventory(p, 9, pg.prefix);
+                                pg.chests.put(e.getClickedBlock().getLocation(), inv);
+                                p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
+                                ItemStack ingot = new ItemStack(Material.NETHERITE_INGOT);
+                                inv.setItem(1, ingot);
+                                inv.setItem(3, ingot);
+                                inv.setItem(5, ingot);
+                                inv.setItem(7, ingot);
                             } else {
                                 p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                             }
