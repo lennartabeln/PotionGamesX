@@ -48,7 +48,7 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 * `/pg delspawn [arenaname]` - Remove last added spawn
 * `/pg build` - Activate build mode
 * `/pg pause` - Pause timer/countdwon
-* `/pg arena [arenaname]` - Force arena 
+* `/pg force [arenaname]` - Force arena 
 * `/pg start` - Set lobby countdown to 10
 * `/pg join` - Join the game - When `startOnJoin = false`  
 * `/pg leave` - Leave the game - When `startOnJoin = false`  
