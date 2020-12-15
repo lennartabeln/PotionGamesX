@@ -42,6 +42,7 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
     
 ### Commands and Permissions
 
+* `/pg help` or `/pg commands` - Get list of commands + permissions - Permission: `none`
 * `/pg setlobby` - Set waiting lobby - Permission: `pg.setup`
 * `/pg addarena [arenaname]` - Add arena - Permission: `pg.setup`
 * `/pg addspawn [arenaname]` - Add spawn - Permission: `pg.setup`
