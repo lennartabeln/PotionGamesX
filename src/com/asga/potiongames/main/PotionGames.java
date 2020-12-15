@@ -242,6 +242,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("K/D");
         chat.add("Kit Selector");
         chat.add("You already have a kit!");
+        chat.add("Commands");
         File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
         FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
         if (getConfig().get("pg.countdown") == null) {
