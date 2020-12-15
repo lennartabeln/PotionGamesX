@@ -19,6 +19,7 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 
 ### Setup
 
+0. You need to be op or have the permission pg.setup
 1. Create lobby `/pg setlobby`
 2. Create arena `/pg addarena [arenaname]`
 3. Add arena spawns `/pg addspawn [arenaname]`
@@ -27,7 +28,8 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 #### Chest-Types
 
 * End Portal Frame: Normal chest like in SurivalGames
-* Honeycomb Block: Special chest with flame bow and arrows
+* Target: Special chest with Flame-Bow and Arrows
+* Netherite Block: Special chest with Netherite Ingots
 * Composter: Shop with potions (Build a Beacon under the Composter to make it shown on the whole map)
     
 #### Create Stats-Wall
@@ -38,22 +40,22 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
     * Look at the head of the 1(2;3) player on the podium and do: `/pg headp1(2;3)`
     * Look at the sign of the 1(2;3) player on the podium and do: `/pg signp1(2;3)`
     
-### Commands
+### Commands and Permissions
 
-* `/pg setlobby` - Set waiting lobby
-* `/pg addarena [arenaname]` - Add arena
-* `/pg addspawn [arenaname]` - Add spawn
-* `/pg delarena [arenaname]` - Remove arena
-* `/pg delspawn [arenaname]` - Remove last added spawn
-* `/pg build` - Activate build mode
-* `/pg pause` - Pause timer/countdwon
-* `/pg arena [arenaname]` - Force arena 
-* `/pg start` - Set lobby countdown to 10
-* `/pg join` - Join the game - When `startOnJoin = false`  
-* `/pg leave` - Leave the game - When `startOnJoin = false`  
-* `/pg stats` - Show your stats
-* `/pg headp1(2;3)` - Add Player Head to Stats-Wall
-* `/pg signp1(2;3)` - Add Player Sign to Stats-Wall
+* `/pg setlobby` - Set waiting lobby - Permission: `pg.setup`
+* `/pg addarena [arenaname]` - Add arena - Permission: `pg.setup`
+* `/pg addspawn [arenaname]` - Add spawn - Permission: `pg.setup`
+* `/pg delarena [arenaname]` - Remove arena - Permission: `pg.setup`
+* `/pg delspawn [arenaname]` - Remove last added spawn - Permission: `pg.setup`
+* `/pg build` - Activate build mode - Permission: `pg.build`
+* `/pg pause` - Pause timer/countdwon - Permission: `pg.pause`
+* `/pg force [arenaname]` - Force arena - Permission: `pg.force`
+* `/pg start` - Set lobby countdown to 10 - Permission: `pg.start`
+* `/pg join` - Join the game - When `startOnJoin = false` - Permission: `pg.join` 
+* `/pg leave` - Leave the game - When `startOnJoin = false` - Permission: `pg.leave` 
+* `/pg stats` - Show your stats - Permission: `pg.stats`
+* `/pg headp1(2;3)` - Add Player Head to Stats-Wall - Permission: `pg.setup`
+* `/pg signp1(2;3)` - Add Player Sign to Stats-Wall - Permission: `pg.setup`
 
 ### Config
 
@@ -71,10 +73,6 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 * To change a massege just change the text in the language you use.
 * To add a language copy the existing lines and paste them below it and change the `en_US` to your language.
 
-### Permissions
-
-//TODO
-
 ## Release History
 
 * 0.5
@@ -90,9 +88,8 @@ PotionGames is a mingames plugin that works like SurvivalGames but with potions 
 
 ## TODO
 
-* ADD: Option to deactivate mysql (file database)
-* ADD: Permissions
+* ADD: Option to deactivate mysql (file database) - (Version 0.5.3)
 * ADD: Kits in config (remove, add, deactivate) - (Version 0.6)
 * ADD: Shop items in config - (Version 0.6)
-* ~~ADD: Chest items in config - (Version 0.6)~~
-* ~~ADD: Multiple lobbys per server - (Version 2.0)~~
+* ADD: Chest items in config - (Version 0.6)
+* ADD: Multiple lobbys per server - (Version 2.0)
