@@ -21,7 +21,7 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         Player p = (Player) sender;
         if (args.length == 1) {
-            if (p.isOp()) {
+            if (p.hasPermission("pg.setup")) {
                 if (args[0].equalsIgnoreCase("headp1")) {
                     pg.getConfig().set("pg.RankWall.headp1", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
                     pg.saveConfig();
@@ -48,83 +48,95 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
                 }
             }
-            if (args[0].equalsIgnoreCase("stats")) {
-                int wins = pg.getWins(p.getUniqueId().toString());
-                int losts = pg.getLosts(p.getUniqueId().toString());
-                int kills = pg.getKills(p.getUniqueId().toString());
-                int deaths = pg.getDeaths(p.getUniqueId().toString());
-                double kd = pg.getKD(p.getUniqueId().toString());
-                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
-                p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
-                p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
-                p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
-                p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
-                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+            if (p.hasPermission("pg.stats")) {
+                if (args[0].equalsIgnoreCase("stats")) {
+                    int wins = pg.getWins(p.getUniqueId().toString());
+                    int losts = pg.getLosts(p.getUniqueId().toString());
+                    int kills = pg.getKills(p.getUniqueId().toString());
+                    int deaths = pg.getDeaths(p.getUniqueId().toString());
+                    double kd = pg.getKD(p.getUniqueId().toString());
+                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                    p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
+                    p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
+                    p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
+                    p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
+                    p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
+                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                }
             }
             if (args[0].equalsIgnoreCase("join")) {
-                if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                    pg.onJoin(p);
+                if (p.hasPermission("pg.join")) {
+                    if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
+                        pg.onJoin(p);
+                    }
                 }
             } else if (args[0].equalsIgnoreCase("leave")) {
-                if (pg.pgPlayers.contains(p) && !pg.isStartOnJoin() || pg.specPlayers.contains(p) && !pg.isStartOnJoin()) {
-                    pg.onLeave(p);
+                if (p.hasPermission("pg.leave")) {
+                    if (pg.pgPlayers.contains(p) && !pg.isStartOnJoin() || pg.specPlayers.contains(p) && !pg.isStartOnJoin()) {
+                        pg.onLeave(p);
+                    }
                 }
             } else if (args[0].equalsIgnoreCase("start")) {
-                if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
-                    if (pg.pgPlayers.size() >= pg.getMinPlayers()) {
-                        if (pg.getCountdown() >= 10) {
-                            pg.setCountdown(10);
-                            for (Player all : pg.pgPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
+                if (p.hasPermission("pg.start")) {
+                    if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
+                        if (pg.pgPlayers.size() >= pg.getMinPlayers()) {
+                            if (pg.getCountdown() >= 10) {
+                                pg.setCountdown(10);
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
+                                }
+                            } else {
+                                p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
                             }
                         } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(21));
                         }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(21));
                     }
                 }
             } else if (args[0].equalsIgnoreCase("pause")) {
-                if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
-                    pg.changePause();
-                    if (pg.isPause()) {
-                        for (Player all : pg.pgPlayers) {
-                            all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
-                        }
-                        for (Player all : pg.specPlayers) {
-                            all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
-                        }
-                    } else {
-                        for (Player all : pg.pgPlayers) {
-                            all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
-                        }
-                        for (Player all : pg.specPlayers) {
-                            all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                if (p.hasPermission("pg.pause")) {
+                    if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
+                        pg.changePause();
+                        if (pg.isPause()) {
+                            for (Player all : pg.pgPlayers) {
+                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
+                            }
+                            for (Player all : pg.specPlayers) {
+                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
+                            }
+                        } else {
+                            for (Player all : pg.pgPlayers) {
+                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                            }
+                            for (Player all : pg.specPlayers) {
+                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                            }
                         }
                     }
                 }
             } else if (args[0].equalsIgnoreCase("build")) {
-                if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
-                    pg.changeBuild();
-                    if (pg.isBuild()) {
-                        for (Player all : pg.pgPlayers) {
-                            all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
-                        }
-                        for (Player all : pg.specPlayers) {
-                            all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
-                        }
-                    } else {
-                        for (Player all : pg.pgPlayers) {
-                            all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
-                        }
-                        for (Player all : pg.specPlayers) {
-                            all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                if (p.hasPermission("pg.build")) {
+                    if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
+                        pg.changeBuild();
+                        if (pg.isBuild()) {
+                            for (Player all : pg.pgPlayers) {
+                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
+                            }
+                            for (Player all : pg.specPlayers) {
+                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
+                            }
+                        } else {
+                            for (Player all : pg.pgPlayers) {
+                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                            }
+                            for (Player all : pg.specPlayers) {
+                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                            }
                         }
                     }
                 }
             } else if (args[0].equalsIgnoreCase("setlobby")) {
-                if (p.isOp()) {
+                if (p.hasPermission("pg.setup")) {
                     pg.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
                     pg.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
                     pg.saveConfig();
@@ -132,37 +144,35 @@ public class Commands implements CommandExecutor {
                 }
             }
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("join")) {
-                if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                    pg.onJoin(p);
-                }
-            } else if (args[0].equalsIgnoreCase("arena")) {
-                if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
-                    String arena = args[1];
-                    String arenaNumber = "1";
-                    try {
-                        pg.setForcearena(true);
-                        int i = 1;
-                        boolean votetedarena = false;
-                        while (!votetedarena) {
-                            if (arena.matches(Objects.requireNonNull(pg.getConfig().getString("pg.arenas." + i + ".name")))) {
-                                arenaNumber = String.valueOf(i);
-                                pg.setVotedArena(arena);
-                                votetedarena = true;
-                            } else {
-                                i++;
+            if (args[0].equalsIgnoreCase("force")) {
+                if (p.hasPermission("pg.force")) {
+                    if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
+                        String arena = args[1];
+                        String arenaNumber = "1";
+                        try {
+                            pg.setForcearena(true);
+                            int i = 1;
+                            boolean votetedarena = false;
+                            while (!votetedarena) {
+                                if (arena.matches(Objects.requireNonNull(pg.getConfig().getString("pg.arenas." + i + ".name")))) {
+                                    arenaNumber = String.valueOf(i);
+                                    pg.setVotedArena(arena);
+                                    votetedarena = true;
+                                } else {
+                                    i++;
+                                }
                             }
+                            pg.setVote(arenaNumber);
+                            for (Player all : pg.pgPlayers) {
+                                all.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(26));
+                            }
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.RED + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                         }
-                        pg.setVote(arenaNumber);
-                        for (Player all : pg.pgPlayers) {
-                            all.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(26));
-                        }
-                    } catch (Exception e) {
-                        p.sendMessage(pg.prefix + ChatColor.RED + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                     }
                 }
             } else if (args[0].equalsIgnoreCase("delarena")) {
-                if (p.isOp()) {
+                if (p.hasPermission("pg.setup")) {
                     int arenaNumber = 1;
                     try {
                         int i = 1;
@@ -185,7 +195,7 @@ public class Commands implements CommandExecutor {
                     }
                 }
             } else if (args[0].equalsIgnoreCase("addarena")) {
-                if (p.isOp()) {
+                if (p.hasPermission("pg.setup")) {
                     int arenaNumber = 1;
                     try {
                         while (pg.getConfig().contains("pg.arenas." + arenaNumber)) {
@@ -205,7 +215,7 @@ public class Commands implements CommandExecutor {
                     }
                 }
             } else if (args[0].equalsIgnoreCase("addspawn")) {
-                if (p.isOp()) {
+                if (p.hasPermission("pg.setup")) {
                     int spawnNumber = 1;
                     int arenaNumber = 1;
                     try {
@@ -232,7 +242,7 @@ public class Commands implements CommandExecutor {
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("delspawn")) {
-                if (p.isOp()) {
+                if (p.hasPermission("pg.setup")) {
                     int arenaNumber = 1;
                     try {
                         int i = 1;
