@@ -28,6 +28,9 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -1686,6 +1689,28 @@ public class Events implements Listener {
         if (pg.isStartOnJoin()) {
             pg.onJoin(p);
             e.setJoinMessage(null);
+        }
+        if (p.isOp()) {
+            String latest = "";
+            try {
+                URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGames/master/version.txt");
+                BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(url.openStream()));
+                StringBuilder stringBuilder = new StringBuilder();
+                String inputLine;
+                while ((inputLine = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(inputLine);
+                    stringBuilder.append(System.lineSeparator());
+                }
+                bufferedReader.close();
+                latest = stringBuilder.toString().trim();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            boolean upToDate = pg.getDescription().getVersion().equals(latest);
+            if (!upToDate) {
+                p.sendMessage(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGames/releases/latest");
+            }
         }
     }
 

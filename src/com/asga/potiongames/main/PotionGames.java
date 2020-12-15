@@ -26,8 +26,11 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffectType;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
@@ -97,6 +100,32 @@ public class PotionGames extends JavaPlugin {
     private boolean tickStarted = false;
     private Connection con;
 
+    public Thread checkUpdates = new Thread(() -> {
+        String latest = "";
+        getLogger().info("Checking for updates...");
+        try {
+            URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGames/master/version.txt");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(url.openStream()));
+            StringBuilder stringBuilder = new StringBuilder();
+            String inputLine;
+            while ((inputLine = bufferedReader.readLine()) != null) {
+                stringBuilder.append(inputLine);
+                stringBuilder.append(System.lineSeparator());
+            }
+            bufferedReader.close();
+            latest = stringBuilder.toString().trim();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean upToDate = getDescription().getVersion().equals(latest);
+        if (upToDate) {
+            getLogger().info("Plugin is up to date! (" + getDescription().getVersion() + ")");
+        } else {
+            getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGames/releases/latest");
+        }
+    });
+
     public static void spawnFireworks(Location loc, int amount) {
         Firework fw = (Firework) Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.FIREWORK);
         FireworkMeta fwm = fw.getFireworkMeta();
@@ -143,7 +172,6 @@ public class PotionGames extends JavaPlugin {
 
     public ResultSet query(String qry) {
         ResultSet rs = null;
-
         try {
             Statement st = con.createStatement();
             rs = st.executeQuery(qry);
@@ -159,7 +187,6 @@ public class PotionGames extends JavaPlugin {
             String prevChannel = playerChannel.get(player);
             leaveChannel(player, prevChannel);
         }
-
         ArrayList<Player> players = channels.get(channelName);
         if (players == null) {
             players = new ArrayList<>();
@@ -350,6 +377,7 @@ public class PotionGames extends JavaPlugin {
         assert coinmeta != null;
         coinmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(55));
         coin.setItemMeta(coinmeta);
+        checkUpdates.start();
     }
 
     @Override
