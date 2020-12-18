@@ -44,115 +44,134 @@ public class Events implements Listener {
     private final Material material1 = Material.POTION;
     private final int time1 = 60;
     private final String kit1 = "Looter";
+    private final int sale1 = 2;
+    private final int sale2 = 2;
     private final String name2 = "DAMAGE_RESISTANCE";
     private final PotionEffectType potion2 = PotionEffectType.DAMAGE_RESISTANCE;
     private final Material material2 = Material.POTION;
     private final int time2 = 60;
     private final String kit2 = "Tank";
+    private final int sale3 = 2;
+    private final int sale4 = 2;
     private final String name3 = "SPEED";
     private final PotionEffectType potion3 = PotionEffectType.SPEED;
     private final Material material3 = Material.POTION;
     private final int time3 = 60;
     private final String kit3 = "Looter";
+    private final int sale5 = 2;
+    private final int sale6 = 2;
     private final String name4 = "ABSORPTION";
     private final PotionEffectType potion4 = PotionEffectType.ABSORPTION;
     private final Material material4 = Material.POTION;
     private final int time4 = 60;
     private final String kit4 = "Tank";
+    private final int sale7 = 2;
+    private final int sale8 = 2;
     private final String name5 = "FIRE_RESISTANCE";
     private final PotionEffectType potion5 = PotionEffectType.FIRE_RESISTANCE;
     private final Material material5 = Material.POTION;
     private final int time5 = 60;
     private final String kit5 = "Tank";
+    private final int sale9 = 2;
+    private final int sale10 = 2;
     private final String name6 = "HEAL";
     private final PotionEffectType potion6 = PotionEffectType.HEAL;
     private final Material material6 = Material.POTION;
     private final int time6 = 60;
     private final String kit6 = "Healer";
+    private final int sale11 = 2;
+    private final int sale12 = 2;
     private final String name7 = "HEALTH_BOOST";
     private final PotionEffectType potion7 = PotionEffectType.HEALTH_BOOST;
     private final Material material7 = Material.POTION;
     private final int time7 = 60;
     private final String kit7 = "Healer";
+    private final int sale13 = 2;
+    private final int sale14 = 2;
     private final String name8 = "INVISIBILITY";
     private final PotionEffectType potion8 = PotionEffectType.INVISIBILITY;
     private final Material material8 = Material.POTION;
     private final int time8 = 60;
     private final String kit8 = "Ghost";
+    private final int sale15 = 2;
+    private final int sale16 = 2;
     private final String name9 = "REGENERATION";
     private final PotionEffectType potion9 = PotionEffectType.REGENERATION;
     private final Material material9 = Material.POTION;
     private final int time9 = 60;
     private final String kit9 = "Healer";
+    private final int sale17 = 2;
+    private final int sale18 = 2;
     private final String name10 = "SATURATION";
     private final PotionEffectType potion10 = PotionEffectType.SATURATION;
     private final Material material10 = Material.POTION;
     private final int time10 = 60;
     private final String kit10 = "Looter";
+    private final int sale19 = 2;
+    private int cost1 = 4;
     private final String name11 = "INCREASE_DAMAGE";
     private final PotionEffectType potion11 = PotionEffectType.INCREASE_DAMAGE;
     private final Material material11 = Material.POTION;
     private final int time11 = 60;
     private final String kit11 = "Fighter";
+    private int cost2 = 4;
+    private int cost3 = 4;
     private final String name12 = "DOLPHINS_GRACE";
     private final PotionEffectType potion12 = PotionEffectType.DOLPHINS_GRACE;
     private final Material material12 = Material.POTION;
     private final int time12 = 60;
     private final String kit12 = "Looter";
+    private int cost4 = 4;
+    private int cost5 = 4;
     private final String name13 = "NIGHT_VISION";
     private final PotionEffectType potion13 = PotionEffectType.NIGHT_VISION;
     private final Material material13 = Material.POTION;
     private final int time13 = 60;
     private final String kit13 = "Ghost";
+    private int cost6 = 4;
+    private int cost7 = 4;
     private final String name14 = "WATER_BREATHING";
     private final PotionEffectType potion14 = PotionEffectType.WATER_BREATHING;
     private final Material material14 = Material.POTION;
     private final int time14 = 60;
     private final String kit14 = "Ghost";
+    private int cost8 = 4;
+    private int cost9 = 4;
     private final String name15 = "WEAKNESS";
     private final PotionEffectType potion15 = PotionEffectType.WEAKNESS;
     private final Material material15 = Material.SPLASH_POTION;
     private final int time15 = 60;
     private final String kit15 = "Fighter";
+    private int cost10 = 4;
+    private int cost11 = 4;
     private final String name16 = "WITHER";
     private final PotionEffectType potion16 = PotionEffectType.WITHER;
     private final Material material16 = Material.SPLASH_POTION;
     private final int time16 = 60;
     private final String kit16 = "Fighter";
+    private int cost12 = 4;
+    private int cost13 = 4;
     private final String name17 = "GLOWING";
     private final PotionEffectType potion17 = PotionEffectType.GLOWING;
     private final Material material17 = Material.SPLASH_POTION;
     private final int time17 = 60;
     private final String kit17 = "Fighter";
+    private int cost14 = 4;
+    private int cost15 = 4;
     private final String name18 = "BLINDNESS";
     private final PotionEffectType potion18 = PotionEffectType.BLINDNESS;
     private final Material material18 = Material.SPLASH_POTION;
     private final int time18 = 60;
     private final String kit18 = "Fighter";
+    private int cost16 = 4;
+    private int cost17 = 4;
     private final String name19 = "CONFUSION";
     private final PotionEffectType potion19 = PotionEffectType.CONFUSION;
     private final Material material19 = Material.SPLASH_POTION;
     private final int time19 = 60;
     private final String kit19 = "Fighter";
-    private int cost1 = 4;
-    private int cost2 = 4;
-    private int cost3 = 4;
-    private int cost4 = 4;
-    private int cost5 = 4;
-    private int cost6 = 4;
-    private int cost7 = 4;
-    private int cost8 = 4;
-    private int cost9 = 4;
-    private int cost10 = 4;
-    private int cost11 = 4;
-    private int cost12 = 4;
-    private int cost13 = 4;
-    private int cost14 = 4;
-    private int cost15 = 4;
-    private int cost16 = 4;
-    private int cost17 = 4;
-    private int cost18 = 4;
     private int cost19 = 4;
+    private int cost18 = 4;
 
     public Events(PotionGames pg) {
         this.pg = pg;
@@ -605,10 +624,8 @@ public class Events implements Listener {
                                 pg.chests.put(e.getClickedBlock().getLocation(), inv);
                                 p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                                 ItemStack ingot = new ItemStack(Material.NETHERITE_INGOT);
-                                inv.setItem(1, ingot);
-                                inv.setItem(3, ingot);
-                                inv.setItem(5, ingot);
-                                inv.setItem(7, ingot);
+                                inv.setItem(2, ingot);
+                                inv.setItem(6, ingot);
                             } else {
                                 p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                             }
@@ -627,7 +644,7 @@ public class Events implements Listener {
                             Inventory inv;
                             inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
                             if (pg.kitplayernames.containsKey(kit1) && pg.kitplayernames.containsValue(p))
-                                cost1 = cost1 / 2;
+                                cost1 = sale1;
                             pg.chests.put(e.getClickedBlock().getLocation(), inv);
                             ItemStack randombarrier = new ItemStack(material1);
                             ItemMeta randombarriermeta = randombarrier.getItemMeta();
@@ -641,7 +658,7 @@ public class Events implements Listener {
                             inv.setItem(0, randombarrier);
 
                             if (pg.kitplayernames.containsKey(kit2) && pg.kitplayernames.containsValue(p))
-                                cost2 = cost2 / 2;
+                                cost2 = sale2;
                             ItemStack randombarrier2 = new ItemStack(material2);
                             ItemMeta randombarriermeta2 = randombarrier2.getItemMeta();
                             assert randombarriermeta2 != null;
@@ -654,7 +671,7 @@ public class Events implements Listener {
                             inv.setItem(1, randombarrier2);
 
                             if (pg.kitplayernames.containsKey(kit3) && pg.kitplayernames.containsValue(p))
-                                cost3 = cost3 / 2;
+                                cost3 = sale3;
                             ItemStack randombarrier3 = new ItemStack(material3);
                             ItemMeta randombarriermeta3 = randombarrier3.getItemMeta();
                             assert randombarriermeta3 != null;
@@ -667,7 +684,7 @@ public class Events implements Listener {
                             inv.setItem(2, randombarrier3);
 
                             if (pg.kitplayernames.containsKey(kit4) && pg.kitplayernames.containsValue(p))
-                                cost4 = cost4 / 2;
+                                cost4 = sale4;
                             ItemStack randombarrier4 = new ItemStack(material4);
                             ItemMeta randombarriermeta4 = randombarrier4.getItemMeta();
                             assert randombarriermeta4 != null;
@@ -680,7 +697,7 @@ public class Events implements Listener {
                             inv.setItem(3, randombarrier4);
 
                             if (pg.kitplayernames.containsKey(kit5) && pg.kitplayernames.containsValue(p))
-                                cost5 = cost5 / 2;
+                                cost5 = sale5;
                             ItemStack randombarrier5 = new ItemStack(material5);
                             ItemMeta randombarriermeta5 = randombarrier5.getItemMeta();
                             assert randombarriermeta5 != null;
@@ -693,7 +710,7 @@ public class Events implements Listener {
                             inv.setItem(4, randombarrier5);
 
                             if (pg.kitplayernames.containsKey(kit6) && pg.kitplayernames.containsValue(p))
-                                cost6 = cost6 / 2;
+                                cost6 = sale6;
                             ItemStack randombarrier6 = new ItemStack(material6);
                             ItemMeta randombarriermeta6 = randombarrier6.getItemMeta();
                             assert randombarriermeta6 != null;
@@ -706,7 +723,7 @@ public class Events implements Listener {
                             inv.setItem(5, randombarrier6);
 
                             if (pg.kitplayernames.containsKey(kit7) && pg.kitplayernames.containsValue(p))
-                                cost7 = cost7 / 2;
+                                cost7 = sale7;
                             ItemStack randombarrier7 = new ItemStack(material7);
                             ItemMeta randombarriermeta7 = randombarrier7.getItemMeta();
                             assert randombarriermeta7 != null;
@@ -719,7 +736,7 @@ public class Events implements Listener {
                             inv.setItem(6, randombarrier7);
 
                             if (pg.kitplayernames.containsKey(kit8) && pg.kitplayernames.containsValue(p))
-                                cost8 = cost8 / 2;
+                                cost8 = sale8;
                             ItemStack randombarrier8 = new ItemStack(material8);
                             ItemMeta randombarriermeta8 = randombarrier8.getItemMeta();
                             assert randombarriermeta8 != null;
@@ -732,7 +749,7 @@ public class Events implements Listener {
                             inv.setItem(7, randombarrier8);
 
                             if (pg.kitplayernames.containsKey(kit9) && pg.kitplayernames.containsValue(p))
-                                cost9 = cost9 / 2;
+                                cost9 = sale9;
                             ItemStack randombarrier9 = new ItemStack(material9);
                             ItemMeta randombarriermeta9 = randombarrier9.getItemMeta();
                             assert randombarriermeta9 != null;
@@ -745,7 +762,7 @@ public class Events implements Listener {
                             inv.setItem(8, randombarrier9);
 
                             if (pg.kitplayernames.containsKey(kit10) && pg.kitplayernames.containsValue(p))
-                                cost10 = cost10 / 2;
+                                cost10 = sale10;
                             ItemStack randombarrier10 = new ItemStack(material10);
                             ItemMeta randombarriermeta10 = randombarrier10.getItemMeta();
                             assert randombarriermeta10 != null;
@@ -758,7 +775,7 @@ public class Events implements Listener {
                             inv.setItem(9, randombarrier10);
 
                             if (pg.kitplayernames.containsKey(kit11) && pg.kitplayernames.containsValue(p))
-                                cost11 = cost11 / 2;
+                                cost11 = sale11;
                             ItemStack randombarrier11 = new ItemStack(material11);
                             ItemMeta randombarriermeta11 = randombarrier11.getItemMeta();
                             assert randombarriermeta11 != null;
@@ -771,7 +788,7 @@ public class Events implements Listener {
                             inv.setItem(10, randombarrier11);
 
                             if (pg.kitplayernames.containsKey(kit12) && pg.kitplayernames.containsValue(p))
-                                cost12 = cost12 / 2;
+                                cost12 = sale12;
                             ItemStack randombarrier12 = new ItemStack(material12);
                             ItemMeta randombarriermeta12 = randombarrier12.getItemMeta();
                             assert randombarriermeta12 != null;
@@ -784,7 +801,7 @@ public class Events implements Listener {
                             inv.setItem(11, randombarrier12);
 
                             if (pg.kitplayernames.containsKey(kit13) && pg.kitplayernames.containsValue(p))
-                                cost13 = cost13 / 2;
+                                cost13 = sale13;
                             ItemStack randombarrier13 = new ItemStack(material13);
                             ItemMeta randombarriermeta13 = randombarrier13.getItemMeta();
                             assert randombarriermeta13 != null;
@@ -797,7 +814,7 @@ public class Events implements Listener {
                             inv.setItem(12, randombarrier13);
 
                             if (pg.kitplayernames.containsKey(kit14) && pg.kitplayernames.containsValue(p))
-                                cost14 = cost14 / 2;
+                                cost14 = sale14;
                             ItemStack randombarrier14 = new ItemStack(material14);
                             ItemMeta randombarriermeta14 = randombarrier14.getItemMeta();
                             assert randombarriermeta14 != null;
@@ -810,7 +827,7 @@ public class Events implements Listener {
                             inv.setItem(13, randombarrier14);
 
                             if (pg.kitplayernames.containsKey(kit15) && pg.kitplayernames.containsValue(p))
-                                cost15 = cost15 / 2;
+                                cost15 = sale15;
                             ItemStack randombarrier15 = new ItemStack(material15);
                             ItemMeta randombarriermeta15 = randombarrier15.getItemMeta();
                             assert randombarriermeta15 != null;
@@ -823,7 +840,7 @@ public class Events implements Listener {
                             inv.setItem(14, randombarrier15);
 
                             if (pg.kitplayernames.containsKey(kit16) && pg.kitplayernames.containsValue(p))
-                                cost16 = cost16 / 2;
+                                cost16 = sale16;
                             ItemStack randombarrier16 = new ItemStack(material16);
                             ItemMeta randombarriermeta16 = randombarrier16.getItemMeta();
                             assert randombarriermeta16 != null;
@@ -836,7 +853,7 @@ public class Events implements Listener {
                             inv.setItem(15, randombarrier16);
 
                             if (pg.kitplayernames.containsKey(kit17) && pg.kitplayernames.containsValue(p))
-                                cost17 = cost17 / 2;
+                                cost17 = sale17;
                             ItemStack randombarrier17 = new ItemStack(material17);
                             ItemMeta randombarriermeta17 = randombarrier17.getItemMeta();
                             assert randombarriermeta17 != null;
@@ -849,7 +866,7 @@ public class Events implements Listener {
                             inv.setItem(16, randombarrier17);
 
                             if (pg.kitplayernames.containsKey(kit18) && pg.kitplayernames.containsValue(p))
-                                cost18 = cost18 / 2;
+                                cost18 = sale18;
                             ItemStack randombarrier18 = new ItemStack(material18);
                             ItemMeta randombarriermeta18 = randombarrier18.getItemMeta();
                             assert randombarriermeta18 != null;
@@ -862,7 +879,7 @@ public class Events implements Listener {
                             inv.setItem(17, randombarrier18);
 
                             if (pg.kitplayernames.containsKey(kit19) && pg.kitplayernames.containsValue(p))
-                                cost19 = cost19 / 2;
+                                cost19 = sale19;
                             ItemStack randombarrier19 = new ItemStack(material19);
                             ItemMeta randombarriermeta19 = randombarrier18.getItemMeta();
                             assert randombarriermeta19 != null;
