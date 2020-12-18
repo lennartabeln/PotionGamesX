@@ -2,7 +2,7 @@
 
 > A Minecraft Minigames Plugin for Bukkit Servers!
 
-PotionGames is a mingames plugin that works like SurvivalGames but with potions and effects!
+PotionGames is a minigames plugin that works like SurvivalGames but with potions and effects!
 
 ## Installation
 
