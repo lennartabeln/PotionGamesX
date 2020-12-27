@@ -99,4 +99,4 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 
 ## Issues
 
-[Report bugs here!](https://github.com/andersspielen/PotionGamesIssues/issues
+[Report bugs here!](https://github.com/andersspielen/PotionGamesIssues/issues)
