@@ -106,7 +106,7 @@ public class PotionGames extends JavaPlugin {
         String latest = "";
         getLogger().info("Checking for updates...");
         try {
-            URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGames/master/version.txt");
+            URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(url.openStream()));
             StringBuilder stringBuilder = new StringBuilder();
