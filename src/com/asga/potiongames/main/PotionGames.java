@@ -97,6 +97,8 @@ public class PotionGames extends JavaPlugin {
     private boolean forcearena = false;
     private boolean startOnJoin = false;
     private boolean activateTeams = false;
+    private boolean activateKits = false;
+    private boolean activateShop = false;
     private boolean tickStarted = false;
     private Connection con;
 
@@ -292,6 +294,20 @@ public class PotionGames extends JavaPlugin {
             saveConfig();
         } else {
             activateTeams = getConfig().getBoolean("pg.activateTeams");
+        }
+        if (getConfig().get("pg.activateKits") == null) {
+            getConfig().addDefault("pg.activateKits", activateKits);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateKits = getConfig().getBoolean("pg.activateKits");
+        }
+        if (getConfig().get("pg.activateShop") == null) {
+            getConfig().addDefault("pg.activateShop", activateShop);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateShop = getConfig().getBoolean("pg.activateShop");
         }
         if (getConfig().get("pg.maxPlayers") == null) {
             getConfig().addDefault("pg.maxPlayers", maxPlayers);
@@ -658,12 +674,14 @@ public class PotionGames extends JavaPlugin {
                                 teamselector.setItemMeta(teamselectormeta);
                                 inv.setItem(4, teamselector);
                             }
-                            ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
-                            ItemMeta kitselectormeta = kitselector.getItemMeta();
-                            assert kitselectormeta != null;
-                            kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
-                            kitselector.setItemMeta(kitselectormeta);
-                            inv.setItem(0, kitselector);
+                            if (activateKits) {
+                                ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
+                                ItemMeta kitselectormeta = kitselector.getItemMeta();
+                                assert kitselectormeta != null;
+                                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
+                                kitselector.setItemMeta(kitselectormeta);
+                                inv.setItem(0, kitselector);
+                            }
                             ItemStack votepaper = new ItemStack(Material.PAPER);
                             ItemMeta votepapaermeta = votepaper.getItemMeta();
                             assert votepapaermeta != null;
@@ -910,14 +928,16 @@ public class PotionGames extends JavaPlugin {
                     }
                 }
             }
-            if (!kited.contains(all.getName())) {
-                Random rnd = new Random();
-                int rndKit = rnd.nextInt(kits.size() + 1);
-                all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
-                all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                kited.add(all.getName());
-                kitplayernames.put(Integer.toString(rndKit), all);
+            if (activateKits) {
+                if (!kited.contains(all.getName())) {
+                    Random rnd = new Random();
+                    int rndKit = rnd.nextInt(kits.size() + 1);
+                    all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
+                    all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                    kited.add(all.getName());
+                    kitplayernames.put(Integer.toString(rndKit), all);
+                }
             }
         }
         if (activateTeams) {
@@ -997,12 +1017,14 @@ public class PotionGames extends JavaPlugin {
                 teamselector.setItemMeta(teamselectormeta);
                 p.getInventory().setItem(4, teamselector);
             }
-            ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
-            ItemMeta kitselectormeta = kitselector.getItemMeta();
-            assert kitselectormeta != null;
-            kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
-            kitselector.setItemMeta(kitselectormeta);
-            p.getInventory().setItem(0, kitselector);
+            if (activateKits) {
+                ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
+                ItemMeta kitselectormeta = kitselector.getItemMeta();
+                assert kitselectormeta != null;
+                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
+                kitselector.setItemMeta(kitselectormeta);
+                p.getInventory().setItem(0, kitselector);
+            }
             ItemStack votepaper = new ItemStack(Material.PAPER);
             ItemMeta votepapaermeta = votepaper.getItemMeta();
             assert votepapaermeta != null;
@@ -1425,6 +1447,10 @@ public class PotionGames extends JavaPlugin {
 
     public boolean isActivateTeams() {
         return activateTeams;
+    }
+
+    public boolean isActivateShop() {
+        return activateShop;
     }
 
     public ArrayList<Player> getChannel(Player player) {

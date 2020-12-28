@@ -413,14 +413,26 @@ public class Events implements Listener {
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_WALL_SIGN
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
-                    if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                        Sign sign = (Sign) e.getClickedBlock().getState();
-                        String line1 = sign.getLine(0);
-                        if (line1.matches("PotionGames")) {
-                            if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                                pg.onJoin(p);
-                            }
-                        }
+                    Sign sign = (Sign) e.getClickedBlock().getState();
+                    String line1 = sign.getLine(0);
+                    String line2 = sign.getLine(1);
+                    if (line1.matches("PotionGames") && line2.matches("Join")) {
+                        if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p))
+                            pg.onJoin(p);
+                    }
+                    if (line1.matches("PotionGames") && line2.matches("Stats")) {
+                        int wins = pg.getWins(p.getUniqueId().toString());
+                        int losts = pg.getLosts(p.getUniqueId().toString());
+                        int kills = pg.getKills(p.getUniqueId().toString());
+                        int deaths = pg.getDeaths(p.getUniqueId().toString());
+                        double kd = pg.getKD(p.getUniqueId().toString());
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                        p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
+                        p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
+                        p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
+                        p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
+                        p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
                     }
                 }
             }
@@ -499,10 +511,6 @@ public class Events implements Listener {
                                 weapons2.add(new ItemStack(Material.IRON_AXE, 1));
                                 weapons2.add(new ItemStack(Material.DIAMOND_SWORD, 1));
                                 weapons2.add(new ItemStack(Material.DIAMOND_AXE, 1));
-                                ArrayList<ItemStack> potions1 = new ArrayList<>();
-                                potions1.add(new ItemStack(Material.GLASS_BOTTLE, 1));
-                                ArrayList<ItemStack> potions2 = new ArrayList<>();
-                                potions2.add(pg.getCoin());
                                 Random rnd = new Random();
                                 int max = 6;
                                 int min = 2;
@@ -514,16 +522,25 @@ public class Events implements Listener {
                                     int slot = rnd.nextInt(27);
                                     int roll = rnd.nextInt(100);
                                     if (roll < 20) {
-                                        int item = rnd.nextInt(5);
-                                        if (item < 3) {
+                                        if (pg.isActivateShop()) {
+                                            ArrayList<ItemStack> potions1 = new ArrayList<>();
+                                            potions1.add(new ItemStack(Material.GLASS_BOTTLE, 1));
+                                            ArrayList<ItemStack> potions2 = new ArrayList<>();
+                                            potions2.add(pg.getCoin());
+                                            int item = rnd.nextInt(5);
+                                            if (item < 3) {
+                                                int item1 = rnd.nextInt(food1.size());
+                                                inv.setItem(slot, food1.get(item1));
+                                            } else if (item < 4) {
+                                                int item1 = rnd.nextInt(potions1.size());
+                                                inv.setItem(slot, potions1.get(item1));
+                                            } else {
+                                                int item1 = rnd.nextInt(potions2.size());
+                                                inv.setItem(slot, potions2.get(item1));
+                                            }
+                                        } else {
                                             int item1 = rnd.nextInt(food1.size());
                                             inv.setItem(slot, food1.get(item1));
-                                        } else if (item < 4) {
-                                            int item1 = rnd.nextInt(potions1.size());
-                                            inv.setItem(slot, potions1.get(item1));
-                                        } else {
-                                            int item1 = rnd.nextInt(potions2.size());
-                                            inv.setItem(slot, potions2.get(item1));
                                         }
                                     } else if (roll < 30) {
                                         int item2 = rnd.nextInt(food2.size());
@@ -631,267 +648,269 @@ public class Events implements Listener {
                             }
                         }
                     }
-                    if (e.getClickedBlock().getType() == Material.COMPOSTER) {
-                        if (pg.getGamestate() == GameStates.INGAME) {
-                            for (ItemStack item : p.getInventory().getContents()) {
-                                if (item != null) {
-                                    if (item.getType() == pg.getCoin().getType())
-                                        amount = item.getAmount();
-                                    if (item.getType() == Material.GLASS_BOTTLE)
-                                        bottle = item.getAmount();
+                    if (pg.isActivateShop()) {
+                        if (e.getClickedBlock().getType() == Material.COMPOSTER) {
+                            if (pg.getGamestate() == GameStates.INGAME) {
+                                for (ItemStack item : p.getInventory().getContents()) {
+                                    if (item != null) {
+                                        if (item.getType() == pg.getCoin().getType())
+                                            amount = item.getAmount();
+                                        if (item.getType() == Material.GLASS_BOTTLE)
+                                            bottle = item.getAmount();
+                                    }
                                 }
+                                Inventory inv;
+                                inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
+                                if (pg.kitplayernames.containsKey(kit1) && pg.kitplayernames.containsValue(p))
+                                    cost1 = sale1;
+                                pg.chests.put(e.getClickedBlock().getLocation(), inv);
+                                ItemStack randombarrier = new ItemStack(material1);
+                                ItemMeta randombarriermeta = randombarrier.getItemMeta();
+                                assert randombarriermeta != null;
+                                randombarriermeta.setDisplayName(name1);
+                                ArrayList<String> lore = new ArrayList<>();
+                                lore.add(pg.chat.get(50) + ": " + time1);
+                                lore.add(pg.chat.get(51) + ": " + cost1 + " " + pg.chat.get(52));
+                                randombarriermeta.setLore(lore);
+                                randombarrier.setItemMeta(randombarriermeta);
+                                inv.setItem(0, randombarrier);
+
+                                if (pg.kitplayernames.containsKey(kit2) && pg.kitplayernames.containsValue(p))
+                                    cost2 = sale2;
+                                ItemStack randombarrier2 = new ItemStack(material2);
+                                ItemMeta randombarriermeta2 = randombarrier2.getItemMeta();
+                                assert randombarriermeta2 != null;
+                                randombarriermeta2.setDisplayName(name2);
+                                ArrayList<String> lore2 = new ArrayList<>();
+                                lore2.add(pg.chat.get(50) + ": " + time2);
+                                lore2.add(pg.chat.get(51) + ": " + cost2 + " " + pg.chat.get(52));
+                                randombarriermeta2.setLore(lore2);
+                                randombarrier2.setItemMeta(randombarriermeta2);
+                                inv.setItem(1, randombarrier2);
+
+                                if (pg.kitplayernames.containsKey(kit3) && pg.kitplayernames.containsValue(p))
+                                    cost3 = sale3;
+                                ItemStack randombarrier3 = new ItemStack(material3);
+                                ItemMeta randombarriermeta3 = randombarrier3.getItemMeta();
+                                assert randombarriermeta3 != null;
+                                randombarriermeta3.setDisplayName(name3);
+                                ArrayList<String> lore3 = new ArrayList<>();
+                                lore3.add(pg.chat.get(50) + ": " + time3);
+                                lore3.add(pg.chat.get(51) + ": " + cost3 + " " + pg.chat.get(52));
+                                randombarriermeta3.setLore(lore3);
+                                randombarrier3.setItemMeta(randombarriermeta3);
+                                inv.setItem(2, randombarrier3);
+
+                                if (pg.kitplayernames.containsKey(kit4) && pg.kitplayernames.containsValue(p))
+                                    cost4 = sale4;
+                                ItemStack randombarrier4 = new ItemStack(material4);
+                                ItemMeta randombarriermeta4 = randombarrier4.getItemMeta();
+                                assert randombarriermeta4 != null;
+                                randombarriermeta4.setDisplayName(name4);
+                                ArrayList<String> lore4 = new ArrayList<>();
+                                lore4.add(pg.chat.get(50) + ": " + time4);
+                                lore4.add(pg.chat.get(51) + ": " + cost4 + " " + pg.chat.get(52));
+                                randombarriermeta4.setLore(lore4);
+                                randombarrier4.setItemMeta(randombarriermeta4);
+                                inv.setItem(3, randombarrier4);
+
+                                if (pg.kitplayernames.containsKey(kit5) && pg.kitplayernames.containsValue(p))
+                                    cost5 = sale5;
+                                ItemStack randombarrier5 = new ItemStack(material5);
+                                ItemMeta randombarriermeta5 = randombarrier5.getItemMeta();
+                                assert randombarriermeta5 != null;
+                                randombarriermeta5.setDisplayName(name5);
+                                ArrayList<String> lore5 = new ArrayList<>();
+                                lore5.add(pg.chat.get(50) + ": " + time5);
+                                lore5.add(pg.chat.get(51) + ": " + cost5 + " " + pg.chat.get(52));
+                                randombarriermeta5.setLore(lore5);
+                                randombarrier5.setItemMeta(randombarriermeta5);
+                                inv.setItem(4, randombarrier5);
+
+                                if (pg.kitplayernames.containsKey(kit6) && pg.kitplayernames.containsValue(p))
+                                    cost6 = sale6;
+                                ItemStack randombarrier6 = new ItemStack(material6);
+                                ItemMeta randombarriermeta6 = randombarrier6.getItemMeta();
+                                assert randombarriermeta6 != null;
+                                randombarriermeta6.setDisplayName(name6);
+                                ArrayList<String> lore6 = new ArrayList<>();
+                                lore6.add(pg.chat.get(50) + ": " + time6);
+                                lore6.add(pg.chat.get(51) + ": " + cost6 + " " + pg.chat.get(52));
+                                randombarriermeta6.setLore(lore6);
+                                randombarrier6.setItemMeta(randombarriermeta6);
+                                inv.setItem(5, randombarrier6);
+
+                                if (pg.kitplayernames.containsKey(kit7) && pg.kitplayernames.containsValue(p))
+                                    cost7 = sale7;
+                                ItemStack randombarrier7 = new ItemStack(material7);
+                                ItemMeta randombarriermeta7 = randombarrier7.getItemMeta();
+                                assert randombarriermeta7 != null;
+                                randombarriermeta7.setDisplayName(name7);
+                                ArrayList<String> lore7 = new ArrayList<>();
+                                lore7.add(pg.chat.get(50) + ": " + time7);
+                                lore7.add(pg.chat.get(51) + ": " + cost7 + " " + pg.chat.get(52));
+                                randombarriermeta7.setLore(lore7);
+                                randombarrier7.setItemMeta(randombarriermeta7);
+                                inv.setItem(6, randombarrier7);
+
+                                if (pg.kitplayernames.containsKey(kit8) && pg.kitplayernames.containsValue(p))
+                                    cost8 = sale8;
+                                ItemStack randombarrier8 = new ItemStack(material8);
+                                ItemMeta randombarriermeta8 = randombarrier8.getItemMeta();
+                                assert randombarriermeta8 != null;
+                                randombarriermeta8.setDisplayName(name8);
+                                ArrayList<String> lore8 = new ArrayList<>();
+                                lore8.add(pg.chat.get(50) + ": " + time8);
+                                lore8.add(pg.chat.get(51) + ": " + cost8 + " " + pg.chat.get(52));
+                                randombarriermeta8.setLore(lore8);
+                                randombarrier8.setItemMeta(randombarriermeta8);
+                                inv.setItem(7, randombarrier8);
+
+                                if (pg.kitplayernames.containsKey(kit9) && pg.kitplayernames.containsValue(p))
+                                    cost9 = sale9;
+                                ItemStack randombarrier9 = new ItemStack(material9);
+                                ItemMeta randombarriermeta9 = randombarrier9.getItemMeta();
+                                assert randombarriermeta9 != null;
+                                randombarriermeta9.setDisplayName(name9);
+                                ArrayList<String> lore9 = new ArrayList<>();
+                                lore9.add(pg.chat.get(50) + ": " + time9);
+                                lore9.add(pg.chat.get(51) + ": " + cost9 + " " + pg.chat.get(52));
+                                randombarriermeta9.setLore(lore9);
+                                randombarrier9.setItemMeta(randombarriermeta9);
+                                inv.setItem(8, randombarrier9);
+
+                                if (pg.kitplayernames.containsKey(kit10) && pg.kitplayernames.containsValue(p))
+                                    cost10 = sale10;
+                                ItemStack randombarrier10 = new ItemStack(material10);
+                                ItemMeta randombarriermeta10 = randombarrier10.getItemMeta();
+                                assert randombarriermeta10 != null;
+                                randombarriermeta10.setDisplayName(name10);
+                                ArrayList<String> lore10 = new ArrayList<>();
+                                lore10.add(pg.chat.get(50) + ": " + time10);
+                                lore10.add(pg.chat.get(51) + ": " + cost10 + " " + pg.chat.get(52));
+                                randombarriermeta10.setLore(lore10);
+                                randombarrier10.setItemMeta(randombarriermeta10);
+                                inv.setItem(9, randombarrier10);
+
+                                if (pg.kitplayernames.containsKey(kit11) && pg.kitplayernames.containsValue(p))
+                                    cost11 = sale11;
+                                ItemStack randombarrier11 = new ItemStack(material11);
+                                ItemMeta randombarriermeta11 = randombarrier11.getItemMeta();
+                                assert randombarriermeta11 != null;
+                                randombarriermeta11.setDisplayName(name11);
+                                ArrayList<String> lore11 = new ArrayList<>();
+                                lore11.add(pg.chat.get(50) + ": " + time11);
+                                lore11.add(pg.chat.get(51) + ": " + cost11 + " " + pg.chat.get(52));
+                                randombarriermeta11.setLore(lore11);
+                                randombarrier11.setItemMeta(randombarriermeta11);
+                                inv.setItem(10, randombarrier11);
+
+                                if (pg.kitplayernames.containsKey(kit12) && pg.kitplayernames.containsValue(p))
+                                    cost12 = sale12;
+                                ItemStack randombarrier12 = new ItemStack(material12);
+                                ItemMeta randombarriermeta12 = randombarrier12.getItemMeta();
+                                assert randombarriermeta12 != null;
+                                randombarriermeta12.setDisplayName(name12);
+                                ArrayList<String> lore12 = new ArrayList<>();
+                                lore12.add(pg.chat.get(50) + ": " + time12);
+                                lore12.add(pg.chat.get(51) + ": " + cost12 + " " + pg.chat.get(52));
+                                randombarriermeta12.setLore(lore12);
+                                randombarrier12.setItemMeta(randombarriermeta12);
+                                inv.setItem(11, randombarrier12);
+
+                                if (pg.kitplayernames.containsKey(kit13) && pg.kitplayernames.containsValue(p))
+                                    cost13 = sale13;
+                                ItemStack randombarrier13 = new ItemStack(material13);
+                                ItemMeta randombarriermeta13 = randombarrier13.getItemMeta();
+                                assert randombarriermeta13 != null;
+                                randombarriermeta13.setDisplayName(name13);
+                                ArrayList<String> lore13 = new ArrayList<>();
+                                lore13.add(pg.chat.get(50) + ": " + time13);
+                                lore13.add(pg.chat.get(51) + ": " + cost13 + " " + pg.chat.get(52));
+                                randombarriermeta13.setLore(lore13);
+                                randombarrier13.setItemMeta(randombarriermeta13);
+                                inv.setItem(12, randombarrier13);
+
+                                if (pg.kitplayernames.containsKey(kit14) && pg.kitplayernames.containsValue(p))
+                                    cost14 = sale14;
+                                ItemStack randombarrier14 = new ItemStack(material14);
+                                ItemMeta randombarriermeta14 = randombarrier14.getItemMeta();
+                                assert randombarriermeta14 != null;
+                                randombarriermeta14.setDisplayName(name14);
+                                ArrayList<String> lore14 = new ArrayList<>();
+                                lore14.add(pg.chat.get(50) + ": " + time14);
+                                lore14.add(pg.chat.get(51) + ": " + cost14 + " " + pg.chat.get(52));
+                                randombarriermeta14.setLore(lore14);
+                                randombarrier14.setItemMeta(randombarriermeta14);
+                                inv.setItem(13, randombarrier14);
+
+                                if (pg.kitplayernames.containsKey(kit15) && pg.kitplayernames.containsValue(p))
+                                    cost15 = sale15;
+                                ItemStack randombarrier15 = new ItemStack(material15);
+                                ItemMeta randombarriermeta15 = randombarrier15.getItemMeta();
+                                assert randombarriermeta15 != null;
+                                randombarriermeta15.setDisplayName(name15);
+                                ArrayList<String> lore15 = new ArrayList<>();
+                                lore15.add(pg.chat.get(50) + ": " + time15);
+                                lore15.add(pg.chat.get(51) + ": " + cost15 + " " + pg.chat.get(52));
+                                randombarriermeta15.setLore(lore15);
+                                randombarrier15.setItemMeta(randombarriermeta15);
+                                inv.setItem(14, randombarrier15);
+
+                                if (pg.kitplayernames.containsKey(kit16) && pg.kitplayernames.containsValue(p))
+                                    cost16 = sale16;
+                                ItemStack randombarrier16 = new ItemStack(material16);
+                                ItemMeta randombarriermeta16 = randombarrier16.getItemMeta();
+                                assert randombarriermeta16 != null;
+                                randombarriermeta16.setDisplayName(name16);
+                                ArrayList<String> lore16 = new ArrayList<>();
+                                lore16.add(pg.chat.get(50) + ": " + time16);
+                                lore16.add(pg.chat.get(51) + ": " + cost16 + " " + pg.chat.get(52));
+                                randombarriermeta16.setLore(lore16);
+                                randombarrier16.setItemMeta(randombarriermeta16);
+                                inv.setItem(15, randombarrier16);
+
+                                if (pg.kitplayernames.containsKey(kit17) && pg.kitplayernames.containsValue(p))
+                                    cost17 = sale17;
+                                ItemStack randombarrier17 = new ItemStack(material17);
+                                ItemMeta randombarriermeta17 = randombarrier17.getItemMeta();
+                                assert randombarriermeta17 != null;
+                                randombarriermeta17.setDisplayName(name17);
+                                ArrayList<String> lore17 = new ArrayList<>();
+                                lore17.add(pg.chat.get(50) + ": " + time17);
+                                lore17.add(pg.chat.get(51) + ": " + cost17 + " " + pg.chat.get(52));
+                                randombarriermeta17.setLore(lore17);
+                                randombarrier17.setItemMeta(randombarriermeta17);
+                                inv.setItem(16, randombarrier17);
+
+                                if (pg.kitplayernames.containsKey(kit18) && pg.kitplayernames.containsValue(p))
+                                    cost18 = sale18;
+                                ItemStack randombarrier18 = new ItemStack(material18);
+                                ItemMeta randombarriermeta18 = randombarrier18.getItemMeta();
+                                assert randombarriermeta18 != null;
+                                randombarriermeta18.setDisplayName(name18);
+                                ArrayList<String> lore18 = new ArrayList<>();
+                                lore18.add(pg.chat.get(50) + ": " + time18);
+                                lore18.add(pg.chat.get(51) + ": " + cost18 + " " + pg.chat.get(52));
+                                randombarriermeta18.setLore(lore18);
+                                randombarrier18.setItemMeta(randombarriermeta18);
+                                inv.setItem(17, randombarrier18);
+
+                                if (pg.kitplayernames.containsKey(kit19) && pg.kitplayernames.containsValue(p))
+                                    cost19 = sale19;
+                                ItemStack randombarrier19 = new ItemStack(material19);
+                                ItemMeta randombarriermeta19 = randombarrier18.getItemMeta();
+                                assert randombarriermeta19 != null;
+                                randombarriermeta19.setDisplayName(name19);
+                                ArrayList<String> lore19 = new ArrayList<>();
+                                lore19.add(pg.chat.get(50) + ": " + time19);
+                                lore19.add(pg.chat.get(51) + ": " + cost19 + " " + pg.chat.get(52));
+                                randombarriermeta19.setLore(lore19);
+                                randombarrier19.setItemMeta(randombarriermeta19);
+                                inv.setItem(18, randombarrier19);
                             }
-                            Inventory inv;
-                            inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
-                            if (pg.kitplayernames.containsKey(kit1) && pg.kitplayernames.containsValue(p))
-                                cost1 = sale1;
-                            pg.chests.put(e.getClickedBlock().getLocation(), inv);
-                            ItemStack randombarrier = new ItemStack(material1);
-                            ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.setDisplayName(name1);
-                            ArrayList<String> lore = new ArrayList<>();
-                            lore.add(pg.chat.get(50) + ": " + time1);
-                            lore.add(pg.chat.get(51) + ": " + cost1 + " " + pg.chat.get(52));
-                            randombarriermeta.setLore(lore);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            inv.setItem(0, randombarrier);
-
-                            if (pg.kitplayernames.containsKey(kit2) && pg.kitplayernames.containsValue(p))
-                                cost2 = sale2;
-                            ItemStack randombarrier2 = new ItemStack(material2);
-                            ItemMeta randombarriermeta2 = randombarrier2.getItemMeta();
-                            assert randombarriermeta2 != null;
-                            randombarriermeta2.setDisplayName(name2);
-                            ArrayList<String> lore2 = new ArrayList<>();
-                            lore2.add(pg.chat.get(50) + ": " + time2);
-                            lore2.add(pg.chat.get(51) + ": " + cost2 + " " + pg.chat.get(52));
-                            randombarriermeta2.setLore(lore2);
-                            randombarrier2.setItemMeta(randombarriermeta2);
-                            inv.setItem(1, randombarrier2);
-
-                            if (pg.kitplayernames.containsKey(kit3) && pg.kitplayernames.containsValue(p))
-                                cost3 = sale3;
-                            ItemStack randombarrier3 = new ItemStack(material3);
-                            ItemMeta randombarriermeta3 = randombarrier3.getItemMeta();
-                            assert randombarriermeta3 != null;
-                            randombarriermeta3.setDisplayName(name3);
-                            ArrayList<String> lore3 = new ArrayList<>();
-                            lore3.add(pg.chat.get(50) + ": " + time3);
-                            lore3.add(pg.chat.get(51) + ": " + cost3 + " " + pg.chat.get(52));
-                            randombarriermeta3.setLore(lore3);
-                            randombarrier3.setItemMeta(randombarriermeta3);
-                            inv.setItem(2, randombarrier3);
-
-                            if (pg.kitplayernames.containsKey(kit4) && pg.kitplayernames.containsValue(p))
-                                cost4 = sale4;
-                            ItemStack randombarrier4 = new ItemStack(material4);
-                            ItemMeta randombarriermeta4 = randombarrier4.getItemMeta();
-                            assert randombarriermeta4 != null;
-                            randombarriermeta4.setDisplayName(name4);
-                            ArrayList<String> lore4 = new ArrayList<>();
-                            lore4.add(pg.chat.get(50) + ": " + time4);
-                            lore4.add(pg.chat.get(51) + ": " + cost4 + " " + pg.chat.get(52));
-                            randombarriermeta4.setLore(lore4);
-                            randombarrier4.setItemMeta(randombarriermeta4);
-                            inv.setItem(3, randombarrier4);
-
-                            if (pg.kitplayernames.containsKey(kit5) && pg.kitplayernames.containsValue(p))
-                                cost5 = sale5;
-                            ItemStack randombarrier5 = new ItemStack(material5);
-                            ItemMeta randombarriermeta5 = randombarrier5.getItemMeta();
-                            assert randombarriermeta5 != null;
-                            randombarriermeta5.setDisplayName(name5);
-                            ArrayList<String> lore5 = new ArrayList<>();
-                            lore5.add(pg.chat.get(50) + ": " + time5);
-                            lore5.add(pg.chat.get(51) + ": " + cost5 + " " + pg.chat.get(52));
-                            randombarriermeta5.setLore(lore5);
-                            randombarrier5.setItemMeta(randombarriermeta5);
-                            inv.setItem(4, randombarrier5);
-
-                            if (pg.kitplayernames.containsKey(kit6) && pg.kitplayernames.containsValue(p))
-                                cost6 = sale6;
-                            ItemStack randombarrier6 = new ItemStack(material6);
-                            ItemMeta randombarriermeta6 = randombarrier6.getItemMeta();
-                            assert randombarriermeta6 != null;
-                            randombarriermeta6.setDisplayName(name6);
-                            ArrayList<String> lore6 = new ArrayList<>();
-                            lore6.add(pg.chat.get(50) + ": " + time6);
-                            lore6.add(pg.chat.get(51) + ": " + cost6 + " " + pg.chat.get(52));
-                            randombarriermeta6.setLore(lore6);
-                            randombarrier6.setItemMeta(randombarriermeta6);
-                            inv.setItem(5, randombarrier6);
-
-                            if (pg.kitplayernames.containsKey(kit7) && pg.kitplayernames.containsValue(p))
-                                cost7 = sale7;
-                            ItemStack randombarrier7 = new ItemStack(material7);
-                            ItemMeta randombarriermeta7 = randombarrier7.getItemMeta();
-                            assert randombarriermeta7 != null;
-                            randombarriermeta7.setDisplayName(name7);
-                            ArrayList<String> lore7 = new ArrayList<>();
-                            lore7.add(pg.chat.get(50) + ": " + time7);
-                            lore7.add(pg.chat.get(51) + ": " + cost7 + " " + pg.chat.get(52));
-                            randombarriermeta7.setLore(lore7);
-                            randombarrier7.setItemMeta(randombarriermeta7);
-                            inv.setItem(6, randombarrier7);
-
-                            if (pg.kitplayernames.containsKey(kit8) && pg.kitplayernames.containsValue(p))
-                                cost8 = sale8;
-                            ItemStack randombarrier8 = new ItemStack(material8);
-                            ItemMeta randombarriermeta8 = randombarrier8.getItemMeta();
-                            assert randombarriermeta8 != null;
-                            randombarriermeta8.setDisplayName(name8);
-                            ArrayList<String> lore8 = new ArrayList<>();
-                            lore8.add(pg.chat.get(50) + ": " + time8);
-                            lore8.add(pg.chat.get(51) + ": " + cost8 + " " + pg.chat.get(52));
-                            randombarriermeta8.setLore(lore8);
-                            randombarrier8.setItemMeta(randombarriermeta8);
-                            inv.setItem(7, randombarrier8);
-
-                            if (pg.kitplayernames.containsKey(kit9) && pg.kitplayernames.containsValue(p))
-                                cost9 = sale9;
-                            ItemStack randombarrier9 = new ItemStack(material9);
-                            ItemMeta randombarriermeta9 = randombarrier9.getItemMeta();
-                            assert randombarriermeta9 != null;
-                            randombarriermeta9.setDisplayName(name9);
-                            ArrayList<String> lore9 = new ArrayList<>();
-                            lore9.add(pg.chat.get(50) + ": " + time9);
-                            lore9.add(pg.chat.get(51) + ": " + cost9 + " " + pg.chat.get(52));
-                            randombarriermeta9.setLore(lore9);
-                            randombarrier9.setItemMeta(randombarriermeta9);
-                            inv.setItem(8, randombarrier9);
-
-                            if (pg.kitplayernames.containsKey(kit10) && pg.kitplayernames.containsValue(p))
-                                cost10 = sale10;
-                            ItemStack randombarrier10 = new ItemStack(material10);
-                            ItemMeta randombarriermeta10 = randombarrier10.getItemMeta();
-                            assert randombarriermeta10 != null;
-                            randombarriermeta10.setDisplayName(name10);
-                            ArrayList<String> lore10 = new ArrayList<>();
-                            lore10.add(pg.chat.get(50) + ": " + time10);
-                            lore10.add(pg.chat.get(51) + ": " + cost10 + " " + pg.chat.get(52));
-                            randombarriermeta10.setLore(lore10);
-                            randombarrier10.setItemMeta(randombarriermeta10);
-                            inv.setItem(9, randombarrier10);
-
-                            if (pg.kitplayernames.containsKey(kit11) && pg.kitplayernames.containsValue(p))
-                                cost11 = sale11;
-                            ItemStack randombarrier11 = new ItemStack(material11);
-                            ItemMeta randombarriermeta11 = randombarrier11.getItemMeta();
-                            assert randombarriermeta11 != null;
-                            randombarriermeta11.setDisplayName(name11);
-                            ArrayList<String> lore11 = new ArrayList<>();
-                            lore11.add(pg.chat.get(50) + ": " + time11);
-                            lore11.add(pg.chat.get(51) + ": " + cost11 + " " + pg.chat.get(52));
-                            randombarriermeta11.setLore(lore11);
-                            randombarrier11.setItemMeta(randombarriermeta11);
-                            inv.setItem(10, randombarrier11);
-
-                            if (pg.kitplayernames.containsKey(kit12) && pg.kitplayernames.containsValue(p))
-                                cost12 = sale12;
-                            ItemStack randombarrier12 = new ItemStack(material12);
-                            ItemMeta randombarriermeta12 = randombarrier12.getItemMeta();
-                            assert randombarriermeta12 != null;
-                            randombarriermeta12.setDisplayName(name12);
-                            ArrayList<String> lore12 = new ArrayList<>();
-                            lore12.add(pg.chat.get(50) + ": " + time12);
-                            lore12.add(pg.chat.get(51) + ": " + cost12 + " " + pg.chat.get(52));
-                            randombarriermeta12.setLore(lore12);
-                            randombarrier12.setItemMeta(randombarriermeta12);
-                            inv.setItem(11, randombarrier12);
-
-                            if (pg.kitplayernames.containsKey(kit13) && pg.kitplayernames.containsValue(p))
-                                cost13 = sale13;
-                            ItemStack randombarrier13 = new ItemStack(material13);
-                            ItemMeta randombarriermeta13 = randombarrier13.getItemMeta();
-                            assert randombarriermeta13 != null;
-                            randombarriermeta13.setDisplayName(name13);
-                            ArrayList<String> lore13 = new ArrayList<>();
-                            lore13.add(pg.chat.get(50) + ": " + time13);
-                            lore13.add(pg.chat.get(51) + ": " + cost13 + " " + pg.chat.get(52));
-                            randombarriermeta13.setLore(lore13);
-                            randombarrier13.setItemMeta(randombarriermeta13);
-                            inv.setItem(12, randombarrier13);
-
-                            if (pg.kitplayernames.containsKey(kit14) && pg.kitplayernames.containsValue(p))
-                                cost14 = sale14;
-                            ItemStack randombarrier14 = new ItemStack(material14);
-                            ItemMeta randombarriermeta14 = randombarrier14.getItemMeta();
-                            assert randombarriermeta14 != null;
-                            randombarriermeta14.setDisplayName(name14);
-                            ArrayList<String> lore14 = new ArrayList<>();
-                            lore14.add(pg.chat.get(50) + ": " + time14);
-                            lore14.add(pg.chat.get(51) + ": " + cost14 + " " + pg.chat.get(52));
-                            randombarriermeta14.setLore(lore14);
-                            randombarrier14.setItemMeta(randombarriermeta14);
-                            inv.setItem(13, randombarrier14);
-
-                            if (pg.kitplayernames.containsKey(kit15) && pg.kitplayernames.containsValue(p))
-                                cost15 = sale15;
-                            ItemStack randombarrier15 = new ItemStack(material15);
-                            ItemMeta randombarriermeta15 = randombarrier15.getItemMeta();
-                            assert randombarriermeta15 != null;
-                            randombarriermeta15.setDisplayName(name15);
-                            ArrayList<String> lore15 = new ArrayList<>();
-                            lore15.add(pg.chat.get(50) + ": " + time15);
-                            lore15.add(pg.chat.get(51) + ": " + cost15 + " " + pg.chat.get(52));
-                            randombarriermeta15.setLore(lore15);
-                            randombarrier15.setItemMeta(randombarriermeta15);
-                            inv.setItem(14, randombarrier15);
-
-                            if (pg.kitplayernames.containsKey(kit16) && pg.kitplayernames.containsValue(p))
-                                cost16 = sale16;
-                            ItemStack randombarrier16 = new ItemStack(material16);
-                            ItemMeta randombarriermeta16 = randombarrier16.getItemMeta();
-                            assert randombarriermeta16 != null;
-                            randombarriermeta16.setDisplayName(name16);
-                            ArrayList<String> lore16 = new ArrayList<>();
-                            lore16.add(pg.chat.get(50) + ": " + time16);
-                            lore16.add(pg.chat.get(51) + ": " + cost16 + " " + pg.chat.get(52));
-                            randombarriermeta16.setLore(lore16);
-                            randombarrier16.setItemMeta(randombarriermeta16);
-                            inv.setItem(15, randombarrier16);
-
-                            if (pg.kitplayernames.containsKey(kit17) && pg.kitplayernames.containsValue(p))
-                                cost17 = sale17;
-                            ItemStack randombarrier17 = new ItemStack(material17);
-                            ItemMeta randombarriermeta17 = randombarrier17.getItemMeta();
-                            assert randombarriermeta17 != null;
-                            randombarriermeta17.setDisplayName(name17);
-                            ArrayList<String> lore17 = new ArrayList<>();
-                            lore17.add(pg.chat.get(50) + ": " + time17);
-                            lore17.add(pg.chat.get(51) + ": " + cost17 + " " + pg.chat.get(52));
-                            randombarriermeta17.setLore(lore17);
-                            randombarrier17.setItemMeta(randombarriermeta17);
-                            inv.setItem(16, randombarrier17);
-
-                            if (pg.kitplayernames.containsKey(kit18) && pg.kitplayernames.containsValue(p))
-                                cost18 = sale18;
-                            ItemStack randombarrier18 = new ItemStack(material18);
-                            ItemMeta randombarriermeta18 = randombarrier18.getItemMeta();
-                            assert randombarriermeta18 != null;
-                            randombarriermeta18.setDisplayName(name18);
-                            ArrayList<String> lore18 = new ArrayList<>();
-                            lore18.add(pg.chat.get(50) + ": " + time18);
-                            lore18.add(pg.chat.get(51) + ": " + cost18 + " " + pg.chat.get(52));
-                            randombarriermeta18.setLore(lore18);
-                            randombarrier18.setItemMeta(randombarriermeta18);
-                            inv.setItem(17, randombarrier18);
-
-                            if (pg.kitplayernames.containsKey(kit19) && pg.kitplayernames.containsValue(p))
-                                cost19 = sale19;
-                            ItemStack randombarrier19 = new ItemStack(material19);
-                            ItemMeta randombarriermeta19 = randombarrier18.getItemMeta();
-                            assert randombarriermeta19 != null;
-                            randombarriermeta19.setDisplayName(name19);
-                            ArrayList<String> lore19 = new ArrayList<>();
-                            lore19.add(pg.chat.get(50) + ": " + time19);
-                            lore19.add(pg.chat.get(51) + ": " + cost19 + " " + pg.chat.get(52));
-                            randombarriermeta19.setLore(lore19);
-                            randombarrier19.setItemMeta(randombarriermeta19);
-                            inv.setItem(18, randombarrier19);
+                            p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                         }
-                        p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                     }
                 }
             }
