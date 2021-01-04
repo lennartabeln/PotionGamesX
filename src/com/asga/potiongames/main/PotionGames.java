@@ -1133,8 +1133,8 @@ public class PotionGames extends JavaPlugin {
                 if (!teamed.contains(all.getName())) {
                     while (!teamfound) {
                         Random rnd = new Random();
-                        int rndTeam = rnd.nextInt(teams.size());
-                        if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers && teamplayers.get(Integer.toString(rndTeam)) != null) {
+                        int rndTeam = rnd.nextInt(teams.size() + 1);
+                        if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
                             teamfound = true;
                             int players = teamplayers.get(Integer.toString(rndTeam));
                             players++;
@@ -1144,7 +1144,7 @@ public class PotionGames extends JavaPlugin {
                             all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                             all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
                             teamed.add(all.getName());
-                            teamplayernames.put(teams.get(rndTeam), all);
+                            teamplayernames.put(Integer.toString(rndTeam), all);
                         }
                     }
                 }

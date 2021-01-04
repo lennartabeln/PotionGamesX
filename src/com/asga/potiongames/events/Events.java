@@ -748,7 +748,7 @@ public class Events implements Listener {
                                     boolean teamfound = false;
                                     while (!teamfound) {
                                         Random rnd = new Random();
-                                        int rndTeam = rnd.nextInt(pg.teams.size());
+                                        int rndTeam = rnd.nextInt(pg.teams.size() + 1);
                                         if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
                                             teamfound = true;
                                             p.closeInventory();
@@ -760,7 +760,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                             pg.teamed.add(e.getWhoClicked().getName());
-                                            pg.teamplayernames.put(pg.teams.get(rndTeam), p);
+                                            pg.teamplayernames.put(Integer.toString(rndTeam), p);
                                         }
                                     }
                                 } else {
@@ -798,7 +798,7 @@ public class Events implements Listener {
                                     boolean teamfound = false;
                                     while (!teamfound) {
                                         Random rnd = new Random();
-                                        int rndTeam = rnd.nextInt(pg.teams.size());
+                                        int rndTeam = rnd.nextInt(pg.teams.size() + 1);
                                         if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
                                             teamfound = true;
                                             p.closeInventory();
@@ -810,7 +810,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                             pg.teamed.add(e.getWhoClicked().getName());
-                                            pg.teamplayernames.put(pg.teams.get(rndTeam), p);
+                                            pg.teamplayernames.put(Integer.toString(rndTeam), p);
                                         }
                                     }
                                 } else {
