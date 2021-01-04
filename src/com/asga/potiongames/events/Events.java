@@ -39,139 +39,6 @@ public class Events implements Listener {
     private final PotionGames pg;
     private int amount;
     private int bottle;
-    private final String name1 = "JUMP";
-    private final PotionEffectType potion1 = PotionEffectType.JUMP;
-    private final Material material1 = Material.POTION;
-    private final int time1 = 60;
-    private final String kit1 = "Looter";
-    private final int sale1 = 2;
-    private final int sale2 = 2;
-    private final String name2 = "DAMAGE_RESISTANCE";
-    private final PotionEffectType potion2 = PotionEffectType.DAMAGE_RESISTANCE;
-    private final Material material2 = Material.POTION;
-    private final int time2 = 60;
-    private final String kit2 = "Tank";
-    private final int sale3 = 2;
-    private final int sale4 = 2;
-    private final String name3 = "SPEED";
-    private final PotionEffectType potion3 = PotionEffectType.SPEED;
-    private final Material material3 = Material.POTION;
-    private final int time3 = 60;
-    private final String kit3 = "Looter";
-    private final int sale5 = 2;
-    private final int sale6 = 2;
-    private final String name4 = "ABSORPTION";
-    private final PotionEffectType potion4 = PotionEffectType.ABSORPTION;
-    private final Material material4 = Material.POTION;
-    private final int time4 = 60;
-    private final String kit4 = "Tank";
-    private final int sale7 = 2;
-    private final int sale8 = 2;
-    private final String name5 = "FIRE_RESISTANCE";
-    private final PotionEffectType potion5 = PotionEffectType.FIRE_RESISTANCE;
-    private final Material material5 = Material.POTION;
-    private final int time5 = 60;
-    private final String kit5 = "Tank";
-    private final int sale9 = 2;
-    private final int sale10 = 2;
-    private final String name6 = "HEAL";
-    private final PotionEffectType potion6 = PotionEffectType.HEAL;
-    private final Material material6 = Material.POTION;
-    private final int time6 = 60;
-    private final String kit6 = "Healer";
-    private final int sale11 = 2;
-    private final int sale12 = 2;
-    private final String name7 = "HEALTH_BOOST";
-    private final PotionEffectType potion7 = PotionEffectType.HEALTH_BOOST;
-    private final Material material7 = Material.POTION;
-    private final int time7 = 60;
-    private final String kit7 = "Healer";
-    private final int sale13 = 2;
-    private final int sale14 = 2;
-    private final String name8 = "INVISIBILITY";
-    private final PotionEffectType potion8 = PotionEffectType.INVISIBILITY;
-    private final Material material8 = Material.POTION;
-    private final int time8 = 60;
-    private final String kit8 = "Ghost";
-    private final int sale15 = 2;
-    private final int sale16 = 2;
-    private final String name9 = "REGENERATION";
-    private final PotionEffectType potion9 = PotionEffectType.REGENERATION;
-    private final Material material9 = Material.POTION;
-    private final int time9 = 60;
-    private final String kit9 = "Healer";
-    private final int sale17 = 2;
-    private final int sale18 = 2;
-    private final String name10 = "SATURATION";
-    private final PotionEffectType potion10 = PotionEffectType.SATURATION;
-    private final Material material10 = Material.POTION;
-    private final int time10 = 60;
-    private final String kit10 = "Looter";
-    private final int sale19 = 2;
-    private int cost1 = 4;
-    private final String name11 = "INCREASE_DAMAGE";
-    private final PotionEffectType potion11 = PotionEffectType.INCREASE_DAMAGE;
-    private final Material material11 = Material.POTION;
-    private final int time11 = 60;
-    private final String kit11 = "Fighter";
-    private int cost2 = 4;
-    private int cost3 = 4;
-    private final String name12 = "DOLPHINS_GRACE";
-    private final PotionEffectType potion12 = PotionEffectType.DOLPHINS_GRACE;
-    private final Material material12 = Material.POTION;
-    private final int time12 = 60;
-    private final String kit12 = "Looter";
-    private int cost4 = 4;
-    private int cost5 = 4;
-    private final String name13 = "NIGHT_VISION";
-    private final PotionEffectType potion13 = PotionEffectType.NIGHT_VISION;
-    private final Material material13 = Material.POTION;
-    private final int time13 = 60;
-    private final String kit13 = "Ghost";
-    private int cost6 = 4;
-    private int cost7 = 4;
-    private final String name14 = "WATER_BREATHING";
-    private final PotionEffectType potion14 = PotionEffectType.WATER_BREATHING;
-    private final Material material14 = Material.POTION;
-    private final int time14 = 60;
-    private final String kit14 = "Ghost";
-    private int cost8 = 4;
-    private int cost9 = 4;
-    private final String name15 = "WEAKNESS";
-    private final PotionEffectType potion15 = PotionEffectType.WEAKNESS;
-    private final Material material15 = Material.SPLASH_POTION;
-    private final int time15 = 60;
-    private final String kit15 = "Fighter";
-    private int cost10 = 4;
-    private int cost11 = 4;
-    private final String name16 = "WITHER";
-    private final PotionEffectType potion16 = PotionEffectType.WITHER;
-    private final Material material16 = Material.SPLASH_POTION;
-    private final int time16 = 60;
-    private final String kit16 = "Fighter";
-    private int cost12 = 4;
-    private int cost13 = 4;
-    private final String name17 = "GLOWING";
-    private final PotionEffectType potion17 = PotionEffectType.GLOWING;
-    private final Material material17 = Material.SPLASH_POTION;
-    private final int time17 = 60;
-    private final String kit17 = "Fighter";
-    private int cost14 = 4;
-    private int cost15 = 4;
-    private final String name18 = "BLINDNESS";
-    private final PotionEffectType potion18 = PotionEffectType.BLINDNESS;
-    private final Material material18 = Material.SPLASH_POTION;
-    private final int time18 = 60;
-    private final String kit18 = "Fighter";
-    private int cost16 = 4;
-    private int cost17 = 4;
-    private final String name19 = "CONFUSION";
-    private final PotionEffectType potion19 = PotionEffectType.CONFUSION;
-    private final Material material19 = Material.SPLASH_POTION;
-    private final int time19 = 60;
-    private final String kit19 = "Fighter";
-    private int cost19 = 4;
-    private int cost18 = 4;
 
     public Events(PotionGames pg) {
         this.pg = pg;
@@ -414,13 +281,13 @@ public class Events implements Listener {
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
                     Sign sign = (Sign) e.getClickedBlock().getState();
-                    String line1 = sign.getLine(0);
                     String line2 = sign.getLine(1);
-                    if (line1.matches("PotionGames") && line2.matches("Join")) {
+                    String line3 = sign.getLine(2);
+                    if (line2.matches("PotionGames") && line3.matches("Join")) {
                         if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p))
                             pg.onJoin(p);
                     }
-                    if (line1.matches("PotionGames") && line2.matches("Stats")) {
+                    if (line2.matches("PotionGames") && line3.matches("Stats")) {
                         int wins = pg.getWins(p.getUniqueId().toString());
                         int losts = pg.getLosts(p.getUniqueId().toString());
                         int kills = pg.getKills(p.getUniqueId().toString());
@@ -661,253 +528,28 @@ public class Events implements Listener {
                                 }
                                 Inventory inv;
                                 inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
-                                if (pg.kitplayernames.containsKey(kit1) && pg.kitplayernames.containsValue(p))
-                                    cost1 = sale1;
                                 pg.chests.put(e.getClickedBlock().getLocation(), inv);
-                                ItemStack randombarrier = new ItemStack(material1);
-                                ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(name1);
-                                ArrayList<String> lore = new ArrayList<>();
-                                lore.add(pg.chat.get(50) + ": " + time1);
-                                lore.add(pg.chat.get(51) + ": " + cost1 + " " + pg.chat.get(52));
-                                randombarriermeta.setLore(lore);
-                                randombarrier.setItemMeta(randombarriermeta);
-                                inv.setItem(0, randombarrier);
-
-                                if (pg.kitplayernames.containsKey(kit2) && pg.kitplayernames.containsValue(p))
-                                    cost2 = sale2;
-                                ItemStack randombarrier2 = new ItemStack(material2);
-                                ItemMeta randombarriermeta2 = randombarrier2.getItemMeta();
-                                assert randombarriermeta2 != null;
-                                randombarriermeta2.setDisplayName(name2);
-                                ArrayList<String> lore2 = new ArrayList<>();
-                                lore2.add(pg.chat.get(50) + ": " + time2);
-                                lore2.add(pg.chat.get(51) + ": " + cost2 + " " + pg.chat.get(52));
-                                randombarriermeta2.setLore(lore2);
-                                randombarrier2.setItemMeta(randombarriermeta2);
-                                inv.setItem(1, randombarrier2);
-
-                                if (pg.kitplayernames.containsKey(kit3) && pg.kitplayernames.containsValue(p))
-                                    cost3 = sale3;
-                                ItemStack randombarrier3 = new ItemStack(material3);
-                                ItemMeta randombarriermeta3 = randombarrier3.getItemMeta();
-                                assert randombarriermeta3 != null;
-                                randombarriermeta3.setDisplayName(name3);
-                                ArrayList<String> lore3 = new ArrayList<>();
-                                lore3.add(pg.chat.get(50) + ": " + time3);
-                                lore3.add(pg.chat.get(51) + ": " + cost3 + " " + pg.chat.get(52));
-                                randombarriermeta3.setLore(lore3);
-                                randombarrier3.setItemMeta(randombarriermeta3);
-                                inv.setItem(2, randombarrier3);
-
-                                if (pg.kitplayernames.containsKey(kit4) && pg.kitplayernames.containsValue(p))
-                                    cost4 = sale4;
-                                ItemStack randombarrier4 = new ItemStack(material4);
-                                ItemMeta randombarriermeta4 = randombarrier4.getItemMeta();
-                                assert randombarriermeta4 != null;
-                                randombarriermeta4.setDisplayName(name4);
-                                ArrayList<String> lore4 = new ArrayList<>();
-                                lore4.add(pg.chat.get(50) + ": " + time4);
-                                lore4.add(pg.chat.get(51) + ": " + cost4 + " " + pg.chat.get(52));
-                                randombarriermeta4.setLore(lore4);
-                                randombarrier4.setItemMeta(randombarriermeta4);
-                                inv.setItem(3, randombarrier4);
-
-                                if (pg.kitplayernames.containsKey(kit5) && pg.kitplayernames.containsValue(p))
-                                    cost5 = sale5;
-                                ItemStack randombarrier5 = new ItemStack(material5);
-                                ItemMeta randombarriermeta5 = randombarrier5.getItemMeta();
-                                assert randombarriermeta5 != null;
-                                randombarriermeta5.setDisplayName(name5);
-                                ArrayList<String> lore5 = new ArrayList<>();
-                                lore5.add(pg.chat.get(50) + ": " + time5);
-                                lore5.add(pg.chat.get(51) + ": " + cost5 + " " + pg.chat.get(52));
-                                randombarriermeta5.setLore(lore5);
-                                randombarrier5.setItemMeta(randombarriermeta5);
-                                inv.setItem(4, randombarrier5);
-
-                                if (pg.kitplayernames.containsKey(kit6) && pg.kitplayernames.containsValue(p))
-                                    cost6 = sale6;
-                                ItemStack randombarrier6 = new ItemStack(material6);
-                                ItemMeta randombarriermeta6 = randombarrier6.getItemMeta();
-                                assert randombarriermeta6 != null;
-                                randombarriermeta6.setDisplayName(name6);
-                                ArrayList<String> lore6 = new ArrayList<>();
-                                lore6.add(pg.chat.get(50) + ": " + time6);
-                                lore6.add(pg.chat.get(51) + ": " + cost6 + " " + pg.chat.get(52));
-                                randombarriermeta6.setLore(lore6);
-                                randombarrier6.setItemMeta(randombarriermeta6);
-                                inv.setItem(5, randombarrier6);
-
-                                if (pg.kitplayernames.containsKey(kit7) && pg.kitplayernames.containsValue(p))
-                                    cost7 = sale7;
-                                ItemStack randombarrier7 = new ItemStack(material7);
-                                ItemMeta randombarriermeta7 = randombarrier7.getItemMeta();
-                                assert randombarriermeta7 != null;
-                                randombarriermeta7.setDisplayName(name7);
-                                ArrayList<String> lore7 = new ArrayList<>();
-                                lore7.add(pg.chat.get(50) + ": " + time7);
-                                lore7.add(pg.chat.get(51) + ": " + cost7 + " " + pg.chat.get(52));
-                                randombarriermeta7.setLore(lore7);
-                                randombarrier7.setItemMeta(randombarriermeta7);
-                                inv.setItem(6, randombarrier7);
-
-                                if (pg.kitplayernames.containsKey(kit8) && pg.kitplayernames.containsValue(p))
-                                    cost8 = sale8;
-                                ItemStack randombarrier8 = new ItemStack(material8);
-                                ItemMeta randombarriermeta8 = randombarrier8.getItemMeta();
-                                assert randombarriermeta8 != null;
-                                randombarriermeta8.setDisplayName(name8);
-                                ArrayList<String> lore8 = new ArrayList<>();
-                                lore8.add(pg.chat.get(50) + ": " + time8);
-                                lore8.add(pg.chat.get(51) + ": " + cost8 + " " + pg.chat.get(52));
-                                randombarriermeta8.setLore(lore8);
-                                randombarrier8.setItemMeta(randombarriermeta8);
-                                inv.setItem(7, randombarrier8);
-
-                                if (pg.kitplayernames.containsKey(kit9) && pg.kitplayernames.containsValue(p))
-                                    cost9 = sale9;
-                                ItemStack randombarrier9 = new ItemStack(material9);
-                                ItemMeta randombarriermeta9 = randombarrier9.getItemMeta();
-                                assert randombarriermeta9 != null;
-                                randombarriermeta9.setDisplayName(name9);
-                                ArrayList<String> lore9 = new ArrayList<>();
-                                lore9.add(pg.chat.get(50) + ": " + time9);
-                                lore9.add(pg.chat.get(51) + ": " + cost9 + " " + pg.chat.get(52));
-                                randombarriermeta9.setLore(lore9);
-                                randombarrier9.setItemMeta(randombarriermeta9);
-                                inv.setItem(8, randombarrier9);
-
-                                if (pg.kitplayernames.containsKey(kit10) && pg.kitplayernames.containsValue(p))
-                                    cost10 = sale10;
-                                ItemStack randombarrier10 = new ItemStack(material10);
-                                ItemMeta randombarriermeta10 = randombarrier10.getItemMeta();
-                                assert randombarriermeta10 != null;
-                                randombarriermeta10.setDisplayName(name10);
-                                ArrayList<String> lore10 = new ArrayList<>();
-                                lore10.add(pg.chat.get(50) + ": " + time10);
-                                lore10.add(pg.chat.get(51) + ": " + cost10 + " " + pg.chat.get(52));
-                                randombarriermeta10.setLore(lore10);
-                                randombarrier10.setItemMeta(randombarriermeta10);
-                                inv.setItem(9, randombarrier10);
-
-                                if (pg.kitplayernames.containsKey(kit11) && pg.kitplayernames.containsValue(p))
-                                    cost11 = sale11;
-                                ItemStack randombarrier11 = new ItemStack(material11);
-                                ItemMeta randombarriermeta11 = randombarrier11.getItemMeta();
-                                assert randombarriermeta11 != null;
-                                randombarriermeta11.setDisplayName(name11);
-                                ArrayList<String> lore11 = new ArrayList<>();
-                                lore11.add(pg.chat.get(50) + ": " + time11);
-                                lore11.add(pg.chat.get(51) + ": " + cost11 + " " + pg.chat.get(52));
-                                randombarriermeta11.setLore(lore11);
-                                randombarrier11.setItemMeta(randombarriermeta11);
-                                inv.setItem(10, randombarrier11);
-
-                                if (pg.kitplayernames.containsKey(kit12) && pg.kitplayernames.containsValue(p))
-                                    cost12 = sale12;
-                                ItemStack randombarrier12 = new ItemStack(material12);
-                                ItemMeta randombarriermeta12 = randombarrier12.getItemMeta();
-                                assert randombarriermeta12 != null;
-                                randombarriermeta12.setDisplayName(name12);
-                                ArrayList<String> lore12 = new ArrayList<>();
-                                lore12.add(pg.chat.get(50) + ": " + time12);
-                                lore12.add(pg.chat.get(51) + ": " + cost12 + " " + pg.chat.get(52));
-                                randombarriermeta12.setLore(lore12);
-                                randombarrier12.setItemMeta(randombarriermeta12);
-                                inv.setItem(11, randombarrier12);
-
-                                if (pg.kitplayernames.containsKey(kit13) && pg.kitplayernames.containsValue(p))
-                                    cost13 = sale13;
-                                ItemStack randombarrier13 = new ItemStack(material13);
-                                ItemMeta randombarriermeta13 = randombarrier13.getItemMeta();
-                                assert randombarriermeta13 != null;
-                                randombarriermeta13.setDisplayName(name13);
-                                ArrayList<String> lore13 = new ArrayList<>();
-                                lore13.add(pg.chat.get(50) + ": " + time13);
-                                lore13.add(pg.chat.get(51) + ": " + cost13 + " " + pg.chat.get(52));
-                                randombarriermeta13.setLore(lore13);
-                                randombarrier13.setItemMeta(randombarriermeta13);
-                                inv.setItem(12, randombarrier13);
-
-                                if (pg.kitplayernames.containsKey(kit14) && pg.kitplayernames.containsValue(p))
-                                    cost14 = sale14;
-                                ItemStack randombarrier14 = new ItemStack(material14);
-                                ItemMeta randombarriermeta14 = randombarrier14.getItemMeta();
-                                assert randombarriermeta14 != null;
-                                randombarriermeta14.setDisplayName(name14);
-                                ArrayList<String> lore14 = new ArrayList<>();
-                                lore14.add(pg.chat.get(50) + ": " + time14);
-                                lore14.add(pg.chat.get(51) + ": " + cost14 + " " + pg.chat.get(52));
-                                randombarriermeta14.setLore(lore14);
-                                randombarrier14.setItemMeta(randombarriermeta14);
-                                inv.setItem(13, randombarrier14);
-
-                                if (pg.kitplayernames.containsKey(kit15) && pg.kitplayernames.containsValue(p))
-                                    cost15 = sale15;
-                                ItemStack randombarrier15 = new ItemStack(material15);
-                                ItemMeta randombarriermeta15 = randombarrier15.getItemMeta();
-                                assert randombarriermeta15 != null;
-                                randombarriermeta15.setDisplayName(name15);
-                                ArrayList<String> lore15 = new ArrayList<>();
-                                lore15.add(pg.chat.get(50) + ": " + time15);
-                                lore15.add(pg.chat.get(51) + ": " + cost15 + " " + pg.chat.get(52));
-                                randombarriermeta15.setLore(lore15);
-                                randombarrier15.setItemMeta(randombarriermeta15);
-                                inv.setItem(14, randombarrier15);
-
-                                if (pg.kitplayernames.containsKey(kit16) && pg.kitplayernames.containsValue(p))
-                                    cost16 = sale16;
-                                ItemStack randombarrier16 = new ItemStack(material16);
-                                ItemMeta randombarriermeta16 = randombarrier16.getItemMeta();
-                                assert randombarriermeta16 != null;
-                                randombarriermeta16.setDisplayName(name16);
-                                ArrayList<String> lore16 = new ArrayList<>();
-                                lore16.add(pg.chat.get(50) + ": " + time16);
-                                lore16.add(pg.chat.get(51) + ": " + cost16 + " " + pg.chat.get(52));
-                                randombarriermeta16.setLore(lore16);
-                                randombarrier16.setItemMeta(randombarriermeta16);
-                                inv.setItem(15, randombarrier16);
-
-                                if (pg.kitplayernames.containsKey(kit17) && pg.kitplayernames.containsValue(p))
-                                    cost17 = sale17;
-                                ItemStack randombarrier17 = new ItemStack(material17);
-                                ItemMeta randombarriermeta17 = randombarrier17.getItemMeta();
-                                assert randombarriermeta17 != null;
-                                randombarriermeta17.setDisplayName(name17);
-                                ArrayList<String> lore17 = new ArrayList<>();
-                                lore17.add(pg.chat.get(50) + ": " + time17);
-                                lore17.add(pg.chat.get(51) + ": " + cost17 + " " + pg.chat.get(52));
-                                randombarriermeta17.setLore(lore17);
-                                randombarrier17.setItemMeta(randombarriermeta17);
-                                inv.setItem(16, randombarrier17);
-
-                                if (pg.kitplayernames.containsKey(kit18) && pg.kitplayernames.containsValue(p))
-                                    cost18 = sale18;
-                                ItemStack randombarrier18 = new ItemStack(material18);
-                                ItemMeta randombarriermeta18 = randombarrier18.getItemMeta();
-                                assert randombarriermeta18 != null;
-                                randombarriermeta18.setDisplayName(name18);
-                                ArrayList<String> lore18 = new ArrayList<>();
-                                lore18.add(pg.chat.get(50) + ": " + time18);
-                                lore18.add(pg.chat.get(51) + ": " + cost18 + " " + pg.chat.get(52));
-                                randombarriermeta18.setLore(lore18);
-                                randombarrier18.setItemMeta(randombarriermeta18);
-                                inv.setItem(17, randombarrier18);
-
-                                if (pg.kitplayernames.containsKey(kit19) && pg.kitplayernames.containsValue(p))
-                                    cost19 = sale19;
-                                ItemStack randombarrier19 = new ItemStack(material19);
-                                ItemMeta randombarriermeta19 = randombarrier18.getItemMeta();
-                                assert randombarriermeta19 != null;
-                                randombarriermeta19.setDisplayName(name19);
-                                ArrayList<String> lore19 = new ArrayList<>();
-                                lore19.add(pg.chat.get(50) + ": " + time19);
-                                lore19.add(pg.chat.get(51) + ": " + cost19 + " " + pg.chat.get(52));
-                                randombarriermeta19.setLore(lore19);
-                                randombarrier19.setItemMeta(randombarriermeta19);
-                                inv.setItem(18, randombarrier19);
+                                int shopitem = 1;
+                                for (int i = 1; i < pg.getActiveSlots() * 2; i++) {
+                                    int coinamount;
+                                    if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
+                                        coinamount = pg.shopsale.get(shopitem - 1);
+                                    } else {
+                                        coinamount = pg.shopcost.get(shopitem - 1);
+                                    }
+                                    ItemStack randombarrier = new ItemStack(pg.shoppotiontype.get(shopitem - 1));
+                                    ItemMeta randombarriermeta = randombarrier.getItemMeta();
+                                    assert randombarriermeta != null;
+                                    randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
+                                    ArrayList<String> lore = new ArrayList<>();
+                                    lore.add(pg.chat.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration());
+                                    lore.add(pg.chat.get(51) + ": " + coinamount + " " + pg.chat.get(52));
+                                    randombarriermeta.setLore(lore);
+                                    randombarrier.setItemMeta(randombarriermeta);
+                                    inv.setItem(shopitem - 1, randombarrier);
+                                    shopitem++;
+                                    i++;
+                                }
                             }
                             p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                         }
@@ -1066,8 +708,8 @@ public class Events implements Listener {
                             p.closeInventory();
                             String arenaname = "";
                             for (int i = 0; i <= pg.arenas.size(); i++) {
-                                if (pg.getConfig().contains("pg.arenas." + i)) {
-                                    String name = pg.getConfig().getString("pg.arenas." + i + ".name");
+                                if (pg.arenadata.contains("pg.arenas." + i)) {
+                                    String name = pg.arenadata.getString("pg.arenas." + i + ".name");
                                     if (pg.voteplayernames.containsKey(name) && pg.voteplayernames.containsValue(p)) {
                                         arenaname = name;
                                     }
@@ -1103,7 +745,7 @@ public class Events implements Listener {
                                     boolean teamfound = false;
                                     while (!teamfound) {
                                         Random rnd = new Random();
-                                        int rndTeam = rnd.nextInt(pg.teams.size() + 1);
+                                        int rndTeam = rnd.nextInt(pg.teams.size());
                                         if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
                                             teamfound = true;
                                             p.closeInventory();
@@ -1115,7 +757,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                             pg.teamed.add(e.getWhoClicked().getName());
-                                            pg.teamplayernames.put(Integer.toString(rndTeam), p);
+                                            pg.teamplayernames.put(pg.teams.get(rndTeam), p);
                                         }
                                     }
                                 } else {
@@ -1153,7 +795,7 @@ public class Events implements Listener {
                                     boolean teamfound = false;
                                     while (!teamfound) {
                                         Random rnd = new Random();
-                                        int rndTeam = rnd.nextInt(pg.teams.size() + 1);
+                                        int rndTeam = rnd.nextInt(pg.teams.size());
                                         if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
                                             teamfound = true;
                                             p.closeInventory();
@@ -1165,7 +807,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                             pg.teamed.add(e.getWhoClicked().getName());
-                                            pg.teamplayernames.put(Integer.toString(rndTeam), p);
+                                            pg.teamplayernames.put(pg.teams.get(rndTeam), p);
                                         }
                                     }
                                 } else {
@@ -1199,13 +841,13 @@ public class Events implements Listener {
                         if (!pg.kited.contains(p.getName())) {
                             if (displayname.equals(pg.chat.get(42))) {
                                 Random rnd = new Random();
-                                int rndKit = rnd.nextInt(pg.kits.size() + 1);
+                                int rndKit = rnd.nextInt(pg.kits.size());
                                 p.closeInventory();
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                 pg.kited.add(e.getWhoClicked().getName());
-                                pg.kitplayernames.put(Integer.toString(rndKit), p);
+                                pg.kitplayernames.put(pg.kits.get(rndKit), p);
                             } else {
                                 p.closeInventory();
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
@@ -1231,7 +873,7 @@ public class Events implements Listener {
                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                 pg.kited.add(e.getWhoClicked().getName());
-                                pg.kitplayernames.put(Integer.toString(rndKit), p);
+                                pg.kitplayernames.put(pg.kits.get(rndKit), p);
                             } else {
                                 p.closeInventory();
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
@@ -1250,460 +892,39 @@ public class Events implements Listener {
         }
         if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
             if (e.getCurrentItem() != null) {
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name1)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost1) {
-                            amount = amount - cost1;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material11);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion1, time1 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name1);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost1; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
+                int shopitem = 1;
+                for (int i = 0; i < pg.shop.size() * 2; i++) {
+                    int coinamount;
+                    if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
+                        coinamount = pg.shopsale.get(shopitem - 1);
                     } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                        coinamount = pg.shopcost.get(shopitem - 1);
                     }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name2)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost2) {
-                            amount = amount - cost2;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material2);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion2, time2 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name2);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost2; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
+                    if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(pg.shop.get(shopitem - 1))) {
+                        if (bottle >= 1) {
+                            if (amount >= coinamount) {
+                                amount = amount - coinamount;
+                                bottle = bottle - 1;
+                                ItemStack randombarrier = new ItemStack(pg.shoppotiontype.get(shopitem - 1));
+                                PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                                assert randombarriermeta != null;
+                                randombarriermeta.addCustomEffect(new PotionEffect(pg.shoppotion.get(shopitem - 1).getType(), pg.shoppotion.get(shopitem - 1).getDuration(), pg.shoppotion.get(shopitem - 1).getAmplifier()), true);
+                                randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
+                                randombarrier.setItemMeta(randombarriermeta);
+                                p.getInventory().addItem(randombarrier);
+                                for (int k = 0; k < coinamount; k++)
+                                    p.getInventory().removeItem(pg.getCoin());
+                                for (int k = 0; k < 1; k++)
+                                    p.getInventory().removeItem(pg.getBottle());
+                            } else {
+                                p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                            }
                         } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
                         }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
                     }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name3)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost3) {
-                            amount = amount - cost3;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material3);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion3, time3 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name3);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost3; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name4)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost4) {
-                            amount = amount - cost4;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material4);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion4, time4 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name4);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost4; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name5)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost5) {
-                            amount = amount - cost5;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material5);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion5, time5 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name5);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost5; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name6)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost6) {
-                            amount = amount - cost6;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material6);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion6, time6 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name6);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost6; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name7)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost7) {
-                            amount = amount - cost7;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material7);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion7, time7 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name7);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost7; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name8)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost8) {
-                            amount = amount - cost8;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material8);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion8, time8 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name8);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost8; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name9)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost9) {
-                            amount = amount - cost9;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material9);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion9, time9 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name9);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost9; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name10)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost10) {
-                            amount = amount - cost10;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material10);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion10, time10 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name10);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost10; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name11)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost11) {
-                            amount = amount - cost11;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material11);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion11, time11 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name11);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost11; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name12)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost12) {
-                            amount = amount - cost12;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material12);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion12, time12 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name12);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost12; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name13)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost13) {
-                            amount = amount - cost13;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material13);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion13, time13 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name13);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost13; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name14)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost14) {
-                            amount = amount - cost14;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material14);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion14, time14 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name14);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost14; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name15)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost15) {
-                            amount = amount - cost15;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material15);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion15, time15 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name15);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost15; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name16)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost16) {
-                            amount = amount - cost16;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material16);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion16, time16 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name16);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost16; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name17)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost17) {
-                            amount = amount - cost17;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material17);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion17, time17 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name17);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost17; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name18)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost18) {
-                            amount = amount - cost18;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material18);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion18, time18 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name18);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost18; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
-                }
-
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(name19)) {
-                    if (bottle >= 1) {
-                        if (amount >= cost19) {
-                            amount = amount - cost19;
-                            bottle = bottle - 1;
-                            ItemStack randombarrier = new ItemStack(material19);
-                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                            assert randombarriermeta != null;
-                            randombarriermeta.addCustomEffect(new PotionEffect(potion19, time19 * 20, 2), true);
-                            randombarriermeta.setDisplayName(name19);
-                            randombarrier.setItemMeta(randombarriermeta);
-                            p.getInventory().addItem(randombarrier);
-                            for (int i = 0; i < cost19; i++)
-                                p.getInventory().removeItem(pg.getCoin());
-                            for (int i = 0; i < 1; i++)
-                                p.getInventory().removeItem(pg.getBottle());
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
-                        }
-                    } else {
-                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
-                    }
+                    shopitem++;
+                    i++;
                 }
             }
             e.setCancelled(true);
@@ -1729,7 +950,7 @@ public class Events implements Listener {
         if (p.isOp()) {
             String latest = "";
             try {
-                URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGames/master/version.txt");
+                URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
                 BufferedReader bufferedReader = new BufferedReader(
                         new InputStreamReader(url.openStream()));
                 StringBuilder stringBuilder = new StringBuilder();
@@ -1745,7 +966,7 @@ public class Events implements Listener {
             }
             boolean upToDate = pg.getDescription().getVersion().equals(latest);
             if (!upToDate) {
-                p.sendMessage(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGames/releases/latest");
+                p.sendMessage(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
             }
         }
     }
