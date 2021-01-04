@@ -5,6 +5,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +21,7 @@ public class Commands implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         Player p = (Player) sender;
         if (args.length == 1) {
             if (p.hasPermission("pg.setup")) {
@@ -183,7 +186,7 @@ public class Commands implements CommandExecutor {
                             int i = 1;
                             boolean votetedarena = false;
                             while (!votetedarena) {
-                                if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
                                     arenaNumber = String.valueOf(i);
                                     pg.setVotedArena(arena);
                                     votetedarena = true;
@@ -207,7 +210,7 @@ public class Commands implements CommandExecutor {
                         int i = 1;
                         boolean arenaID = false;
                         while (!arenaID) {
-                            if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                            if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
                                 arenaNumber = i;
                                 arenaID = true;
                             } else {
@@ -215,8 +218,8 @@ public class Commands implements CommandExecutor {
                             }
                         }
                         String arenaName = args[1];
-                        pg.arenadata.set("pg.arenas." + arenaNumber, null);
-                        pg.arenadata.save(pg.arenadatafile);
+                        arenadata.set("pg.arenas." + arenaNumber, null);
+                        arenadata.save(pg.arenadatafile);
                         p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28));
                     } catch (Exception e) {
                         p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
@@ -226,13 +229,13 @@ public class Commands implements CommandExecutor {
                 if (p.hasPermission("pg.setup")) {
                     int arenaNumber = 1;
                     try {
-                        while (pg.arenadata.contains("pg.arenas." + arenaNumber)) {
+                        while (arenadata.contains("pg.arenas." + arenaNumber)) {
                             arenaNumber++;
                         }
                         String arenaName = args[1];
-                        pg.arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
-                        pg.arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
-                        pg.arenadata.set("pg.arenas." + arenaNumber + ".name", arenaName);
+                        arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
+                        arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
+                        arenadata.set("pg.arenas." + arenaNumber + ".name", arenaName);
                         p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(29));
 
                     } catch (Exception e) {
@@ -247,18 +250,18 @@ public class Commands implements CommandExecutor {
                         int i = 1;
                         boolean arenaName = false;
                         while (!arenaName) {
-                            if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                            if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
                                 arenaNumber = i;
                                 arenaName = true;
                             } else {
                                 i++;
                             }
                         }
-                        while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
+                        while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
                             spawnNumber++;
                         }
-                        pg.arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
-                        pg.arenadata.save(pg.arenadatafile);
+                        arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
+                        arenadata.save(pg.arenadatafile);
                         p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(30));
                     } catch (Exception e) {
                         p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31));
@@ -273,7 +276,7 @@ public class Commands implements CommandExecutor {
                         int i = 1;
                         boolean arenaName = false;
                         while (!arenaName) {
-                            if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                            if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
                                 arenaNumber = i;
                                 arenaName = true;
                             } else {
@@ -281,8 +284,8 @@ public class Commands implements CommandExecutor {
                             }
                         }
                         int spawnNumber = Integer.parseInt(args[2]);
-                        pg.arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
-                        pg.arenadata.save(pg.arenadatafile);
+                        arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
+                        arenadata.save(pg.arenadatafile);
                         p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(32));
                     } catch (Exception e) {
                         p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31));

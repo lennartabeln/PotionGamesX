@@ -7,6 +7,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LightningStrike;
@@ -687,6 +689,7 @@ public class Events implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         Player p = (Player) e.getWhoClicked();
         if (pg.getGamestate() == GameStates.WAITING && !pg.isBuild() && pg.pgPlayers.contains(p) || pg.getGamestate() == GameStates.PREPARING && !pg.isBuild() && pg.pgPlayers.contains(p)) {
             if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(14))) {
@@ -708,8 +711,8 @@ public class Events implements Listener {
                             p.closeInventory();
                             String arenaname = "";
                             for (int i = 0; i <= pg.arenas.size(); i++) {
-                                if (pg.arenadata.contains("pg.arenas." + i)) {
-                                    String name = pg.arenadata.getString("pg.arenas." + i + ".name");
+                                if (arenadata.contains("pg.arenas." + i)) {
+                                    String name = arenadata.getString("pg.arenas." + i + ".name");
                                     if (pg.voteplayernames.containsKey(name) && pg.voteplayernames.containsValue(p)) {
                                         arenaname = name;
                                     }
