@@ -113,6 +113,7 @@ public class PotionGames extends JavaPlugin {
     private boolean activateKits = false;
     private boolean activateShop = false;
     private boolean tickStarted = false;
+    private boolean activateMySQL = false;
     private Connection con;
 
     public Thread checkUpdates = new Thread(() -> {
@@ -285,6 +286,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Kit Selector");
         chat.add("You already have a kit!");
         chat.add("Commands");
+        chat.add("MySQL is deactivated!");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 1, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -451,6 +453,13 @@ public class PotionGames extends JavaPlugin {
         FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
+        if (getConfig().get("pg.activateMySQL") == null) {
+            getConfig().addDefault("pg.activateMySQL", activateMySQL);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateMySQL = getConfig().getBoolean("pg.activateMySQL");
+        }
         if (getConfig().get("pg.countdown") == null) {
             getConfig().addDefault("pg.countdown", countdown);
             getConfig().options().copyDefaults(true);
@@ -642,8 +651,10 @@ public class PotionGames extends JavaPlugin {
             user = getConfig().getString("pg.mysql.user");
             password = getConfig().getString("pg.mysql.password");
         }
-        connect();
-        ConnectMySQL();
+        if (activateMySQL) {
+            connect();
+            ConnectMySQL();
+        }
         getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_GREEN + chat.get(40));
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Events(this), this);
@@ -659,7 +670,9 @@ public class PotionGames extends JavaPlugin {
     @Override
     public void onDisable() {
         reset();
-        close();
+        if (activateMySQL) {
+            close();
+        }
         getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
     }
 
@@ -826,8 +839,9 @@ public class PotionGames extends JavaPlugin {
                                     playercompass.setItemMeta(playercompassmeta);
                                     all.getInventory().setItem(8, playercompass);
                                     if (kitplayernames.containsKey("Rich Kid") && kitplayernames.containsValue(all)) {
-                                        for (int i = 0; i < 5; i++)
+                                        for (int i = 0; i < 5; i++) {
                                             all.getInventory().addItem(coin);
+                                        }
                                     }
                                 }
                                 countdown--;
@@ -852,8 +866,9 @@ public class PotionGames extends JavaPlugin {
                                     if (pgPlayers.size() == 1 || teams.size() == 1)
                                         setCountdown(-2);
                                 } else {
-                                    if (pgPlayers.size() == 1)
+                                    if (pgPlayers.size() == 1) {
                                         setCountdown(-2);
+                                    }
                                 }
                             } else if (countdown == -2) {
                                 for (int i = 0; i < pgPlayers.size(); i++) {
@@ -865,7 +880,9 @@ public class PotionGames extends JavaPlugin {
                                         all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
                                     }
                                     spawnFireworks(winner.getLocation(), 1);
-                                    addWins(winner.getUniqueId().toString(), 1);
+                                    if (activateMySQL) {
+                                        addWins(winner.getUniqueId().toString(), 1);
+                                    }
                                     setCountdown(-3);
                                 }
                             } else if (countdown == -3) {
@@ -1320,8 +1337,10 @@ public class PotionGames extends JavaPlugin {
     public void onLeave(Player p) {
         if (pgPlayers.contains(p)) {
             joinChannel(p.getPlayer(), "Global");
-            if (getGamestate() == GameStates.INGAME && pgPlayers.size() > 1) {
-                addLosts(p.getUniqueId().toString(), 1);
+            if (activateMySQL) {
+                if (getGamestate() == GameStates.INGAME && pgPlayers.size() > 1) {
+                    addLosts(p.getUniqueId().toString(), 1);
+                }
             }
             p.getInventory().setContents(inv.get(p.getName()));
             p.getInventory().setArmorContents(armor.get(p.getName()));
@@ -1705,6 +1724,10 @@ public class PotionGames extends JavaPlugin {
 
     public HashMap<Location, Block> getLiquidPlaced() {
         return liquidPlaced;
+    }
+
+    public boolean isActivateMySQL() {
+        return activateMySQL;
     }
 
     public boolean isStartOnJoin() {

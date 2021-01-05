@@ -80,18 +80,22 @@ public class Commands implements CommandExecutor {
             }
             if (p.hasPermission("pg.stats")) {
                 if (args[0].equalsIgnoreCase("stats")) {
-                    int wins = pg.getWins(p.getUniqueId().toString());
-                    int losts = pg.getLosts(p.getUniqueId().toString());
-                    int kills = pg.getKills(p.getUniqueId().toString());
-                    int deaths = pg.getDeaths(p.getUniqueId().toString());
-                    double kd = pg.getKD(p.getUniqueId().toString());
-                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                    p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
-                    p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
-                    p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
-                    p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
-                    p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
-                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                    if (pg.isActivateMySQL()) {
+                        int wins = pg.getWins(p.getUniqueId().toString());
+                        int losts = pg.getLosts(p.getUniqueId().toString());
+                        int kills = pg.getKills(p.getUniqueId().toString());
+                        int deaths = pg.getDeaths(p.getUniqueId().toString());
+                        double kd = pg.getKD(p.getUniqueId().toString());
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                        p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
+                        p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
+                        p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
+                        p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
+                        p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                    } else {
+                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(65));
+                    }
                 }
             }
             if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("commands")) {
