@@ -23,6 +23,33 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         Player p = (Player) sender;
+        if (args.length == 0) {
+            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
+            if (p.hasPermission("pg.setup")) {
+                p.sendMessage(pg.prefix + "/pg setlobby - Set waiting lobby - Permission: pg.setup");
+                p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add arena - Permission: pg.setup");
+                p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add spawn - Permission: pg.setup");
+                p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove arena - Permission: pg.setup");
+                p.sendMessage(pg.prefix + "/pg delspawn [arenaname] - Remove last added spawn - Permission: pg.setup");
+                p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall - Permission: pg.setup");
+                p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall - Permission: pg.setup");
+            }
+            if (p.hasPermission("pg.build"))
+                p.sendMessage(pg.prefix + "/pg build - Activate build mode - Permission: pg.build");
+            if (p.hasPermission("pg.pause"))
+                p.sendMessage(pg.prefix + "/pg pause - Pause timer/countdown - Permission: pg.pause");
+            if (p.hasPermission("pg.force"))
+                p.sendMessage(pg.prefix + "/pg force [arenaname] - Force arena - Permission: pg.force");
+            if (p.hasPermission("pg.start"))
+                p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10 - Permission: pg.start");
+            if (p.hasPermission("pg.join"))
+                p.sendMessage(pg.prefix + "/pg join - Join the game - When startOnJoin = false - Permission: pg.join");
+            if (p.hasPermission("pg.leave"))
+                p.sendMessage(pg.prefix + "/pg leave - Leave the game - When startOnJoin = false - Permission: pg.leave");
+            if (p.hasPermission("pg.stats"))
+                p.sendMessage(pg.prefix + "/pg stats - Show your stats - Permission: pg.stats");
+            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
+        }
         if (args.length == 1) {
             if (p.hasPermission("pg.setup")) {
                 if (args[0].equalsIgnoreCase("headp1")) {
@@ -67,34 +94,32 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
                 }
             }
-            if (p.hasPermission("pg.help")) {
-                if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("commands")) {
-                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
-                    if (p.hasPermission("pg.setup")) {
-                        p.sendMessage(pg.prefix + "/pg setlobby - Set waiting lobby - Permission: pg.setup");
-                        p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add arena - Permission: pg.setup");
-                        p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add spawn - Permission: pg.setup");
-                        p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove arena - Permission: pg.setup");
-                        p.sendMessage(pg.prefix + "/pg delspawn [arenaname] - Remove last added spawn - Permission: pg.setup");
-                        p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall - Permission: pg.setup");
-                        p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall - Permission: pg.setup");
-                    }
-                    if (p.hasPermission("pg.build"))
-                        p.sendMessage(pg.prefix + "/pg build - Activate build mode - Permission: pg.build");
-                    if (p.hasPermission("pg.pause"))
-                        p.sendMessage(pg.prefix + "/pg pause - Pause timer/countdwon - Permission: pg.pause");
-                    if (p.hasPermission("pg.force"))
-                        p.sendMessage(pg.prefix + "/pg force [arenaname] - Force arena - Permission: pg.force");
-                    if (p.hasPermission("pg.start"))
-                        p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10 - Permission: pg.start");
-                    if (p.hasPermission("pg.join"))
-                        p.sendMessage(pg.prefix + "/pg join - Join the game - When startOnJoin = false - Permission: pg.join");
-                    if (p.hasPermission("pg.leave"))
-                        p.sendMessage(pg.prefix + "/pg leave - Leave the game - When startOnJoin = false - Permission: pg.leave");
-                    if (p.hasPermission("pg.stats"))
-                        p.sendMessage(pg.prefix + "/pg stats - Show your stats - Permission: pg.stats");
-                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
+            if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("commands")) {
+                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
+                if (p.hasPermission("pg.setup")) {
+                    p.sendMessage(pg.prefix + "/pg setlobby - Set waiting lobby - Permission: pg.setup");
+                    p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add arena - Permission: pg.setup");
+                    p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add spawn - Permission: pg.setup");
+                    p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove arena - Permission: pg.setup");
+                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] - Remove last added spawn - Permission: pg.setup");
+                    p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall - Permission: pg.setup");
+                    p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall - Permission: pg.setup");
                 }
+                if (p.hasPermission("pg.build"))
+                    p.sendMessage(pg.prefix + "/pg build - Activate build mode - Permission: pg.build");
+                if (p.hasPermission("pg.pause"))
+                    p.sendMessage(pg.prefix + "/pg pause - Pause timer/countdown - Permission: pg.pause");
+                if (p.hasPermission("pg.force"))
+                    p.sendMessage(pg.prefix + "/pg force [arenaname] - Force arena - Permission: pg.force");
+                if (p.hasPermission("pg.start"))
+                    p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10 - Permission: pg.start");
+                if (p.hasPermission("pg.join"))
+                    p.sendMessage(pg.prefix + "/pg join - Join the game - When startOnJoin = false - Permission: pg.join");
+                if (p.hasPermission("pg.leave"))
+                    p.sendMessage(pg.prefix + "/pg leave - Leave the game - When startOnJoin = false - Permission: pg.leave");
+                if (p.hasPermission("pg.stats"))
+                    p.sendMessage(pg.prefix + "/pg stats - Show your stats - Permission: pg.stats");
+                p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
             }
             if (args[0].equalsIgnoreCase("join")) {
                 if (p.hasPermission("pg.join")) {
@@ -173,6 +198,26 @@ public class Commands implements CommandExecutor {
                     pg.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
                     pg.saveConfig();
                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24));
+                }
+            } else if (args[0].equalsIgnoreCase("force")) {
+                if (p.hasPermission("pg.force")) {
+                    p.sendMessage(pg.prefix + "/pg force [arenaname] - Force arena - Permission: pg.force");
+                }
+            } else if (args[0].equalsIgnoreCase("delarena")) {
+                if (p.hasPermission("pg.setup")) {
+                    p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove arena - Permission: pg.setup");
+                }
+            } else if (args[0].equalsIgnoreCase("addarena")) {
+                if (p.hasPermission("pg.setup")) {
+                    p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add arena - Permission: pg.setup");
+                }
+            } else if (args[0].equalsIgnoreCase("addspawn")) {
+                if (p.hasPermission("pg.setup")) {
+                    p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add spawn - Permission: pg.setup");
+                }
+            } else if (args[0].equalsIgnoreCase("delspawn")) {
+                if (p.hasPermission("pg.setup")) {
+                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] - Remove last added spawn - Permission: pg.setup");
                 }
             }
         } else if (args.length == 2) {
