@@ -594,7 +594,6 @@ public class PotionGames extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //Debug-Start
         if (!kitallowed) {
             kitallowed = true;
             kits.add("Rich Kid");
@@ -628,7 +627,6 @@ public class PotionGames extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //Debug-End
         if (getConfig().get("pg.mysql") == null) {
             getConfig().addDefault("pg.mysql.host", "localhost");
             getConfig().addDefault("pg.mysql.port", "3306");
@@ -722,14 +720,12 @@ public class PotionGames extends JavaPlugin {
                                 }
                             }
                         }
-                        //
                         int kit = 1;
                         for (int i = 0; i < activeKits; i++) {
                             String name = kitdata.getString("pg.kits." + kit + ".name");
                             kits.add(name);
                             kit++;
                         }
-                        //
                         if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
                             ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
                             int ii = 0;
