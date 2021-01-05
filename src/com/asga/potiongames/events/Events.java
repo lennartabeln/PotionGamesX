@@ -267,6 +267,7 @@ public class Events implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
+        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(pg.kitdatafile);
         Player p = e.getPlayer();
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (e.getHand() == EquipmentSlot.HAND) {
@@ -532,7 +533,7 @@ public class Events implements Listener {
                                 inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
                                 pg.chests.put(e.getClickedBlock().getLocation(), inv);
                                 int shopitem = 1;
-                                for (int i = 1; i < pg.getActiveSlots() * 2; i++) {
+                                for (int i = 0; i < pg.getActivePotions(); i++) {
                                     int coinamount;
                                     if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
                                         coinamount = pg.shopsale.get(shopitem - 1);
@@ -550,7 +551,6 @@ public class Events implements Listener {
                                     randombarrier.setItemMeta(randombarriermeta);
                                     inv.setItem(shopitem - 1, randombarrier);
                                     shopitem++;
-                                    i++;
                                 }
                             }
                             p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
@@ -670,15 +670,13 @@ public class Events implements Listener {
                         randombarriermeta.setDisplayName(pg.chat.get(42));
                         randombarrier.setItemMeta(randombarriermeta);
                         inv.setItem(0, randombarrier);
-                        int slot = 1;
-                        for (String i : pg.kits) {
+                        for (int i = 1; i <= pg.getActiveKits(); i++) {
                             ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
                             ItemMeta arenamapmeta = arenamap.getItemMeta();
                             assert arenamapmeta != null;
-                            arenamapmeta.setDisplayName(i);
+                            arenamapmeta.setDisplayName(kitdata.getString("pg.kits." + i + ".name"));
                             arenamap.setItemMeta(arenamapmeta);
-                            inv.setItem(slot, arenamap);
-                            slot++;
+                            inv.setItem(i, arenamap);
                         }
                         p.openInventory(inv);
                     }
@@ -844,7 +842,7 @@ public class Events implements Listener {
                         if (!pg.kited.contains(p.getName())) {
                             if (displayname.equals(pg.chat.get(42))) {
                                 Random rnd = new Random();
-                                int rndKit = rnd.nextInt(pg.kits.size());
+                                int rndKit = rnd.nextInt(pg.getActiveKits());
                                 p.closeInventory();
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
@@ -862,7 +860,7 @@ public class Events implements Listener {
                         } else {
                             p.closeInventory();
                             String kitname = "";
-                            for (int i = 0; i <= pg.kits.size(); i++) {
+                            for (int i = 0; i <= pg.getActiveKits(); i++) {
                                 if (pg.kitplayernames.containsKey(Integer.toString(i)) && pg.kitplayernames.containsValue(p)) {
                                     kitname = String.valueOf(i);
                                 }
@@ -870,7 +868,7 @@ public class Events implements Listener {
                             pg.teamplayernames.remove(kitname, p);
                             if (displayname.equals(pg.chat.get(42))) {
                                 Random rnd = new Random();
-                                int rndKit = rnd.nextInt(pg.kits.size() + 1);
+                                int rndKit = rnd.nextInt(pg.getActiveKits() + 1);
                                 p.closeInventory();
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
@@ -896,7 +894,7 @@ public class Events implements Listener {
         if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
             if (e.getCurrentItem() != null) {
                 int shopitem = 1;
-                for (int i = 0; i < pg.shop.size() * 2; i++) {
+                for (int i = 0; i < pg.shop.size(); i++) {
                     int coinamount;
                     if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
                         coinamount = pg.shopsale.get(shopitem - 1);
@@ -927,7 +925,6 @@ public class Events implements Listener {
                         }
                     }
                     shopitem++;
-                    i++;
                 }
             }
             e.setCancelled(true);

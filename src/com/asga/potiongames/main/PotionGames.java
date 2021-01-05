@@ -85,9 +85,12 @@ public class PotionGames extends JavaPlugin {
     private int minPlayers = maxPlayers / 2;
     private int playerAmount = 0;
     private int teamAmount = maxPlayers / teamSize;
+    public File shopdatafile = new File(getDataFolder() + File.separator + "shopdata.yml");
+    public File kitdatafile = new File(getDataFolder() + File.separator + "kitdata.yml");
     public File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
-    public File shopitemsfile = new File(getDataFolder() + File.separator + "shopitems.yml");
+    private int activePotions = 19;
     public File arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");
+    private int activeKits = 6;
     private String language = "en_US";
     private String vote = "";
     private String votedArena = "";
@@ -137,7 +140,6 @@ public class PotionGames extends JavaPlugin {
             getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
         }
     });
-    private int activeSlots = 19;
 
     public static void spawnFireworks(Location loc, int amount) {
         Firework fw = (Firework) Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.FIREWORK);
@@ -446,8 +448,9 @@ public class PotionGames extends JavaPlugin {
         shopcost.add(4);
         shopsale.add(2);
         FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
-        FileConfiguration shopitems = YamlConfiguration.loadConfiguration(shopitemsfile);
+        FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         if (getConfig().get("pg.countdown") == null) {
             getConfig().addDefault("pg.countdown", countdown);
             getConfig().options().copyDefaults(true);
@@ -505,6 +508,20 @@ public class PotionGames extends JavaPlugin {
             teamSize = getConfig().getInt("pg.teamSize");
             teamAmount = maxPlayers / teamSize;
         }
+        if (getConfig().get("pg.activePotions") == null) {
+            getConfig().addDefault("pg.activePotions", activePotions);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activePotions = getConfig().getInt("pg.activePotions");
+        }
+        if (getConfig().get("pg.activeKits") == null) {
+            getConfig().addDefault("pg.activeKits", activeKits);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activeKits = getConfig().getInt("pg.activeKits");
+        }
         if (getConfig().get("pg.language") == null) {
             getConfig().addDefault("pg.language", language);
             getConfig().options().copyDefaults(true);
@@ -525,7 +542,7 @@ public class PotionGames extends JavaPlugin {
             prefixNoColor = messages.getString("pg.messages." + language + ".prefixNoColor");
         }
         int message = 1;
-        for (int i = 0; i < chat.size() * 2; i++) {
+        for (int i = 0; i < chat.size(); i++) {
             if (messages.get("pg.messages." + language + "." + message) == null) {
                 messages.addDefault("pg.messages." + language + "." + message, chat.get(message - 1));
                 messages.options().copyDefaults(true);
@@ -534,49 +551,41 @@ public class PotionGames extends JavaPlugin {
                 chat.set(message - 1, name);
             }
             message++;
-            i++;
         }
         try {
             messages.save(messagesfile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (getConfig().get("pg.activeSlots") == null) {
-            getConfig().addDefault("pg.activeSlots", activeSlots);
-            getConfig().options().copyDefaults(true);
-        } else {
-            activeSlots = getConfig().getInt("pg.activeSlots");
-        }
         int shopitem = 1;
-        for (int i = 0; i < shop.size() * 2; i++) {
-            if (shopitems.get("pg.shopitems." + shopitem) == null) {
-                shopitems.addDefault("pg.shopitems." + shopitem, shop.get(shopitem - 1));
-                shopitems.addDefault("pg.shopitems." + shopitem + ".name", shop.get(shopitem - 1));
-                shopitems.addDefault("pg.shopitems." + shopitem + "." + "shoppotion", shoppotion.get(shopitem - 1));
-                shopitems.addDefault("pg.shopitems." + shopitem + "." + "shoppotiontype", shoppotiontype.get(shopitem - 1));
-                shopitems.addDefault("pg.shopitems." + shopitem + ".kit", shopkit.get(shopitem - 1));
-                shopitems.addDefault("pg.shopitems." + shopitem + ".cost", shopcost.get(shopitem - 1));
-                shopitems.addDefault("pg.shopitems." + shopitem + ".sale", shopsale.get(shopitem - 1));
-                shopitems.options().copyDefaults(true);
+        for (int i = 0; i < shop.size(); i++) {
+            if (shopdata.get("pg.potions." + shopitem) == null) {
+                shopdata.addDefault("pg.potions." + shopitem, shop.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + ".name", shop.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + "." + "shoppotion", shoppotion.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + "." + "shoppotiontype", shoppotiontype.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + ".kit", shopkit.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + ".cost", shopcost.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + ".sale", shopsale.get(shopitem - 1));
+                shopdata.options().copyDefaults(true);
             } else {
-                String name = shopitems.getString("pg.shopitems." + shopitem + ".name");
+                String name = shopdata.getString("pg.potions." + shopitem + ".name");
                 shop.set(shopitem - 1, name);
-                PotionEffect potion = (PotionEffect) shopitems.get("pg.shopitems." + shopitem + "." + "shoppotion");
+                PotionEffect potion = (PotionEffect) shopdata.get("pg.potions." + shopitem + "." + "shoppotion");
                 shoppotion.set(shopitem - 1, potion);
-                ItemStack potiontype = (ItemStack) shopitems.get("pg.shopitems." + shopitem + "." + "shoppotiontype");
+                ItemStack potiontype = (ItemStack) shopdata.get("pg.potions." + shopitem + "." + "shoppotiontype");
                 shoppotiontype.set(shopitem - 1, potiontype);
-                String kit = shopitems.getString("pg.shopitems." + shopitem + ".kit");
+                String kit = shopdata.getString("pg.potions." + shopitem + ".kit");
                 shopkit.set(shopitem - 1, kit);
-                Integer cost = (Integer) shopitems.get("pg.shopitems." + shopitem + ".cost");
+                Integer cost = (Integer) shopdata.get("pg.potions." + shopitem + ".cost");
                 shopcost.set(shopitem - 1, cost);
-                Integer sale = (Integer) shopitems.get("pg.shopitems." + shopitem + ".sale");
+                Integer sale = (Integer) shopdata.get("pg.potions." + shopitem + ".sale");
                 shopsale.set(shopitem - 1, sale);
             }
             shopitem++;
-            i++;
         }
         try {
-            shopitems.save(shopitemsfile);
+            shopdata.save(shopdatafile);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -585,6 +594,41 @@ public class PotionGames extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //Debug-Start
+        if (!kitallowed) {
+            kitallowed = true;
+            kits.add("Rich Kid");
+            kits.add("Fighter");
+            kits.add("Healer");
+            kits.add("Looter");
+            kits.add("Ghost");
+            kits.add("Tank");
+            for (int i = 7; i < 27; i++) {
+                kits.add("kit" + i);
+            }
+            kitplayers.put(chat.get(42), 0);
+            for (String all : kits) {
+                kitplayers.put(all, 0);
+            }
+        }
+        int kititem = 1;
+        for (int i = 0; i < kits.size(); i++) {
+            if (kitdata.get("pg.kits." + kititem) == null) {
+                kitdata.addDefault("pg.kits." + kititem, kits.get(kititem - 1));
+                kitdata.addDefault("pg.kits." + kititem + ".name", kits.get(kititem - 1));
+                kitdata.options().copyDefaults(true);
+            } else {
+                String name = kitdata.getString("pg.kits." + kititem + ".name");
+                kits.set(kititem - 1, name);
+            }
+            kititem++;
+        }
+        try {
+            kitdata.save(kitdatafile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //Debug-End
         if (getConfig().get("pg.mysql") == null) {
             getConfig().addDefault("pg.mysql.host", "localhost");
             getConfig().addDefault("pg.mysql.port", "3306");
@@ -629,6 +673,7 @@ public class PotionGames extends JavaPlugin {
 
     public void tick() {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         setCountdown(getConfig().getInt("pg.countdown"));
         tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if (!isPause()) {
@@ -677,19 +722,14 @@ public class PotionGames extends JavaPlugin {
                                 }
                             }
                         }
-                        if (!kitallowed) {
-                            kitallowed = true;
-                            kits.add("Rich Kid");
-                            kits.add("Fighter");
-                            kits.add("Healer");
-                            kits.add("Looter");
-                            kits.add("Ghost");
-                            kits.add("Tank");
-                            kitplayers.put(chat.get(42), 0);
-                            for (String all : kits) {
-                                kitplayers.put(all, 0);
-                            }
+                        //
+                        int kit = 1;
+                        for (int i = 0; i < activeKits; i++) {
+                            String name = kitdata.getString("pg.kits." + kit + ".name");
+                            kits.add(name);
+                            kit++;
                         }
+                        //
                         if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
                             ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
                             int ii = 0;
@@ -1152,7 +1192,7 @@ public class PotionGames extends JavaPlugin {
             if (activateKits) {
                 if (!kited.contains(all.getName())) {
                     Random rnd = new Random();
-                    int rndKit = rnd.nextInt(kits.size());
+                    int rndKit = rnd.nextInt(activeKits);
                     all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
                     all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
                     all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
@@ -1587,8 +1627,12 @@ public class PotionGames extends JavaPlugin {
         this.reset = reset;
     }
 
-    public int getActiveSlots() {
-        return activeSlots;
+    public int getActivePotions() {
+        return activePotions;
+    }
+
+    public int getActiveKits() {
+        return activeKits;
     }
 
     public void changePause() {
