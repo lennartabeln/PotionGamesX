@@ -80,7 +80,7 @@ public class Commands implements CommandExecutor {
             }
             if (p.hasPermission("pg.stats")) {
                 if (args[0].equalsIgnoreCase("stats")) {
-                    if (pg.isActivateShop()) {
+                    if (pg.isActivateMySQL()) {
                         int wins = pg.getWins(p.getUniqueId().toString());
                         int losts = pg.getLosts(p.getUniqueId().toString());
                         int kills = pg.getKills(p.getUniqueId().toString());
