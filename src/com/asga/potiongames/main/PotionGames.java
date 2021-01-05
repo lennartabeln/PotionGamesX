@@ -85,12 +85,12 @@ public class PotionGames extends JavaPlugin {
     private int minPlayers = maxPlayers / 2;
     private int playerAmount = 0;
     private int teamAmount = maxPlayers / teamSize;
+    private int activePotions = 19;
+    private int activeKits = 6;
     public File shopdatafile = new File(getDataFolder() + File.separator + "shopdata.yml");
     public File kitdatafile = new File(getDataFolder() + File.separator + "kitdata.yml");
     public File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
-    private int activePotions = 19;
     public File arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");
-    private int activeKits = 6;
     private String language = "en_US";
     private String vote = "";
     private String votedArena = "";
