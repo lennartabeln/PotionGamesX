@@ -115,6 +115,7 @@ public class PotionGames extends JavaPlugin {
     private boolean tickStarted = false;
     private boolean activateMySQL = false;
     private Connection con;
+    private Statement st;
 
     public Thread checkUpdates = new Thread(() -> {
         String latest = "";
@@ -156,46 +157,86 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void connect() {
-        try {
-            con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
-            System.out.println(prefixNoColor + " " + chat.get(36));
-        } catch (SQLException e) {
-            System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+        if (activateMySQL) {
+            try {
+                con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
+                System.out.println(prefixNoColor + " " + chat.get(36));
+            } catch (SQLException e) {
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            }
+        } else {
+            con = null;
+            try {
+                File dbFile = new File(getDataFolder(), "stats.db");
+                String url = "jdbc:sqlite:" + dbFile.getPath();
+                con = DriverManager.getConnection(url);
+                st = con.createStatement();
+                System.out.println(prefixNoColor + " " + chat.get(36));
+            } catch (SQLException e) {
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            }
         }
     }
 
     public void close() {
-        try {
-            if (con != null) {
-                con.close();
-                System.out.println(prefixNoColor + " " + chat.get(38));
+        if (activateMySQL) {
+            try {
+                if (con != null) {
+                    con.close();
+                    System.out.println(prefixNoColor + " " + chat.get(38));
+                }
+            } catch (SQLException e) {
+                System.out.println(prefixNoColor + " " + chat.get(39) + ": " + e.getMessage());
             }
-        } catch (SQLException e) {
-            System.out.println(prefixNoColor + " " + chat.get(39) + ": " + e.getMessage());
+        } else {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
     public void update(String qry) {
-        try {
-            Statement st = con.createStatement();
-            st.executeUpdate(qry);
-            st.close();
-        } catch (SQLException e) {
-            connect();
-            System.err.println();
+        if (activateMySQL) {
+            try {
+                st = con.createStatement();
+                st.executeUpdate(qry);
+                st.close();
+            } catch (SQLException e) {
+                connect();
+                System.err.println();
+            }
+        } else {
+            try {
+                st.execute(qry);
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
     public ResultSet query(String qry) {
-        ResultSet rs = null;
-        try {
-            Statement st = con.createStatement();
-            rs = st.executeQuery(qry);
-        } catch (SQLException e) {
-            connect();
-            System.err.println();
+        if (activateMySQL) {
+            ResultSet rs = null;
+            try {
+                st = con.createStatement();
+                rs = st.executeQuery(qry);
+            } catch (SQLException e) {
+                connect();
+                System.err.println();
+            }
+            return rs;
+        } else {
+            try {
+                return st.executeQuery(qry);
+            } catch (SQLException exception) {
+                exception.printStackTrace();
+            }
+            return null;
         }
-        return rs;
     }
 
     public void joinChannel(Player player, String channelName) {
@@ -651,10 +692,8 @@ public class PotionGames extends JavaPlugin {
             user = getConfig().getString("pg.mysql.user");
             password = getConfig().getString("pg.mysql.password");
         }
-        if (activateMySQL) {
-            connect();
-            ConnectMySQL();
-        }
+        connect();
+        ConnectMySQL();
         getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_GREEN + chat.get(40));
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Events(this), this);
@@ -670,9 +709,7 @@ public class PotionGames extends JavaPlugin {
     @Override
     public void onDisable() {
         reset();
-        if (activateMySQL) {
-            close();
-        }
+        close();
         getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
     }
 
@@ -880,9 +917,7 @@ public class PotionGames extends JavaPlugin {
                                         all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
                                     }
                                     spawnFireworks(winner.getLocation(), 1);
-                                    if (activateMySQL) {
-                                        addWins(winner.getUniqueId().toString(), 1);
-                                    }
+                                    addWins(winner.getUniqueId().toString(), 1);
                                     setCountdown(-3);
                                 }
                             } else if (countdown == -3) {
@@ -1187,7 +1222,7 @@ public class PotionGames extends JavaPlugin {
                     while (!teamfound) {
                         Random rnd = new Random();
                         int rndTeam = rnd.nextInt(teams.size() + 1);
-                        if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
+                        if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers && teamplayers.get(Integer.toString(rndTeam)) != null) {
                             teamfound = true;
                             int players = teamplayers.get(Integer.toString(rndTeam));
                             players++;
@@ -1337,10 +1372,8 @@ public class PotionGames extends JavaPlugin {
     public void onLeave(Player p) {
         if (pgPlayers.contains(p)) {
             joinChannel(p.getPlayer(), "Global");
-            if (activateMySQL) {
-                if (getGamestate() == GameStates.INGAME && pgPlayers.size() > 1) {
-                    addLosts(p.getUniqueId().toString(), 1);
-                }
+            if (getGamestate() == GameStates.INGAME && pgPlayers.size() > 1) {
+                addLosts(p.getUniqueId().toString(), 1);
             }
             p.getInventory().setContents(inv.get(p.getName()));
             p.getInventory().setArmorContents(armor.get(p.getName()));
@@ -1724,10 +1757,6 @@ public class PotionGames extends JavaPlugin {
 
     public HashMap<Location, Block> getLiquidPlaced() {
         return liquidPlaced;
-    }
-
-    public boolean isActivateMySQL() {
-        return activateMySQL;
     }
 
     public boolean isStartOnJoin() {

@@ -200,15 +200,13 @@ public class Events implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
-        if (pg.isActivateMySQL()) {
-            if (p.getKiller() != null) {
-                pg.addDeaths(p.getUniqueId().toString(), 1);
-                pg.addLosts(p.getUniqueId().toString(), 1);
-                pg.addKills(p.getKiller().getUniqueId().toString(), 1);
-            } else {
-                pg.addDeaths(p.getUniqueId().toString(), 1);
-                pg.addLosts(p.getUniqueId().toString(), 1);
-            }
+        if (p.getKiller() != null) {
+            pg.addDeaths(p.getUniqueId().toString(), 1);
+            pg.addLosts(p.getUniqueId().toString(), 1);
+            pg.addKills(p.getKiller().getUniqueId().toString(), 1);
+        } else {
+            pg.addDeaths(p.getUniqueId().toString(), 1);
+            pg.addLosts(p.getUniqueId().toString(), 1);
         }
         if (pg.pgPlayers.contains(p)) {
             e.setKeepLevel(true);
@@ -292,21 +290,19 @@ public class Events implements Listener {
                         if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p))
                             pg.onJoin(p);
                     }
-                    if (pg.isActivateMySQL()) {
-                        if (line2.matches("PotionGames") && line3.matches("Stats")) {
-                            int wins = pg.getWins(p.getUniqueId().toString());
-                            int losts = pg.getLosts(p.getUniqueId().toString());
-                            int kills = pg.getKills(p.getUniqueId().toString());
-                            int deaths = pg.getDeaths(p.getUniqueId().toString());
-                            double kd = pg.getKD(p.getUniqueId().toString());
-                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                            p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
-                            p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
-                            p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
-                            p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
-                            p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
-                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                        }
+                    if (line2.matches("PotionGames") && line3.matches("Stats")) {
+                        int wins = pg.getWins(p.getUniqueId().toString());
+                        int losts = pg.getLosts(p.getUniqueId().toString());
+                        int kills = pg.getKills(p.getUniqueId().toString());
+                        int deaths = pg.getDeaths(p.getUniqueId().toString());
+                        double kd = pg.getKD(p.getUniqueId().toString());
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                        p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
+                        p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
+                        p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
+                        p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
+                        p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
                     }
                 }
             }
