@@ -68,6 +68,7 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<ItemStack> armour5 = new ArrayList<>();
     public ArrayList<ItemStack> weapons1 = new ArrayList<>();
     public ArrayList<ItemStack> weapons2 = new ArrayList<>();
+    public ArrayList<PotionEffect> potions = new ArrayList<>();
     public HashMap<Integer, String> rank = new HashMap<>();
     public HashMap<String, Integer> votes = new HashMap<>();
     public HashMap<String, Player> voteplayernames = new HashMap<>();
@@ -777,6 +778,29 @@ public class PotionGames extends JavaPlugin {
         weapons2.add(new ItemStack(Material.IRON_AXE, 1));
         weapons2.add(new ItemStack(Material.DIAMOND_SWORD, 1));
         weapons2.add(new ItemStack(Material.DIAMOND_AXE, 1));
+        potions.add(new PotionEffect(PotionEffectType.SPEED, 40 * 20, 2));
+        potions.add(new PotionEffect(PotionEffectType.SLOW, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.HEAL, 1, 0));
+        potions.add(new PotionEffect(PotionEffectType.HARM, 1, 0));
+        potions.add(new PotionEffect(PotionEffectType.JUMP, 40 * 20, 3));
+        potions.add(new PotionEffect(PotionEffectType.CONFUSION, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.REGENERATION, 20 * 20, 1));
+        potions.add(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 60 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.INVISIBILITY, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.HUNGER, 10 * 20, 1));
+        potions.add(new PotionEffect(PotionEffectType.WEAKNESS, 60 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.POISON, 10 * 20, 1));
+        potions.add(new PotionEffect(PotionEffectType.WITHER, 10 * 20, 1));
+        potions.add(new PotionEffect(PotionEffectType.ABSORPTION, 60 * 20, 2));
+        potions.add(new PotionEffect(PotionEffectType.GLOWING, 20 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.HEALTH_BOOST, 60 * 20, 2));
+        potions.add(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 60 * 20, 2));
+        potions.add(new PotionEffect(PotionEffectType.SATURATION, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.NIGHT_VISION, 60 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.WATER_BREATHING, 60 * 20, 2));
         int chestitem = 1;
         if (chestdata.get("pg.food1." + chestitem) == null) {
             for (int i = 0; i < food1.size(); i++) {
@@ -900,6 +924,20 @@ public class PotionGames extends JavaPlugin {
             while (chestdata.contains("pg.weapons2" + chestitem)) {
                 ItemStack item = (ItemStack) chestdata.get("pg.weapons2." + chestitem);
                 weapons2.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        chestitem = 1;
+        if (chestdata.get("pg.potions." + chestitem) == null) {
+            for (int i = 0; i < potions.size(); i++) {
+                chestdata.addDefault("pg.potions." + chestitem, potions.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.potions" + chestitem)) {
+                PotionEffect effect = (PotionEffect) chestdata.get("pg.potions." + chestitem);
+                potions.set(chestitem - 1, effect);
                 chestitem++;
             }
         }
@@ -1275,6 +1313,14 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void clearEffects(Player all) {
+        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
+        int chestitem = 1;
+        while (chestdata.contains("pg.potions" + chestitem)) {
+            PotionEffect effect = (PotionEffect) chestdata.get("pg.potions." + chestitem);
+            assert effect != null;
+            all.removePotionEffect(effect.getType());
+            chestitem++;
+        }
         if (all.hasPotionEffect(PotionEffectType.SPEED)) {
             all.removePotionEffect(PotionEffectType.SPEED);
         }
@@ -1436,7 +1482,8 @@ public class PotionGames extends JavaPlugin {
                     while (!teamfound) {
                         Random rnd = new Random();
                         int rndTeam = rnd.nextInt(teams.size() + 1);
-                        if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers && teamplayers.get(Integer.toString(rndTeam)) != null) {
+                        assert teamplayers != null;
+                        if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
                             teamfound = true;
                             int players = teamplayers.get(Integer.toString(rndTeam));
                             players++;

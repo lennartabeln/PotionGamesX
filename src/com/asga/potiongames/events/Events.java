@@ -389,32 +389,8 @@ public class Events implements Listener {
                                 int tries = effect.nextInt(diff + 1);
                                 while (tries != 0) {
                                     tries--;
-                                    ArrayList<PotionEffect> potions = new ArrayList<>();
-                                    potions.add(new PotionEffect(PotionEffectType.SPEED, 40 * 20, 2));
-                                    potions.add(new PotionEffect(PotionEffectType.SLOW, 40 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 40 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.HEAL, 1, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.HARM, 1, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.JUMP, 40 * 20, 3));
-                                    potions.add(new PotionEffect(PotionEffectType.CONFUSION, 40 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.REGENERATION, 20 * 20, 1));
-                                    potions.add(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 40 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 60 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.INVISIBILITY, 40 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.HUNGER, 10 * 20, 1));
-                                    potions.add(new PotionEffect(PotionEffectType.WEAKNESS, 60 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.POISON, 10 * 20, 1));
-                                    potions.add(new PotionEffect(PotionEffectType.WITHER, 10 * 20, 1));
-                                    potions.add(new PotionEffect(PotionEffectType.ABSORPTION, 60 * 20, 2));
-                                    potions.add(new PotionEffect(PotionEffectType.GLOWING, 20 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.HEALTH_BOOST, 60 * 20, 2));
-                                    potions.add(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 60 * 20, 2));
-                                    potions.add(new PotionEffect(PotionEffectType.SATURATION, 40 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.NIGHT_VISION, 60 * 20, 0));
-                                    potions.add(new PotionEffect(PotionEffectType.WATER_BREATHING, 60 * 20, 2));
-                                    int potion = effect.nextInt(potions.size());
-                                    p.addPotionEffect(potions.get(potion));
+                                    int potion = effect.nextInt(pg.potions.size());
+                                    p.addPotionEffect(pg.potions.get(potion));
                                 }
                             }
                         }
@@ -690,6 +666,7 @@ public class Events implements Listener {
                                     while (!teamfound) {
                                         Random rnd = new Random();
                                         int rndTeam = rnd.nextInt(pg.teams.size() + 1);
+                                        assert pg.teamplayers != null;
                                         if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
                                             teamfound = true;
                                             p.closeInventory();
@@ -740,6 +717,7 @@ public class Events implements Listener {
                                     while (!teamfound) {
                                         Random rnd = new Random();
                                         int rndTeam = rnd.nextInt(pg.teams.size() + 1);
+                                        assert pg.teamplayers != null;
                                         if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
                                             teamfound = true;
                                             p.closeInventory();
