@@ -34,20 +34,27 @@ public class Commands implements CommandExecutor {
                 p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall - Permission: pg.setup");
                 p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall - Permission: pg.setup");
             }
-            if (p.hasPermission("pg.build"))
+            if (p.hasPermission("pg.build")) {
                 p.sendMessage(pg.prefix + "/pg build - Activate build mode - Permission: pg.build");
-            if (p.hasPermission("pg.pause"))
+            }
+            if (p.hasPermission("pg.pause")) {
                 p.sendMessage(pg.prefix + "/pg pause - Pause timer/countdown - Permission: pg.pause");
-            if (p.hasPermission("pg.force"))
+            }
+            if (p.hasPermission("pg.force")) {
                 p.sendMessage(pg.prefix + "/pg force [arenaname] - Force arena - Permission: pg.force");
-            if (p.hasPermission("pg.start"))
+            }
+            if (p.hasPermission("pg.start")) {
                 p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10 - Permission: pg.start");
-            if (p.hasPermission("pg.join"))
+            }
+            if (p.hasPermission("pg.join")) {
                 p.sendMessage(pg.prefix + "/pg join - Join the game - When startOnJoin = false - Permission: pg.join");
-            if (p.hasPermission("pg.leave"))
+            }
+            if (p.hasPermission("pg.leave")) {
                 p.sendMessage(pg.prefix + "/pg leave - Leave the game - When startOnJoin = false - Permission: pg.leave");
-            if (p.hasPermission("pg.stats"))
+            }
+            if (p.hasPermission("pg.stats")) {
                 p.sendMessage(pg.prefix + "/pg stats - Show your stats - Permission: pg.stats");
+            }
             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
         }
         if (args.length == 1) {
@@ -105,20 +112,27 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall - Permission: pg.setup");
                     p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall - Permission: pg.setup");
                 }
-                if (p.hasPermission("pg.build"))
+                if (p.hasPermission("pg.build")) {
                     p.sendMessage(pg.prefix + "/pg build - Activate build mode - Permission: pg.build");
-                if (p.hasPermission("pg.pause"))
+                }
+                if (p.hasPermission("pg.pause")) {
                     p.sendMessage(pg.prefix + "/pg pause - Pause timer/countdown - Permission: pg.pause");
-                if (p.hasPermission("pg.force"))
+                }
+                if (p.hasPermission("pg.force")) {
                     p.sendMessage(pg.prefix + "/pg force [arenaname] - Force arena - Permission: pg.force");
-                if (p.hasPermission("pg.start"))
+                }
+                if (p.hasPermission("pg.start")) {
                     p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10 - Permission: pg.start");
-                if (p.hasPermission("pg.join"))
+                }
+                if (p.hasPermission("pg.join")) {
                     p.sendMessage(pg.prefix + "/pg join - Join the game - When startOnJoin = false - Permission: pg.join");
-                if (p.hasPermission("pg.leave"))
+                }
+                if (p.hasPermission("pg.leave")) {
                     p.sendMessage(pg.prefix + "/pg leave - Leave the game - When startOnJoin = false - Permission: pg.leave");
-                if (p.hasPermission("pg.stats"))
+                }
+                if (p.hasPermission("pg.stats")) {
                     p.sendMessage(pg.prefix + "/pg stats - Show your stats - Permission: pg.stats");
+                }
                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
             }
             if (args[0].equalsIgnoreCase("join")) {
@@ -282,7 +296,6 @@ public class Commands implements CommandExecutor {
                         arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
                         arenadata.set("pg.arenas." + arenaNumber + ".name", arenaName);
                         p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(29));
-
                     } catch (Exception e) {
                         p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                     }
@@ -340,4 +353,5 @@ public class Commands implements CommandExecutor {
         }
         return false;
     }
+
 }

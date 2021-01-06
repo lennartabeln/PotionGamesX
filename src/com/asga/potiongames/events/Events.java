@@ -233,11 +233,13 @@ public class Events implements Listener {
                 assert killer != null;
                 killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
                 if (pg.kitplayernames.containsKey("Rich Kid") && pg.kitplayernames.containsValue(p)) {
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < 10; i++) {
                         killer.getInventory().addItem(pg.getCoin());
+                    }
                 } else {
-                    for (int i = 0; i < 5; i++)
+                    for (int i = 0; i < 5; i++) {
                         killer.getInventory().addItem(pg.getCoin());
+                    }
                 }
                 e.setDeathMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
             } catch (Exception ex) {
@@ -287,8 +289,9 @@ public class Events implements Listener {
                     String line2 = sign.getLine(1);
                     String line3 = sign.getLine(2);
                     if (line2.matches("PotionGames") && line3.matches("Join")) {
-                        if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p))
+                        if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
                             pg.onJoin(p);
+                        }
                     }
                     if (line2.matches("PotionGames") && line3.matches("Stats")) {
                         int wins = pg.getWins(p.getUniqueId().toString());
@@ -523,10 +526,12 @@ public class Events implements Listener {
                             if (pg.getGamestate() == GameStates.INGAME) {
                                 for (ItemStack item : p.getInventory().getContents()) {
                                     if (item != null) {
-                                        if (item.getType() == pg.getCoin().getType())
+                                        if (item.getType() == pg.getCoin().getType()) {
                                             amount = item.getAmount();
-                                        if (item.getType() == Material.GLASS_BOTTLE)
+                                        }
+                                        if (item.getType() == Material.GLASS_BOTTLE) {
                                             bottle = item.getAmount();
+                                        }
                                     }
                                 }
                                 Inventory inv;
@@ -587,8 +592,9 @@ public class Events implements Listener {
                             double lastDistance = Double.MAX_VALUE;
                             for (Player cp : p.getWorld().getPlayers()) {
                                 if (pg.getPgPlayers().contains(cp)) {
-                                    if (p == cp)
+                                    if (p == cp) {
                                         continue;
+                                    }
                                     double distance = p.getLocation().distance(cp.getLocation());
                                     if (distance < lastDistance) {
                                         lastDistance = distance;
@@ -913,10 +919,12 @@ public class Events implements Listener {
                                 randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
                                 randombarrier.setItemMeta(randombarriermeta);
                                 p.getInventory().addItem(randombarrier);
-                                for (int k = 0; k < coinamount; k++)
+                                for (int k = 0; k < coinamount; k++) {
                                     p.getInventory().removeItem(pg.getCoin());
-                                for (int k = 0; k < 1; k++)
+                                }
+                                for (int k = 0; k < 1; k++) {
                                     p.getInventory().removeItem(pg.getBottle());
+                                }
                             } else {
                                 p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
                             }
@@ -951,8 +959,7 @@ public class Events implements Listener {
             String latest = "";
             try {
                 URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
-                BufferedReader bufferedReader = new BufferedReader(
-                        new InputStreamReader(url.openStream()));
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
                 StringBuilder stringBuilder = new StringBuilder();
                 String inputLine;
                 while ((inputLine = bufferedReader.readLine()) != null) {
