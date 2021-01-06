@@ -24,7 +24,6 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
@@ -321,69 +320,7 @@ public class Events implements Listener {
                             if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
                                 Inventory inv;
                                 inv = Bukkit.createInventory(p, 27, ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games");
-                                ArrayList<ItemStack> food1 = new ArrayList<>();
-                                food1.add(new ItemStack(Material.CAKE, 1));
-                                food1.add(new ItemStack(Material.BREAD, 3));
-                                food1.add(new ItemStack(Material.PUMPKIN_PIE, 3));
-                                food1.add(new ItemStack(Material.COOKIE, 3));
-                                food1.add(new ItemStack(Material.BAKED_POTATO, 3));
-                                ArrayList<ItemStack> food2 = new ArrayList<>();
-                                food2.add(new ItemStack(Material.RABBIT_STEW, 1));
-                                food2.add(new ItemStack(Material.MUSHROOM_STEW, 1));
-                                food2.add(new ItemStack(Material.BEETROOT_SOUP, 1));
-                                food2.add(new ItemStack(Material.GOLDEN_CARROT, 1));
-                                ArrayList<ItemStack> armour1 = new ArrayList<>();
-                                armour1.add(new ItemStack(Material.LEATHER_HELMET, 1));
-                                armour1.add(new ItemStack(Material.LEATHER_CHESTPLATE, 1));
-                                armour1.add(new ItemStack(Material.LEATHER_LEGGINGS, 1));
-                                armour1.add(new ItemStack(Material.LEATHER_BOOTS, 1));
-                                ArrayList<ItemStack> armour2 = new ArrayList<>();
-                                armour2.add(new ItemStack(Material.CHAINMAIL_HELMET, 1));
-                                armour2.add(new ItemStack(Material.CHAINMAIL_CHESTPLATE, 1));
-                                armour2.add(new ItemStack(Material.CHAINMAIL_LEGGINGS, 1));
-                                armour2.add(new ItemStack(Material.CHAINMAIL_BOOTS, 1));
-                                ArrayList<ItemStack> armour3 = new ArrayList<>();
-                                armour3.add(new ItemStack(Material.GOLDEN_HELMET, 1));
-                                armour3.add(new ItemStack(Material.GOLDEN_CHESTPLATE, 1));
-                                armour3.add(new ItemStack(Material.GOLDEN_LEGGINGS, 1));
-                                armour3.add(new ItemStack(Material.GOLDEN_BOOTS, 1));
-                                ArrayList<ItemStack> armour4 = new ArrayList<>();
-                                armour4.add(new ItemStack(Material.IRON_HELMET, 1));
-                                armour4.add(new ItemStack(Material.IRON_CHESTPLATE, 1));
-                                armour4.add(new ItemStack(Material.IRON_LEGGINGS, 1));
-                                armour4.add(new ItemStack(Material.IRON_BOOTS, 1));
-                                ArrayList<ItemStack> armour5 = new ArrayList<>();
-                                armour5.add(new ItemStack(Material.DIAMOND_HELMET, 1));
-                                armour5.add(new ItemStack(Material.DIAMOND_CHESTPLATE, 1));
-                                armour5.add(new ItemStack(Material.DIAMOND_LEGGINGS, 1));
-                                armour5.add(new ItemStack(Material.DIAMOND_BOOTS, 1));
-                                ArrayList<ItemStack> weapons1 = new ArrayList<>();
-                                weapons1.add(new ItemStack(Material.FISHING_ROD, 1));
-                                weapons1.add(new ItemStack(Material.BOW, 1));
-                                weapons1.add(new ItemStack(Material.ARROW, 5));
-                                weapons1.add(new ItemStack(Material.SPECTRAL_ARROW, 1));
-                                weapons1.add(new ItemStack(Material.SHIELD, 1));
-                                ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL, 1);
-                                ItemMeta itemMeta = itemStack.getItemMeta();
-                                if (itemMeta instanceof Damageable) {
-                                    ((Damageable) itemMeta).setDamage(60);
-                                }
-                                itemStack.setItemMeta(itemMeta);
-                                weapons1.add(itemStack);
-                                weapons1.add(new ItemStack(Material.COBWEB, 3));
-                                weapons1.add(new ItemStack(Material.WATER_BUCKET, 1));
-                                weapons1.add(new ItemStack(Material.LAVA_BUCKET, 1));
-                                weapons1.add(new ItemStack(Material.WOODEN_SWORD, 1));
-                                weapons1.add(new ItemStack(Material.STONE_SWORD, 1));
-                                weapons1.add(new ItemStack(Material.WOODEN_AXE, 1));
-                                weapons1.add(new ItemStack(Material.STONE_AXE, 1));
-                                ArrayList<ItemStack> weapons2 = new ArrayList<>();
-                                weapons2.add(new ItemStack(Material.GOLDEN_SWORD, 1));
-                                weapons2.add(new ItemStack(Material.IRON_SWORD, 1));
-                                weapons2.add(new ItemStack(Material.GOLDEN_AXE, 1));
-                                weapons2.add(new ItemStack(Material.IRON_AXE, 1));
-                                weapons2.add(new ItemStack(Material.DIAMOND_SWORD, 1));
-                                weapons2.add(new ItemStack(Material.DIAMOND_AXE, 1));
+                                pg.chestData();
                                 Random rnd = new Random();
                                 int max = 6;
                                 int min = 2;
@@ -402,8 +339,8 @@ public class Events implements Listener {
                                             potions2.add(pg.getCoin());
                                             int item = rnd.nextInt(5);
                                             if (item < 3) {
-                                                int item1 = rnd.nextInt(food1.size());
-                                                inv.setItem(slot, food1.get(item1));
+                                                int item1 = rnd.nextInt(pg.food1.size());
+                                                inv.setItem(slot, pg.food1.get(item1));
                                             } else if (item < 4) {
                                                 int item1 = rnd.nextInt(potions1.size());
                                                 inv.setItem(slot, potions1.get(item1));
@@ -412,33 +349,33 @@ public class Events implements Listener {
                                                 inv.setItem(slot, potions2.get(item1));
                                             }
                                         } else {
-                                            int item1 = rnd.nextInt(food1.size());
-                                            inv.setItem(slot, food1.get(item1));
+                                            int item1 = rnd.nextInt(pg.food1.size());
+                                            inv.setItem(slot, pg.food1.get(item1));
                                         }
                                     } else if (roll < 30) {
-                                        int item2 = rnd.nextInt(food2.size());
-                                        inv.setItem(slot, food2.get(item2));
+                                        int item2 = rnd.nextInt(pg.food2.size());
+                                        inv.setItem(slot, pg.food2.get(item2));
                                     } else if (roll < 45) {
-                                        int item3 = rnd.nextInt(armour1.size());
-                                        inv.setItem(slot, armour1.get(item3));
+                                        int item3 = rnd.nextInt(pg.armour1.size());
+                                        inv.setItem(slot, pg.armour1.get(item3));
                                     } else if (roll < 60) {
-                                        int item4 = rnd.nextInt(armour2.size());
-                                        inv.setItem(slot, armour2.get(item4));
+                                        int item4 = rnd.nextInt(pg.armour2.size());
+                                        inv.setItem(slot, pg.armour2.get(item4));
                                     } else if (roll < 67) {
-                                        int item5 = rnd.nextInt(armour3.size());
-                                        inv.setItem(slot, armour3.get(item5));
+                                        int item5 = rnd.nextInt(pg.armour3.size());
+                                        inv.setItem(slot, pg.armour3.get(item5));
                                     } else if (roll < 72) {
-                                        int item6 = rnd.nextInt(armour4.size());
-                                        inv.setItem(slot, armour4.get(item6));
+                                        int item6 = rnd.nextInt(pg.armour4.size());
+                                        inv.setItem(slot, pg.armour4.get(item6));
                                     } else if (roll < 75) {
-                                        int item7 = rnd.nextInt(armour5.size());
-                                        inv.setItem(slot, armour5.get(item7));
+                                        int item7 = rnd.nextInt(pg.armour5.size());
+                                        inv.setItem(slot, pg.armour5.get(item7));
                                     } else if (roll < 95) {
-                                        int item8 = rnd.nextInt(weapons1.size());
-                                        inv.setItem(slot, weapons1.get(item8));
+                                        int item8 = rnd.nextInt(pg.weapons1.size());
+                                        inv.setItem(slot, pg.weapons1.get(item8));
                                     } else {
-                                        int item9 = rnd.nextInt(weapons2.size());
-                                        inv.setItem(slot, weapons2.get(item9));
+                                        int item9 = rnd.nextInt(pg.weapons2.size());
+                                        inv.setItem(slot, pg.weapons2.get(item9));
                                     }
                                 }
                                 pg.chests.put(e.getClickedBlock().getLocation(), inv);

@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
@@ -58,6 +59,15 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<Integer> shopsale = new ArrayList<>();
     public ArrayList<Location> rankhead = new ArrayList<>();
     public ArrayList<Location> ranksign = new ArrayList<>();
+    public ArrayList<ItemStack> food1 = new ArrayList<>();
+    public ArrayList<ItemStack> food2 = new ArrayList<>();
+    public ArrayList<ItemStack> armour1 = new ArrayList<>();
+    public ArrayList<ItemStack> armour2 = new ArrayList<>();
+    public ArrayList<ItemStack> armour3 = new ArrayList<>();
+    public ArrayList<ItemStack> armour4 = new ArrayList<>();
+    public ArrayList<ItemStack> armour5 = new ArrayList<>();
+    public ArrayList<ItemStack> weapons1 = new ArrayList<>();
+    public ArrayList<ItemStack> weapons2 = new ArrayList<>();
     public HashMap<Integer, String> rank = new HashMap<>();
     public HashMap<String, Integer> votes = new HashMap<>();
     public HashMap<String, Player> voteplayernames = new HashMap<>();
@@ -91,6 +101,7 @@ public class PotionGames extends JavaPlugin {
     public File kitdatafile = new File(getDataFolder() + File.separator + "kitdata.yml");
     public File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
     public File arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");
+    public File chestdatafile = new File(getDataFolder() + File.separator + "chestdata.yml");
     private String language = "en_US";
     private String vote = "";
     private String votedArena = "";
@@ -667,6 +678,7 @@ public class PotionGames extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        chestData();
         if (getConfig().get("pg.mysql") == null) {
             getConfig().addDefault("pg.mysql.host", "localhost");
             getConfig().addDefault("pg.mysql.port", "3306");
@@ -706,6 +718,195 @@ public class PotionGames extends JavaPlugin {
     public void reset() {
         for (Player all : Bukkit.getOnlinePlayers()) {
             all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
+        }
+    }
+
+    public void chestData() {
+        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
+        food1.add(new ItemStack(Material.CAKE, 1));
+        food1.add(new ItemStack(Material.BREAD, 3));
+        food1.add(new ItemStack(Material.PUMPKIN_PIE, 3));
+        food1.add(new ItemStack(Material.COOKIE, 3));
+        food1.add(new ItemStack(Material.BAKED_POTATO, 3));
+        food2.add(new ItemStack(Material.RABBIT_STEW, 1));
+        food2.add(new ItemStack(Material.MUSHROOM_STEW, 1));
+        food2.add(new ItemStack(Material.BEETROOT_SOUP, 1));
+        food2.add(new ItemStack(Material.GOLDEN_CARROT, 1));
+        armour1.add(new ItemStack(Material.LEATHER_HELMET, 1));
+        armour1.add(new ItemStack(Material.LEATHER_CHESTPLATE, 1));
+        armour1.add(new ItemStack(Material.LEATHER_LEGGINGS, 1));
+        armour1.add(new ItemStack(Material.LEATHER_BOOTS, 1));
+        armour2.add(new ItemStack(Material.CHAINMAIL_HELMET, 1));
+        armour2.add(new ItemStack(Material.CHAINMAIL_CHESTPLATE, 1));
+        armour2.add(new ItemStack(Material.CHAINMAIL_LEGGINGS, 1));
+        armour2.add(new ItemStack(Material.CHAINMAIL_BOOTS, 1));
+        armour3.add(new ItemStack(Material.GOLDEN_HELMET, 1));
+        armour3.add(new ItemStack(Material.GOLDEN_CHESTPLATE, 1));
+        armour3.add(new ItemStack(Material.GOLDEN_LEGGINGS, 1));
+        armour3.add(new ItemStack(Material.GOLDEN_BOOTS, 1));
+        armour4.add(new ItemStack(Material.IRON_HELMET, 1));
+        armour4.add(new ItemStack(Material.IRON_CHESTPLATE, 1));
+        armour4.add(new ItemStack(Material.IRON_LEGGINGS, 1));
+        armour4.add(new ItemStack(Material.IRON_BOOTS, 1));
+        armour5.add(new ItemStack(Material.DIAMOND_HELMET, 1));
+        armour5.add(new ItemStack(Material.DIAMOND_CHESTPLATE, 1));
+        armour5.add(new ItemStack(Material.DIAMOND_LEGGINGS, 1));
+        armour5.add(new ItemStack(Material.DIAMOND_BOOTS, 1));
+        weapons1.add(new ItemStack(Material.FISHING_ROD, 1));
+        weapons1.add(new ItemStack(Material.BOW, 1));
+        weapons1.add(new ItemStack(Material.ARROW, 5));
+        weapons1.add(new ItemStack(Material.SPECTRAL_ARROW, 1));
+        weapons1.add(new ItemStack(Material.SHIELD, 1));
+        ItemStack itemStack = new ItemStack(Material.FLINT_AND_STEEL, 1);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta instanceof Damageable) {
+            ((Damageable) itemMeta).setDamage(60);
+        }
+        itemStack.setItemMeta(itemMeta);
+        weapons1.add(itemStack);
+        weapons1.add(new ItemStack(Material.COBWEB, 3));
+        weapons1.add(new ItemStack(Material.WATER_BUCKET, 1));
+        weapons1.add(new ItemStack(Material.LAVA_BUCKET, 1));
+        weapons1.add(new ItemStack(Material.WOODEN_SWORD, 1));
+        weapons1.add(new ItemStack(Material.STONE_SWORD, 1));
+        weapons1.add(new ItemStack(Material.WOODEN_AXE, 1));
+        weapons1.add(new ItemStack(Material.STONE_AXE, 1));
+        weapons2.add(new ItemStack(Material.GOLDEN_SWORD, 1));
+        weapons2.add(new ItemStack(Material.IRON_SWORD, 1));
+        weapons2.add(new ItemStack(Material.GOLDEN_AXE, 1));
+        weapons2.add(new ItemStack(Material.IRON_AXE, 1));
+        weapons2.add(new ItemStack(Material.DIAMOND_SWORD, 1));
+        weapons2.add(new ItemStack(Material.DIAMOND_AXE, 1));
+        int chestitem = 1;
+        if (chestdata.get("pg.food1." + chestitem) == null) {
+            for (int i = 0; i < food1.size(); i++) {
+                chestdata.addDefault("pg.food1." + chestitem, food1.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.food1" + chestitem)) {
+                ItemStack item = (ItemStack) chestdata.get("pg.food1." + chestitem);
+                food1.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        chestitem = 1;
+        if (chestdata.get("pg.food2." + chestitem) == null) {
+            for (int i = 0; i < food2.size(); i++) {
+                chestdata.addDefault("pg.food2." + chestitem, food2.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.food2" + chestitem)) {
+                ItemStack item = (ItemStack) chestdata.get("pg.food2." + chestitem);
+                food2.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        chestitem = 1;
+        if (chestdata.get("pg.armour1." + chestitem) == null) {
+            for (int i = 0; i < armour1.size(); i++) {
+                chestdata.addDefault("pg.armour1." + chestitem, armour1.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.armour1" + chestitem)) {
+                ItemStack item = (ItemStack) chestdata.get("pg.armour1." + chestitem);
+                armour1.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        chestitem = 1;
+        if (chestdata.get("pg.armour2." + chestitem) == null) {
+            for (int i = 0; i < armour2.size(); i++) {
+                chestdata.addDefault("pg.armour2." + chestitem, armour2.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.armour2" + chestitem)) {
+                ItemStack item = (ItemStack) chestdata.get("pg.armour2." + chestitem);
+                armour2.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        chestitem = 1;
+        if (chestdata.get("pg.armour3." + chestitem) == null) {
+            for (int i = 0; i < armour3.size(); i++) {
+                chestdata.addDefault("pg.armour3." + chestitem, armour3.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.armour3" + chestitem)) {
+                ItemStack item = (ItemStack) chestdata.get("pg.armour3." + chestitem);
+                armour3.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        chestitem = 1;
+        if (chestdata.get("pg.armour4." + chestitem) == null) {
+            for (int i = 0; i < armour4.size(); i++) {
+                chestdata.addDefault("pg.armour4." + chestitem, armour4.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.armour4" + chestitem)) {
+                ItemStack item = (ItemStack) chestdata.get("pg.armour4." + chestitem);
+                armour4.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        chestitem = 1;
+        if (chestdata.get("pg.armour5." + chestitem) == null) {
+            for (int i = 0; i < armour5.size(); i++) {
+                chestdata.addDefault("pg.armour5." + chestitem, armour5.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.armour5" + chestitem)) {
+                ItemStack item = (ItemStack) chestdata.get("pg.armour5." + chestitem);
+                armour5.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        chestitem = 1;
+        if (chestdata.get("pg.weapons1." + chestitem) == null) {
+            for (int i = 0; i < weapons1.size(); i++) {
+                chestdata.addDefault("pg.weapons1." + chestitem, weapons1.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.weapons1" + chestitem)) {
+                ItemStack item = (ItemStack) chestdata.get("pg.weapons1." + chestitem);
+                weapons1.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        chestitem = 1;
+        if (chestdata.get("pg.weapons2." + chestitem) == null) {
+            for (int i = 0; i < weapons2.size(); i++) {
+                chestdata.addDefault("pg.weapons2." + chestitem, weapons2.get(chestitem - 1));
+                chestdata.options().copyDefaults(true);
+                chestitem++;
+            }
+        } else {
+            while (chestdata.contains("pg.weapons2" + chestitem)) {
+                ItemStack item = (ItemStack) chestdata.get("pg.weapons2." + chestitem);
+                weapons2.set(chestitem - 1, item);
+                chestitem++;
+            }
+        }
+        try {
+            chestdata.save(chestdatafile);
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
