@@ -209,13 +209,13 @@ public class PotionGames extends JavaPlugin {
                 st.close();
             } catch (SQLException e) {
                 connect();
-                System.err.println();
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             try {
                 st.execute(qry);
-            } catch (SQLException exception) {
-                exception.printStackTrace();
+            } catch (SQLException e) {
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
             }
         }
     }
@@ -228,14 +228,14 @@ public class PotionGames extends JavaPlugin {
                 rs = st.executeQuery(qry);
             } catch (SQLException e) {
                 connect();
-                System.err.println();
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
             }
             return rs;
         } else {
             try {
                 return st.executeQuery(qry);
-            } catch (SQLException exception) {
-                exception.printStackTrace();
+            } catch (SQLException e) {
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
             }
             return null;
         }
@@ -329,7 +329,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Kit Selector");
         chat.add("You already have a kit!");
         chat.add("Commands");
-        chat.add("MySQL is deactivated!");
+        chat.add("Rounds");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 1, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -1674,7 +1674,7 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void ConnectMySQL() {
-        update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), WINS int, LOSTS int, KILLS int, DEATHS int, KD double);");
+        update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSTS int, KILLS int, DEATHS int, KD double);");
     }
 
     public boolean playerExists(String uuid) {
@@ -1692,7 +1692,7 @@ public class PotionGames extends JavaPlugin {
 
     public void createPlayer(String uuid) {
         if (!playerExists(uuid)) {
-            update("INSERT INTO Stats(UUID, WINS, LOSTS, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0');");
+            update("INSERT INTO Stats(UUID, ROUNDS, WINS, LOSTS, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0', '0');");
         }
     }
 
@@ -1791,6 +1791,25 @@ public class PotionGames extends JavaPlugin {
         return i;
     }
 
+    public int getRounds(String uuid) {
+        int i = 0;
+        if (playerExists(uuid)) {
+            try {
+                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
+                if ((rs.next())) {
+                    rs.getInt("ROUNDS");
+                }
+                i = rs.getInt("ROUNDS");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            createPlayer(uuid);
+            getRounds(uuid);
+        }
+        return i;
+    }
+
     public void setKills(String uuid, int kills) {
         if (playerExists(uuid)) {
             update("UPDATE Stats SET KILLS= '" + kills + "' WHERE UUID= '" + uuid + "';");
@@ -1846,6 +1865,18 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
+    public void setRounds(String uuid, int rounds) {
+        if (playerExists(uuid)) {
+            int wins = getWins(uuid);
+            int losts = getLosts(uuid);
+            rounds = wins + losts;
+            update("UPDATE Stats SET ROUNDS= '" + rounds + "' WHERE UUID= '" + uuid + "';");
+        } else {
+            createPlayer(uuid);
+            setRounds(uuid, rounds);
+        }
+    }
+
     public void addKills(String uuid, int kills) {
         if (playerExists(uuid)) {
             setKills(uuid, (getKills(uuid) + kills));
@@ -1869,6 +1900,7 @@ public class PotionGames extends JavaPlugin {
     public void addWins(String uuid, int wins) {
         if (playerExists(uuid)) {
             setWins(uuid, (getWins(uuid) + wins));
+            setRounds(uuid, 0);
         } else {
             createPlayer(uuid);
             addWins(uuid, wins);
@@ -1878,6 +1910,7 @@ public class PotionGames extends JavaPlugin {
     public void addLosts(String uuid, int losts) {
         if (playerExists(uuid)) {
             setLosts(uuid, (getLosts(uuid) + losts));
+            setRounds(uuid, 0);
         } else {
             createPlayer(uuid);
             addLosts(uuid, losts);

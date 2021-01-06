@@ -7,13 +7,19 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 ## Installation
 
 1. Download the plugin
+
+* [Download the latest release here!](https://github.com/andersspielen/PotionGamesIssues/releases/latest)
 2. Put the .jar in your plugins folder
 3. Download Multiverse-Core
+
+* [Download the latest release here!](https://www.spigotmc.org/resources/multiverse-core.390/)
+
 4. Put the .jar in your plugins folder
 5. Add `mv.bypass.gamemode.*: true` to your permissions.yml
-5. Start your server
-6. Change the config.yml in the PotionGames folder like you want it
-7. (Optional) Change or add languages to the messages.yml in the PotionGames folder
+6. Start your server
+7. Import your worlds with `/mv import [worldname] NORMAL`
+8. Change the .yml files in the PotionGames folder like you want them
+9. Restart your server to reload the changed plugin files
 
 ## Usage
 
@@ -54,8 +60,9 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 1. Place 3 Player Heads on a block next to each other
 2. Place 3 Signs at the front of the block
 3. Now use the commands listed below to create a podium
-    * Look at the head of the 1(2;3) player on the podium and do: `/pg headp1(2;3)`
-    * Look at the sign of the 1(2;3) player on the podium and do: `/pg signp1(2;3)`
+
+* Look at the head of the 1(2;3) player on the podium and do: `/pg headp1(2;3)`
+* Look at the sign of the 1(2;3) player on the podium and do: `/pg signp1(2;3)`
 
 ### Commands and Permissions
 
@@ -64,13 +71,13 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `/pg addarena [arenaname]` - Add an arena - Permission: `pg.setup`
 * `/pg addspawn [arenaname]` - Add spawn - Permission: `pg.setup`
 * `/pg delarena [arenaname]` - Remove arena - Permission: `pg.setup`
-* `/pg delspawn [arenaname]` - Remove last added spawn - Permission: `pg.setup`
+* `/pg delspawn [arenaname] [number]` - Remove spawn - Permission: `pg.setup`
 * `/pg build` - Activate build mode - Permission: `pg.build`
 * `/pg pause` - Pause timer/countdown - Permission: `pg.pause`
 * `/pg force [arenaname]` - Force arena - Permission: `pg.force`
 * `/pg start` - Set lobby countdown to 10 - Permission: `pg.start`
-* `/pg join` - Join the game - When `startOnJoin = false` - Permission: `pg.join` 
-* `/pg leave` - Leave the game - When `startOnJoin = false` - Permission: `pg.leave` 
+* `/pg join` - Join the game(`startOnJoin = false`) - Permission: `pg.join`
+* `/pg leave` - Leave the game(`startOnJoin = false`) - Permission: `pg.leave`
 * `/pg stats` - Show your stats - Permission: `pg.stats`
 * `/pg headp1(2;3)` - Add Player Head to Stats-Wall - Permission: `pg.setup`
 * `/pg signp1(2;3)` - Add Player Sign to Stats-Wall - Permission: `pg.setup`
