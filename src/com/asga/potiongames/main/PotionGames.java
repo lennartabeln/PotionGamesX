@@ -179,23 +179,13 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void close() {
-        if (activateMySQL) {
-            try {
-                if (con != null) {
-                    con.close();
-                    System.out.println(prefixNoColor + " " + chat.get(38));
-                }
-            } catch (SQLException e) {
-                System.out.println(prefixNoColor + " " + chat.get(39) + ": " + e.getMessage());
+        try {
+            if (con != null) {
+                con.close();
+                System.out.println(prefixNoColor + " " + chat.get(38));
             }
-        } else {
-            try {
-                if (con != null) {
-                    con.close();
-                }
-            } catch (SQLException exception) {
-                exception.printStackTrace();
-            }
+        } catch (SQLException e) {
+            System.out.println(prefixNoColor + " " + chat.get(39) + ": " + e.getMessage());
         }
     }
 
