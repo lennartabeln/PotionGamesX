@@ -100,7 +100,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 ## Release History
 
 * 1.0
-  * ADD: Option to change chest items
+  * ADD: Option to change chest items and effects
 * 0.9
   * ADD: Option to change database type between MySQL and SQLite
 * 0.8.5
