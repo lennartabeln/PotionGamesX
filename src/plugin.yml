@@ -2,7 +2,101 @@ name: PotionGames
 author: andersspielen
 main: com.asga.potiongames.main.PotionGames
 version: 1.0
-api-version: 1.13
+api-version: 1.16
 softdepend: [ Multiverse-Core ]
 commands:
   pg:
+    description: Get list of commands + permissions
+    aliases: [ potiongames, pgames, potiong ]
+    usage: "Usage: /pg or /pg help or /pg commands"
+  pg setlobby:
+    description: Set lobby
+    usage: "Usage: /pg setlobby"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg addarena:
+    description: Add an arena
+    usage: "Usage: /pg addarena [arenaname]"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg addspawn:
+    description: Add a spawn
+    usage: "Usage: /pg addspawn [arenaname]"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg delarena:
+    description: Remove an arena
+    usage: "Usage: /pg delarena [arenaname]"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg delspawn:
+    description: Remove a spawn
+    usage: "Usage: /pg delspawn [arenaname] [number]"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg build:
+    description: Activate build mode
+    usage: "Usage: /pg build"
+    permission: pg.build
+    permission-message: You do not have permission to use this command.
+  pg pause:
+    description: Pause timer/countdown
+    usage: "Usage: /pg pause"
+    permission: pg.pause
+    permission-message: You do not have permission to use this command.
+  pg force:
+    description: Force an arena
+    usage: "Usage: /pg force [arenaname]"
+    permission: pg.force
+    permission-message: You do not have permission to use this command.
+  pg start:
+    description: Set lobby countdown to 10
+    usage: "Usage: /pg start"
+    permission: pg.start
+    permission-message: You do not have permission to use this command.
+  pg join:
+    description: Join the game
+    usage: "Usage: /pg join"
+    permission: pg.join
+    permission-message: You do not have permission to use this command.
+  pg leave:
+    description: Leave the game
+    usage: "Usage: /pg leave"
+    permission: pg.leave
+    permission-message: You do not have permission to use this command.
+  pg stats:
+    description: Show your stats
+    usage: "Usage: /pg stats"
+    permission: pg.stats
+    permission-message: You do not have permission to use this command.
+  pg headp1:
+    description: Add Player 1 Head to Stats-Wall
+    usage: "Usage: /pg headp1"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg headp2:
+    description: Add Player 2 Head to Stats-Wall
+    usage: "Usage: /pg headp2"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg headp3:
+    description: Add Player 3 Head to Stats-Wall
+    usage: "Usage: /pg headp3"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg signp1:
+    description: Add Player 1 Sign to Stats-Wall
+    usage: "Usage: /pg signp1"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg signp2:
+    description: Add Player 2 Sign to Stats-Wall
+    usage: "Usage: /pg signp2"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg signp3:
+    description: Add Player 3 Sign to Stats-Wall
+    usage: "Usage: /pg signp3"
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+
