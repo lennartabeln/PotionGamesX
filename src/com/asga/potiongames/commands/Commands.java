@@ -26,11 +26,11 @@ public class Commands implements CommandExecutor {
         if (args.length == 0) {
             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
             if (p.hasPermission("pg.setup")) {
-                p.sendMessage(pg.prefix + "/pg setlobby - Set waiting lobby");
+                p.sendMessage(pg.prefix + "/pg setlobby - Set lobby");
                 p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add arena");
                 p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add spawn");
                 p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove arena");
-                p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [number] - Remove spawn");
+                p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [#] - Remove spawn");
                 p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
                 p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
             }
@@ -105,11 +105,11 @@ public class Commands implements CommandExecutor {
             if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("commands")) {
                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
                 if (p.hasPermission("pg.setup")) {
-                    p.sendMessage(pg.prefix + "/pg setlobby - Set waiting lobby");
+                    p.sendMessage(pg.prefix + "/pg setlobby - Set lobby");
                     p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add arena");
                     p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add spawn");
                     p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove arena");
-                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [number] - Remove spawn");
+                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [#] - Remove spawn");
                     p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
                     p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                 }
@@ -232,7 +232,7 @@ public class Commands implements CommandExecutor {
                 }
             } else if (args[0].equalsIgnoreCase("delspawn")) {
                 if (p.hasPermission("pg.setup")) {
-                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [number] - Remove spawn");
+                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [#] - Remove spawn");
                 }
             }
         } else if (args.length == 2) {
@@ -328,7 +328,7 @@ public class Commands implements CommandExecutor {
                 }
             } else if (args[0].equalsIgnoreCase("delspawn")) {
                 if (p.hasPermission("pg.setup")) {
-                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [number] - Remove spawn");
+                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [#] - Remove spawn");
                 }
             }
         } else if (args.length == 3) {

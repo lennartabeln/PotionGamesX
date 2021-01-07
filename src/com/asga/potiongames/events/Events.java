@@ -295,10 +295,12 @@ public class Events implements Listener {
                     if (line2.matches("PotionGames") && line3.matches("Stats")) {
                         int wins = pg.getWins(p.getUniqueId().toString());
                         int losts = pg.getLosts(p.getUniqueId().toString());
+                        int rounds = pg.getRounds(p.getUniqueId().toString());
                         int kills = pg.getKills(p.getUniqueId().toString());
                         int deaths = pg.getDeaths(p.getUniqueId().toString());
                         double kd = pg.getKD(p.getUniqueId().toString());
                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                        p.sendMessage(pg.prefix + pg.chat.get(65) + ": " + ChatColor.AQUA + rounds);
                         p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
                         p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
                         p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);

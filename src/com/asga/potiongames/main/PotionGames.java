@@ -104,13 +104,13 @@ public class PotionGames extends JavaPlugin {
     public File arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");
     public File chestdatafile = new File(getDataFolder() + File.separator + "chestdata.yml");
     private String language = "en_US";
-    private String vote = "";
-    private String votedArena = "";
+    private String vote;
+    private String votedArena;
     private String host = "localhost";
     private String port = "3306";
     private String database = "potiongames";
     private String user = "root";
-    private String password = "";
+    private String password;
     private GameStates gamestate;
     private boolean joinable = true;
     private boolean pause = false;
