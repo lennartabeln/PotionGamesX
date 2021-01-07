@@ -1439,7 +1439,7 @@ public class PotionGames extends JavaPlugin {
                     }
                 }
                 if (!randomArena) {
-                    if (winner == arenadata.get("pg.arenas." + i + ".name")) {
+                    if (winner.equals(arenadata.getString("pg.arenas." + i + ".name"))) {
                         winner = String.valueOf(i);
                         for (Player all : pgPlayers) {
                             all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
@@ -1474,9 +1474,9 @@ public class PotionGames extends JavaPlugin {
 
     public void teleportAndStart() {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        int maxteamplayers = teamSize;
-        boolean teamfound = false;
         for (Player all : pgPlayers) {
+            int maxteamplayers = teamSize;
+            boolean teamfound = false;
             if (activateTeams) {
                 if (!teamed.contains(all.getName())) {
                     while (!teamfound) {
