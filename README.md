@@ -57,8 +57,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 1. Place 3 Player Heads on a block next to each other
 2. Place 3 Signs at the front of the block
 3. Now use the commands listed below to create a podium
-  * Look at the head of the 1(2;3) player on the podium and do: `/pg headp1(2;3)`
-  * Look at the sign of the 1(2;3) player on the podium and do: `/pg signp1(2;3)`
+  1. Look at the head of the 1(2;3) player on the podium and do: `/pg headp1(2;3)`
+  2. Look at the sign of the 1(2;3) player on the podium and do: `/pg signp1(2;3)`
 
 ### Commands and Permissions
 
