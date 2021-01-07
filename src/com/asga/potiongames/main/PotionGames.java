@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -44,6 +45,7 @@ public class PotionGames extends JavaPlugin {
     public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
     public ArrayList<Player> pgPlayers = new ArrayList<>();
     public ArrayList<Player> specPlayers = new ArrayList<>();
+    public ArrayList<Player> richkidPlayers = new ArrayList<>();
     public ArrayList<String> arenas = new ArrayList<>();
     public ArrayList<String> voted = new ArrayList<>();
     public ArrayList<String> teams = new ArrayList<>();
@@ -79,6 +81,7 @@ public class PotionGames extends JavaPlugin {
     public HashMap<Location, Inventory> chests = new HashMap<>();
     public HashMap<Location, Material> placedBlocks = new HashMap<>();
     public HashMap<Location, Material> breakedBlocks = new HashMap<>();
+    public HashMap<Location, BlockData> waterBlocks = new HashMap<>();
     public HashMap<Location, Block> liquidPlaced = new HashMap<>();
     public HashMap<String, ItemStack[]> inv = new HashMap<>();
     public HashMap<String, ItemStack[]> armor = new HashMap<>();
@@ -1104,10 +1107,10 @@ public class PotionGames extends JavaPlugin {
                                     playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
                                     playercompass.setItemMeta(playercompassmeta);
                                     all.getInventory().setItem(8, playercompass);
-                                    if (kitplayernames.containsKey("Rich Kid") && kitplayernames.containsValue(all)) {
-                                        for (int i = 0; i < 5; i++) {
-                                            all.getInventory().addItem(coin);
-                                        }
+                                }
+                                for (Player rich : richkidPlayers) {
+                                    for (int i = 0; i < 5; i++) {
+                                        rich.getInventory().addItem(coin);
                                     }
                                 }
                                 countdown--;
@@ -1202,6 +1205,7 @@ public class PotionGames extends JavaPlugin {
                             all.setHealth(20);
                             all.setFoodLevel(20);
                             clearEffects(all);
+                            all.setFireTicks(0);
                             if (activateTeams) {
                                 ItemStack teamselector = new ItemStack(Material.CLOCK);
                                 ItemMeta teamselectormeta = teamselector.getItemMeta();
@@ -1237,6 +1241,7 @@ public class PotionGames extends JavaPlugin {
                         kited.clear();
                         kitallowed = false;
                         kitplayernames.clear();
+                        richkidPlayers.clear();
                         Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                         Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
                         while (arenadata.contains("pg.arenas." + gamerule)) {
@@ -1286,6 +1291,11 @@ public class PotionGames extends JavaPlugin {
                             Location loc = entry.getKey();
                             Material mat = entry.getValue();
                             loc.getBlock().setType(mat);
+                        }
+                        for (Entry<Location, BlockData> entry : waterBlocks.entrySet()) {
+                            Location loc = entry.getKey();
+                            BlockData data = entry.getValue();
+                            loc.getBlock().setBlockData(data);
                         }
                         int worldName = 1;
                         while (arenadata.contains("pg.arenas." + worldName)) {
@@ -1482,8 +1492,7 @@ public class PotionGames extends JavaPlugin {
                     while (!teamfound) {
                         Random rnd = new Random();
                         int rndTeam = rnd.nextInt(teams.size() + 1);
-                        assert teamplayers != null;
-                        if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
+                        if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers && teamplayers.get(Integer.toString(rndTeam)) >= 0) {
                             teamfound = true;
                             int players = teamplayers.get(Integer.toString(rndTeam));
                             players++;
@@ -1507,6 +1516,9 @@ public class PotionGames extends JavaPlugin {
                     all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
                     kited.add(all.getName());
                     kitplayernames.put(kits.get(rndKit), all);
+                    if (kits.get(rndKit).equals("Rich Kid")) {
+                        richkidPlayers.add(all);
+                    }
                 }
             }
         }
@@ -1557,6 +1569,7 @@ public class PotionGames extends JavaPlugin {
         p.setExp(0);
         p.setGameMode(GameMode.ADVENTURE);
         clearEffects(p);
+        p.setFireTicks(0);
         addPlayerAmount();
         if (joinable) {
             pgPlayers.add(p);
@@ -2047,6 +2060,10 @@ public class PotionGames extends JavaPlugin {
 
     public HashMap<Location, Material> getBreakedBlocks() {
         return breakedBlocks;
+    }
+
+    public HashMap<Location, BlockData> getWaterBlocks() {
+        return waterBlocks;
     }
 
     public HashMap<Location, Block> getLiquidPlaced() {

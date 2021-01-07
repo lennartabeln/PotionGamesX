@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -116,23 +117,30 @@ public class Events implements Listener {
 
     @EventHandler
     public void onBlockFade(BlockFadeEvent e) {
-        switch (e.getBlock().getType()) {
-            case ICE:
-            case SNOW:
+        e.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onWaterPassTrough(BlockFromToEvent e) {
+        if (!pg.isBuild()) {
+            if (pg.getGamestate() == GameStates.INGAME) {
                 e.setCancelled(true);
-                break;
-            default:
-                break;
+            }
         }
     }
 
     @EventHandler
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
-        if (e.getBucket() != Material.WATER_BUCKET && pg.pgPlayers.contains(e.getPlayer())
-                || e.getBucket() != Material.LAVA_BUCKET && pg.pgPlayers.contains(e.getPlayer())) {
-            Block block = e.getBlockClicked().getRelative(e.getBlockFace());
-            Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
-            pg.getLiquidPlaced().put(loc, block);
+        if (pg.pgPlayers.contains(e.getPlayer())) {
+            if (!pg.isBuild()) {
+                if (pg.getGamestate() == GameStates.INGAME) {
+                    if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
+                        Block block = e.getBlockClicked().getRelative(e.getBlockFace());
+                        Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
+                        pg.getLiquidPlaced().put(loc, block);
+                    }
+                }
+            }
         }
     }
 
@@ -199,62 +207,68 @@ public class Events implements Listener {
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
-        if (p.getKiller() != null) {
-            pg.addDeaths(p.getUniqueId().toString(), 1);
-            pg.addLosts(p.getUniqueId().toString(), 1);
-            pg.addKills(p.getKiller().getUniqueId().toString(), 1);
-        } else {
-            pg.addDeaths(p.getUniqueId().toString(), 1);
-            pg.addLosts(p.getUniqueId().toString(), 1);
-        }
         if (pg.pgPlayers.contains(p)) {
-            e.setKeepLevel(true);
-            pg.pgPlayers.remove(p);
-            pg.specPlayers.add(p);
-            if (pg.isActivateTeams()) {
-                String teamname = "";
-                for (int i = 1; i <= pg.getTeamAmount(); i++) {
-                    if (pg.teamplayernames.containsKey(Integer.toString(i)) && pg.teamplayernames.containsValue(p)) {
-                        teamname = String.valueOf(i);
+            if (!pg.isBuild()) {
+                if (pg.getGamestate() == GameStates.INGAME) {
+                    if (p.getKiller() != null) {
+                        pg.addDeaths(p.getUniqueId().toString(), 1);
+                        pg.addLosts(p.getUniqueId().toString(), 1);
+                        pg.addKills(p.getKiller().getUniqueId().toString(), 1);
+                    } else {
+                        pg.addDeaths(p.getUniqueId().toString(), 1);
+                        pg.addLosts(p.getUniqueId().toString(), 1);
                     }
-                }
-                pg.teamplayernames.remove(teamname, p);
-                int teamamount = pg.teamplayers.get(teamname) - 1;
-                pg.teamplayers.put(teamname, teamamount);
-                if (pg.teamplayers.get(teamname) == 0) {
-                    pg.teams.remove(teamname);
+                    if (pg.pgPlayers.contains(p)) {
+                        e.setKeepLevel(true);
+                        pg.pgPlayers.remove(p);
+                        pg.specPlayers.add(p);
+                        if (pg.isActivateTeams()) {
+                            String teamname = "";
+                            for (int i = 1; i <= pg.getTeamAmount(); i++) {
+                                if (pg.teamplayernames.containsKey(Integer.toString(i)) && pg.teamplayernames.containsValue(p)) {
+                                    teamname = String.valueOf(i);
+                                }
+                            }
+                            pg.teamplayernames.remove(teamname, p);
+                            int teamamount = pg.teamplayers.get(teamname) - 1;
+                            pg.teamplayers.put(teamname, teamamount);
+                            if (pg.teamplayers.get(teamname) == 0) {
+                                pg.teams.remove(teamname);
+                            }
+                        }
+                        int amountPlayers = pg.getPlayerAmount();
+                        int player = pg.pgPlayers.size();
+                        try {
+                            Player killer = p.getKiller();
+                            assert killer != null;
+                            killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
+                            if (pg.kitplayernames.containsKey("Rich Kid") && pg.kitplayernames.containsValue(p)) {
+                                for (int i = 0; i < 10; i++) {
+                                    killer.getInventory().addItem(pg.getCoin());
+                                }
+                            } else {
+                                for (int i = 0; i < 5; i++) {
+                                    killer.getInventory().addItem(pg.getCoin());
+                                }
+                            }
+                            e.setDeathMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                        } catch (Exception ex) {
+                            e.setDeathMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                        }
+                        p.setGameMode(GameMode.SPECTATOR);
+                        p.getWorld().strikeLightning(p.getLocation());
+                        p.setAllowFlight(true);
+                        p.setFlying(true);
+                        p.setLevel(0);
+                        p.setExp(0);
+                        p.setFireTicks(0);
+                        p.setHealth(20);
+                        p.setFoodLevel(20);
+                        p.setCanPickupItems(false);
+                        p.setCollidable(false);
+                    }
                 }
             }
-            int amountPlayers = pg.getPlayerAmount();
-            int player = pg.pgPlayers.size();
-            try {
-                Player killer = p.getKiller();
-                assert killer != null;
-                killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
-                if (pg.kitplayernames.containsKey("Rich Kid") && pg.kitplayernames.containsValue(p)) {
-                    for (int i = 0; i < 10; i++) {
-                        killer.getInventory().addItem(pg.getCoin());
-                    }
-                } else {
-                    for (int i = 0; i < 5; i++) {
-                        killer.getInventory().addItem(pg.getCoin());
-                    }
-                }
-                e.setDeathMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
-            } catch (Exception ex) {
-                e.setDeathMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
-            }
-            p.setGameMode(GameMode.SPECTATOR);
-            p.setAllowFlight(true);
-            p.setFlying(true);
-            p.setLevel(0);
-            p.setExp(0);
-            p.setFireTicks(0);
-            p.setHealth(20);
-            p.setFoodLevel(20);
-            p.setCanPickupItems(false);
-            p.setCollidable(false);
-            p.getWorld().strikeLightning(p.getLocation());
         }
     }
 
@@ -262,7 +276,13 @@ public class Events implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         Player p = (Player) e.getEntity();
         if (pg.pgPlayers.contains(p)) {
-            e.setCancelled(e.getDamager() instanceof LightningStrike && e.getEntity() instanceof Player || e.getDamager() instanceof Firework && e.getEntity() instanceof Player);
+            if (!pg.isBuild()) {
+                if (pg.getGamestate() == GameStates.INGAME) {
+                    if (pg.pgPlayers.contains(p)) {
+                        e.setCancelled(e.getDamager() instanceof LightningStrike && e.getEntity() instanceof Player || e.getDamager() instanceof Firework && e.getEntity() instanceof Player);
+                    }
+                }
+            }
         }
     }
 
@@ -476,6 +496,9 @@ public class Events implements Listener {
                             p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                         }
                     }
+                    if (e.getClickedBlock().getBlockData() instanceof Waterlogged) {
+                        pg.getWaterBlocks().put(e.getClickedBlock().getLocation(), e.getClickedBlock().getBlockData());
+                    }
                 }
             }
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
@@ -668,8 +691,7 @@ public class Events implements Listener {
                                     while (!teamfound) {
                                         Random rnd = new Random();
                                         int rndTeam = rnd.nextInt(pg.teams.size() + 1);
-                                        assert pg.teamplayers != null;
-                                        if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
+                                        if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers && pg.teamplayers.get(Integer.toString(rndTeam)) >= 0) {
                                             teamfound = true;
                                             p.closeInventory();
                                             int players = pg.teamplayers.get(Integer.toString(rndTeam));
@@ -772,6 +794,9 @@ public class Events implements Listener {
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                 pg.kited.add(e.getWhoClicked().getName());
                                 pg.kitplayernames.put(pg.kits.get(rndKit), p);
+                                if (pg.kits.get(rndKit).equals("Rich Kid")) {
+                                    pg.richkidPlayers.add(p);
+                                }
                             } else {
                                 p.closeInventory();
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
@@ -779,6 +804,9 @@ public class Events implements Listener {
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                 pg.kited.add(e.getWhoClicked().getName());
                                 pg.kitplayernames.put(displayname, p);
+                                if (displayname.equals("Rich Kid")) {
+                                    pg.richkidPlayers.add(p);
+                                }
                             }
                         } else {
                             p.closeInventory();
@@ -789,6 +817,7 @@ public class Events implements Listener {
                                 }
                             }
                             pg.teamplayernames.remove(kitname, p);
+                            pg.richkidPlayers.remove(p);
                             if (displayname.equals(pg.chat.get(42))) {
                                 Random rnd = new Random();
                                 int rndKit = rnd.nextInt(pg.getActiveKits() + 1);
@@ -798,6 +827,9 @@ public class Events implements Listener {
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                 pg.kited.add(e.getWhoClicked().getName());
                                 pg.kitplayernames.put(pg.kits.get(rndKit), p);
+                                if (pg.kits.get(rndKit).equals("Rich Kid")) {
+                                    pg.richkidPlayers.add(p);
+                                }
                             } else {
                                 p.closeInventory();
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
@@ -805,6 +837,9 @@ public class Events implements Listener {
                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                 pg.kited.add(e.getWhoClicked().getName());
                                 pg.kitplayernames.put(displayname, p);
+                                if (displayname.equals("Rich Kid")) {
+                                    pg.richkidPlayers.add(p);
+                                }
                             }
                         }
                     }
