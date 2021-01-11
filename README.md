@@ -4,6 +4,21 @@
 
 PotionGames is a minigames plugin that works like SurvivalGames but with potions and effects!
 
+## Functions
+
+* Setup your own loot table for the normal chest type
+* Setup your own potion effects for looting the normal chests
+* Loot coins and glass bottles to use in the shop
+* Setup up to 27 potions for the shop
+* Setup up to 26 kits to give sale prices for certain potions from the shop
+* Setup up to 26 different arenas to vote for every round
+* Setup teams with your own team size
+* Use milk buckets to clear all of your potion effects
+* Eat soups with one click to also heal some health
+* Use stats with SQLite or MySQL
+* Use the stats wall to show the best three players
+* Use startOnJoin option to use this plugin with Bungeecord
+
 ## Installation
 
 1. Download the plugin
