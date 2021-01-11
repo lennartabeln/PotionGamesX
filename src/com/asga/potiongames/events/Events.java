@@ -524,6 +524,11 @@ public class Events implements Listener {
                             }
                         }
                     }
+                    if (p.getInventory().getItemInMainHand().getType() == Material.MILK_BUCKET) {
+                        if (pg.getGamestate() == GameStates.INGAME) {
+                            pg.clearEffects(p);
+                        }
+                    }
                     if (p.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
                         if (pg.getGamestate() == GameStates.INGAME) {
                             Player result = null;
