@@ -485,7 +485,7 @@ public class Events implements Listener {
                                     assert randombarriermeta != null;
                                     randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
                                     ArrayList<String> lore = new ArrayList<>();
-                                    lore.add(pg.chat.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration());
+                                    lore.add(pg.chat.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration() / 20);
                                     lore.add(pg.chat.get(51) + ": " + coinamount + " " + pg.chat.get(52));
                                     randombarriermeta.setLore(lore);
                                     randombarrier.setItemMeta(randombarriermeta);
@@ -527,6 +527,7 @@ public class Events implements Listener {
                     if (p.getInventory().getItemInMainHand().getType() == Material.MILK_BUCKET) {
                         if (pg.getGamestate() == GameStates.INGAME) {
                             pg.clearEffects(p);
+                            p.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
