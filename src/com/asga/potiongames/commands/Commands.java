@@ -138,71 +138,152 @@ public class Commands implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("join")) {
                 if (p.hasPermission("pg.join")) {
-                    if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                        pg.onJoin(p);
+                    if (!pg.isArenaSystem()) {
+                        if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
+                            pg.onJoin(p);
+                        }
                     }
                 }
             } else if (args[0].equalsIgnoreCase("leave")) {
                 if (p.hasPermission("pg.leave")) {
-                    if (pg.pgPlayers.contains(p) && !pg.isStartOnJoin() || pg.specPlayers.contains(p) && !pg.isStartOnJoin()) {
-                        pg.onLeave(p);
+                    if (pg.isArenaSystem()) {
+                        if (pg.playerLobby.containsKey(p) && !pg.isStartOnJoin()) {
+                            String s = null;
+                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                                if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
+                                }
+                            }
+                            pg.leaveLobby(p, s);
+                        } else if (pg.specLobby.containsKey(p) && !pg.isStartOnJoin()) {
+                            String s = null;
+                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                                if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
+                                }
+                            }
+                            pg.leaveLobby(p, s);
+                        }
+                    } else {
+                        if (pg.pgPlayers.contains(p) && !pg.isStartOnJoin() || pg.specPlayers.contains(p) && !pg.isStartOnJoin()) {
+                            pg.onLeave(p);
+                        }
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("start")) {
+            } else if (args[0].equalsIgnoreCase("start")) { //TODO
                 if (p.hasPermission("pg.start")) {
-                    if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
-                        if (pg.pgPlayers.size() >= pg.getMinPlayers()) {
-                            if (pg.getCountdown() >= 10) {
-                                pg.setCountdown(10);
-                                for (Player all : pg.pgPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
+                    if (pg.isArenaSystem()) {
+                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                            if (pg.pgPlayers.size() >= pg.getMinPlayers()) {
+                                if (pg.getCountdown() >= 10) {
+                                    pg.setCountdown(10);
+                                    for (Player all : pg.pgPlayers) {
+                                        all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
+                                    }
+                                } else {
+                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
                                 }
                             } else {
-                                p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
+                                p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(21));
                             }
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(21));
+                        }
+                    } else {
+                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                            if (pg.pgPlayers.size() >= pg.getMinPlayers()) {
+                                if (pg.getCountdown() >= 10) {
+                                    pg.setCountdown(10);
+                                    for (Player all : pg.pgPlayers) {
+                                        all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
+                                    }
+                                } else {
+                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
+                                }
+                            } else {
+                                p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(21));
+                            }
                         }
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("pause")) {
+            } else if (args[0].equalsIgnoreCase("pause")) { //TODO
                 if (p.hasPermission("pg.pause")) {
-                    if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
-                        pg.changePause();
-                        if (pg.isPause()) {
-                            for (Player all : pg.pgPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
+                    if (pg.isArenaSystem()) {
+                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                            pg.changePause();
+                            if (pg.isPause()) {
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
+                                }
+                                for (Player all : pg.specPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
+                                }
+                            } else {
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                                }
+                                for (Player all : pg.specPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                                }
                             }
-                            for (Player all : pg.specPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
-                            }
-                        } else {
-                            for (Player all : pg.pgPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
-                            }
-                            for (Player all : pg.specPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                        }
+                    } else {
+                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                            pg.changePause();
+                            if (pg.isPause()) {
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
+                                }
+                                for (Player all : pg.specPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
+                                }
+                            } else {
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                                }
+                                for (Player all : pg.specPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                                }
                             }
                         }
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("build")) {
+            } else if (args[0].equalsIgnoreCase("build")) { //TODO
                 if (p.hasPermission("pg.build")) {
-                    if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
-                        pg.changeBuild();
-                        if (pg.isBuild()) {
-                            for (Player all : pg.pgPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
+                    if (pg.isArenaSystem()) {
+                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                            pg.changeBuild();
+                            if (pg.isBuild()) {
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
+                                }
+                                for (Player all : pg.specPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
+                                }
+                            } else {
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                                }
+                                for (Player all : pg.specPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                                }
                             }
-                            for (Player all : pg.specPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
-                            }
-                        } else {
-                            for (Player all : pg.pgPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
-                            }
-                            for (Player all : pg.specPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                        }
+                    } else {
+                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                            pg.changeBuild();
+                            if (pg.isBuild()) {
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
+                                }
+                                for (Player all : pg.specPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
+                                }
+                            } else {
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                                }
+                                for (Player all : pg.specPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                                }
                             }
                         }
                     }
@@ -236,30 +317,66 @@ public class Commands implements CommandExecutor {
                 }
             }
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("force")) {
+            if (args[0].equalsIgnoreCase("join")) {
+                if (pg.isArenaSystem()) {
+                    String s = args[1];
+                    if (p.hasPermission("pg.join")) {
+                        if (!pg.playerLobby.containsKey(p)) {
+                            pg.joinLobby(p, s);
+                        }
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("force")) { //TODO
                 if (p.hasPermission("pg.force")) {
-                    if (pg.pgPlayers.contains(p) && p.isOp() || pg.specPlayers.contains(p) && p.isOp()) {
-                        String arena = args[1];
-                        String arenaNumber = "1";
-                        try {
-                            pg.setForcearena(true);
-                            int i = 1;
-                            boolean votetedarena = false;
-                            while (!votetedarena) {
-                                if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
-                                    arenaNumber = String.valueOf(i);
-                                    pg.setVotedArena(arena);
-                                    votetedarena = true;
-                                } else {
-                                    i++;
+                    if (pg.isArenaSystem()) {
+                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                            String arena = args[1];
+                            String arenaNumber = "1";
+                            try {
+                                pg.setForcearena(true);
+                                int i = 1;
+                                boolean votetedarena = false;
+                                while (!votetedarena) {
+                                    if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        arenaNumber = String.valueOf(i);
+                                        pg.setVotedArena(arena);
+                                        votetedarena = true;
+                                    } else {
+                                        i++;
+                                    }
                                 }
+                                pg.setVote(arenaNumber);
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(26));
+                                }
+                            } catch (Exception e) {
+                                p.sendMessage(pg.prefix + ChatColor.RED + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                             }
-                            pg.setVote(arenaNumber);
-                            for (Player all : pg.pgPlayers) {
-                                all.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(26));
+                        }
+                    } else {
+                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                            String arena = args[1];
+                            String arenaNumber = "1";
+                            try {
+                                pg.setForcearena(true);
+                                int i = 1;
+                                boolean votetedarena = false;
+                                while (!votetedarena) {
+                                    if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        arenaNumber = String.valueOf(i);
+                                        pg.setVotedArena(arena);
+                                        votetedarena = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
+                                pg.setVote(arenaNumber);
+                                for (Player all : pg.pgPlayers) {
+                                    all.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(26));
+                                }
+                            } catch (Exception e) {
+                                p.sendMessage(pg.prefix + ChatColor.RED + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                             }
-                        } catch (Exception e) {
-                            p.sendMessage(pg.prefix + ChatColor.RED + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                         }
                     }
                 }
