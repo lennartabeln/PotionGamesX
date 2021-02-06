@@ -29,6 +29,7 @@ public class Commands implements CommandExecutor {
             if (p.hasPermission("pg.setup")) {
                 if (pg.isArenaSystem()) {
                     p.sendMessage(pg.prefix + "/pg setlobby [lobbynumber] - Set lobby");
+                    p.sendMessage(pg.prefix + "/pg dellobby [lobbynumber] - Remove lobby");
                     p.sendMessage(pg.prefix + "/pg addarena [lobbynumber] [arenaname] - Add an arena");
                     p.sendMessage(pg.prefix + "/pg addspawn [lobbynumber] [arenaname] - Add a spawn");
                     p.sendMessage(pg.prefix + "/pg delarena [lobbynumber] [arenaname] - Remove an arena");
@@ -131,6 +132,7 @@ public class Commands implements CommandExecutor {
                 if (p.hasPermission("pg.setup")) {
                     if (pg.isArenaSystem()) {
                         p.sendMessage(pg.prefix + "/pg setlobby [lobbynumber] - Set lobby");
+                        p.sendMessage(pg.prefix + "/pg dellobby [lobbynumber] - Remove lobby");
                         p.sendMessage(pg.prefix + "/pg addarena [lobbynumber] [arenaname] - Add an arena");
                         p.sendMessage(pg.prefix + "/pg addspawn [lobbynumber] [arenaname] - Add a spawn");
                         p.sendMessage(pg.prefix + "/pg delarena [lobbynumber] [arenaname] - Remove an arena");
@@ -393,12 +395,27 @@ public class Commands implements CommandExecutor {
                     if (pg.isArenaSystem()) {
                         arenadata.set("pg.lobbies." + args[1] + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
                         arenadata.set("pg.lobbies." + args[1] + ".coords", Objects.requireNonNull(p.getLocation()));
+                        arenadata.set("pg.lobbies." + args[1] + ".teamSize", 2);
+                        arenadata.set("pg.lobbies." + args[1] + ".maxPlayers", 24);
+                        arenadata.set("pg.lobbies." + args[1] + ".minPlayers", 12);
                         try {
                             arenadata.save(pg.arenadatafile);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + " (" + ChatColor.AQUA + "Lobby: " + args[1] + ")");
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("dellobby")) {
+                if (p.hasPermission("pg.setup")) {
+                    if (pg.isArenaSystem()) {
+                        arenadata.set("pg.lobbies." + args[1], null);
+                        try {
+                            arenadata.save(pg.arenadatafile);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(66) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
                     }
                 }
             } else if (args[0].equalsIgnoreCase("join")) {
@@ -508,6 +525,7 @@ public class Commands implements CommandExecutor {
                             arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
                             arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
                             arenadata.set("pg.arenas." + arenaNumber + ".name", arenaName);
+                            arenadata.save(pg.arenadatafile);
                             p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(29));
                         } catch (Exception e) {
                             p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
@@ -537,7 +555,7 @@ public class Commands implements CommandExecutor {
                             arenadata.save(pg.arenadatafile);
                             p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(30));
                         } catch (Exception e) {
-                            p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31));
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.RED + " " + pg.chat.get(31));
                         }
                     }
                 }

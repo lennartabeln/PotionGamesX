@@ -284,6 +284,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("You already have a kit!");
         chat.add("Commands");
         chat.add("Rounds");
+        chat.add("Lobby successfully removed!");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
