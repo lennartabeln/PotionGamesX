@@ -1278,8 +1278,6 @@ public class PotionGames extends JavaPlugin {
                         }
                         break;
                     case RESET:
-                        setMove(true);
-                        setJoinable(true);
                         setReset(10);
                         setCountdown(getConfig().getInt("pg.countdown"));
                         pgPlayers.addAll(specPlayers);
@@ -1666,39 +1664,43 @@ public class PotionGames extends JavaPlugin {
         pgPlayers.remove(p);
         specPlayers.remove(p);
         setPlayerAmount(getPlayerAmount() - 1);
-        if (activateTeams) {
-            if (teamed.contains(p.getName())) {
-                String teamname = null;
-                for (int i = 1; i <= teamAmount; i++) {
-                    if (teamplayernames.containsKey(Integer.toString(i)) && teamplayernames.containsValue(p)) {
-                        teamname = Integer.toString(i);
+        if (getPlayerAmount() != 0) {
+            if (activateTeams) {
+                if (teamed.contains(p.getName())) {
+                    String teamname = null;
+                    for (int i = 1; i <= teamAmount; i++) {
+                        if (teamplayernames.containsKey(Integer.toString(i)) && teamplayernames.containsValue(p)) {
+                            teamname = Integer.toString(i);
+                        }
                     }
-                }
-                teamplayernames.remove(teamname, p);
-                int teamamount = teamplayers.get(teamname) - 1;
-                teamplayers.put(teamname, teamamount);
-                if (getGamestate() == GameStates.INGAME) {
-                    if (teamplayers.get(teamname) == 0) {
-                        teams.remove(teamname);
+                    teamplayernames.remove(teamname, p);
+                    int teamamount = teamplayers.get(teamname) - 1;
+                    teamplayers.put(teamname, teamamount);
+                    if (getGamestate() == GameStates.INGAME) {
+                        if (teamplayers.get(teamname) == 0) {
+                            teams.remove(teamname);
+                        }
                     }
-                }
-                teamed.remove(p.getName());
-            }
-        }
-        if (voted.contains(p.getName())) {
-            String arenaname = null;
-            for (int i = 0; i <= arenas.size(); i++) {
-                if (arenadata.contains("pg.arenas." + i)) {
-                    if (voteplayernames.containsKey(arenadata.getString("pg.arenas." + i + ".name")) && voteplayernames.containsValue(p)) {
-                        arenaname = arenadata.getString("pg.arenas." + i + ".name");
-                    }
-                } else {
-                    arenaname = chat.get(42);
+                    teamed.remove(p.getName());
                 }
             }
-            voteplayernames.remove(arenaname, p);
-            votes.replace(arenaname, votes.get(arenaname) - 1);
-            voted.remove(p.getName());
+            if (voted.contains(p.getName())) {
+                String arenaname = null;
+                for (int i = 0; i <= arenas.size(); i++) {
+                    if (arenadata.contains("pg.arenas." + i)) {
+                        if (voteplayernames.containsKey(arenadata.getString("pg.arenas." + i + ".name")) && voteplayernames.containsValue(p)) {
+                            arenaname = arenadata.getString("pg.arenas." + i + ".name");
+                        }
+                    } else {
+                        arenaname = chat.get(42);
+                    }
+                }
+                voteplayernames.remove(arenaname, p);
+                votes.replace(arenaname, votes.get(arenaname) - 1);
+                voted.remove(p.getName());
+            }
+        } else {
+            setGamestate(GameStates.RESET);
         }
     }
 
@@ -1848,7 +1850,7 @@ public class PotionGames extends JavaPlugin {
                             }
                             countdownLobby.replace(s, countdownLobby.get(s) - 1);
                         } else {
-                            lobbyStates.replace(s, GameStates.INGAME);
+                            lobbyStates.replace(s, GameStates.WAITING);
                         }
                         break;
                     case INGAME:
@@ -1980,8 +1982,6 @@ public class PotionGames extends JavaPlugin {
                         }
                         break;
                     case RESET:
-                        lobbyMove.replace(s, true);
-                        lobbyJoinable.replace(s, true);
                         resetLobby.replace(s, reset);
                         countdownLobby.replace(s, getConfig().getInt("pg.countdown"));
                         playerLobby.putAll(specLobby);
@@ -2421,7 +2421,7 @@ public class PotionGames extends JavaPlugin {
         specLobby.remove(p);
         playerLobby.remove(p);
         lobbyAmount.replace(s, lobbyAmount.get(s) - 1);
-        if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
+        if (lobbyAmount.get(s) != 0) {
             if (activateTeams) {
                 if (teamed.contains(p.getName())) {
                     String teamname = null;
@@ -2474,6 +2474,8 @@ public class PotionGames extends JavaPlugin {
                 lobbyvotes.replace(s, temp);
                 voted.remove(p.getName());
             }
+        } else {
+            lobbyStates.replace(s, GameStates.RESET);
         }
     }
 
