@@ -3,6 +3,7 @@ package com.asga.potiongames.events;
 import com.asga.potiongames.gamestates.GameStates;
 import com.asga.potiongames.main.PotionGames;
 import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -503,6 +504,7 @@ public class Events implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         FileConfiguration kitdata = YamlConfiguration.loadConfiguration(pg.kitdatafile);
         Player p = e.getPlayer();
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -520,25 +522,17 @@ public class Events implements Listener {
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN
                         || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
                     Sign sign = (Sign) e.getClickedBlock().getState();
+                    String line1 = sign.getLine(0);
                     String line2 = sign.getLine(1);
                     String line3 = sign.getLine(2);
                     if (pg.isArenaSystem()) {
-                        String s = null;
-                        for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
-                            if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                                s = Integer.toString(ii);
-                            }
-                        }
-                        if (line2.matches("PotionGames")) {
-                            assert s != null;
-                            if (line3.matches(s)) {
-                                if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                                    pg.joinLobby(p, s);
-                                }
+                        if (e.getClickedBlock().getLocation().equals(arenadata.getLocation("pg.arenas." + line1 + ".sign"))) {
+                            if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
+                                pg.joinLobby(p, line1);
                             }
                         }
                     } else {
-                        if (line2.matches("PotionGames") && line3.matches("Join")) {
+                        if (e.getClickedBlock().getLocation().equals(pg.getConfig().getLocation("pg.Lobby.sign"))) {
                             if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
                                 pg.onJoin(p);
                             }
@@ -1480,43 +1474,44 @@ public class Events implements Listener {
                                 }
                             }
                         }
-                    } else if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
-                        if (e.getCurrentItem() != null) {
-                            int shopitem = 1;
-                            for (int i = 0; i < pg.shop.size(); i++) {
-                                int coinamount;
-                                if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
-                                    coinamount = pg.shopsale.get(shopitem - 1);
-                                } else {
-                                    coinamount = pg.shopcost.get(shopitem - 1);
-                                }
-                                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(pg.shop.get(shopitem - 1))) {
-                                    if (bottle >= 1) {
-                                        if (amount >= coinamount) {
-                                            amount = amount - coinamount;
-                                            bottle = bottle - 1;
-                                            ItemStack randombarrier = new ItemStack(pg.shoppotiontype.get(shopitem - 1));
-                                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                                            assert randombarriermeta != null;
-                                            randombarriermeta.addCustomEffect(new PotionEffect(pg.shoppotion.get(shopitem - 1).getType(), pg.shoppotion.get(shopitem - 1).getDuration(), pg.shoppotion.get(shopitem - 1).getAmplifier()), true);
-                                            randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
-                                            randombarrier.setItemMeta(randombarriermeta);
-                                            p.getInventory().addItem(randombarrier);
-                                            for (int k = 0; k < coinamount; k++) {
-                                                p.getInventory().removeItem(pg.getCoin());
-                                            }
-                                            for (int k = 0; k < 1; k++) {
-                                                p.getInventory().removeItem(pg.getBottle());
-                                            }
-                                        } else {
-                                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                    }
+                }
+                if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
+                    if (e.getCurrentItem() != null) {
+                        int shopitem = 1;
+                        for (int i = 0; i < pg.shop.size(); i++) {
+                            int coinamount;
+                            if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
+                                coinamount = pg.shopsale.get(shopitem - 1);
+                            } else {
+                                coinamount = pg.shopcost.get(shopitem - 1);
+                            }
+                            if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(pg.shop.get(shopitem - 1))) {
+                                if (bottle >= 1) {
+                                    if (amount >= coinamount) {
+                                        amount = amount - coinamount;
+                                        bottle = bottle - 1;
+                                        ItemStack randombarrier = new ItemStack(pg.shoppotiontype.get(shopitem - 1));
+                                        PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                                        assert randombarriermeta != null;
+                                        randombarriermeta.addCustomEffect(new PotionEffect(pg.shoppotion.get(shopitem - 1).getType(), pg.shoppotion.get(shopitem - 1).getDuration(), pg.shoppotion.get(shopitem - 1).getAmplifier()), true);
+                                        randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
+                                        randombarrier.setItemMeta(randombarriermeta);
+                                        p.getInventory().addItem(randombarrier);
+                                        for (int k = 0; k < coinamount; k++) {
+                                            p.getInventory().removeItem(pg.getCoin());
+                                        }
+                                        for (int k = 0; k < 1; k++) {
+                                            p.getInventory().removeItem(pg.getBottle());
                                         }
                                     } else {
-                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
                                     }
+                                } else {
+                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
                                 }
-                                shopitem++;
                             }
+                            shopitem++;
                         }
                     }
                     e.setCancelled(true);
@@ -1733,43 +1728,44 @@ public class Events implements Listener {
                                 }
                             }
                         }
-                    } else if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
-                        if (e.getCurrentItem() != null) {
-                            int shopitem = 1;
-                            for (int i = 0; i < pg.shop.size(); i++) {
-                                int coinamount;
-                                if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
-                                    coinamount = pg.shopsale.get(shopitem - 1);
-                                } else {
-                                    coinamount = pg.shopcost.get(shopitem - 1);
-                                }
-                                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(pg.shop.get(shopitem - 1))) {
-                                    if (bottle >= 1) {
-                                        if (amount >= coinamount) {
-                                            amount = amount - coinamount;
-                                            bottle = bottle - 1;
-                                            ItemStack randombarrier = new ItemStack(pg.shoppotiontype.get(shopitem - 1));
-                                            PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                                            assert randombarriermeta != null;
-                                            randombarriermeta.addCustomEffect(new PotionEffect(pg.shoppotion.get(shopitem - 1).getType(), pg.shoppotion.get(shopitem - 1).getDuration(), pg.shoppotion.get(shopitem - 1).getAmplifier()), true);
-                                            randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
-                                            randombarrier.setItemMeta(randombarriermeta);
-                                            p.getInventory().addItem(randombarrier);
-                                            for (int k = 0; k < coinamount; k++) {
-                                                p.getInventory().removeItem(pg.getCoin());
-                                            }
-                                            for (int k = 0; k < 1; k++) {
-                                                p.getInventory().removeItem(pg.getBottle());
-                                            }
-                                        } else {
-                                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                    }
+                }
+                if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
+                    if (e.getCurrentItem() != null) {
+                        int shopitem = 1;
+                        for (int i = 0; i < pg.shop.size(); i++) {
+                            int coinamount;
+                            if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
+                                coinamount = pg.shopsale.get(shopitem - 1);
+                            } else {
+                                coinamount = pg.shopcost.get(shopitem - 1);
+                            }
+                            if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(pg.shop.get(shopitem - 1))) {
+                                if (bottle >= 1) {
+                                    if (amount >= coinamount) {
+                                        amount = amount - coinamount;
+                                        bottle = bottle - 1;
+                                        ItemStack randombarrier = new ItemStack(pg.shoppotiontype.get(shopitem - 1));
+                                        PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
+                                        assert randombarriermeta != null;
+                                        randombarriermeta.addCustomEffect(new PotionEffect(pg.shoppotion.get(shopitem - 1).getType(), pg.shoppotion.get(shopitem - 1).getDuration(), pg.shoppotion.get(shopitem - 1).getAmplifier()), true);
+                                        randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
+                                        randombarrier.setItemMeta(randombarriermeta);
+                                        p.getInventory().addItem(randombarrier);
+                                        for (int k = 0; k < coinamount; k++) {
+                                            p.getInventory().removeItem(pg.getCoin());
+                                        }
+                                        for (int k = 0; k < 1; k++) {
+                                            p.getInventory().removeItem(pg.getBottle());
                                         }
                                     } else {
-                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
                                     }
+                                } else {
+                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
                                 }
-                                shopitem++;
                             }
+                            shopitem++;
                         }
                     }
                     e.setCancelled(true);
@@ -1789,7 +1785,7 @@ public class Events implements Listener {
                         s = Integer.toString(ii);
                     }
                 }
-                e.setCancelled(pg.lobbyStates.get(s) != GameStates.INGAME && pg.playerLobby.get(p).contains(p.toString()));
+                e.setCancelled(pg.lobbyStates.get(s) != GameStates.INGAME && pg.playerLobby.get(p).contains(Objects.requireNonNull(s)));
             } else {
                 e.setCancelled(pg.getGamestate() != GameStates.INGAME && pg.pgPlayers.contains(p));
             }
@@ -1823,7 +1819,12 @@ public class Events implements Listener {
             }
             boolean upToDate = pg.getDescription().getVersion().equals(latest);
             if (!upToDate) {
-                p.sendMessage(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
+                TextComponent message = new TextComponent(TextComponent.fromLegacyText(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - "));
+                TextComponent link = new TextComponent(TextComponent.fromLegacyText(ChatColor.GRAY + "Click here to download!"));
+                link.setUnderlined(true);
+                message.addExtra(link);
+                message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/andersspielen/PotionGamesIssues/releases/latest"));
+                p.spigot().sendMessage(message);
             }
         }
     }

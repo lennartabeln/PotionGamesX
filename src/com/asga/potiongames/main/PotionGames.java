@@ -658,44 +658,51 @@ public class PotionGames extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Events(this), this);
         Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
-        int lobby = 1;
-        while (arenadata.contains("pg.arenas." + lobby)) {
-            String s = Integer.toString(lobby);
-            lobbyStates.put(s, GameStates.WAITING);
-            lobbyJoinable.put(s, true);
-            lobbyForcearena.put(s, false);
-            lobbyMove.put(s, true);
-            lobbyVoteallowed.put(s, true);
-            lobbyTeamallowed.put(s, true);
-            lobbyKitallowed.put(s, true);
-            lobbyAmount.put(s, 0);
-            lobbyTickstarted.put(s, false);
-            lobbyVoted.put(s, null);
-            lobbyBuild.put(s, false);
-            lobbyPause.put(s, false);
-            lobbyVote.put(s, null);
-            lobbyVotedarena.put(s, null);
-            int team = 1;
-            while (team <= teamAmount) {
-                String tname = Integer.toString(team);
-                lobbyteamplayers.put(tname, 0);
-                lobbyteamplayernamesdata.put(tname, null);
-                team++;
+        if (!isArenaSystem()) {
+            setGamestate(GameStates.WAITING);
+            tickStarted = true;
+            tick();
+        } else {
+            int lobby = 1;
+            while (arenadata.contains("pg.arenas." + lobby)) {
+                String s = Integer.toString(lobby);
+                lobbyStates.put(s, GameStates.WAITING);
+                lobbyJoinable.put(s, true);
+                lobbyForcearena.put(s, false);
+                lobbyMove.put(s, true);
+                lobbyVoteallowed.put(s, true);
+                lobbyTeamallowed.put(s, true);
+                lobbyKitallowed.put(s, true);
+                lobbyAmount.put(s, 0);
+                lobbyTickstarted.put(s, true);
+                lobbyVoted.put(s, null);
+                lobbyBuild.put(s, false);
+                lobbyPause.put(s, false);
+                lobbyVote.put(s, null);
+                lobbyVotedarena.put(s, null);
+                int team = 1;
+                while (team <= teamAmount) {
+                    String tname = Integer.toString(team);
+                    lobbyteamplayers.put(tname, 0);
+                    lobbyteamplayernamesdata.put(tname, null);
+                    team++;
+                }
+                lobbyteams.put(s, lobbyteamplayers);
+                lobbyteamplayernames.put(s, lobbyteamplayernamesdata);
+                lobbyvoteplayers.put(chat.get(42), 0);
+                lobbyvoteplayernames.put(chat.get(42), null);
+                int arena = 1;
+                while (arenadata.contains("pg.arenas." + arena)) {
+                    String aname = arenadata.getString("pg.arenas." + arena + ".name");
+                    lobbyvoteplayers.put(aname, 0);
+                    lobbyvoteplayernames.put(aname, null);
+                    arena++;
+                }
+                lobbyvotes.put(s, lobbyvoteplayers);
+                lobbyvoteplayernames.put(s, lobbyvoteplayernamesdata);
+                tickLobby(s);
+                lobby++;
             }
-            lobbyteams.put(s, lobbyteamplayers);
-            lobbyteamplayernames.put(s, lobbyteamplayernamesdata);
-            lobbyvoteplayers.put(chat.get(42), 0);
-            lobbyvoteplayernames.put(chat.get(42), null);
-            int arena = 1;
-            while (arenadata.contains("pg.arenas." + arena)) {
-                String aname = arenadata.getString("pg.arenas." + arena + ".name");
-                lobbyvoteplayers.put(aname, 0);
-                lobbyvoteplayernames.put(aname, null);
-                arena++;
-            }
-            lobbyvotes.put(s, lobbyvoteplayers);
-            lobbyvoteplayernames.put(s, lobbyvoteplayernamesdata);
-            lobby++;
         }
         ItemMeta coinmeta = coin.getItemMeta();
         assert coinmeta != null;
@@ -1052,6 +1059,21 @@ public class PotionGames extends JavaPlugin {
                 int gamerule = 1;
                 switch (gamestate) {
                     case WAITING:
+                        if (getConfig().contains("pg.Lobby") && getConfig().getLocation("pg.Lobby.sign") != null) {
+                            Location loc = getConfig().getLocation("pg.Lobby.sign");
+                            assert loc != null;
+                            BlockState b = loc.getBlock().getState();
+                            Sign sign = (Sign) b;
+                            sign.setLine(0, "PotionGames");
+                            if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
+                                sign.setLine(1, ChatColor.DARK_GREEN + getGamestate().toString());
+                            } else {
+                                sign.setLine(1, ChatColor.DARK_RED + getGamestate().toString());
+                            }
+                            sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                            sign.setLine(3, "[" + getPlayerAmount() + "/" + maxPlayers + "]");
+                            sign.update();
+                        }
                         specPlayers.clear();
                         setMove(true);
                         setJoinable(true);
@@ -1149,6 +1171,25 @@ public class PotionGames extends JavaPlugin {
                         }
                         break;
                     case PREPARING:
+                        if (getConfig().contains("pg.Lobby") && getConfig().getLocation("pg.Lobby.sign") != null) {
+                            Location loc = getConfig().getLocation("pg.Lobby.sign");
+                            assert loc != null;
+                            BlockState b = loc.getBlock().getState();
+                            Sign sign = (Sign) b;
+                            sign.setLine(0, "PotionGames");
+                            if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
+                                sign.setLine(1, ChatColor.DARK_GREEN + getGamestate().toString());
+                            } else {
+                                sign.setLine(1, ChatColor.DARK_RED + getGamestate().toString());
+                            }
+                            if (getVote() != null) {
+                                sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
+                            } else {
+                                sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                            }
+                            sign.setLine(3, "[" + getPlayerAmount() + "/" + maxPlayers + "]");
+                            sign.update();
+                        }
                         if (getPlayerAmount() >= minPlayers) {
                             for (Player all : pgPlayers) {
                                 all.setLevel(countdown);
@@ -1179,6 +1220,25 @@ public class PotionGames extends JavaPlugin {
                         }
                         break;
                     case INGAME:
+                        if (getConfig().contains("pg.Lobby") && getConfig().getLocation("pg.Lobby.sign") != null) {
+                            Location loc = getConfig().getLocation("pg.Lobby.sign");
+                            assert loc != null;
+                            BlockState b = loc.getBlock().getState();
+                            Sign sign = (Sign) b;
+                            sign.setLine(0, "PotionGames");
+                            if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
+                                sign.setLine(1, ChatColor.DARK_GREEN + getGamestate().toString());
+                            } else {
+                                sign.setLine(1, ChatColor.DARK_RED + getGamestate().toString());
+                            }
+                            if (getVote() != null) {
+                                sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
+                            } else {
+                                sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                            }
+                            sign.setLine(3, "[" + getPlayerAmount() + "/" + maxPlayers + "]");
+                            sign.update();
+                        }
                         int setting = 1;
                         while (arenadata.contains("pg.arenas." + setting)) {
                             String name = arenadata.getString("pg.arenas." + setting + ".world");
@@ -1278,8 +1338,25 @@ public class PotionGames extends JavaPlugin {
                         }
                         break;
                     case RESET:
+                        if (getConfig().contains("pg.Lobby") && getConfig().getLocation("pg.Lobby.sign") != null) {
+                            Location loc = getConfig().getLocation("pg.Lobby.sign");
+                            assert loc != null;
+                            BlockState b = loc.getBlock().getState();
+                            Sign sign = (Sign) b;
+                            sign.setLine(0, "PotionGames");
+                            if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
+                                sign.setLine(1, ChatColor.DARK_GREEN + getGamestate().toString());
+                            } else {
+                                sign.setLine(1, ChatColor.DARK_RED + getGamestate().toString());
+                            }
+                            sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                            sign.setLine(3, "[" + getPlayerAmount() + "/" + maxPlayers + "]");
+                            sign.update();
+                        }
                         setReset(10);
                         setCountdown(getConfig().getInt("pg.countdown"));
+                        setVote(null);
+                        setVotedArena(null);
                         pgPlayers.addAll(specPlayers);
                         for (Player all : pgPlayers) {
                             Location loc = (Location) getConfig().get("pg.Lobby.coords");
@@ -1711,9 +1788,24 @@ public class PotionGames extends JavaPlugin {
         resetLobby.put(s, reset);
         tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if (!lobbyPause.get(s)) {
-                int gamerule = 1;
+                int gamerule = Integer.parseInt(s);
                 switch (lobbyStates.get(s)) {
                     case WAITING:
+                        if (arenadata.contains("pg.arenas." + s) && arenadata.getLocation("pg.arenas." + s + ".sign") != null) {
+                            Location loc = arenadata.getLocation("pg.arenas." + s + ".sign");
+                            assert loc != null;
+                            BlockState b = loc.getBlock().getState();
+                            Sign sign = (Sign) b;
+                            sign.setLine(0, s);
+                            if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
+                                sign.setLine(1, ChatColor.DARK_GREEN + lobbyStates.get(s).toString());
+                            } else {
+                                sign.setLine(1, ChatColor.DARK_RED + lobbyStates.get(s).toString());
+                            }
+                            sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                            sign.setLine(3, "[" + lobbyAmount.get(s).toString() + "/" + maxPlayers + "]");
+                            sign.update();
+                        }
                         for (Player all : specLobby.keySet()) {
                             if (specLobby.get(all).equals(s)) {
                                 specLobby.remove(all);
@@ -1816,6 +1908,25 @@ public class PotionGames extends JavaPlugin {
                         }
                         break;
                     case PREPARING:
+                        if (arenadata.contains("pg.arenas." + s) && arenadata.getLocation("pg.arenas." + s + ".sign") != null) {
+                            Location loc = arenadata.getLocation("pg.arenas." + s + ".sign");
+                            assert loc != null;
+                            BlockState b = loc.getBlock().getState();
+                            Sign sign = (Sign) b;
+                            sign.setLine(0, s);
+                            if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
+                                sign.setLine(1, ChatColor.DARK_GREEN + lobbyStates.get(s).toString());
+                            } else {
+                                sign.setLine(1, ChatColor.DARK_RED + lobbyStates.get(s).toString());
+                            }
+                            if (lobbyVote.get(s) != null) {
+                                sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + lobbyVote.get(s) + ".name")).toString());
+                            } else {
+                                sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                            }
+                            sign.setLine(3, "[" + lobbyAmount.get(s).toString() + "/" + maxPlayers + "]");
+                            sign.update();
+                        }
                         if (lobbyAmount.get(s) >= minPlayers) {
                             for (Player all : playerLobby.keySet()) {
                                 if (playerLobby.get(all).equals(s)) {
@@ -1854,6 +1965,25 @@ public class PotionGames extends JavaPlugin {
                         }
                         break;
                     case INGAME:
+                        if (arenadata.contains("pg.arenas." + s) && arenadata.getLocation("pg.arenas." + s + ".sign") != null) {
+                            Location loc = arenadata.getLocation("pg.arenas." + s + ".sign");
+                            assert loc != null;
+                            BlockState b = loc.getBlock().getState();
+                            Sign sign = (Sign) b;
+                            sign.setLine(0, s);
+                            if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
+                                sign.setLine(1, ChatColor.DARK_GREEN + lobbyStates.get(s).toString());
+                            } else {
+                                sign.setLine(1, ChatColor.DARK_RED + lobbyStates.get(s).toString());
+                            }
+                            if (lobbyVote.get(s) != null) {
+                                sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + lobbyVote.get(s) + ".name")).toString());
+                            } else {
+                                sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                            }
+                            sign.setLine(3, "[" + lobbyAmount.get(s).toString() + "/" + maxPlayers + "]");
+                            sign.update();
+                        }
                         int setting = Integer.parseInt(s);
                         String wname = arenadata.getString("pg.arenas." + setting + ".world");
                         assert wname != null;
@@ -1982,8 +2112,25 @@ public class PotionGames extends JavaPlugin {
                         }
                         break;
                     case RESET:
+                        if (arenadata.contains("pg.arenas." + s) && arenadata.getLocation("pg.arenas." + s + ".sign") != null) {
+                            Location loc = arenadata.getLocation("pg.arenas." + s + ".sign");
+                            assert loc != null;
+                            BlockState b = loc.getBlock().getState();
+                            Sign sign = (Sign) b;
+                            sign.setLine(0, s);
+                            if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
+                                sign.setLine(1, ChatColor.DARK_GREEN + lobbyStates.get(s).toString());
+                            } else {
+                                sign.setLine(1, ChatColor.DARK_RED + lobbyStates.get(s).toString());
+                            }
+                            sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                            sign.setLine(3, "[" + lobbyAmount.get(s).toString() + "/" + maxPlayers + "]");
+                            sign.update();
+                        }
                         resetLobby.replace(s, reset);
                         countdownLobby.replace(s, getConfig().getInt("pg.countdown"));
+                        lobbyVote.replace(s, null);
+                        lobbyVotedarena.replace(s, null);
                         playerLobby.putAll(specLobby);
                         for (Player all : playerLobby.keySet()) {
                             if (playerLobby.get(all).equals(s)) {

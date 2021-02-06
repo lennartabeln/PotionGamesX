@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Objects;
 
 public class Commands implements CommandExecutor {
@@ -85,6 +86,34 @@ public class Commands implements CommandExecutor {
                 } else if (args[0].equalsIgnoreCase("signp3")) {
                     pg.getConfig().set("pg.RankWall.signp3", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
                     pg.saveConfig();
+                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                } else if (args[0].equalsIgnoreCase("joinsign")) {
+                    pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                    pg.saveConfig();
+                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                } else if (args[0].equalsIgnoreCase("sign1")) {
+                    arenadata.set("pg.arenas.1.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                    try {
+                        arenadata.save(pg.arenadatafile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                } else if (args[0].equalsIgnoreCase("sign2")) {
+                    arenadata.set("pg.arenas.2.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                    try {
+                        arenadata.save(pg.arenadatafile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                } else if (args[0].equalsIgnoreCase("sign3")) {
+                    arenadata.set("pg.arenas.3.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                    try {
+                        arenadata.save(pg.arenadatafile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
                 }
             }
