@@ -72,10 +72,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
     whole map)
 * Composter: Shop with potions (Build a Beacon under the Composter to make it shown on the whole map)
 
-#### Create Join and Stats Signs
+#### Create Stats Sign
 
-* Join Sign
-  * Place a Sign and type in the second line `PotionGames` and in the third line `Join`
 * Stats Sign
   * Place a Sign and type in the second line `PotionGames` and in the third line `Stats`
 
@@ -120,8 +118,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `/pg pause` - Pause timer/countdown - Permission: `pg.pause`
 * `/pg force [arenaname]` - Force an arena - Permission: `pg.force`
 * `/pg start` - Set lobby countdown to 10 - Permission: `pg.start`
-* `/pg join` - Join the game(`startOnJoin = false`) - Permission: `pg.join`
-* `/pg leave` - Leave the game(`startOnJoin = false`) - Permission: `pg.leave`
+* `/pg join` - Join the game (`startOnJoin = false`) - Permission: `pg.join`
+* `/pg leave` - Leave the game (`startOnJoin = false`) - Permission: `pg.leave`
 * `/pg stats` - Show your stats - Permission: `pg.stats`
 * `/pg headp1(2;3)` - Add Player Head to Stats-Wall - Permission: `pg.setup`
 * `/pg signp1(2;3)` - Add Player Sign to Stats-Wall - Permission: `pg.setup`
