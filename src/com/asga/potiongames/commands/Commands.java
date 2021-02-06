@@ -27,13 +27,26 @@ public class Commands implements CommandExecutor {
         if (args.length == 0) {
             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
             if (p.hasPermission("pg.setup")) {
-                p.sendMessage(pg.prefix + "/pg setlobby - Set lobby");
-                p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add an arena");
-                p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add a spawn");
-                p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove an arena");
-                p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [#] - Remove a spawn");
-                p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
-                p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
+                if (pg.isArenaSystem()) {
+                    p.sendMessage(pg.prefix + "/pg setlobby [lobbynumber] - Set lobby");
+                    p.sendMessage(pg.prefix + "/pg addarena [lobbynumber] [arenaname] - Add an arena");
+                    p.sendMessage(pg.prefix + "/pg addspawn [lobbynumber] [arenaname] - Add a spawn");
+                    p.sendMessage(pg.prefix + "/pg delarena [lobbynumber] [arenaname] - Remove an arena");
+                    p.sendMessage(pg.prefix + "/pg delspawn [lobbynumber] [arenaname] - Remove last spawn");
+                    p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
+                    p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
+                    p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
+                    p.sendMessage(pg.prefix + "/pg joinsign [lobbynumber] - Add Join-Sign");
+                } else {
+                    p.sendMessage(pg.prefix + "/pg setlobby - Set lobby");
+                    p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add an arena");
+                    p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add a spawn");
+                    p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove an arena");
+                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] - Remove last spawn");
+                    p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
+                    p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
+                    p.sendMessage(pg.prefix + "/pg joinsign - Set Join-Sign");
+                }
             }
             if (p.hasPermission("pg.build")) {
                 p.sendMessage(pg.prefix + "/pg build - Activate build mode");
@@ -49,13 +62,13 @@ public class Commands implements CommandExecutor {
             }
             if (p.hasPermission("pg.join")) {
                 if (pg.isArenaSystem()) {
-                    p.sendMessage(pg.prefix + "/pg join # - Join a game(startOnJoin = false)");
+                    p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
                 } else {
-                    p.sendMessage(pg.prefix + "/pg join - Join the game(startOnJoin = false)");
+                    p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
                 }
             }
             if (p.hasPermission("pg.leave")) {
-                p.sendMessage(pg.prefix + "/pg leave - Leave the game(startOnJoin = false)");
+                p.sendMessage(pg.prefix + "/pg leave - Leave the game (startOnJoin = false)");
             }
             if (p.hasPermission("pg.stats")) {
                 p.sendMessage(pg.prefix + "/pg stats - Show your stats");
@@ -88,33 +101,11 @@ public class Commands implements CommandExecutor {
                     pg.saveConfig();
                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
                 } else if (args[0].equalsIgnoreCase("joinsign")) {
-                    pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                    pg.saveConfig();
-                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
-                } else if (args[0].equalsIgnoreCase("sign1")) {
-                    arenadata.set("pg.arenas.1.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                    try {
-                        arenadata.save(pg.arenadatafile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    if (!pg.isArenaSystem()) {
+                        pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                        pg.saveConfig();
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
                     }
-                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
-                } else if (args[0].equalsIgnoreCase("sign2")) {
-                    arenadata.set("pg.arenas.2.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                    try {
-                        arenadata.save(pg.arenadatafile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
-                } else if (args[0].equalsIgnoreCase("sign3")) {
-                    arenadata.set("pg.arenas.3.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                    try {
-                        arenadata.save(pg.arenadatafile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
                 }
             }
             if (p.hasPermission("pg.stats")) {
@@ -138,13 +129,26 @@ public class Commands implements CommandExecutor {
             if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("commands")) {
                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
                 if (p.hasPermission("pg.setup")) {
-                    p.sendMessage(pg.prefix + "/pg setlobby - Set lobby");
-                    p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add an arena");
-                    p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add a spawn");
-                    p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove an arena");
-                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [#] - Remove a spawn");
-                    p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
-                    p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
+                    if (pg.isArenaSystem()) {
+                        p.sendMessage(pg.prefix + "/pg setlobby [lobbynumber] - Set lobby");
+                        p.sendMessage(pg.prefix + "/pg addarena [lobbynumber] [arenaname] - Add an arena");
+                        p.sendMessage(pg.prefix + "/pg addspawn [lobbynumber] [arenaname] - Add a spawn");
+                        p.sendMessage(pg.prefix + "/pg delarena [lobbynumber] [arenaname] - Remove an arena");
+                        p.sendMessage(pg.prefix + "/pg delspawn [lobbynumber] [arenaname] - Remove last spawn");
+                        p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
+                        p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
+                        p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
+                        p.sendMessage(pg.prefix + "/pg joinsign [lobbynumber] - Add Join-Sign");
+                    } else {
+                        p.sendMessage(pg.prefix + "/pg setlobby - Set lobby");
+                        p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add an arena");
+                        p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add a spawn");
+                        p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove an arena");
+                        p.sendMessage(pg.prefix + "/pg delspawn [arenaname] - Remove last spawn");
+                        p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
+                        p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
+                        p.sendMessage(pg.prefix + "/pg joinsign - Set Join-Sign");
+                    }
                 }
                 if (p.hasPermission("pg.build")) {
                     p.sendMessage(pg.prefix + "/pg build - Activate build mode");
@@ -160,13 +164,13 @@ public class Commands implements CommandExecutor {
                 }
                 if (p.hasPermission("pg.join")) {
                     if (pg.isArenaSystem()) {
-                        p.sendMessage(pg.prefix + "/pg join # - Join a game(startOnJoin = false)");
+                        p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
                     } else {
-                        p.sendMessage(pg.prefix + "/pg join - Join the game(startOnJoin = false)");
+                        p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
                     }
                 }
                 if (p.hasPermission("pg.leave")) {
-                    p.sendMessage(pg.prefix + "/pg leave - Leave the game(startOnJoin = false)");
+                    p.sendMessage(pg.prefix + "/pg leave - Leave the game (startOnJoin = false)");
                 }
                 if (p.hasPermission("pg.stats")) {
                     p.sendMessage(pg.prefix + "/pg stats - Show your stats");
@@ -177,7 +181,7 @@ public class Commands implements CommandExecutor {
                 if (p.hasPermission("pg.join")) {
                     if (pg.isArenaSystem()) {
                         if (p.hasPermission("pg.join")) {
-                            p.sendMessage(pg.prefix + "/pg join # - Join a game(startOnJoin = false)");
+                            p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
                         }
                     } else {
                         if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
@@ -375,34 +379,29 @@ public class Commands implements CommandExecutor {
                 }
             } else if (args[0].equalsIgnoreCase("setlobby")) {
                 if (p.hasPermission("pg.setup")) {
-                    pg.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
-                    pg.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
-                    pg.saveConfig();
-                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24));
-                }
-            } else if (args[0].equalsIgnoreCase("force")) {
-                if (p.hasPermission("pg.force")) {
-                    p.sendMessage(pg.prefix + "/pg force [arenaname] - Force an arena");
-                }
-            } else if (args[0].equalsIgnoreCase("delarena")) {
-                if (p.hasPermission("pg.setup")) {
-                    p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove an arena");
-                }
-            } else if (args[0].equalsIgnoreCase("addarena")) {
-                if (p.hasPermission("pg.setup")) {
-                    p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add an arena");
-                }
-            } else if (args[0].equalsIgnoreCase("addspawn")) {
-                if (p.hasPermission("pg.setup")) {
-                    p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add a spawn");
-                }
-            } else if (args[0].equalsIgnoreCase("delspawn")) {
-                if (p.hasPermission("pg.setup")) {
-                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [#] - Remove a spawn");
+                    if (!pg.isArenaSystem()) {
+                        pg.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
+                        pg.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
+                        pg.saveConfig();
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24));
+                    }
                 }
             }
         } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase("join")) {
+            if (args[0].equalsIgnoreCase("setlobby")) {
+                if (p.hasPermission("pg.setup")) {
+                    if (pg.isArenaSystem()) {
+                        arenadata.set("pg.lobbies." + args[1] + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
+                        arenadata.set("pg.lobbies." + args[1] + ".coords", Objects.requireNonNull(p.getLocation()));
+                        try {
+                            arenadata.save(pg.arenadatafile);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + " (" + ChatColor.AQUA + "Lobby: " + args[1] + ")");
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("join")) {
                 if (pg.isArenaSystem()) {
                     String s = args[1];
                     if (p.hasPermission("pg.join")) {
@@ -475,93 +474,213 @@ public class Commands implements CommandExecutor {
                 }
             } else if (args[0].equalsIgnoreCase("delarena")) {
                 if (p.hasPermission("pg.setup")) {
-                    int arenaNumber = 1;
-                    try {
-                        int i = 1;
-                        boolean arenaID = false;
-                        while (!arenaID) {
-                            if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
-                                arenaNumber = i;
-                                arenaID = true;
-                            } else {
-                                i++;
+                    if (!pg.isArenaSystem()) {
+                        int arenaNumber = 1;
+                        try {
+                            int i = 1;
+                            boolean arenaID = false;
+                            while (!arenaID) {
+                                if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                    arenaNumber = i;
+                                    arenaID = true;
+                                } else {
+                                    i++;
+                                }
                             }
+                            String arenaName = args[1];
+                            arenadata.set("pg.arenas." + arenaNumber, null);
+                            arenadata.save(pg.arenadatafile);
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28));
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                         }
-                        String arenaName = args[1];
-                        arenadata.set("pg.arenas." + arenaNumber, null);
-                        arenadata.save(pg.arenadatafile);
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28));
-                    } catch (Exception e) {
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                     }
                 }
             } else if (args[0].equalsIgnoreCase("addarena")) {
                 if (p.hasPermission("pg.setup")) {
-                    int arenaNumber = 1;
-                    try {
-                        while (arenadata.contains("pg.arenas." + arenaNumber)) {
-                            arenaNumber++;
+                    if (!pg.isArenaSystem()) {
+                        int arenaNumber = 1;
+                        try {
+                            while (arenadata.contains("pg.arenas." + arenaNumber)) {
+                                arenaNumber++;
+                            }
+                            String arenaName = args[1];
+                            arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
+                            arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
+                            arenadata.set("pg.arenas." + arenaNumber + ".name", arenaName);
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(29));
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                         }
-                        String arenaName = args[1];
-                        arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
-                        arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
-                        arenadata.set("pg.arenas." + arenaNumber + ".name", arenaName);
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(29));
-                    } catch (Exception e) {
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
                     }
                 }
             } else if (args[0].equalsIgnoreCase("addspawn")) {
                 if (p.hasPermission("pg.setup")) {
-                    int spawnNumber = 1;
-                    int arenaNumber = 1;
-                    try {
-                        int i = 1;
-                        boolean arenaName = false;
-                        while (!arenaName) {
-                            if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
-                                arenaNumber = i;
-                                arenaName = true;
-                            } else {
-                                i++;
+                    if (!pg.isArenaSystem()) {
+                        int spawnNumber = 1;
+                        int arenaNumber = 1;
+                        try {
+                            int i = 1;
+                            boolean arenaName = false;
+                            while (!arenaName) {
+                                if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                    arenaNumber = i;
+                                    arenaName = true;
+                                } else {
+                                    i++;
+                                }
                             }
+                            while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
+                                spawnNumber++;
+                            }
+                            arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
+                            arenadata.save(pg.arenadatafile);
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(30));
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31));
                         }
-                        while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
-                            spawnNumber++;
-                        }
-                        arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
-                        arenadata.save(pg.arenadatafile);
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(30));
-                    } catch (Exception e) {
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31));
                     }
                 }
             } else if (args[0].equalsIgnoreCase("delspawn")) {
                 if (p.hasPermission("pg.setup")) {
-                    p.sendMessage(pg.prefix + "/pg delspawn [arenaname] [#] - Remove spawn");
+                    if (!pg.isArenaSystem()) {
+                        int arenaNumber = 1;
+                        int spawnNumber = 1;
+                        try {
+                            int i = 1;
+                            boolean arenaName = false;
+                            while (!arenaName) {
+                                if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                    arenaNumber = i;
+                                    arenaName = true;
+                                } else {
+                                    i++;
+                                }
+                            }
+                            int max = 1;
+                            while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + max)) {
+                                spawnNumber = max;
+                                max++;
+                            }
+                            arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
+                            arenadata.save(pg.arenadatafile);
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(32));
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31));
+                        }
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("joinsign")) {
+                if (p.hasPermission("pg.setup")) {
+                    if (pg.isArenaSystem()) {
+                        arenadata.set("pg.lobbies." + args[1] + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                        try {
+                            arenadata.save(pg.arenadatafile);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
+                    }
                 }
             }
         } else if (args.length == 3) {
-            if (args[0].equalsIgnoreCase("delspawn")) {
+            if (args[0].equalsIgnoreCase("delarena")) {
                 if (p.hasPermission("pg.setup")) {
-                    int arenaNumber = 1;
-                    try {
-                        int i = 1;
-                        boolean arenaName = false;
-                        while (!arenaName) {
-                            if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
-                                arenaNumber = i;
-                                arenaName = true;
-                            } else {
-                                i++;
+                    if (pg.isArenaSystem()) {
+                        int arenaNumber = 1;
+                        try {
+                            int i = 1;
+                            boolean arenaID = false;
+                            while (!arenaID) {
+                                if (args[2].matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                    arenaNumber = i;
+                                    arenaID = true;
+                                } else {
+                                    i++;
+                                }
                             }
+                            String arenaName = args[2];
+                            arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber, null);
+                            arenadata.save(pg.arenadatafile);
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
                         }
-                        int spawnNumber = Integer.parseInt(args[2]);
-                        arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
-                        arenadata.save(pg.arenadatafile);
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(32));
-                    } catch (Exception e) {
-                        p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31));
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("addarena")) {
+                if (p.hasPermission("pg.setup")) {
+                    if (pg.isArenaSystem()) {
+                        int arenaNumber = 1;
+                        try {
+                            while (arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber)) {
+                                arenaNumber++;
+                            }
+                            String arenaName = args[2];
+                            arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber, p.getWorld());
+                            arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".world", p.getWorld().getName());
+                            arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".name", arenaName);
+                            arenadata.save(pg.arenadatafile);
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
+                        }
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("addspawn")) {
+                if (p.hasPermission("pg.setup")) {
+                    if (pg.isArenaSystem()) {
+                        int spawnNumber = 1;
+                        int arenaNumber = 1;
+                        try {
+                            int i = 1;
+                            boolean arenaName = false;
+                            while (!arenaName) {
+                                if (args[2].matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                    arenaNumber = i;
+                                    arenaName = true;
+                                } else {
+                                    i++;
+                                }
+                            }
+                            while (arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber)) {
+                                spawnNumber++;
+                            }
+                            arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
+                            arenadata.save(pg.arenadatafile);
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(30) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
+                        }
+                    }
+                }
+            } else if (args[0].equalsIgnoreCase("delspawn")) {
+                if (p.hasPermission("pg.setup")) {
+                    if (pg.isArenaSystem()) {
+                        int arenaNumber = 1;
+                        int spawnNumber = 1;
+                        try {
+                            int i = 1;
+                            boolean arenaName = false;
+                            while (!arenaName) {
+                                if (args[2].matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                    arenaNumber = i;
+                                    arenaName = true;
+                                } else {
+                                    i++;
+                                }
+                            }
+                            int max = 1;
+                            while (arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + max)) {
+                                spawnNumber = max;
+                                max++;
+                            }
+                            arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber, null);
+                            arenadata.save(pg.arenadatafile);
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(32) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.AQUA + args[2] + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
+                        }
                     }
                 }
             }

@@ -1,7 +1,7 @@
 name: PotionGames
 author: andersspielen
 main: com.asga.potiongames.main.PotionGames
-version: 2.1-dev
+version: 2.2
 api-version: 1.16
 softdepend: [ Multiverse-Core ]
 commands:
@@ -25,7 +25,7 @@ commands:
     permission: pg.setup
     permission-message: You do not have permission to use this command.
   pg delspawn:
-    description: Remove a spawn
+    description: Remove last spawn
     permission: pg.setup
     permission-message: You do not have permission to use this command.
   pg build:
@@ -78,6 +78,10 @@ commands:
     permission-message: You do not have permission to use this command.
   pg signp3:
     description: Add Player 3 Sign to Stats-Wall
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg joinsign:
+    description: Add Join-Sign
     permission: pg.setup
     permission-message: You do not have permission to use this command.
 

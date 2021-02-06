@@ -377,7 +377,7 @@ public class Events implements Listener {
                             pg.specLobby.put(p, s);
                             if (pg.isActivateTeams()) {
                                 String teamname = null;
-                                for (int i = 1; i <= pg.getTeamAmount(); i++) {
+                                for (int i = 1; i <= pg.lobbyteamAmount.get(s); i++) {
                                     if (pg.lobbyteamplayernames.get(s).containsKey(Integer.toString(i)) && pg.lobbyteamplayernames.get(s).containsValue(p)) {
                                         if (pg.lobbyteamplayernames.get(s).get(Integer.toString(i)) == p) {
                                             teamname = Integer.toString(i);
@@ -526,7 +526,7 @@ public class Events implements Listener {
                     String line2 = sign.getLine(1);
                     String line3 = sign.getLine(2);
                     if (pg.isArenaSystem()) {
-                        if (e.getClickedBlock().getLocation().equals(arenadata.getLocation("pg.arenas." + line1 + ".sign"))) {
+                        if (e.getClickedBlock().getLocation().equals(arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
                             if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
                                 pg.joinLobby(p, line1);
                             }
@@ -1222,9 +1222,11 @@ public class Events implements Listener {
                                     HashMap<String, Integer> temp = new HashMap<>();
                                     randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                     temp.put(pg.chat.get(42), randomvotes);
-                                    for (int max = 1; max <= pg.lobbyStates.keySet().size(); max++) {
-                                        int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.arenas." + max + ".name"));
-                                        temp.put(arenadata.getString("pg.arenas." + max + ".name"), oldvotes);
+                                    int max = 1;
+                                    while (arenadata.contains("pg.lobbies." + s + "." + max)) {
+                                        int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                                        temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
+                                        max++;
                                     }
                                     temp.put(displayname, votes);
                                     pg.lobbyvotes.replace(s, temp);
@@ -1250,9 +1252,11 @@ public class Events implements Listener {
                                     HashMap<String, Integer> tempold = new HashMap<>();
                                     randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                     tempold.put(pg.chat.get(42), randomvotes);
-                                    for (int max = 1; max <= pg.lobbyStates.keySet().size(); max++) {
-                                        int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.arenas." + max + ".name"));
-                                        tempold.put(arenadata.getString("pg.arenas." + max + ".name"), oldvotes);
+                                    int max = 1;
+                                    while (arenadata.contains("pg.lobbies." + s + "." + max)) {
+                                        int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                                        tempold.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
+                                        max++;
                                     }
                                     tempold.put(arenaname, votes);
                                     pg.lobbyvotes.replace(s, tempold);
@@ -1262,9 +1266,10 @@ public class Events implements Listener {
                                     HashMap<String, Integer> temp = new HashMap<>();
                                     randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                     temp.put(pg.chat.get(42), randomvotes);
-                                    for (int max = 1; max <= pg.lobbyStates.keySet().size(); max++) {
-                                        int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.arenas." + max + ".name"));
-                                        temp.put(arenadata.getString("pg.arenas." + max + ".name"), oldvotes);
+                                    while (arenadata.contains("pg.lobbies." + s + "." + max)) {
+                                        int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                                        temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
+                                        max++;
                                     }
                                     temp.put(displayname, votes);
                                     pg.lobbyvotes.replace(s, temp);
@@ -1297,7 +1302,7 @@ public class Events implements Listener {
                                                     int players = pg.lobbyteams.get(s).get(Integer.toString(rndTeam));
                                                     players++;
                                                     HashMap<String, Integer> temp = new HashMap<>();
-                                                    for (int max = 1; max <= pg.getTeamAmount(); max++) {
+                                                    for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
                                                         int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
                                                         temp.put(Integer.toString(max), oldplayers);
                                                     }
@@ -1317,7 +1322,7 @@ public class Events implements Listener {
                                                 int players = pg.lobbyteams.get(s).get(displayname);
                                                 players++;
                                                 HashMap<String, Integer> temp = new HashMap<>();
-                                                for (int max = 1; max <= pg.getTeamAmount(); max++) {
+                                                for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
                                                     int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
                                                     temp.put(Integer.toString(max), oldplayers);
                                                 }
@@ -1348,7 +1353,7 @@ public class Events implements Listener {
                                         int teamamount = pg.lobbyteams.get(s).get(teamname);
                                         teamamount--;
                                         HashMap<String, Integer> tempold = new HashMap<>();
-                                        for (int max = 1; max <= pg.getTeamAmount(); max++) {
+                                        for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
                                             int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
                                             tempold.put(Integer.toString(max), oldplayers);
                                         }
@@ -1366,7 +1371,7 @@ public class Events implements Listener {
                                                     int players = pg.lobbyteams.get(s).get(Integer.toString(rndTeam));
                                                     players++;
                                                     HashMap<String, Integer> temp = new HashMap<>();
-                                                    for (int max = 1; max <= pg.getTeamAmount(); max++) {
+                                                    for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
                                                         int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
                                                         temp.put(Integer.toString(max), oldplayers);
                                                     }
@@ -1386,7 +1391,7 @@ public class Events implements Listener {
                                                 int players = pg.lobbyteams.get(s).get(displayname);
                                                 players++;
                                                 HashMap<String, Integer> temp = new HashMap<>();
-                                                for (int max = 1; max <= pg.getTeamAmount(); max++) {
+                                                for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
                                                     int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
                                                     temp.put(Integer.toString(max), oldplayers);
                                                 }
