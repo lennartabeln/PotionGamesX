@@ -187,23 +187,21 @@ public class Events implements Listener {
 
     @EventHandler
     public void onWaterPassTrough(BlockFromToEvent e) {
-        if (!pg.isBuild()) {
-            e.setCancelled(true);
-        }
+        e.setCancelled(true);
     }
 
     @EventHandler
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
         Player p = e.getPlayer();
         if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-            if (!pg.isBuild()) {
-                if (pg.isArenaSystem()) {
-                    String s = null;
-                    for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
-                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
-                        }
+            if (pg.isArenaSystem()) {
+                String s = null;
+                for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                        s = Integer.toString(ii);
                     }
+                }
+                if (!pg.lobbyBuild.get(s)) {
                     if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                         if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
                             Block block = e.getBlockClicked().getRelative(e.getBlockFace());
@@ -211,7 +209,9 @@ public class Events implements Listener {
                             pg.getLiquidPlaced().put(loc, block);
                         }
                     }
-                } else {
+                }
+            } else {
+                if (!pg.isBuild()) {
                     if (pg.getGamestate() == GameStates.INGAME) {
                         if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
                             Block block = e.getBlockClicked().getRelative(e.getBlockFace());
@@ -228,14 +228,14 @@ public class Events implements Listener {
     public void onBlockPlace(BlockPlaceEvent e) {
         Player p = e.getPlayer();
         if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-            if (!pg.isBuild()) {
-                if (pg.isArenaSystem()) {
-                    String s = null;
-                    for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
-                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
-                        }
+            if (pg.isArenaSystem()) {
+                String s = null;
+                for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                        s = Integer.toString(ii);
                     }
+                }
+                if (!pg.lobbyBuild.get(s)) {
                     if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                         if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
                                 || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
@@ -256,7 +256,9 @@ public class Events implements Listener {
                             e.setCancelled(true);
                         }
                     }
-                } else {
+                }
+            } else {
+                if (!pg.isBuild()) {
                     if (pg.getGamestate() == GameStates.INGAME) {
                         if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
                                 || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
@@ -288,14 +290,15 @@ public class Events implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
         Player p = e.getPlayer();
         if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-            if (!pg.isBuild()) {
-                if (pg.isArenaSystem()) {
-                    String s = null;
-                    for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
-                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
-                        }
+
+            if (pg.isArenaSystem()) {
+                String s = null;
+                for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                        s = Integer.toString(ii);
                     }
+                }
+                if (!pg.lobbyBuild.get(s)) {
                     if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                         if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
                                 || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
@@ -316,7 +319,9 @@ public class Events implements Listener {
                             e.setCancelled(true);
                         }
                     }
-                } else {
+                }
+            } else {
+                if (!pg.isBuild()) {
                     if (pg.getGamestate() == GameStates.INGAME) {
                         if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
                                 || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
@@ -348,14 +353,14 @@ public class Events implements Listener {
     public void onDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
         if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-            if (!pg.isBuild()) {
-                if (pg.isArenaSystem()) {
-                    String s = null;
-                    for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
-                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
-                        }
+            if (pg.isArenaSystem()) {
+                String s = null;
+                for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                        s = Integer.toString(ii);
                     }
+                }
+                if (!pg.lobbyBuild.get(s)) {
                     if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                         if (p.getKiller() != null) {
                             pg.addDeaths(p.getUniqueId().toString(), 1);
@@ -370,7 +375,7 @@ public class Events implements Listener {
                             pg.playerLobby.remove(p);
                             pg.specLobby.put(p, s);
                             if (pg.isActivateTeams()) {
-                                String teamname = "";
+                                String teamname = null;
                                 for (int i = 1; i <= pg.getTeamAmount(); i++) {
                                     if (pg.lobbyteamplayernames.get(s).containsKey(Integer.toString(i)) && pg.lobbyteamplayernames.get(s).containsValue(p)) {
                                         if (pg.lobbyteamplayernames.get(s).get(Integer.toString(i)) == p) {
@@ -424,7 +429,9 @@ public class Events implements Listener {
                             p.setCollidable(false);
                         }
                     }
-                } else {
+                }
+            } else {
+                if (!pg.isBuild()) {
                     if (pg.getGamestate() == GameStates.INGAME) {
                         if (p.getKiller() != null) {
                             pg.addDeaths(p.getUniqueId().toString(), 1);
@@ -439,10 +446,10 @@ public class Events implements Listener {
                             pg.pgPlayers.remove(p);
                             pg.specPlayers.add(p);
                             if (pg.isActivateTeams()) {
-                                String teamname = "";
+                                String teamname = null;
                                 for (int i = 1; i <= pg.getTeamAmount(); i++) {
                                     if (pg.teamplayernames.containsKey(Integer.toString(i)) && pg.teamplayernames.containsValue(p)) {
-                                        teamname = String.valueOf(i);
+                                        teamname = Integer.toString(i);
                                     }
                                 }
                                 pg.teamplayernames.remove(teamname, p);
@@ -789,7 +796,7 @@ public class Events implements Listener {
                     if (e.getClickedBlock().getType() == Material.NETHERITE_BLOCK) {
                         if (pg.isArenaSystem()) {
                             int i = 1;
-                            String s = String.valueOf(i);
+                            String s = Integer.toString(i);
                             if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                 if (!pg.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                     Inventory inv;
@@ -824,7 +831,7 @@ public class Events implements Listener {
                         if (e.getClickedBlock().getType() == Material.COMPOSTER) {
                             if (pg.isArenaSystem()) {
                                 int ii = 1;
-                                String s = String.valueOf(ii);
+                                String s = Integer.toString(ii);
                                 if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                     for (ItemStack item : p.getInventory().getContents()) {
                                         if (item != null) {
@@ -961,7 +968,7 @@ public class Events implements Listener {
                     if (p.getInventory().getItemInMainHand().getType() == Material.MILK_BUCKET) {
                         if (pg.isArenaSystem()) {
                             int i = 1;
-                            String s = String.valueOf(i);
+                            String s = Integer.toString(i);
                             if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                 pg.clearEffects(p);
                                 p.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
@@ -976,7 +983,7 @@ public class Events implements Listener {
                     if (p.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
                         if (pg.isArenaSystem()) {
                             int i = 1;
-                            String s = String.valueOf(i);
+                            String s = Integer.toString(i);
                             if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                 Player result = null;
                                 double lastDistance = Double.MAX_VALUE;
@@ -1152,7 +1159,7 @@ public class Events implements Listener {
                 if (p.getInventory().getItemInMainHand().getType() == Material.ENDER_CHEST) {
                     if (pg.isArenaSystem()) {
                         int ii = 1;
-                        String s = String.valueOf(ii);
+                        String s = Integer.toString(ii);
                         if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(62));
                             ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
@@ -1208,7 +1215,7 @@ public class Events implements Listener {
                         s = Integer.toString(ii);
                     }
                 }
-                if (pg.lobbyStates.get(s) == GameStates.WAITING && !pg.isBuild() && pg.playerLobby.containsKey(p) || pg.lobbyStates.get(s) == GameStates.PREPARING && !pg.isBuild() && pg.playerLobby.containsKey(p)) {
+                if (pg.lobbyStates.get(s) == GameStates.WAITING && !pg.lobbyBuild.get(s) && pg.playerLobby.containsKey(p) || pg.lobbyStates.get(s) == GameStates.PREPARING && !pg.lobbyBuild.get(s) && pg.playerLobby.containsKey(p)) {
                     if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(14))) {
                         if (e.getCurrentItem() != null) {
                             int randomvotes;
@@ -1235,7 +1242,7 @@ public class Events implements Listener {
                                     pg.lobbyvoteplayernames.get(s).put(displayname, p);
                                 } else {
                                     p.closeInventory();
-                                    String arenaname = "";
+                                    String arenaname = null;
                                     for (int i = 0; i <= pg.lobbyvotes.get(s).size(); i++) {
                                         for (String all : pg.lobbyvoteplayernames.get(s).keySet()) {
                                             if (pg.lobbyvoteplayernames.get(s).get(all) == p) {
@@ -1337,7 +1344,7 @@ public class Events implements Listener {
                                         }
                                     } else {
                                         p.closeInventory();
-                                        String teamname = "";
+                                        String teamname = null;
                                         for (String all : pg.lobbyteamplayernames.get(s).keySet()) {
                                             if (pg.lobbyteamplayernames.get(s).get(all) == p) {
                                                 teamname = all;
@@ -1439,10 +1446,10 @@ public class Events implements Listener {
                                     }
                                 } else {
                                     p.closeInventory();
-                                    String kitname = "";
+                                    String kitname = null;
                                     for (int i = 0; i <= pg.getActiveKits(); i++) {
                                         if (pg.kitplayernames.containsKey(Integer.toString(i)) && pg.kitplayernames.containsValue(p)) {
-                                            kitname = String.valueOf(i);
+                                            kitname = Integer.toString(i);
                                         }
                                     }
                                     pg.kitplayernames.remove(kitname, p);
@@ -1533,7 +1540,7 @@ public class Events implements Listener {
                                     pg.voteplayernames.put(displayname, p);
                                 } else {
                                     p.closeInventory();
-                                    String arenaname = "";
+                                    String arenaname = null;
                                     for (int i = 0; i <= pg.arenas.size(); i++) {
                                         if (arenadata.contains("pg.arenas." + i)) {
                                             String name = arenadata.getString("pg.arenas." + i + ".name");
@@ -1608,10 +1615,10 @@ public class Events implements Listener {
                                         }
                                     } else {
                                         p.closeInventory();
-                                        String teamname = "";
+                                        String teamname = null;
                                         for (int i = 1; i <= pg.getTeamAmount(); i++) {
                                             if (pg.teamplayernames.containsKey(Integer.toString(i)) && pg.teamplayernames.containsValue(p)) {
-                                                teamname = String.valueOf(i);
+                                                teamname = Integer.toString(i);
                                             }
                                         }
                                         pg.teamplayernames.remove(teamname, p);
@@ -1692,10 +1699,10 @@ public class Events implements Listener {
                                     }
                                 } else {
                                     p.closeInventory();
-                                    String kitname = "";
+                                    String kitname = null;
                                     for (int i = 0; i <= pg.getActiveKits(); i++) {
                                         if (pg.kitplayernames.containsKey(Integer.toString(i)) && pg.kitplayernames.containsValue(p)) {
-                                            kitname = String.valueOf(i);
+                                            kitname = Integer.toString(i);
                                         }
                                     }
                                     pg.kitplayernames.remove(kitname, p);
@@ -1799,7 +1806,7 @@ public class Events implements Listener {
             e.setJoinMessage(null);
         }
         if (p.isOp()) {
-            String latest = "";
+            String latest = null;
             try {
                 URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));

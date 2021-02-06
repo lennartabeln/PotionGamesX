@@ -47,7 +47,11 @@ public class Commands implements CommandExecutor {
                 p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10");
             }
             if (p.hasPermission("pg.join")) {
-                p.sendMessage(pg.prefix + "/pg join - Join the game(startOnJoin = false)");
+                if (pg.isArenaSystem()) {
+                    p.sendMessage(pg.prefix + "/pg join # - Join a game(startOnJoin = false)");
+                } else {
+                    p.sendMessage(pg.prefix + "/pg join - Join the game(startOnJoin = false)");
+                }
             }
             if (p.hasPermission("pg.leave")) {
                 p.sendMessage(pg.prefix + "/pg leave - Leave the game(startOnJoin = false)");
@@ -126,7 +130,11 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10");
                 }
                 if (p.hasPermission("pg.join")) {
-                    p.sendMessage(pg.prefix + "/pg join - Join the game(startOnJoin = false)");
+                    if (pg.isArenaSystem()) {
+                        p.sendMessage(pg.prefix + "/pg join # - Join a game(startOnJoin = false)");
+                    } else {
+                        p.sendMessage(pg.prefix + "/pg join - Join the game(startOnJoin = false)");
+                    }
                 }
                 if (p.hasPermission("pg.leave")) {
                     p.sendMessage(pg.prefix + "/pg leave - Leave the game(startOnJoin = false)");
@@ -138,7 +146,11 @@ public class Commands implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("join")) {
                 if (p.hasPermission("pg.join")) {
-                    if (!pg.isArenaSystem()) {
+                    if (pg.isArenaSystem()) {
+                        if (p.hasPermission("pg.join")) {
+                            p.sendMessage(pg.prefix + "/pg join # - Join a game(startOnJoin = false)");
+                        }
+                    } else {
                         if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
                             pg.onJoin(p);
                         }
@@ -170,15 +182,23 @@ public class Commands implements CommandExecutor {
                         }
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("start")) { //TODO
+            } else if (args[0].equalsIgnoreCase("start")) {
                 if (p.hasPermission("pg.start")) {
                     if (pg.isArenaSystem()) {
-                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
-                            if (pg.pgPlayers.size() >= pg.getMinPlayers()) {
-                                if (pg.getCountdown() >= 10) {
-                                    pg.setCountdown(10);
-                                    for (Player all : pg.pgPlayers) {
-                                        all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
+                        if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
+                            String s = null;
+                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                                if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
+                                }
+                            }
+                            if (pg.lobbyAmount.get(s) >= pg.getMinPlayers()) {
+                                if (pg.countdownLobby.get(s) >= 10) {
+                                    pg.countdownLobby.replace(s, 10);
+                                    for (Player all : pg.playerLobby.keySet()) {
+                                        if (pg.playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
+                                        }
                                     }
                                 } else {
                                     p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
@@ -204,24 +224,42 @@ public class Commands implements CommandExecutor {
                         }
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("pause")) { //TODO
+            } else if (args[0].equalsIgnoreCase("pause")) {
                 if (p.hasPermission("pg.pause")) {
                     if (pg.isArenaSystem()) {
-                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
-                            pg.changePause();
-                            if (pg.isPause()) {
-                                for (Player all : pg.pgPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
+                        if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
+                            String s = null;
+                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                                if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
                                 }
-                                for (Player all : pg.specPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.isPause());
+                            }
+                            if (pg.lobbyPause.get(s)) {
+                                pg.lobbyPause.replace(s, false);
+                            } else {
+                                pg.lobbyPause.replace(s, true);
+                            }
+                            if (pg.lobbyPause.get(s)) {
+                                for (Player all : pg.playerLobby.keySet()) {
+                                    if (pg.playerLobby.get(all).equals(s)) {
+                                        all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.lobbyPause.get(s));
+                                    }
+                                }
+                                for (Player all : pg.specLobby.keySet()) {
+                                    if (pg.specLobby.get(all).equals(s)) {
+                                        all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.GREEN + pg.lobbyPause.get(s));
+                                    }
                                 }
                             } else {
-                                for (Player all : pg.pgPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                                for (Player all : pg.playerLobby.keySet()) {
+                                    if (pg.playerLobby.get(all).equals(s)) {
+                                        all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.lobbyPause.get(s));
+                                    }
                                 }
-                                for (Player all : pg.specPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.isPause());
+                                for (Player all : pg.specLobby.keySet()) {
+                                    if (pg.specLobby.get(all).equals(s)) {
+                                        all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(22) + ": " + ChatColor.RED + pg.lobbyPause.get(s));
+                                    }
                                 }
                             }
                         }
@@ -246,24 +284,42 @@ public class Commands implements CommandExecutor {
                         }
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("build")) { //TODO
+            } else if (args[0].equalsIgnoreCase("build")) {
                 if (p.hasPermission("pg.build")) {
                     if (pg.isArenaSystem()) {
-                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
-                            pg.changeBuild();
-                            if (pg.isBuild()) {
-                                for (Player all : pg.pgPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
+                        if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
+                            String s = null;
+                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                                if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
                                 }
-                                for (Player all : pg.specPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.isBuild());
+                            }
+                            if (pg.lobbyBuild.get(s)) {
+                                pg.lobbyBuild.replace(s, false);
+                            } else {
+                                pg.lobbyBuild.replace(s, true);
+                            }
+                            if (pg.lobbyBuild.get(s)) {
+                                for (Player all : pg.playerLobby.keySet()) {
+                                    if (pg.playerLobby.get(all).equals(s)) {
+                                        all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.lobbyBuild.get(s));
+                                    }
+                                }
+                                for (Player all : pg.specLobby.keySet()) {
+                                    if (pg.specLobby.get(all).equals(s)) {
+                                        all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.GREEN + pg.lobbyBuild.get(s));
+                                    }
                                 }
                             } else {
-                                for (Player all : pg.pgPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                                for (Player all : pg.playerLobby.keySet()) {
+                                    if (pg.playerLobby.get(all).equals(s)) {
+                                        all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.lobbyBuild.get(s));
+                                    }
                                 }
-                                for (Player all : pg.specPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.isBuild());
+                                for (Player all : pg.specLobby.keySet()) {
+                                    if (pg.specLobby.get(all).equals(s)) {
+                                        all.sendMessage(pg.prefix + ChatColor.AQUA + pg.chat.get(23) + ": " + ChatColor.RED + pg.lobbyBuild.get(s));
+                                    }
                                 }
                             }
                         }
@@ -326,28 +382,36 @@ public class Commands implements CommandExecutor {
                         }
                     }
                 }
-            } else if (args[0].equalsIgnoreCase("force")) { //TODO
+            } else if (args[0].equalsIgnoreCase("force")) {
                 if (p.hasPermission("pg.force")) {
                     if (pg.isArenaSystem()) {
-                        if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                        if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
+                            String s = null;
+                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                                if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
+                                }
+                            }
                             String arena = args[1];
-                            String arenaNumber = "1";
+                            String arenaNumber = null;
                             try {
-                                pg.setForcearena(true);
+                                pg.lobbyForcearena.replace(s, true);
                                 int i = 1;
                                 boolean votetedarena = false;
                                 while (!votetedarena) {
                                     if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
-                                        arenaNumber = String.valueOf(i);
-                                        pg.setVotedArena(arena);
+                                        arenaNumber = Integer.toString(i);
+                                        pg.lobbyVotedarena.replace(s, arena);
                                         votetedarena = true;
                                     } else {
                                         i++;
                                     }
                                 }
-                                pg.setVote(arenaNumber);
-                                for (Player all : pg.pgPlayers) {
-                                    all.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(26));
+                                pg.lobbyVote.replace(s, arenaNumber);
+                                for (Player all : pg.playerLobby.keySet()) {
+                                    if (pg.playerLobby.get(all).equals(s)) {
+                                        all.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(26));
+                                    }
                                 }
                             } catch (Exception e) {
                                 p.sendMessage(pg.prefix + ChatColor.RED + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
@@ -356,14 +420,14 @@ public class Commands implements CommandExecutor {
                     } else {
                         if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
                             String arena = args[1];
-                            String arenaNumber = "1";
+                            String arenaNumber = null;
                             try {
                                 pg.setForcearena(true);
                                 int i = 1;
                                 boolean votetedarena = false;
                                 while (!votetedarena) {
                                     if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
-                                        arenaNumber = String.valueOf(i);
+                                        arenaNumber = Integer.toString(i);
                                         pg.setVotedArena(arena);
                                         votetedarena = true;
                                     } else {

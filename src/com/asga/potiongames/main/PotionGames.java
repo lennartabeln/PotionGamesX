@@ -106,6 +106,10 @@ public class PotionGames extends JavaPlugin {
     public HashMap<String, Boolean> lobbyTeamallowed = new HashMap<>();
     public HashMap<String, Boolean> lobbyKitallowed = new HashMap<>();
     public HashMap<String, Boolean> lobbyTickstarted = new HashMap<>();
+    public HashMap<String, Boolean> lobbyBuild = new HashMap<>();
+    public HashMap<String, Boolean> lobbyPause = new HashMap<>();
+    public HashMap<String, String> lobbyVote = new HashMap<>();
+    public HashMap<String, String> lobbyVotedarena = new HashMap<>();
     public HashMap<String, String> lobbyVoted = new HashMap<>();
     public HashMap<String, Integer> lobbyteamplayers = new HashMap<>();
     public HashMap<String, HashMap<String, Integer>> lobbyteams = new HashMap<>();
@@ -156,9 +160,8 @@ public class PotionGames extends JavaPlugin {
     private boolean arenaSystem = false;
     private Connection con;
     private Statement st;
-
     public Thread checkUpdates = new Thread(() -> {
-        String latest = "";
+        String latest = null;
         getLogger().info("Checking for updates...");
         try {
             URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
@@ -183,6 +186,19 @@ public class PotionGames extends JavaPlugin {
         }
     });
 
+    @Override
+    public void onDisable() {
+        reset();
+        close();
+        getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
+    }
+
+    public void reset() {
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
+        }
+    }
+
     public static void spawnFireworks(Location loc, int amount) {
         Firework fw = (Firework) Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.FIREWORK);
         FireworkMeta fwm = fw.getFireworkMeta();
@@ -194,100 +210,6 @@ public class PotionGames extends JavaPlugin {
             Firework fw2 = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
             fw2.setFireworkMeta(fwm);
         }
-    }
-
-    public void connect() {
-        if (activateMySQL) {
-            try {
-                con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
-                System.out.println(prefixNoColor + " " + chat.get(36));
-            } catch (SQLException e) {
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
-            }
-        } else {
-            con = null;
-            try {
-                File dbFile = new File(getDataFolder(), "stats.db");
-                String url = "jdbc:sqlite:" + dbFile.getPath();
-                con = DriverManager.getConnection(url);
-                st = con.createStatement();
-                System.out.println(prefixNoColor + " " + chat.get(36));
-            } catch (SQLException e) {
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
-            }
-        }
-    }
-
-    public void close() {
-        try {
-            if (con != null) {
-                con.close();
-                System.out.println(prefixNoColor + " " + chat.get(38));
-            }
-        } catch (SQLException e) {
-            System.out.println(prefixNoColor + " " + chat.get(39) + ": " + e.getMessage());
-        }
-    }
-
-    public void update(String qry) {
-        if (activateMySQL) {
-            try {
-                st = con.createStatement();
-                st.executeUpdate(qry);
-                st.close();
-            } catch (SQLException e) {
-                connect();
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
-            }
-        } else {
-            try {
-                st.execute(qry);
-            } catch (SQLException e) {
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
-            }
-        }
-    }
-
-    public ResultSet query(String qry) {
-        if (activateMySQL) {
-            ResultSet rs = null;
-            try {
-                st = con.createStatement();
-                rs = st.executeQuery(qry);
-            } catch (SQLException e) {
-                connect();
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
-            }
-            return rs;
-        } else {
-            try {
-                return st.executeQuery(qry);
-            } catch (SQLException e) {
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
-            }
-            return null;
-        }
-    }
-
-    public void joinChannel(Player player, String channelName) {
-        if (playerChannel.get(player) != null) {
-            String prevChannel = playerChannel.get(player);
-            leaveChannel(player, prevChannel);
-        }
-        ArrayList<Player> players = channels.get(channelName);
-        if (players == null) {
-            players = new ArrayList<>();
-        }
-        players.add(player);
-        channels.put(channelName, players);
-        playerChannel.put(player, channelName);
-    }
-
-    public void leaveChannel(Player player, String channelName) {
-        ArrayList<Player> players = channels.get(channelName);
-        players.remove(player);
-        channels.put(channelName, players);
-        playerChannel.remove(player);
     }
 
     @Override
@@ -738,7 +660,7 @@ public class PotionGames extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
         int lobby = 1;
         while (arenadata.contains("pg.arenas." + lobby)) {
-            String s = String.valueOf(lobby);
+            String s = Integer.toString(lobby);
             lobbyStates.put(s, GameStates.WAITING);
             lobbyJoinable.put(s, true);
             lobbyForcearena.put(s, false);
@@ -749,6 +671,10 @@ public class PotionGames extends JavaPlugin {
             lobbyAmount.put(s, 0);
             lobbyTickstarted.put(s, false);
             lobbyVoted.put(s, null);
+            lobbyBuild.put(s, false);
+            lobbyPause.put(s, false);
+            lobbyVote.put(s, null);
+            lobbyVotedarena.put(s, null);
             int team = 1;
             while (team <= teamAmount) {
                 String tname = Integer.toString(team);
@@ -778,17 +704,25 @@ public class PotionGames extends JavaPlugin {
         checkUpdates.start();
     }
 
-    @Override
-    public void onDisable() {
-        reset();
-        close();
-        getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
+    public void joinChannel(Player player, String channelName) {
+        if (playerChannel.get(player) != null) {
+            String prevChannel = playerChannel.get(player);
+            leaveChannel(player, prevChannel);
+        }
+        ArrayList<Player> players = channels.get(channelName);
+        if (players == null) {
+            players = new ArrayList<>();
+        }
+        players.add(player);
+        channels.put(channelName, players);
+        playerChannel.put(player, channelName);
     }
 
-    public void reset() {
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
-        }
+    public void leaveChannel(Player player, String channelName) {
+        ArrayList<Player> players = channels.get(channelName);
+        players.remove(player);
+        channels.put(channelName, players);
+        playerChannel.remove(player);
     }
 
     public void chestData() {
@@ -1016,6 +950,97 @@ public class PotionGames extends JavaPlugin {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void clearEffects(Player all) {
+        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
+        int chestitem = 1;
+        while (chestdata.contains("pg.potions" + chestitem)) {
+            PotionEffect effect = (PotionEffect) chestdata.get("pg.potions." + chestitem);
+            assert effect != null;
+            all.removePotionEffect(effect.getType());
+            chestitem++;
+        }
+        if (all.hasPotionEffect(PotionEffectType.SPEED)) {
+            all.removePotionEffect(PotionEffectType.SPEED);
+        }
+        if (all.hasPotionEffect(PotionEffectType.SLOW)) {
+            all.removePotionEffect(PotionEffectType.SLOW);
+        }
+        if (all.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
+            all.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
+        }
+        if (all.hasPotionEffect(PotionEffectType.HEAL)) {
+            all.removePotionEffect(PotionEffectType.HEAL);
+        }
+        if (all.hasPotionEffect(PotionEffectType.HARM)) {
+            all.removePotionEffect(PotionEffectType.HARM);
+        }
+        if (all.hasPotionEffect(PotionEffectType.JUMP)) {
+            all.removePotionEffect(PotionEffectType.JUMP);
+        }
+        if (all.hasPotionEffect(PotionEffectType.CONFUSION)) {
+            all.removePotionEffect(PotionEffectType.CONFUSION);
+        }
+        if (all.hasPotionEffect(PotionEffectType.REGENERATION)) {
+            all.removePotionEffect(PotionEffectType.REGENERATION);
+        }
+        if (all.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
+            all.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+        }
+        if (all.hasPotionEffect(PotionEffectType.FIRE_RESISTANCE)) {
+            all.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
+        }
+        if (all.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            all.removePotionEffect(PotionEffectType.INVISIBILITY);
+        }
+        if (all.hasPotionEffect(PotionEffectType.BLINDNESS)) {
+            all.removePotionEffect(PotionEffectType.BLINDNESS);
+        }
+        if (all.hasPotionEffect(PotionEffectType.HUNGER)) {
+            all.removePotionEffect(PotionEffectType.HUNGER);
+        }
+        if (all.hasPotionEffect(PotionEffectType.WEAKNESS)) {
+            all.removePotionEffect(PotionEffectType.WEAKNESS);
+        }
+        if (all.hasPotionEffect(PotionEffectType.POISON)) {
+            all.removePotionEffect(PotionEffectType.POISON);
+        }
+        if (all.hasPotionEffect(PotionEffectType.WITHER)) {
+            all.removePotionEffect(PotionEffectType.WITHER);
+        }
+        if (all.hasPotionEffect(PotionEffectType.ABSORPTION)) {
+            all.removePotionEffect(PotionEffectType.ABSORPTION);
+        }
+        if (all.hasPotionEffect(PotionEffectType.GLOWING)) {
+            all.removePotionEffect(PotionEffectType.GLOWING);
+        }
+        if (all.hasPotionEffect(PotionEffectType.HEALTH_BOOST)) {
+            all.removePotionEffect(PotionEffectType.HEALTH_BOOST);
+        }
+        if (all.hasPotionEffect(PotionEffectType.DOLPHINS_GRACE)) {
+            all.removePotionEffect(PotionEffectType.DOLPHINS_GRACE);
+        }
+        if (all.hasPotionEffect(PotionEffectType.SATURATION)) {
+            all.removePotionEffect(PotionEffectType.SATURATION);
+        }
+        if (all.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
+            all.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        }
+        if (all.hasPotionEffect(PotionEffectType.WATER_BREATHING)) {
+            all.removePotionEffect(PotionEffectType.WATER_BREATHING);
+        }
+    }
+
+    public void setGameRules(String name) {
+        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
+        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_FIRE_TICK, false);
+        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_MOB_SPAWNING, false);
+        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.MOB_GRIEFING, false);
+        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
+        Objects.requireNonNull(Bukkit.getWorld(name)).setTime(0);
     }
 
     public void tick() {
@@ -1389,97 +1414,6 @@ public class PotionGames extends JavaPlugin {
         }, 0, 20);
     }
 
-    public void clearEffects(Player all) {
-        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
-        int chestitem = 1;
-        while (chestdata.contains("pg.potions" + chestitem)) {
-            PotionEffect effect = (PotionEffect) chestdata.get("pg.potions." + chestitem);
-            assert effect != null;
-            all.removePotionEffect(effect.getType());
-            chestitem++;
-        }
-        if (all.hasPotionEffect(PotionEffectType.SPEED)) {
-            all.removePotionEffect(PotionEffectType.SPEED);
-        }
-        if (all.hasPotionEffect(PotionEffectType.SLOW)) {
-            all.removePotionEffect(PotionEffectType.SLOW);
-        }
-        if (all.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
-            all.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-        }
-        if (all.hasPotionEffect(PotionEffectType.HEAL)) {
-            all.removePotionEffect(PotionEffectType.HEAL);
-        }
-        if (all.hasPotionEffect(PotionEffectType.HARM)) {
-            all.removePotionEffect(PotionEffectType.HARM);
-        }
-        if (all.hasPotionEffect(PotionEffectType.JUMP)) {
-            all.removePotionEffect(PotionEffectType.JUMP);
-        }
-        if (all.hasPotionEffect(PotionEffectType.CONFUSION)) {
-            all.removePotionEffect(PotionEffectType.CONFUSION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.REGENERATION)) {
-            all.removePotionEffect(PotionEffectType.REGENERATION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
-            all.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-        }
-        if (all.hasPotionEffect(PotionEffectType.FIRE_RESISTANCE)) {
-            all.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
-        }
-        if (all.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-            all.removePotionEffect(PotionEffectType.INVISIBILITY);
-        }
-        if (all.hasPotionEffect(PotionEffectType.BLINDNESS)) {
-            all.removePotionEffect(PotionEffectType.BLINDNESS);
-        }
-        if (all.hasPotionEffect(PotionEffectType.HUNGER)) {
-            all.removePotionEffect(PotionEffectType.HUNGER);
-        }
-        if (all.hasPotionEffect(PotionEffectType.WEAKNESS)) {
-            all.removePotionEffect(PotionEffectType.WEAKNESS);
-        }
-        if (all.hasPotionEffect(PotionEffectType.POISON)) {
-            all.removePotionEffect(PotionEffectType.POISON);
-        }
-        if (all.hasPotionEffect(PotionEffectType.WITHER)) {
-            all.removePotionEffect(PotionEffectType.WITHER);
-        }
-        if (all.hasPotionEffect(PotionEffectType.ABSORPTION)) {
-            all.removePotionEffect(PotionEffectType.ABSORPTION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.GLOWING)) {
-            all.removePotionEffect(PotionEffectType.GLOWING);
-        }
-        if (all.hasPotionEffect(PotionEffectType.HEALTH_BOOST)) {
-            all.removePotionEffect(PotionEffectType.HEALTH_BOOST);
-        }
-        if (all.hasPotionEffect(PotionEffectType.DOLPHINS_GRACE)) {
-            all.removePotionEffect(PotionEffectType.DOLPHINS_GRACE);
-        }
-        if (all.hasPotionEffect(PotionEffectType.SATURATION)) {
-            all.removePotionEffect(PotionEffectType.SATURATION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
-            all.removePotionEffect(PotionEffectType.NIGHT_VISION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.WATER_BREATHING)) {
-            all.removePotionEffect(PotionEffectType.WATER_BREATHING);
-        }
-    }
-
-    public void setGameRules(String name) {
-        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_WEATHER_CYCLE, false);
-        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_FIRE_TICK, false);
-        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_MOB_SPAWNING, false);
-        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.MOB_GRIEFING, false);
-        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
-        Objects.requireNonNull(Bukkit.getWorld(name)).setTime(0);
-    }
-
     public void voteResults() {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         int max = 0;
@@ -1488,7 +1422,7 @@ public class PotionGames extends JavaPlugin {
                 max = i;
             }
         }
-        String winner = "";
+        String winner = null;
         for (String all : votes.keySet()) {
             if (votes.get(all) == max) {
                 winner = all;
@@ -1499,12 +1433,13 @@ public class PotionGames extends JavaPlugin {
             int i = 1;
             boolean votedArena = false;
             while (!votedArena) {
+                assert winner != null;
                 if (winner.equals(chat.get(42))) {
                     String arenaName = null;
                     while (arenaName == null) {
                         Random rnd = new Random();
                         int rndArena = rnd.nextInt(arenas.size() + 1);
-                        winner = String.valueOf(rndArena);
+                        winner = Integer.toString(rndArena);
                         arenaName = arenadata.getString("pg.arenas." + winner + ".name");
                         if (arenaName != null) {
                             for (Player all : pgPlayers) {
@@ -1517,7 +1452,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 if (!randomArena) {
                     if (winner.equals(arenadata.getString("pg.arenas." + i + ".name"))) {
-                        winner = String.valueOf(i);
+                        winner = Integer.toString(i);
                         for (Player all : pgPlayers) {
                             all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
                         }
@@ -1537,7 +1472,7 @@ public class PotionGames extends JavaPlugin {
             while (arenaName == null) {
                 Random rnd = new Random();
                 int rndArena = rnd.nextInt(arenas.size() + 1);
-                winner = String.valueOf(rndArena);
+                winner = Integer.toString(rndArena);
                 arenaName = arenadata.getString("pg.arenas." + winner + ".name");
                 if (arenaName != null) {
                     for (Player all : pgPlayers) {
@@ -1592,7 +1527,7 @@ public class PotionGames extends JavaPlugin {
         if (activateTeams) {
             String teamname;
             for (int i = 1; i <= teamAmount; i++) {
-                teamname = String.valueOf(i);
+                teamname = Integer.toString(i);
                 if (teamplayers.get(teamname) == 0) {
                     teams.remove(teamname);
                 }
@@ -1733,10 +1668,10 @@ public class PotionGames extends JavaPlugin {
         setPlayerAmount(getPlayerAmount() - 1);
         if (activateTeams) {
             if (teamed.contains(p.getName())) {
-                String teamname = "";
+                String teamname = null;
                 for (int i = 1; i <= teamAmount; i++) {
                     if (teamplayernames.containsKey(Integer.toString(i)) && teamplayernames.containsValue(p)) {
-                        teamname = String.valueOf(i);
+                        teamname = Integer.toString(i);
                     }
                 }
                 teamplayernames.remove(teamname, p);
@@ -1751,7 +1686,7 @@ public class PotionGames extends JavaPlugin {
             }
         }
         if (voted.contains(p.getName())) {
-            String arenaname = "";
+            String arenaname = null;
             for (int i = 0; i <= arenas.size(); i++) {
                 if (arenadata.contains("pg.arenas." + i)) {
                     if (voteplayernames.containsKey(arenadata.getString("pg.arenas." + i + ".name")) && voteplayernames.containsValue(p)) {
@@ -1767,345 +1702,13 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
-    public void joinLobby(Player p, String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        joinChannel(p.getPlayer(), "Local");
-        PlayerInventory inventory = p.getInventory();
-        inv.put(p.getName(), p.getInventory().getContents());
-        armor.put(p.getName(), p.getInventory().getArmorContents());
-        lvl.put(p.getName(), p.getLevel());
-        exp.put(p.getName(), p.getExp());
-        loc.put(p.getName(), p.getLocation());
-        gm.put(p.getName(), p.getGameMode());
-        inventory.clear();
-        inventory.setHelmet(null);
-        inventory.setChestplate(null);
-        inventory.setLeggings(null);
-        inventory.setBoots(null);
-        p.setHealth(20);
-        p.setFoodLevel(20);
-        p.setLevel(0);
-        p.setExp(0);
-        p.setGameMode(GameMode.ADVENTURE);
-        clearEffects(p);
-        p.setFireTicks(0);
-        lobbyAmount.replace(s, lobbyAmount.get(s) + 1);
-        if (lobbyJoinable.get(s)) {
-            playerLobby.put(p, s);
-            try {
-                Location loc = (Location) getConfig().get("pg.Lobby.coords");
-                assert loc != null;
-                p.teleport(loc);
-                lobbyStates.replace(s, GameStates.WAITING);
-                if (!lobbyTickstarted.get(s)) {
-                    tickLobby(s);
-                    lobbyTickstarted.replace(s, true);
-                }
-            } catch (Exception ex) {
-                for (Player all : playerLobby.keySet()) {
-                    if (playerLobby.get(all).equals(s)) {
-                        if (all.isOp()) {
-                            all.sendMessage(prefix + p.getName() + ChatColor.RED + " " + chat.get(18));
-                        }
-                    }
-                }
-            }
-            String name = getConfig().getString("pg.Lobby.world");
-            setGameRules(name);
-            assert name != null;
-            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
-            if (activateTeams) {
-                ItemStack teamselector = new ItemStack(Material.CLOCK);
-                ItemMeta teamselectormeta = teamselector.getItemMeta();
-                assert teamselectormeta != null;
-                teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
-                teamselector.setItemMeta(teamselectormeta);
-                p.getInventory().setItem(4, teamselector);
-            }
-            if (activateKits) {
-                ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
-                ItemMeta kitselectormeta = kitselector.getItemMeta();
-                assert kitselectormeta != null;
-                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
-                kitselector.setItemMeta(kitselectormeta);
-                p.getInventory().setItem(0, kitselector);
-            }
-            ItemStack votepaper = new ItemStack(Material.PAPER);
-            ItemMeta votepapaermeta = votepaper.getItemMeta();
-            assert votepapaermeta != null;
-            votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
-            votepaper.setItemMeta(votepapaermeta);
-            p.getInventory().setItem(8, votepaper);
-        }
-        if (!lobbyJoinable.get(s)) {
-            specLobby.put(p, s);
-            try {
-                String vote = getVote();
-                Location loc = arenadata.getLocation("pg.arenas." + vote + ".spawns." + 1);
-                assert loc != null;
-                p.teleport(loc);
-            } catch (Exception e) {
-                for (Player all : playerLobby.keySet()) {
-                    if (playerLobby.get(all).equals(s)) {
-                        if (all.isOp()) {
-                            all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
-                        }
-                    }
-                }
-            }
-            p.setGameMode(GameMode.SPECTATOR);
-            p.setAllowFlight(true);
-            p.setFlying(true);
-            p.setLevel(0);
-            p.setExp(0);
-            p.setFireTicks(0);
-            p.setHealth(20);
-            p.setFoodLevel(20);
-            p.setCanPickupItems(false);
-            p.setCollidable(false);
-        }
-    }
-
-    public void voteResults(String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        int max = 0;
-        for (int i : lobbyvotes.get(s).values()) {
-            if (i > max) {
-                max = i;
-            }
-        }
-        String winner = "";
-        for (String all : lobbyvotes.get(s).keySet()) {
-            if (lobbyvotes.get(s).get(all) == max) {
-                winner = all;
-            }
-        }
-        if (!lobbyForcearena.get(s) && lobbyVoted.get(s) != null) {
-            boolean randomArena = false;
-            int i = 1;
-            boolean votedArena = false;
-            while (!votedArena) {
-                if (winner.equals(chat.get(42))) {
-                    String arenaName = null;
-                    while (arenaName == null) {
-                        Random rnd = new Random();
-                        int rndArena = rnd.nextInt(lobbyvotes.get(s).keySet().size() + 1);
-                        winner = String.valueOf(rndArena);
-                        arenaName = arenadata.getString("pg.arenas." + winner + ".name");
-                        if (arenaName != null) {
-                            for (Player all : playerLobby.keySet()) {
-                                if (playerLobby.get(all).equals(s)) {
-                                    all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
-                                }
-                            }
-                        }
-                        randomArena = true;
-                        votedArena = true;
-                    }
-                }
-                if (!randomArena) {
-                    if (winner.equals(arenadata.getString("pg.arenas." + i + ".name"))) {
-                        winner = String.valueOf(i);
-                        for (Player all : playerLobby.keySet()) {
-                            if (playerLobby.get(all).equals(s)) {
-                                all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
-                            }
-                        }
-                        votedArena = true;
-                    } else {
-                        i++;
-                    }
-                }
-            }
-        } else if (lobbyForcearena.get(s) && lobbyVoted.get(s) != null || lobbyForcearena.get(s) && lobbyVoted.get(s) == null) {
-            winner = getVote();
-            for (Player all : playerLobby.keySet()) {
-                if (playerLobby.get(all).equals(s)) {
-                    all.sendMessage(prefix + ChatColor.AQUA + getVotedArena() + ChatColor.GREEN + " " + chat.get(7));
-                }
-            }
-        } else if (lobbyVoted.get(s) == null && !lobbyForcearena.get(s)) {
-            String arenaName = null;
-            while (arenaName == null) {
-                Random rnd = new Random();
-                int rndArena = rnd.nextInt(lobbyvotes.get(s).keySet().size() + 1);
-                winner = String.valueOf(rndArena);
-                arenaName = arenadata.getString("pg.arenas." + winner + ".name");
-                if (arenaName != null) {
-                    for (Player all : playerLobby.keySet()) {
-                        if (playerLobby.get(all).equals(s)) {
-                            all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
-                        }
-                    }
-                }
-            }
-        }
-        setVote(winner);
-    }
-
-    public void teleportAndStart(String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        for (Player all : playerLobby.keySet()) {
-            if (playerLobby.get(all).equals(s)) {
-                int maxteamplayers = teamSize;
-                boolean teamfound = false;
-                if (activateTeams) {
-                    if (!teamed.contains(all.getName())) {
-                        while (!teamfound) {
-                            Random rnd = new Random();
-                            int rndTeam = rnd.nextInt(teams.size() + 1);
-                            if (lobbyteams.get(s).get(Integer.toString(rndTeam)) < maxteamplayers && lobbyteams.get(s).get(Integer.toString(rndTeam)) >= 0 && lobbyteams.get(s).get(Integer.toString(rndTeam)) != null) {
-                                teamfound = true;
-                                int players = lobbyteams.get(s).get(Integer.toString(rndTeam));
-                                players++;
-                                HashMap<String, Integer> temp = new HashMap<>();
-                                for (int max = 1; max <= getTeamAmount(); max++) {
-                                    int oldplayers = lobbyteams.get(s).get(Integer.toString(max));
-                                    temp.put(Integer.toString(max), oldplayers);
-                                }
-                                temp.put(Integer.toString(rndTeam), players);
-                                lobbyteams.replace(s, temp);
-                                all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
-                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + lobbyteams.get(s).get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
-                                teamed.add(all.getName());
-                                lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), all);
-                            }
-                        }
-                    }
-                }
-                if (activateKits) {
-                    if (!kited.contains(all.getName())) {
-                        Random rnd = new Random();
-                        int rndKit = rnd.nextInt(activeKits);
-                        all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
-                        all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                        kited.add(all.getName());
-                        kitplayernames.put(kits.get(rndKit), all);
-                        if (kits.get(rndKit).equals("Rich Kid")) {
-                            richkidPlayers.add(all);
-                        }
-                    }
-                }
-            }
-        }
-        if (activateTeams) {
-            String teamname;
-            for (int i = 1; i <= teamAmount; i++) {
-                teamname = String.valueOf(i);
-                if (lobbyteams.get(s).get(teamname) == 0) {
-                    lobbyteams.get(s).remove(teamname);
-                }
-            }
-        }
-        int i = 1;
-        for (Player all : playerLobby.keySet()) {
-            if (playerLobby.get(all).equals(s)) {
-                try {
-                    String vote = getVote();
-                    Location loc = arenadata.getLocation("pg.arenas." + vote + ".spawns." + i);
-                    assert loc != null;
-                    all.teleport(loc);
-                } catch (Exception e) {
-                    for (Player op : playerLobby.keySet()) {
-                        if (playerLobby.get(all).equals(s)) {
-                            if (op.isOp()) {
-                                op.sendMessage(prefix + all.getName() + ChatColor.RED + chat.get(8));
-                            }
-                        }
-                    }
-                }
-            }
-            i++;
-        }
-    }
-
-    public void leaveLobby(Player p, String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        joinChannel(p.getPlayer(), "Global");
-        if (lobbyStates.get(s) == GameStates.INGAME && lobbyAmount.get(s) > 1 && playerLobby.containsKey(p)) {
-            addLosts(p.getUniqueId().toString(), 1);
-        }
-        p.getInventory().setContents(inv.get(p.getName()));
-        p.getInventory().setArmorContents(armor.get(p.getName()));
-        p.teleport(loc.get(p.getName()));
-        p.setLevel(lvl.get(p.getName()));
-        p.setExp(exp.get(p.getName()));
-        p.setGameMode(gm.get(p.getName()));
-        inv.remove(p.getName());
-        armor.remove(p.getName());
-        loc.remove(p.getName());
-        lvl.remove(p.getName());
-        exp.remove(p.getName());
-        gm.remove(p.getName());
-        specLobby.remove(p);
-        playerLobby.remove(p);
-        lobbyAmount.replace(s, lobbyAmount.get(s) - 1);
-        if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
-            if (activateTeams) {
-                if (teamed.contains(p.getName())) {
-                    String teamname = "";
-                    for (int i = 1; i <= getTeamAmount(); i++) {
-                        if (lobbyteamplayernames.get(s).containsKey(Integer.toString(i)) && lobbyteamplayernames.get(s).containsValue(p)) {
-                            if (lobbyteamplayernames.get(s).get(Integer.toString(i)) == p) {
-                                teamname = Integer.toString(i);
-                            }
-                        }
-                    }
-                    lobbyteamplayernames.get(s).remove(teamname, p);
-                    int teamamount = lobbyteams.get(s).get(teamname);
-                    teamamount--;
-                    HashMap<String, Integer> temp = new HashMap<>();
-                    for (int max = 1; max <= getTeamAmount(); max++) {
-                        int oldplayers = lobbyteams.get(s).get(Integer.toString(max));
-                        temp.put(Integer.toString(max), oldplayers);
-                    }
-                    temp.put(teamname, teamamount);
-                    lobbyteams.replace(s, temp);
-                    if (lobbyStates.get(s) == GameStates.INGAME) {
-                        if (lobbyteams.get(s).get(teamname) == 0) {
-                            lobbyteams.get(s).remove(teamname);
-                        }
-                    }
-                    teamed.remove(p.getName());
-                }
-            }
-            if (voted.contains(p.getName())) {
-                String arenaname = "";
-                for (int i = 1; i <= lobbyStates.keySet().size(); i++) {
-                    if (lobbyvoteplayernames.get(s).containsKey(arenadata.getString("pg.arenas." + i + ".name")) && lobbyvoteplayernames.get(s).containsValue(p)) {
-                        if (lobbyvoteplayernames.get(s).get(arenadata.getString("pg.arenas." + i + ".name")) == p) {
-                            arenaname = arenadata.getString("pg.arenas." + i + ".name");
-                        }
-                    }
-                }
-                lobbyvoteplayernames.get(s).remove(arenaname, p);
-                int voteamount = lobbyvotes.get(s).get(arenaname);
-                voteamount--;
-                HashMap<String, Integer> temp = new HashMap<>();
-                int randomvotes;
-                randomvotes = lobbyvotes.get(s).get(chat.get(42));
-                temp.put(chat.get(42), randomvotes);
-                for (int max = 1; max <= getTeamAmount(); max++) {
-                    int oldplayers = lobbyvotes.get(s).get(arenadata.getString("pg.arenas." + max + ".name"));
-                    temp.put(arenadata.getString("pg.arenas." + max + ".name"), oldplayers);
-                }
-                temp.put(arenaname, voteamount);
-                lobbyvotes.replace(s, temp);
-                voted.remove(p.getName());
-            }
-        }
-    }
-
     public void tickLobby(String s) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         countdownLobby.put(s, getConfig().getInt("pg.countdown"));
         resetLobby.put(s, reset);
         tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            if (!isPause()) {
+            if (!lobbyPause.get(s)) {
                 int gamerule = 1;
                 switch (lobbyStates.get(s)) {
                     case WAITING:
@@ -2539,6 +2142,412 @@ public class PotionGames extends JavaPlugin {
                 }
             }
         }, 0, 20);
+    }
+
+    public void voteResults(String s) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+        int max = 0;
+        for (int i : lobbyvotes.get(s).values()) {
+            if (i > max) {
+                max = i;
+            }
+        }
+        String winner = null;
+        for (String all : lobbyvotes.get(s).keySet()) {
+            if (lobbyvotes.get(s).get(all) == max) {
+                winner = all;
+            }
+        }
+        if (!lobbyForcearena.get(s) && lobbyVoted.get(s) != null) {
+            boolean randomArena = false;
+            int i = 1;
+            boolean votedArena = false;
+            while (!votedArena) {
+                assert winner != null;
+                if (winner.equals(chat.get(42))) {
+                    String arenaName = null;
+                    while (arenaName == null) {
+                        Random rnd = new Random();
+                        int rndArena = rnd.nextInt(lobbyvotes.get(s).keySet().size() + 1);
+                        winner = Integer.toString(rndArena);
+                        arenaName = arenadata.getString("pg.arenas." + winner + ".name");
+                        if (arenaName != null) {
+                            for (Player all : playerLobby.keySet()) {
+                                if (playerLobby.get(all).equals(s)) {
+                                    all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
+                                }
+                            }
+                        }
+                        randomArena = true;
+                        votedArena = true;
+                    }
+                }
+                if (!randomArena) {
+                    if (winner.equals(arenadata.getString("pg.arenas." + i + ".name"))) {
+                        winner = Integer.toString(i);
+                        for (Player all : playerLobby.keySet()) {
+                            if (playerLobby.get(all).equals(s)) {
+                                all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
+                            }
+                        }
+                        votedArena = true;
+                    } else {
+                        i++;
+                    }
+                }
+            }
+        } else if (lobbyForcearena.get(s) && lobbyVoted.get(s) != null || lobbyForcearena.get(s) && lobbyVoted.get(s) == null) {
+            winner = lobbyVote.get(s);
+            for (Player all : playerLobby.keySet()) {
+                if (playerLobby.get(all).equals(s)) {
+                    all.sendMessage(prefix + ChatColor.AQUA + lobbyVotedarena.get(s) + ChatColor.GREEN + " " + chat.get(7));
+                }
+            }
+        } else if (lobbyVoted.get(s) == null && !lobbyForcearena.get(s)) {
+            String arenaName = null;
+            while (arenaName == null) {
+                Random rnd = new Random();
+                int rndArena = rnd.nextInt(lobbyvotes.get(s).keySet().size() + 1);
+                winner = Integer.toString(rndArena);
+                arenaName = arenadata.getString("pg.arenas." + winner + ".name");
+                if (arenaName != null) {
+                    for (Player all : playerLobby.keySet()) {
+                        if (playerLobby.get(all).equals(s)) {
+                            all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
+                        }
+                    }
+                }
+            }
+        }
+        lobbyVote.replace(s, winner);
+    }
+
+    public void teleportAndStart(String s) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+        for (Player all : playerLobby.keySet()) {
+            if (playerLobby.get(all).equals(s)) {
+                int maxteamplayers = teamSize;
+                boolean teamfound = false;
+                if (activateTeams) {
+                    if (!teamed.contains(all.getName())) {
+                        while (!teamfound) {
+                            Random rnd = new Random();
+                            int rndTeam = rnd.nextInt(teams.size() + 1);
+                            if (lobbyteams.get(s).get(Integer.toString(rndTeam)) < maxteamplayers && lobbyteams.get(s).get(Integer.toString(rndTeam)) >= 0 && lobbyteams.get(s).get(Integer.toString(rndTeam)) != null) {
+                                teamfound = true;
+                                int players = lobbyteams.get(s).get(Integer.toString(rndTeam));
+                                players++;
+                                HashMap<String, Integer> temp = new HashMap<>();
+                                for (int max = 1; max <= getTeamAmount(); max++) {
+                                    int oldplayers = lobbyteams.get(s).get(Integer.toString(max));
+                                    temp.put(Integer.toString(max), oldplayers);
+                                }
+                                temp.put(Integer.toString(rndTeam), players);
+                                lobbyteams.replace(s, temp);
+                                all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
+                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + lobbyteams.get(s).get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
+                                teamed.add(all.getName());
+                                lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), all);
+                            }
+                        }
+                    }
+                }
+                if (activateKits) {
+                    if (!kited.contains(all.getName())) {
+                        Random rnd = new Random();
+                        int rndKit = rnd.nextInt(activeKits);
+                        all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
+                        all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                        kited.add(all.getName());
+                        kitplayernames.put(kits.get(rndKit), all);
+                        if (kits.get(rndKit).equals("Rich Kid")) {
+                            richkidPlayers.add(all);
+                        }
+                    }
+                }
+            }
+        }
+        if (activateTeams) {
+            String teamname;
+            for (int i = 1; i <= teamAmount; i++) {
+                teamname = Integer.toString(i);
+                if (lobbyteams.get(s).get(teamname) == 0) {
+                    lobbyteams.get(s).remove(teamname);
+                }
+            }
+        }
+        int i = 1;
+        for (Player all : playerLobby.keySet()) {
+            if (playerLobby.get(all).equals(s)) {
+                try {
+                    String vote = lobbyVote.get(s);
+                    Location loc = arenadata.getLocation("pg.arenas." + vote + ".spawns." + i);
+                    assert loc != null;
+                    all.teleport(loc);
+                } catch (Exception e) {
+                    for (Player op : playerLobby.keySet()) {
+                        if (playerLobby.get(all).equals(s)) {
+                            if (op.isOp()) {
+                                op.sendMessage(prefix + all.getName() + ChatColor.RED + chat.get(8));
+                            }
+                        }
+                    }
+                }
+            }
+            i++;
+        }
+    }
+
+    public void joinLobby(Player p, String s) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+        joinChannel(p.getPlayer(), "Local");
+        PlayerInventory inventory = p.getInventory();
+        inv.put(p.getName(), p.getInventory().getContents());
+        armor.put(p.getName(), p.getInventory().getArmorContents());
+        lvl.put(p.getName(), p.getLevel());
+        exp.put(p.getName(), p.getExp());
+        loc.put(p.getName(), p.getLocation());
+        gm.put(p.getName(), p.getGameMode());
+        inventory.clear();
+        inventory.setHelmet(null);
+        inventory.setChestplate(null);
+        inventory.setLeggings(null);
+        inventory.setBoots(null);
+        p.setHealth(20);
+        p.setFoodLevel(20);
+        p.setLevel(0);
+        p.setExp(0);
+        p.setGameMode(GameMode.ADVENTURE);
+        clearEffects(p);
+        p.setFireTicks(0);
+        lobbyAmount.replace(s, lobbyAmount.get(s) + 1);
+        if (lobbyJoinable.get(s)) {
+            playerLobby.put(p, s);
+            try {
+                Location loc = (Location) getConfig().get("pg.Lobby.coords");
+                assert loc != null;
+                p.teleport(loc);
+                lobbyStates.replace(s, GameStates.WAITING);
+                if (!lobbyTickstarted.get(s)) {
+                    tickLobby(s);
+                    lobbyTickstarted.replace(s, true);
+                }
+            } catch (Exception ex) {
+                for (Player all : playerLobby.keySet()) {
+                    if (playerLobby.get(all).equals(s)) {
+                        if (all.isOp()) {
+                            all.sendMessage(prefix + p.getName() + ChatColor.RED + " " + chat.get(18));
+                        }
+                    }
+                }
+            }
+            String name = getConfig().getString("pg.Lobby.world");
+            setGameRules(name);
+            assert name != null;
+            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
+            if (activateTeams) {
+                ItemStack teamselector = new ItemStack(Material.CLOCK);
+                ItemMeta teamselectormeta = teamselector.getItemMeta();
+                assert teamselectormeta != null;
+                teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
+                teamselector.setItemMeta(teamselectormeta);
+                p.getInventory().setItem(4, teamselector);
+            }
+            if (activateKits) {
+                ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
+                ItemMeta kitselectormeta = kitselector.getItemMeta();
+                assert kitselectormeta != null;
+                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
+                kitselector.setItemMeta(kitselectormeta);
+                p.getInventory().setItem(0, kitselector);
+            }
+            ItemStack votepaper = new ItemStack(Material.PAPER);
+            ItemMeta votepapaermeta = votepaper.getItemMeta();
+            assert votepapaermeta != null;
+            votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
+            votepaper.setItemMeta(votepapaermeta);
+            p.getInventory().setItem(8, votepaper);
+        }
+        if (!lobbyJoinable.get(s)) {
+            specLobby.put(p, s);
+            try {
+                String vote = getVote();
+                Location loc = arenadata.getLocation("pg.arenas." + vote + ".spawns." + 1);
+                assert loc != null;
+                p.teleport(loc);
+            } catch (Exception e) {
+                for (Player all : playerLobby.keySet()) {
+                    if (playerLobby.get(all).equals(s)) {
+                        if (all.isOp()) {
+                            all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
+                        }
+                    }
+                }
+            }
+            p.setGameMode(GameMode.SPECTATOR);
+            p.setAllowFlight(true);
+            p.setFlying(true);
+            p.setLevel(0);
+            p.setExp(0);
+            p.setFireTicks(0);
+            p.setHealth(20);
+            p.setFoodLevel(20);
+            p.setCanPickupItems(false);
+            p.setCollidable(false);
+        }
+    }
+
+    public void leaveLobby(Player p, String s) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+        joinChannel(p.getPlayer(), "Global");
+        if (lobbyStates.get(s) == GameStates.INGAME && lobbyAmount.get(s) > 1 && playerLobby.containsKey(p)) {
+            addLosts(p.getUniqueId().toString(), 1);
+        }
+        p.getInventory().setContents(inv.get(p.getName()));
+        p.getInventory().setArmorContents(armor.get(p.getName()));
+        p.teleport(loc.get(p.getName()));
+        p.setLevel(lvl.get(p.getName()));
+        p.setExp(exp.get(p.getName()));
+        p.setGameMode(gm.get(p.getName()));
+        inv.remove(p.getName());
+        armor.remove(p.getName());
+        loc.remove(p.getName());
+        lvl.remove(p.getName());
+        exp.remove(p.getName());
+        gm.remove(p.getName());
+        specLobby.remove(p);
+        playerLobby.remove(p);
+        lobbyAmount.replace(s, lobbyAmount.get(s) - 1);
+        if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
+            if (activateTeams) {
+                if (teamed.contains(p.getName())) {
+                    String teamname = null;
+                    for (int i = 1; i <= getTeamAmount(); i++) {
+                        if (lobbyteamplayernames.get(s).containsKey(Integer.toString(i)) && lobbyteamplayernames.get(s).containsValue(p)) {
+                            if (lobbyteamplayernames.get(s).get(Integer.toString(i)) == p) {
+                                teamname = Integer.toString(i);
+                            }
+                        }
+                    }
+                    lobbyteamplayernames.get(s).remove(teamname, p);
+                    int teamamount = lobbyteams.get(s).get(teamname);
+                    teamamount--;
+                    HashMap<String, Integer> temp = new HashMap<>();
+                    for (int max = 1; max <= getTeamAmount(); max++) {
+                        int oldplayers = lobbyteams.get(s).get(Integer.toString(max));
+                        temp.put(Integer.toString(max), oldplayers);
+                    }
+                    temp.put(teamname, teamamount);
+                    lobbyteams.replace(s, temp);
+                    if (lobbyStates.get(s) == GameStates.INGAME) {
+                        if (lobbyteams.get(s).get(teamname) == 0) {
+                            lobbyteams.get(s).remove(teamname);
+                        }
+                    }
+                    teamed.remove(p.getName());
+                }
+            }
+            if (voted.contains(p.getName())) {
+                String arenaname = null;
+                for (int i = 1; i <= lobbyStates.keySet().size(); i++) {
+                    if (lobbyvoteplayernames.get(s).containsKey(arenadata.getString("pg.arenas." + i + ".name")) && lobbyvoteplayernames.get(s).containsValue(p)) {
+                        if (lobbyvoteplayernames.get(s).get(arenadata.getString("pg.arenas." + i + ".name")) == p) {
+                            arenaname = arenadata.getString("pg.arenas." + i + ".name");
+                        }
+                    }
+                }
+                lobbyvoteplayernames.get(s).remove(arenaname, p);
+                int voteamount = lobbyvotes.get(s).get(arenaname);
+                voteamount--;
+                HashMap<String, Integer> temp = new HashMap<>();
+                int randomvotes;
+                randomvotes = lobbyvotes.get(s).get(chat.get(42));
+                temp.put(chat.get(42), randomvotes);
+                for (int max = 1; max <= getTeamAmount(); max++) {
+                    int oldplayers = lobbyvotes.get(s).get(arenadata.getString("pg.arenas." + max + ".name"));
+                    temp.put(arenadata.getString("pg.arenas." + max + ".name"), oldplayers);
+                }
+                temp.put(arenaname, voteamount);
+                lobbyvotes.replace(s, temp);
+                voted.remove(p.getName());
+            }
+        }
+    }
+
+    public void connect() {
+        if (activateMySQL) {
+            try {
+                con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
+                System.out.println(prefixNoColor + " " + chat.get(36));
+            } catch (SQLException e) {
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            }
+        } else {
+            con = null;
+            try {
+                File dbFile = new File(getDataFolder(), "stats.db");
+                String url = "jdbc:sqlite:" + dbFile.getPath();
+                con = DriverManager.getConnection(url);
+                st = con.createStatement();
+                System.out.println(prefixNoColor + " " + chat.get(36));
+            } catch (SQLException e) {
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            }
+        }
+    }
+
+    public void close() {
+        try {
+            if (con != null) {
+                con.close();
+                System.out.println(prefixNoColor + " " + chat.get(38));
+            }
+        } catch (SQLException e) {
+            System.out.println(prefixNoColor + " " + chat.get(39) + ": " + e.getMessage());
+        }
+    }
+
+    public void update(String qry) {
+        if (activateMySQL) {
+            try {
+                st = con.createStatement();
+                st.executeUpdate(qry);
+                st.close();
+            } catch (SQLException e) {
+                connect();
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            }
+        } else {
+            try {
+                st.execute(qry);
+            } catch (SQLException e) {
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            }
+        }
+    }
+
+    public ResultSet query(String qry) {
+        if (activateMySQL) {
+            ResultSet rs = null;
+            try {
+                st = con.createStatement();
+                rs = st.executeQuery(qry);
+            } catch (SQLException e) {
+                connect();
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            }
+            return rs;
+        } else {
+            try {
+                return st.executeQuery(qry);
+            } catch (SQLException e) {
+                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            }
+            return null;
+        }
     }
 
     public void ConnectMySQL() {
