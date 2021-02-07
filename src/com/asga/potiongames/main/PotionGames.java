@@ -123,6 +123,8 @@ public class PotionGames extends JavaPlugin {
     public HashMap<String, Integer> lobbymaxPlayers = new HashMap<>();
     public HashMap<String, Integer> lobbyminPlayers = new HashMap<>();
     public HashMap<String, Integer> lobbyteamAmount = new HashMap<>();
+    public HashMap<String, Integer> lobbyroundTime = new HashMap<>();
+    public HashMap<String, Integer> lobbyroundTimeSeconds = new HashMap<>();
     private int tick;
     private int countdown = 60;
     private int reset = 10;
@@ -131,6 +133,8 @@ public class PotionGames extends JavaPlugin {
     private int minPlayers = maxPlayers / 2;
     private int playerAmount = 0;
     private int teamAmount = maxPlayers / teamSize;
+    private int roundTime = 30;
+    private int roundTimeSeconds = roundTime * 60;
     private int activePotions = 19;
     private int activeKits = 6;
     public File shopdatafile = new File(getDataFolder() + File.separator + "shopdata.yml");
@@ -285,6 +289,8 @@ public class PotionGames extends JavaPlugin {
         chat.add("Commands");
         chat.add("Rounds");
         chat.add("Lobby successfully removed!");
+        chat.add("seconds remaining to end this round!");
+        chat.add("Nobody won this round!");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -522,6 +528,14 @@ public class PotionGames extends JavaPlugin {
             teamSize = getConfig().getInt("pg.teamSize");
             teamAmount = maxPlayers / teamSize;
         }
+        if (getConfig().get("pg.roundTime") == null) {
+            getConfig().addDefault("pg.roundTime", roundTime);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            roundTime = getConfig().getInt("pg.roundTime");
+            roundTimeSeconds = roundTime * 60;
+        }
         if (getConfig().get("pg.activePotions") == null) {
             getConfig().addDefault("pg.activePotions", activePotions);
             getConfig().options().copyDefaults(true);
@@ -691,6 +705,9 @@ public class PotionGames extends JavaPlugin {
                 lobbyminPlayers.put(s, minPlayersNumber);
                 int teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
                 lobbyteamAmount.put(s, teamAmountNumber);
+                lobbyroundTime.put(s, 30);
+                int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
+                lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
                 if (arenadata.get("pg.lobbies." + s + ".teamSize") == null) {
                     arenadata.addDefault("pg.lobbies." + s + ".teamSize", teamSize);
                     arenadata.options().copyDefaults(true);
@@ -724,6 +741,19 @@ public class PotionGames extends JavaPlugin {
                 } else {
                     lobbyminPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".minPlayers"));
                 }
+                if (arenadata.get("pg.lobbies." + s + ".roundTime") == null) {
+                    arenadata.addDefault("pg.lobbies." + s + ".roundTime", roundTime);
+                    arenadata.options().copyDefaults(true);
+                    try {
+                        arenadata.save(arenadatafile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    lobbyroundTime.replace(s, arenadata.getInt("pg.lobbies." + s + ".roundTime"));
+                }
+                roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
+                lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
                 teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
                 lobbyteamAmount.put(s, teamAmountNumber);
                 int team = 1;
@@ -1100,6 +1130,7 @@ public class PotionGames extends JavaPlugin {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         setCountdown(getConfig().getInt("pg.countdown"));
+        roundTimeSeconds = roundTime * 60;
         tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if (!isPause()) {
                 int gamerule = 1;
@@ -1126,13 +1157,7 @@ public class PotionGames extends JavaPlugin {
                         if (getConfig().contains("pg.Lobby.world")) {
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
-                        }
-                        while (arenadata.contains("pg.arenas." + gamerule)) {
-                            String name = arenadata.getString("pg.arenas." + gamerule + ".world");
-                            setGameRules(name);
-                            assert name != null;
-                            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
-                            gamerule++;
+                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setGameRule(GameRule.FALL_DAMAGE, false);
                         }
                         if (!voteallowed) {
                             voteallowed = true;
@@ -1291,6 +1316,7 @@ public class PotionGames extends JavaPlugin {
                             assert name != null;
                             Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
                             Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
+                            Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                             setting++;
                         }
                         setJoinable(false);
@@ -1336,6 +1362,114 @@ public class PotionGames extends JavaPlugin {
                                     if (pgPlayers.size() == 1) {
                                         setCountdown(-2);
                                     }
+                                }
+                                roundTimeSeconds--;
+                                if (roundTimeSeconds == 600) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 300) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 240) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 180) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 120) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 60) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 30) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 20) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 10) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 5) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 4) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 3) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 2) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 1) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + roundTimeSeconds + " " + ChatColor.GREEN + chat.get(67));
+                                    }
+                                } else if (roundTimeSeconds == 0) {
+                                    for (Player all : pgPlayers) {
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(68));
+                                    }
+                                    for (Player all : specPlayers) {
+                                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(68));
+                                    }
+                                    setCountdown(-3);
                                 }
                             } else if (countdown == -2) {
                                 for (int i = 0; i < pgPlayers.size(); i++) {
@@ -1401,6 +1535,7 @@ public class PotionGames extends JavaPlugin {
                         }
                         setReset(10);
                         setCountdown(getConfig().getInt("pg.countdown"));
+                        roundTimeSeconds = roundTime * 60;
                         setVote(null);
                         setVotedArena(null);
                         pgPlayers.addAll(specPlayers);
@@ -1833,6 +1968,8 @@ public class PotionGames extends JavaPlugin {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         countdownLobby.put(s, getConfig().getInt("pg.countdown"));
+        int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
+        lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
         resetLobby.put(s, reset);
         tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if (!lobbyPause.get(s)) {
@@ -1864,13 +2001,7 @@ public class PotionGames extends JavaPlugin {
                         if (arenadata.contains("pg.lobbies." + s + ".world")) {
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setPVP(false);
-                        }
-                        while (arenadata.contains("pg.lobbies." + s + "." + gamerule)) {
-                            String name = arenadata.getString("pg.lobbies." + s + "." + gamerule + ".world");
-                            setGameRules(name);
-                            assert name != null;
-                            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
-                            gamerule++;
+                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setGameRule(GameRule.FALL_DAMAGE, false);
                         }
                         if (!voteallowed) {
                             voteallowed = true;
@@ -2033,10 +2164,14 @@ public class PotionGames extends JavaPlugin {
                             sign.update();
                         }
                         int setting = 1;
-                        String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
-                        assert wname != null;
-                        Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
-                        Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
+                        while (arenadata.contains("pg.lobbies." + s + "." + setting)) {
+                            String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
+                            assert wname != null;
+                            Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
+                            Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
+                            Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
+                            setting++;
+                        }
                         lobbyJoinable.replace(s, false);
                         if (lobbyAmount.get(s) != 0) {
                             if (countdownLobby.get(s) == 10) {
@@ -2088,6 +2223,174 @@ public class PotionGames extends JavaPlugin {
                                     if (lobbyAmount.get(s) == 1) {
                                         countdownLobby.replace(s, -2);
                                     }
+                                }
+                                lobbyroundTimeSeconds.replace(s, lobbyroundTimeSeconds.get(s) - 1);
+                                if (lobbyroundTimeSeconds.get(s) == 600) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 300) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 240) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 180) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 120) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 60) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 30) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 20) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 10) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 5) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 4) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 3) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 2) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 1) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.AQUA + lobbyroundTimeSeconds.get(s) + " " + ChatColor.GREEN + chat.get(67));
+                                        }
+                                    }
+                                } else if (lobbyroundTimeSeconds.get(s) == 0) {
+                                    for (Player all : playerLobby.keySet()) {
+                                        if (playerLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(68));
+                                        }
+                                    }
+                                    for (Player all : specLobby.keySet()) {
+                                        if (specLobby.get(all).equals(s)) {
+                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(68));
+                                        }
+                                    }
+                                    countdownLobby.replace(s, -3);
                                 }
                             } else if (countdownLobby.get(s) == -2) {
                                 Player winner;
@@ -2177,6 +2480,7 @@ public class PotionGames extends JavaPlugin {
                         }
                         resetLobby.replace(s, reset);
                         countdownLobby.replace(s, getConfig().getInt("pg.countdown"));
+                        lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
                         lobbyVote.replace(s, null);
                         lobbyVotedarena.replace(s, null);
                         playerLobby.putAll(specLobby);

@@ -398,6 +398,7 @@ public class Commands implements CommandExecutor {
                         arenadata.set("pg.lobbies." + args[1] + ".teamSize", 2);
                         arenadata.set("pg.lobbies." + args[1] + ".maxPlayers", 24);
                         arenadata.set("pg.lobbies." + args[1] + ".minPlayers", 12);
+                        arenadata.set("pg.lobbies." + args[1] + ".roundTime", 30);
                         try {
                             arenadata.save(pg.arenadatafile);
                         } catch (IOException e) {
