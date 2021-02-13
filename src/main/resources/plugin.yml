@@ -92,4 +92,3 @@ commands:
     description: Set up plugin
     permission: pg.setup
     permission-message: You do not have permission to use this command.
-
