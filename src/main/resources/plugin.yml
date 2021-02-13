@@ -1,7 +1,7 @@
 name: PotionGames
 author: andersspielen
 main: com.asga.potiongames.main.PotionGames
-version: 2.3
+version: 3.0
 api-version: 1.16
 softdepend: [ Multiverse-Core ]
 commands:
@@ -86,6 +86,10 @@ commands:
     permission-message: You do not have permission to use this command.
   pg dellobby:
     description: Remove lobby
+    permission: pg.setup
+    permission-message: You do not have permission to use this command.
+  pg setup:
+    description: Set up plugin
     permission: pg.setup
     permission-message: You do not have permission to use this command.
 

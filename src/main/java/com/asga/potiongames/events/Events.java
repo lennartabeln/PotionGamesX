@@ -32,6 +32,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,6 +44,8 @@ public class Events implements Listener {
     private final PotionGames pg;
     private int amount;
     private int bottle;
+    String lobby;
+    String arena;
 
     public Events(PotionGames pg) {
         this.pg = pg;
@@ -50,8 +53,140 @@ public class Events implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent e) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         Player p = e.getPlayer();
         e.getRecipients().clear();
+        if (pg.addlobby) {
+            lobby = e.getMessage();
+            e.setCancelled(true);
+            if (p.hasPermission("pg.setup")) {
+                if (pg.isArenaSystem()) {
+                    arenadata.set("pg.lobbies." + lobby + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
+                    arenadata.set("pg.lobbies." + lobby + ".coords", Objects.requireNonNull(p.getLocation()));
+                    arenadata.set("pg.lobbies." + lobby + ".teamSize", 2);
+                    arenadata.set("pg.lobbies." + lobby + ".maxPlayers", 24);
+                    arenadata.set("pg.lobbies." + lobby + ".minPlayers", 12);
+                    arenadata.set("pg.lobbies." + lobby + ".roundTime", 30);
+                    try {
+                        arenadata.save(pg.arenadatafile);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                }
+            }
+            pg.addlobby = false;
+            pg.setup(p);
+        }
+        if (pg.addarena) {
+            arena = e.getMessage();
+            e.setCancelled(true);
+            if (p.hasPermission("pg.setup")) {
+                if (!pg.isArenaSystem()) {
+                    int arenaNumber = 1;
+                    try {
+                        while (arenadata.contains("pg.arenas." + arenaNumber)) {
+                            arenaNumber++;
+                        }
+                        arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
+                        arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
+                        arenadata.set("pg.arenas." + arenaNumber + ".name", arena);
+                        arenadata.save(pg.arenadatafile);
+                        p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29));
+                    } catch (Exception ex) {
+                        p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
+                    }
+                }
+            }
+            if (p.hasPermission("pg.setup")) {
+                if (pg.isArenaSystem()) {
+                    int arenaNumber = 1;
+                    try {
+                        while (arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber)) {
+                            arenaNumber++;
+                        }
+                        arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, p.getWorld());
+                        arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".world", p.getWorld().getName());
+                        arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".name", arena);
+                        arenadata.save(pg.arenadatafile);
+                        p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                    } catch (Exception ex) {
+                        p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                    }
+                }
+            }
+            pg.addarena = false;
+            pg.setup(p);
+        }
+        if (pg.dellobby) {
+            lobby = e.getMessage();
+            e.setCancelled(true);
+            if (p.hasPermission("pg.setup")) {
+                if (pg.isArenaSystem()) {
+                    arenadata.set("pg.lobbies." + lobby, null);
+                    try {
+                        arenadata.save(pg.arenadatafile);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(66) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                }
+            }
+            pg.dellobby = false;
+            pg.setup(p);
+        }
+        if (pg.delarena) {
+            arena = e.getMessage();
+            e.setCancelled(true);
+            if (p.hasPermission("pg.setup")) {
+                if (!pg.isArenaSystem()) {
+                    int arenaNumber = 1;
+                    try {
+                        int i = 1;
+                        boolean arenaID = false;
+                        while (!arenaID) {
+                            if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                arenaNumber = i;
+                                arenaID = true;
+                            } else {
+                                i++;
+                            }
+                        }
+                        String arenaName = arena;
+                        arenadata.set("pg.arenas." + arenaNumber, null);
+                        arenadata.save(pg.arenadatafile);
+                        p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28));
+                    } catch (Exception ex) {
+                        p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
+                    }
+                }
+            }
+            if (p.hasPermission("pg.setup")) {
+                if (pg.isArenaSystem()) {
+                    int arenaNumber = 1;
+                    try {
+                        int i = 1;
+                        boolean arenaID = false;
+                        while (!arenaID) {
+                            if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                arenaNumber = i;
+                                arenaID = true;
+                            } else {
+                                i++;
+                            }
+                        }
+                        String arenaName = arena;
+                        arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, null);
+                        arenadata.save(pg.arenadatafile);
+                        p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                    } catch (Exception ex) {
+                        p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                    }
+                }
+            }
+            pg.delarena = false;
+            pg.setup(p);
+        }
         if (pg.playerChannel.get(p).equals("Local")) {
             if (pg.isArenaSystem()) {
                 String s = null;
@@ -1195,6 +1330,317 @@ public class Events implements Listener {
                 }
             }
         }
+        if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
+            if (e.getHand() == EquipmentSlot.HAND) {
+                if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
+                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Lobby")) {
+                        if (p.hasPermission("pg.setup")) {
+                            if (!pg.isArenaSystem()) {
+                                pg.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
+                                pg.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
+                                pg.saveConfig();
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24));
+                            }
+                        }
+                        if (p.hasPermission("pg.setup")) {
+                            if (pg.isArenaSystem()) {
+                                p.getInventory().clear();
+                                pg.addlobby = true;
+                                e.setCancelled(true);
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(69));
+                            }
+                        }
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Arena")) {
+                        p.getInventory().clear();
+                        pg.addarena = true;
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(70));
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Spawn")) {
+                        if (p.hasPermission("pg.setup")) {
+                            if (!pg.isArenaSystem()) {
+                                int spawnNumber = 1;
+                                int arenaNumber = 1;
+                                try {
+                                    int i = 1;
+                                    boolean arenaName = false;
+                                    while (!arenaName) {
+                                        if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                            arenaNumber = i;
+                                            arenaName = true;
+                                        } else {
+                                            i++;
+                                        }
+                                    }
+                                    while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
+                                        spawnNumber++;
+                                    }
+                                    arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
+                                    arenadata.save(pg.arenadatafile);
+                                    p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(30));
+                                } catch (Exception ex) {
+                                    p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.RED + " " + pg.chat.get(31));
+                                }
+                            }
+                        }
+                        if (p.hasPermission("pg.setup")) {
+                            if (pg.isArenaSystem()) {
+                                int spawnNumber = 1;
+                                int arenaNumber = 1;
+                                try {
+                                    int i = 1;
+                                    boolean arenaName = false;
+                                    while (!arenaName) {
+                                        if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                            arenaNumber = i;
+                                            arenaName = true;
+                                        } else {
+                                            i++;
+                                        }
+                                    }
+                                    while (arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber)) {
+                                        spawnNumber++;
+                                    }
+                                    arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
+                                    arenadata.save(pg.arenadatafile);
+                                    p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(30) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
+                                } catch (Exception ex) {
+                                    p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
+                                }
+                            }
+                        }
+                    }
+                }
+                if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
+                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Lobby")) {
+                        if (pg.isArenaSystem()) {
+                            Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
+                            for (int slot = 1; slot <= 1000; slot++) {
+                                if (arenadata.contains("pg.lobbies." + slot)) {
+                                    ArrayList<String> arenalore = new ArrayList<>();
+                                    ItemStack arenamap = new ItemStack(Material.MAP);
+                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
+                                    assert arenamapmeta != null;
+                                    arenamapmeta.setDisplayName(String.valueOf(slot));
+                                    arenamapmeta.setLore(arenalore);
+                                    arenamap.setItemMeta(arenamapmeta);
+                                    inv.setItem(slot - 1, arenamap);
+                                }
+                            }
+                            p.openInventory(inv);
+                        }
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
+                        Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
+                        if (pg.isArenaSystem()) {
+                            for (int slot = 1; slot <= 1000; slot++) {
+                                if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
+                                    ArrayList<String> arenalore = new ArrayList<>();
+                                    ItemStack arenamap = new ItemStack(Material.MAP);
+                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
+                                    assert arenamapmeta != null;
+                                    arenamapmeta.setDisplayName(arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"));
+                                    arenamapmeta.setLore(arenalore);
+                                    arenamap.setItemMeta(arenamapmeta);
+                                    inv.setItem(slot - 1, arenamap);
+                                }
+                            }
+                        } else {
+                            for (int slot = 1; slot <= 1000; slot++) {
+                                if (arenadata.contains("pg.arenas." + slot)) {
+                                    ArrayList<String> arenalore = new ArrayList<>();
+                                    ItemStack arenamap = new ItemStack(Material.MAP);
+                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
+                                    assert arenamapmeta != null;
+                                    arenamapmeta.setDisplayName(arenadata.getString("pg.arenas." + slot + ".name"));
+                                    arenamapmeta.setLore(arenalore);
+                                    arenamap.setItemMeta(arenamapmeta);
+                                    inv.setItem(slot - 1, arenamap);
+                                }
+                            }
+                        }
+                        p.openInventory(inv);
+                    }
+                }
+                if (p.getInventory().getItemInMainHand().getType() == Material.OAK_SIGN) {
+                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Set Join-Sign")) {
+                        if (p.hasPermission("pg.setup")) {
+                            if (!pg.isArenaSystem()) {
+                                pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                                pg.saveConfig();
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                            }
+                        }
+                        if (p.hasPermission("pg.setup")) {
+                            if (pg.isArenaSystem()) {
+                                arenadata.set("pg.lobbies." + lobby + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                                try {
+                                    arenadata.save(pg.arenadatafile);
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                            }
+                        }
+                    }
+                }
+                if (p.getInventory().getItemInMainHand().getType() == Material.BARRIER) {
+                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Leave Setup-Mode")) {
+                        p.getInventory().setContents(pg.inv.get(p.getName()));
+                        p.getInventory().setArmorContents(pg.armor.get(p.getName()));
+                        p.teleport(pg.loc.get(p.getName()));
+                        p.setLevel(pg.lvl.get(p.getName()));
+                        p.setExp(pg.exp.get(p.getName()));
+                        p.setGameMode(pg.gm.get(p.getName()));
+                        pg.inv.remove(p.getName());
+                        pg.armor.remove(p.getName());
+                        pg.loc.remove(p.getName());
+                        pg.lvl.remove(p.getName());
+                        pg.exp.remove(p.getName());
+                        pg.gm.remove(p.getName());
+                        p.setAllowFlight(false);
+                    }
+                }
+            }
+        }
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
+            if (e.getHand() == EquipmentSlot.HAND) {
+                if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
+                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Lobby")) {
+                        if (pg.isArenaSystem()) {
+                            p.getInventory().clear();
+                            pg.dellobby = true;
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(71));
+                        }
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Arena")) {
+                        p.getInventory().clear();
+                        pg.delarena = true;
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(72));
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Spawn")) {
+                        if (p.hasPermission("pg.setup")) {
+                            if (!pg.isArenaSystem()) {
+                                int arenaNumber = 1;
+                                int spawnNumber = 1;
+                                try {
+                                    int i = 1;
+                                    boolean arenaName = false;
+                                    while (!arenaName) {
+                                        if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                            arenaNumber = i;
+                                            arenaName = true;
+                                        } else {
+                                            i++;
+                                        }
+                                    }
+                                    int max = 1;
+                                    while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + max)) {
+                                        spawnNumber = max;
+                                        max++;
+                                    }
+                                    arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
+                                    arenadata.save(pg.arenadatafile);
+                                    p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(32));
+                                } catch (Exception ex) {
+                                    p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(31));
+                                }
+                            }
+                        }
+                        if (p.hasPermission("pg.setup")) {
+                            if (pg.isArenaSystem()) {
+                                int arenaNumber = 1;
+                                int spawnNumber = 1;
+                                try {
+                                    int i = 1;
+                                    boolean arenaName = false;
+                                    while (!arenaName) {
+                                        if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                            arenaNumber = i;
+                                            arenaName = true;
+                                        } else {
+                                            i++;
+                                        }
+                                    }
+                                    int max = 1;
+                                    while (arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + max)) {
+                                        spawnNumber = max;
+                                        max++;
+                                    }
+                                    arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
+                                    arenadata.save(pg.arenadatafile);
+                                    p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(32) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                } catch (Exception ex) {
+                                    p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                }
+                            }
+                        }
+                    }
+                }
+                if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
+                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Lobby")) {
+                        if (pg.isArenaSystem()) {
+                            Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
+                            for (int slot = 1; slot <= 1000; slot++) {
+                                if (arenadata.contains("pg.lobbies." + slot)) {
+                                    ArrayList<String> arenalore = new ArrayList<>();
+                                    ItemStack arenamap = new ItemStack(Material.MAP);
+                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
+                                    assert arenamapmeta != null;
+                                    arenamapmeta.setDisplayName(String.valueOf(slot));
+                                    arenamapmeta.setLore(arenalore);
+                                    arenamap.setItemMeta(arenamapmeta);
+                                    inv.setItem(slot - 1, arenamap);
+                                }
+                            }
+                            p.openInventory(inv);
+                        }
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
+                        Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
+                        if (pg.isArenaSystem()) {
+                            for (int slot = 1; slot <= 1000; slot++) {
+                                if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
+                                    ArrayList<String> arenalore = new ArrayList<>();
+                                    ItemStack arenamap = new ItemStack(Material.MAP);
+                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
+                                    assert arenamapmeta != null;
+                                    arenamapmeta.setDisplayName(arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"));
+                                    arenamapmeta.setLore(arenalore);
+                                    arenamap.setItemMeta(arenamapmeta);
+                                    inv.setItem(slot - 1, arenamap);
+                                }
+                            }
+                        } else {
+                            for (int slot = 1; slot <= 1000; slot++) {
+                                if (arenadata.contains("pg.arenas." + slot)) {
+                                    ArrayList<String> arenalore = new ArrayList<>();
+                                    ItemStack arenamap = new ItemStack(Material.MAP);
+                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
+                                    assert arenamapmeta != null;
+                                    arenamapmeta.setDisplayName(arenadata.getString("pg.arenas." + slot + ".name"));
+                                    arenamapmeta.setLore(arenalore);
+                                    arenamap.setItemMeta(arenamapmeta);
+                                    inv.setItem(slot - 1, arenamap);
+                                }
+                            }
+                        }
+                        p.openInventory(inv);
+                    }
+                }
+                if (p.getInventory().getItemInMainHand().getType() == Material.BARRIER) {
+                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Leave Setup-Mode")) {
+                        p.getInventory().setContents(pg.inv.get(p.getName()));
+                        p.getInventory().setArmorContents(pg.armor.get(p.getName()));
+                        p.teleport(pg.loc.get(p.getName()));
+                        p.setLevel(pg.lvl.get(p.getName()));
+                        p.setExp(pg.exp.get(p.getName()));
+                        p.setGameMode(pg.gm.get(p.getName()));
+                        pg.inv.remove(p.getName());
+                        pg.armor.remove(p.getName());
+                        pg.loc.remove(p.getName());
+                        pg.lvl.remove(p.getName());
+                        pg.exp.remove(p.getName());
+                        pg.gm.remove(p.getName());
+                        p.setAllowFlight(false);
+                    }
+                }
+            }
+        }
     }
 
     @EventHandler
@@ -1222,11 +1668,11 @@ public class Events implements Listener {
                                     HashMap<String, Integer> temp = new HashMap<>();
                                     randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                     temp.put(pg.chat.get(42), randomvotes);
-                                    int max = 1;
-                                    while (arenadata.contains("pg.lobbies." + s + "." + max)) {
-                                        int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
-                                        temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
-                                        max++;
+                                    for (int max = 1; max <= 1000; max++) {
+                                        if (arenadata.contains("pg.lobbies." + s + "." + max)) {
+                                            int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                                            temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
+                                        }
                                     }
                                     temp.put(displayname, votes);
                                     pg.lobbyvotes.replace(s, temp);
@@ -1252,11 +1698,11 @@ public class Events implements Listener {
                                     HashMap<String, Integer> tempold = new HashMap<>();
                                     randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                     tempold.put(pg.chat.get(42), randomvotes);
-                                    int max = 1;
-                                    while (arenadata.contains("pg.lobbies." + s + "." + max)) {
-                                        int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
-                                        tempold.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
-                                        max++;
+                                    for (int max = 1; max <= 1000; max++) {
+                                        if (arenadata.contains("pg.lobbies." + s + "." + max)) {
+                                            int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                                            tempold.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
+                                        }
                                     }
                                     tempold.put(arenaname, votes);
                                     pg.lobbyvotes.replace(s, tempold);
@@ -1266,10 +1712,11 @@ public class Events implements Listener {
                                     HashMap<String, Integer> temp = new HashMap<>();
                                     randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                     temp.put(pg.chat.get(42), randomvotes);
-                                    while (arenadata.contains("pg.lobbies." + s + "." + max)) {
-                                        int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
-                                        temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
-                                        max++;
+                                    for (int max = 1; max <= 1000; max++) {
+                                        if (arenadata.contains("pg.lobbies." + s + "." + max)) {
+                                            int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                                            temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
+                                        }
                                     }
                                     temp.put(displayname, votes);
                                     pg.lobbyvotes.replace(s, temp);
@@ -1776,6 +2223,22 @@ public class Events implements Listener {
                     e.setCancelled(true);
                 }
             }
+        }
+        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby")) {
+            if (e.getCurrentItem() != null) {
+                p.closeInventory();
+                lobby = Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName();
+                p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + " " + ChatColor.GREEN + "successfully chosen!");
+            }
+            e.setCancelled(true);
+        }
+        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Choose Arena")) {
+            if (e.getCurrentItem() != null) {
+                p.closeInventory();
+                arena = Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName();
+                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + " " + ChatColor.GREEN + "successfully chosen!");
+            }
+            e.setCancelled(true);
         }
     }
 
