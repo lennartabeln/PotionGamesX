@@ -1047,7 +1047,7 @@ public class PotionGames extends JavaPlugin {
         ItemStack addlobby = new ItemStack(Material.STICK);
         ItemMeta addlobbymeta = addlobby.getItemMeta();
         assert addlobbymeta != null;
-        addlobbymeta.setDisplayName(ChatColor.DARK_AQUA + "Add/Del Lobby");
+        addlobbymeta.setDisplayName(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby");
         addlobby.setItemMeta(addlobbymeta);
         p.getInventory().setItem(1, addlobby);
         if (isArenaSystem()) {
@@ -1061,7 +1061,7 @@ public class PotionGames extends JavaPlugin {
         ItemStack addarena = new ItemStack(Material.STICK);
         ItemMeta addarenameta = addarena.getItemMeta();
         assert addarenameta != null;
-        addarenameta.setDisplayName(ChatColor.DARK_AQUA + "Add/Del Arena");
+        addarenameta.setDisplayName(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena");
         addarena.setItemMeta(addarenameta);
         p.getInventory().setItem(3, addarena);
         ItemStack choosearena = new ItemStack(Material.CLOCK);
@@ -1073,7 +1073,7 @@ public class PotionGames extends JavaPlugin {
         ItemStack addspawn = new ItemStack(Material.STICK);
         ItemMeta addspawnmeta = addspawn.getItemMeta();
         assert addspawnmeta != null;
-        addspawnmeta.setDisplayName(ChatColor.DARK_AQUA + "Add/Del Spawn");
+        addspawnmeta.setDisplayName(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn");
         addspawn.setItemMeta(addspawnmeta);
         p.getInventory().setItem(5, addspawn);
         ItemStack signsetup = new ItemStack(Material.OAK_SIGN);

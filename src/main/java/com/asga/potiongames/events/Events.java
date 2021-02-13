@@ -1333,7 +1333,7 @@ public class Events implements Listener {
         if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
             if (e.getHand() == EquipmentSlot.HAND) {
                 if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
-                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Lobby")) {
+                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby")) {
                         if (p.hasPermission("pg.setup")) {
                             if (!pg.isArenaSystem()) {
                                 pg.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
@@ -1350,11 +1350,11 @@ public class Events implements Listener {
                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(69));
                             }
                         }
-                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Arena")) {
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena")) {
                         p.getInventory().clear();
                         pg.addarena = true;
                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(70));
-                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Spawn")) {
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
                         if (p.hasPermission("pg.setup")) {
                             if (!pg.isArenaSystem()) {
                                 int spawnNumber = 1;
@@ -1503,17 +1503,17 @@ public class Events implements Listener {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
             if (e.getHand() == EquipmentSlot.HAND) {
                 if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
-                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Lobby")) {
+                    if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby")) {
                         if (pg.isArenaSystem()) {
                             p.getInventory().clear();
                             pg.dellobby = true;
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(71));
                         }
-                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Arena")) {
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena")) {
                         p.getInventory().clear();
                         pg.delarena = true;
                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(72));
-                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add/Del Spawn")) {
+                    } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
                         if (p.hasPermission("pg.setup")) {
                             if (!pg.isArenaSystem()) {
                                 int arenaNumber = 1;
