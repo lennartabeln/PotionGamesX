@@ -207,7 +207,7 @@ public class Events implements Listener {
                 });
                 e.getRecipients().add(p);
                 String message = ChatColor.WHITE + e.getMessage();
-                if (!p.isOp()) {
+                if (!p.hasPermission("pg.admin")) {
                     if (pg.playerLobby.containsKey(p)) {
                         e.setCancelled(true);
                         for (Player pgchat : pg.playerLobby.keySet()) {
@@ -263,7 +263,7 @@ public class Events implements Listener {
                 });
                 e.getRecipients().add(p);
                 String message = ChatColor.WHITE + e.getMessage();
-                if (!p.isOp()) {
+                if (!p.hasPermission("pg.admin")) {
                     if (pg.pgPlayers.contains(p)) {
                         e.setCancelled(true);
                         for (Player pgchat : pg.pgPlayers) {
@@ -2269,7 +2269,7 @@ public class Events implements Listener {
             pg.onJoin(p);
             e.setJoinMessage(null);
         }
-        if (p.isOp()) {
+        if (p.hasPermission("pg.update")) {
             String latest = null;
             try {
                 URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");

@@ -1855,7 +1855,7 @@ public class PotionGames extends JavaPlugin {
                 p.teleport(loc);
             } catch (Exception e) {
                 for (Player all : pgPlayers) {
-                    if (all.isOp()) {
+                    if (all.hasPermission("pg.admin")) {
                         all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
                     }
                 }
@@ -1899,7 +1899,7 @@ public class PotionGames extends JavaPlugin {
                 }
             } catch (Exception ex) {
                 for (Player all : pgPlayers) {
-                    if (all.isOp()) {
+                    if (all.hasPermission("pg.admin")) {
                         all.sendMessage(prefix + p.getName() + ChatColor.RED + " " + chat.get(18));
                     }
                 }
@@ -1940,7 +1940,7 @@ public class PotionGames extends JavaPlugin {
                 p.teleport(loc);
             } catch (Exception e) {
                 for (Player all : pgPlayers) {
-                    if (all.isOp()) {
+                    if (all.hasPermission("pg.admin")) {
                         all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
                     }
                 }
@@ -2852,7 +2852,7 @@ public class PotionGames extends JavaPlugin {
                 } catch (Exception e) {
                     for (Player op : playerLobby.keySet()) {
                         if (playerLobby.get(all).equals(s)) {
-                            if (op.isOp()) {
+                            if (all.hasPermission("pg.admin")) {
                                 op.sendMessage(prefix + all.getName() + ChatColor.RED + chat.get(8));
                             }
                         }
@@ -2900,7 +2900,7 @@ public class PotionGames extends JavaPlugin {
             } catch (Exception ex) {
                 for (Player all : playerLobby.keySet()) {
                     if (playerLobby.get(all).equals(s)) {
-                        if (all.isOp()) {
+                        if (all.hasPermission("pg.admin")) {
                             all.sendMessage(prefix + p.getName() + ChatColor.RED + " " + chat.get(18));
                         }
                     }
@@ -2943,7 +2943,7 @@ public class PotionGames extends JavaPlugin {
             } catch (Exception e) {
                 for (Player all : playerLobby.keySet()) {
                     if (playerLobby.get(all).equals(s)) {
-                        if (all.isOp()) {
+                        if (all.hasPermission("pg.admin")) {
                             all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
                         }
                     }
