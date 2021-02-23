@@ -38,7 +38,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 
 ### Setup
 
-#### New: Use `/pg setup` to set up the plugin!
+#### Use `/pg setup` to set up the plugin!
 
 #### Multi-Lobby-System
 
