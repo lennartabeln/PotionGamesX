@@ -63,6 +63,9 @@ public class Events implements Listener {
                 if (pg.isArenaSystem()) {
                     arenadata.set("pg.lobbies." + lobby + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
                     arenadata.set("pg.lobbies." + lobby + ".coords", Objects.requireNonNull(p.getLocation()));
+                    arenadata.set("pg.lobbies." + lobby + ".activateTeams", true);
+                    arenadata.set("pg.lobbies." + lobby + ".activateKits", true);
+                    arenadata.set("pg.lobbies." + lobby + ".activateShop", true);
                     arenadata.set("pg.lobbies." + lobby + ".teamSize", 2);
                     arenadata.set("pg.lobbies." + lobby + ".maxPlayers", 24);
                     arenadata.set("pg.lobbies." + lobby + ".minPlayers", 12);
@@ -510,7 +513,7 @@ public class Events implements Listener {
                             e.setKeepLevel(true);
                             pg.playerLobby.remove(p);
                             pg.specLobby.put(p, s);
-                            if (pg.isActivateTeams()) {
+                            if (pg.lobbyActivateTeams.get(s)) {
                                 String teamname = null;
                                 for (int i = 1; i <= pg.lobbyteamAmount.get(s); i++) {
                                     if (pg.lobbyteamplayernames.get(s).containsKey(Integer.toString(i)) && pg.lobbyteamplayernames.get(s).containsValue(p)) {
@@ -1730,7 +1733,7 @@ public class Events implements Listener {
                             }
                         }
                     }
-                    if (pg.isActivateTeams()) {
+                    if (pg.lobbyActivateTeams.get(s)) {
                         if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {

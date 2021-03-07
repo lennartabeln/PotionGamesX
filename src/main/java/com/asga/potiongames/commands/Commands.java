@@ -255,7 +255,7 @@ public class Commands implements CommandExecutor {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (pg.lobbyAmount.get(s) >= pg.getMinPlayers()) {
+                            if (pg.lobbyAmount.get(s) >= pg.lobbyminPlayers.get(s)) {
                                 if (pg.countdownLobby.get(s) >= 10) {
                                     pg.countdownLobby.replace(s, 10);
                                     for (Player all : pg.playerLobby.keySet()) {
@@ -423,6 +423,9 @@ public class Commands implements CommandExecutor {
                     if (pg.isArenaSystem()) {
                         arenadata.set("pg.lobbies." + args[1] + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
                         arenadata.set("pg.lobbies." + args[1] + ".coords", Objects.requireNonNull(p.getLocation()));
+                        arenadata.set("pg.lobbies." + args[1] + ".activateTeams", true);
+                        arenadata.set("pg.lobbies." + args[1] + ".activateKits", true);
+                        arenadata.set("pg.lobbies." + args[1] + ".activateShop", true);
                         arenadata.set("pg.lobbies." + args[1] + ".teamSize", 2);
                         arenadata.set("pg.lobbies." + args[1] + ".maxPlayers", 24);
                         arenadata.set("pg.lobbies." + args[1] + ".minPlayers", 12);
