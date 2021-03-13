@@ -712,7 +712,7 @@ public class Events implements Listener {
                             if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                 if (!pg.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                     Inventory inv;
-                                    inv = Bukkit.createInventory(p, 27, ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games");
+                                    inv = Bukkit.createInventory(p, 27, pg.prefix);
                                     pg.chestData();
                                     Random rnd = new Random();
                                     int max = 6;
@@ -792,7 +792,7 @@ public class Events implements Listener {
                             if (pg.getGamestate() == GameStates.INGAME) {
                                 if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
                                     Inventory inv;
-                                    inv = Bukkit.createInventory(p, 27, ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games");
+                                    inv = Bukkit.createInventory(p, 27, pg.prefix);
                                     pg.chestData();
                                     Random rnd = new Random();
                                     int max = 6;
