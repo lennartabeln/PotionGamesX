@@ -883,7 +883,7 @@ public class Events implements Listener {
                                     inv = Bukkit.createInventory(p, 9, pg.prefix);
                                     pg.lobbychests.put(e.getClickedBlock().getLocation(), s);
                                     pg.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
-                                    p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
+                                    p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
                                     ItemStack arrow = new ItemStack(Material.ARROW);
                                     ItemStack firebow = new ItemStack(Material.BOW);
                                     ItemMeta firebowmeta = firebow.getItemMeta();
@@ -935,7 +935,7 @@ public class Events implements Listener {
                                     inv = Bukkit.createInventory(p, 9, pg.prefix);
                                     pg.lobbychests.put(e.getClickedBlock().getLocation(), s);
                                     pg.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
-                                    p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
+                                    p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
                                     ItemStack ingot = new ItemStack(Material.NETHERITE_INGOT);
                                     inv.setItem(2, ingot);
                                     inv.setItem(6, ingot);

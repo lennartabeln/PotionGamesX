@@ -302,6 +302,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Type arena name in chat to add it!");
         chat.add("Type lobby number in chat to remove it!");
         chat.add("Type arena name in chat to remove it!");
+        chat.add("could not be teleported to a spawn!");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -2897,7 +2898,7 @@ public class PotionGames extends JavaPlugin {
                     for (Player op : playerLobby.keySet()) {
                         if (playerLobby.get(all).equals(s)) {
                             if (all.hasPermission("pg.admin")) {
-                                op.sendMessage(prefix + all.getName() + ChatColor.RED + chat.get(8));
+                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
                             }
                         }
                     }
@@ -2988,7 +2989,7 @@ public class PotionGames extends JavaPlugin {
                 for (Player all : playerLobby.keySet()) {
                     if (playerLobby.get(all).equals(s)) {
                         if (all.hasPermission("pg.admin")) {
-                            all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
+                            all.sendMessage(prefix + p.getName() + " " + ChatColor.RED + chat.get(73));
                         }
                     }
                 }
