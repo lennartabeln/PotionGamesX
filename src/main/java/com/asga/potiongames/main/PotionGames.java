@@ -14,6 +14,7 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -1075,6 +1076,57 @@ public class PotionGames extends JavaPlugin {
                 potions.set(chestitem - 1, effect);
                 chestitem++;
             }
+        }
+        ItemStack example = new ItemStack(Material.BOW, 3);
+        ItemMeta examplemeta = itemStack.getItemMeta();
+        assert examplemeta != null;
+        examplemeta.setDisplayName(ChatColor.RED + "EXAMPLE");
+        if (examplemeta instanceof Damageable) {
+            ((Damageable) examplemeta).setDamage(60);
+        }
+        example.setItemMeta(examplemeta);
+        example.addEnchantment(Enchantment.ARROW_FIRE, 1);
+        if (chestdata.get("pg.customchests." + 1) == null) {
+            chestdata.addDefault("pg.customchests." + 1 + ".activate", false);
+            chestdata.addDefault("pg.customchests." + 1 + ".chesttype", Material.COMMAND_BLOCK.toString());
+            chestdata.addDefault("pg.customchests." + 1 + ".chestsize", 9);
+            chestdata.addDefault("pg.customchests." + 1 + "." + 1 + ".slot", 1);
+            chestdata.addDefault("pg.customchests." + 1 + "." + 1 + ".item", example);
+            chestdata.options().copyDefaults(true);
+        }
+        ItemStack arrow = new ItemStack(Material.ARROW);
+        ItemStack firebow = new ItemStack(Material.BOW);
+        ItemMeta firebowmeta = firebow.getItemMeta();
+        assert firebowmeta != null;
+        firebowmeta.setDisplayName(ChatColor.LIGHT_PURPLE + chat.get(11));
+        firebow.setItemMeta(firebowmeta);
+        firebow.addEnchantment(Enchantment.ARROW_FIRE, 1);
+        if (chestdata.get("pg.customchests." + 2) == null) {
+            chestdata.addDefault("pg.customchests." + 2 + ".activate", true);
+            chestdata.addDefault("pg.customchests." + 2 + ".chesttype", Material.TARGET.toString());
+            chestdata.addDefault("pg.customchests." + 2 + ".chestsize", 9);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 1 + ".slot", 2);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 1 + ".item", arrow);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 2 + ".slot", 3);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 2 + ".item", arrow);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 3 + ".slot", 7);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 3 + ".item", arrow);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 4 + ".slot", 8);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 4 + ".item", arrow);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 5 + ".slot", 5);
+            chestdata.addDefault("pg.customchests." + 2 + "." + 5 + ".item", firebow);
+            chestdata.options().copyDefaults(true);
+        }
+        ItemStack ingot = new ItemStack(Material.NETHERITE_INGOT);
+        if (chestdata.get("pg.customchests." + 3) == null) {
+            chestdata.addDefault("pg.customchests." + 3 + ".activate", true);
+            chestdata.addDefault("pg.customchests." + 3 + ".chesttype", Material.NETHERITE_BLOCK.toString());
+            chestdata.addDefault("pg.customchests." + 3 + ".chestsize", 9);
+            chestdata.addDefault("pg.customchests." + 3 + "." + 1 + ".slot", 3);
+            chestdata.addDefault("pg.customchests." + 3 + "." + 1 + ".item", ingot);
+            chestdata.addDefault("pg.customchests." + 3 + "." + 2 + ".slot", 7);
+            chestdata.addDefault("pg.customchests." + 3 + "." + 2 + ".item", ingot);
+            chestdata.options().copyDefaults(true);
         }
         try {
             chestdata.save(chestdatafile);

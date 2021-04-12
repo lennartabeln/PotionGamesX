@@ -11,7 +11,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -644,6 +643,7 @@ public class Events implements Listener {
     public void onInteract(PlayerInteractEvent e) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         FileConfiguration kitdata = YamlConfiguration.loadConfiguration(pg.kitdatafile);
+        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(pg.chestdatafile);
         Player p = e.getPlayer();
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (e.getHand() == EquipmentSlot.HAND) {
@@ -869,95 +869,48 @@ public class Events implements Listener {
                             }
                         }
                     }
-                    if (e.getClickedBlock().getType() == Material.TARGET) {
-                        if (pg.isArenaSystem()) {
-                            String s = null;
-                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
-                                if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                                    s = Integer.toString(ii);
-                                }
-                            }
-                            if (pg.lobbyStates.get(s) == GameStates.INGAME) {
-                                if (!pg.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
-                                    Inventory inv;
-                                    inv = Bukkit.createInventory(p, 9, pg.prefix);
-                                    pg.lobbychests.put(e.getClickedBlock().getLocation(), s);
-                                    pg.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
-                                    p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
-                                    ItemStack arrow = new ItemStack(Material.ARROW);
-                                    ItemStack firebow = new ItemStack(Material.BOW);
-                                    ItemMeta firebowmeta = firebow.getItemMeta();
-                                    assert firebowmeta != null;
-                                    firebowmeta.setDisplayName(ChatColor.LIGHT_PURPLE + pg.chat.get(11));
-                                    firebow.setItemMeta(firebowmeta);
-                                    firebow.addEnchantment(Enchantment.ARROW_FIRE, 1);
-                                    inv.setItem(1, arrow);
-                                    inv.setItem(2, arrow);
-                                    inv.setItem(6, arrow);
-                                    inv.setItem(7, arrow);
-                                    inv.setItem(4, firebow);
+                    int chestnumber = 1;
+                    int chestitem = 1;
+                    while (chestdata.contains("pg.customchests." + chestnumber)) {
+                        if (e.getClickedBlock().getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.customchests." + chestnumber + ".chesttype")).toString())) {
+                            if (chestdata.getBoolean("pg.customchests." + chestnumber + ".activate")) {
+                                if (pg.isArenaSystem()) {
+                                    int i = 1;
+                                    String s = Integer.toString(i);
+                                    if (pg.lobbyStates.get(s) == GameStates.INGAME) {
+                                        if (!pg.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
+                                            Inventory inv;
+                                            inv = Bukkit.createInventory(p, chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), pg.prefix);
+                                            pg.lobbychests.put(e.getClickedBlock().getLocation(), s);
+                                            pg.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
+                                            p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
+                                            while (chestdata.contains("pg.customchests." + chestnumber + "." + chestitem)) {
+                                                inv.setItem(chestdata.getInt("pg.customchests." + chestnumber + "." + chestitem + ".slot") - 1, chestdata.getItemStack("pg.customchests." + chestnumber + "." + chestitem + ".item"));
+                                                chestitem++;
+                                            }
+                                        } else {
+                                            p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
+                                        }
+                                    }
                                 } else {
-                                    p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
-                                }
-                            }
-                        } else {
-                            if (pg.getGamestate() == GameStates.INGAME) {
-                                if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
-                                    Inventory inv;
-                                    inv = Bukkit.createInventory(p, 9, pg.prefix);
-                                    pg.chests.put(e.getClickedBlock().getLocation(), inv);
-                                    p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
-                                    ItemStack arrow = new ItemStack(Material.ARROW);
-                                    ItemStack firebow = new ItemStack(Material.BOW);
-                                    ItemMeta firebowmeta = firebow.getItemMeta();
-                                    assert firebowmeta != null;
-                                    firebowmeta.setDisplayName(ChatColor.LIGHT_PURPLE + pg.chat.get(11));
-                                    firebow.setItemMeta(firebowmeta);
-                                    firebow.addEnchantment(Enchantment.ARROW_FIRE, 1);
-                                    inv.setItem(1, arrow);
-                                    inv.setItem(2, arrow);
-                                    inv.setItem(6, arrow);
-                                    inv.setItem(7, arrow);
-                                    inv.setItem(4, firebow);
-                                } else {
-                                    p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
+                                    if (pg.getGamestate() == GameStates.INGAME) {
+                                        if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
+                                            Inventory inv;
+                                            inv = Bukkit.createInventory(p, chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), pg.prefix);
+                                            pg.chests.put(e.getClickedBlock().getLocation(), inv);
+                                            p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
+                                            while (chestdata.contains("pg.customchests." + chestnumber + "." + chestitem)) {
+                                                inv.setItem(chestdata.getInt("pg.customchests." + chestnumber + "." + chestitem + ".slot") - 1, chestdata.getItemStack("pg.customchests." + chestnumber + "." + chestitem + ".item"));
+                                                chestitem++;
+                                            }
+                                        } else {
+                                            p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                    if (e.getClickedBlock().getType() == Material.NETHERITE_BLOCK) {
-                        if (pg.isArenaSystem()) {
-                            int i = 1;
-                            String s = Integer.toString(i);
-                            if (pg.lobbyStates.get(s) == GameStates.INGAME) {
-                                if (!pg.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
-                                    Inventory inv;
-                                    inv = Bukkit.createInventory(p, 9, pg.prefix);
-                                    pg.lobbychests.put(e.getClickedBlock().getLocation(), s);
-                                    pg.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
-                                    p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
-                                    ItemStack ingot = new ItemStack(Material.NETHERITE_INGOT);
-                                    inv.setItem(2, ingot);
-                                    inv.setItem(6, ingot);
-                                } else {
-                                    p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
-                                }
-                            }
-                        } else {
-                            if (pg.getGamestate() == GameStates.INGAME) {
-                                if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
-                                    Inventory inv;
-                                    inv = Bukkit.createInventory(p, 9, pg.prefix);
-                                    pg.chests.put(e.getClickedBlock().getLocation(), inv);
-                                    p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
-                                    ItemStack ingot = new ItemStack(Material.NETHERITE_INGOT);
-                                    inv.setItem(2, ingot);
-                                    inv.setItem(6, ingot);
-                                } else {
-                                    p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
-                                }
-                            }
-                        }
+                        chestnumber++;
                     }
                     if (pg.isActivateShop()) {
                         if (e.getClickedBlock().getType() == Material.COMPOSTER) {
