@@ -5,6 +5,7 @@
 PotionGames is a minigames plugin that works like SurvivalGames but with potions and effects!
 
 ## New in Version 4.0: Change and add blocks with a custom loot table!
+More details in the `chestdata.yml` file!
 
 ## Functions
 
