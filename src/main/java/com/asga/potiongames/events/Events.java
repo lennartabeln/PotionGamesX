@@ -701,7 +701,7 @@ public class Events implements Listener {
             }
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (e.getHand() == EquipmentSlot.HAND) {
-                    if (Objects.requireNonNull(e.getClickedBlock()).getType() == Material.END_PORTAL_FRAME) {
+                    if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.chestblocks.normal")).toString())) {
                         if (pg.isArenaSystem()) {
                             String s = null;
                             for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
@@ -913,7 +913,7 @@ public class Events implements Listener {
                         chestnumber++;
                     }
                     if (pg.isActivateShop()) {
-                        if (e.getClickedBlock().getType() == Material.COMPOSTER) {
+                        if ((e.getClickedBlock()).getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.chestblocks.shop")).toString())) {
                             if (pg.isArenaSystem()) {
                                 int ii = 1;
                                 String s = Integer.toString(ii);

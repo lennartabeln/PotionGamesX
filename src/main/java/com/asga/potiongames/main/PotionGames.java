@@ -1128,6 +1128,14 @@ public class PotionGames extends JavaPlugin {
             chestdata.addDefault("pg.customchests." + 3 + "." + 2 + ".item", ingot);
             chestdata.options().copyDefaults(true);
         }
+        if (chestdata.get("pg.chestblocks.normal") == null) {
+            chestdata.addDefault("pg.chestblocks.normal", Material.END_PORTAL_FRAME.toString());
+            chestdata.options().copyDefaults(true);
+        }
+        if (chestdata.get("pg.chestblocks.shop") == null) {
+            chestdata.addDefault("pg.chestblocks.shop", Material.COMPOSTER.toString());
+            chestdata.options().copyDefaults(true);
+        }
         try {
             chestdata.save(chestdatafile);
         } catch (IOException ex) {
