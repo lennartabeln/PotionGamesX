@@ -39,7 +39,6 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(pg.prefix + "/pg delspawn [lobbynumber] [arenaname] - Remove last spawn");
                     p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
                     p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
-                    p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                     p.sendMessage(pg.prefix + "/pg joinsign [lobbynumber] - Add Join-Sign");
                 } else {
                     p.sendMessage(pg.prefix + "/pg setup - Set up plugin");
@@ -165,7 +164,6 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg delarena [lobbynumber] [arenaname] - Remove an arena");
                         p.sendMessage(pg.prefix + "/pg delspawn [lobbynumber] [arenaname] - Remove last spawn");
                         p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
-                        p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg joinsign [lobbynumber] - Add Join-Sign");
                     } else {
