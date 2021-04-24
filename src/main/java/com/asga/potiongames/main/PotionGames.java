@@ -115,6 +115,8 @@ public class PotionGames extends JavaPlugin {
     public HashMap<String, String> lobbyVote = new HashMap<>();
     public HashMap<String, String> lobbyVotedarena = new HashMap<>();
     public HashMap<String, String> lobbyVoted = new HashMap<>();
+    public HashMap<String, String> lobbyTeamed = new HashMap<>();
+    public HashMap<String, String> lobbyKited = new HashMap<>();
     public HashMap<String, HashMap<String, Integer>> lobbyteams = new HashMap<>();
     public HashMap<String, Player> lobbyteamplayernamesdata = new HashMap<>();
     public HashMap<String, HashMap<String, Player>> lobbyteamplayernames = new HashMap<>();
@@ -127,6 +129,14 @@ public class PotionGames extends JavaPlugin {
     public HashMap<String, Integer> lobbyteamAmount = new HashMap<>();
     public HashMap<String, Integer> lobbyroundTime = new HashMap<>();
     public HashMap<String, Integer> lobbyroundTimeSeconds = new HashMap<>();
+    public HashMap<String, HashMap<Location, Block>> lobbyLiquidPlaced = new HashMap<>();
+    public HashMap<String, HashMap<Location, Material>> lobbyPlacedBlocks = new HashMap<>();
+    public HashMap<String, HashMap<Location, Material>> lobbyBreakedBlocks = new HashMap<>();
+    public HashMap<String, HashMap<Location, BlockData>> lobbyWaterBlocks = new HashMap<>();
+    public HashMap<Location, Block> lobbyLiquidPlacedData = new HashMap<>();
+    public HashMap<Location, Material> lobbyPlacedBlocksData = new HashMap<>();
+    public HashMap<Location, Material> lobbyBreakedBlocksData = new HashMap<>();
+    public HashMap<Location, BlockData> lobbyWaterBlocksData = new HashMap<>();
     private int tick;
     private int countdown = 60;
     private int reset = 10;
@@ -835,6 +845,10 @@ public class PotionGames extends JavaPlugin {
                             kitplayers.put(all, 0);
                         }
                     }
+                    lobbyLiquidPlaced.put(s, lobbyLiquidPlacedData);
+                    lobbyPlacedBlocks.put(s, lobbyPlacedBlocksData);
+                    lobbyBreakedBlocks.put(s, lobbyBreakedBlocksData);
+                    lobbyWaterBlocks.put(s, lobbyWaterBlocksData);
                     lobbyStates.put(s, GameStates.WAITING);
                     tickLobby(s);
                 }
@@ -2671,35 +2685,23 @@ public class PotionGames extends JavaPlugin {
                             }
                             for (Player all : playerLobby.keySet()) {
                                 if (playerLobby.get(all).equals(s)) {
-                                    voted.remove(all.getName());
+                                    lobbyVoted.remove(s, all.getName());
                                 }
                             }
                             lobbyVoteallowed.replace(s, false);
                             lobbyForcearena.replace(s, false);
-                            if (lobbyActivateTeams.get(s)) {
-                                for (Player all : playerLobby.keySet()) {
-                                    if (playerLobby.get(all).equals(s)) {
-                                        teamed.remove(all.getName());
-                                    }
+                            for (Player all : playerLobby.keySet()) {
+                                if (playerLobby.get(all).equals(s)) {
+                                    lobbyTeamed.remove(s, all.getName());
                                 }
                             }
                             lobbyTeamallowed.replace(s, false);
                             for (Player all : playerLobby.keySet()) {
                                 if (playerLobby.get(all).equals(s)) {
-                                    lobbyteamplayernames.remove(all.getName());
-                                }
-                            }
-                            for (Player all : playerLobby.keySet()) {
-                                if (playerLobby.get(all).equals(s)) {
-                                    kited.remove(all.getName());
+                                    lobbyKited.remove(s, all.getName());
                                 }
                             }
                             lobbyKitallowed.replace(s, false);
-                            for (Player all : playerLobby.keySet()) {
-                                if (playerLobby.get(all).equals(s)) {
-                                    kitplayernames.remove(all.getName());
-                                }
-                            }
                             for (Player all : playerLobby.keySet()) {
                                 if (playerLobby.get(all).equals(s)) {
                                     richkidPlayers.remove(all);
@@ -2734,6 +2736,7 @@ public class PotionGames extends JavaPlugin {
                                     temp.put(Integer.toString(max), 0);
                                 }
                                 lobbyteams.replace(s, temp);
+                                lobbyTeamed.remove(s);
                             }
                             if (!lobbyKitallowed.get(s)) {
                                 lobbyKitallowed.replace(s, true);
@@ -2741,21 +2744,22 @@ public class PotionGames extends JavaPlugin {
                                 for (String all : kits) {
                                     kitplayers.put(all, 0);
                                 }
+                                lobbyKited.remove(s);
                             }
-                            for (Entry<Location, Block> entry : liquidPlaced.entrySet()) {
+                            for (Entry<Location, Block> entry : lobbyLiquidPlaced.get(s).entrySet()) {
                                 Location loc = entry.getKey();
                                 loc.getBlock().setType(Material.AIR);
                             }
-                            for (Entry<Location, Material> entry : placedBlocks.entrySet()) {
+                            for (Entry<Location, Material> entry : lobbyPlacedBlocks.get(s).entrySet()) {
                                 Location loc = entry.getKey();
                                 loc.getBlock().setType(Material.AIR);
                             }
-                            for (Entry<Location, Material> entry : breakedBlocks.entrySet()) {
+                            for (Entry<Location, Material> entry : lobbyBreakedBlocks.get(s).entrySet()) {
                                 Location loc = entry.getKey();
                                 Material mat = entry.getValue();
                                 loc.getBlock().setType(mat);
                             }
-                            for (Entry<Location, BlockData> entry : waterBlocks.entrySet()) {
+                            for (Entry<Location, BlockData> entry : lobbyWaterBlocks.get(s).entrySet()) {
                                 Location loc = entry.getKey();
                                 BlockData data = entry.getValue();
                                 loc.getBlock().setBlockData(data);
@@ -2873,7 +2877,7 @@ public class PotionGames extends JavaPlugin {
                 int maxteamplayers = teamSize;
                 boolean teamfound = false;
                 if (lobbyActivateTeams.get(s)) {
-                    if (!teamed.contains(all.getName())) {
+                    if (!lobbyTeamed.containsValue(all.getName())) {
                         while (!teamfound) {
                             Random rnd = new Random();
                             int rndTeam = rnd.nextInt(lobbyteams.get(s).size());
@@ -2893,20 +2897,20 @@ public class PotionGames extends JavaPlugin {
                                 all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
                                 all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + lobbyteams.get(s).get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                 all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
-                                teamed.add(all.getName());
+                                lobbyTeamed.put(s, all.getName());
                                 lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), all);
                             }
                         }
                     }
                 }
                 if (lobbyActivateKits.get(s)) {
-                    if (!kited.contains(all.getName())) {
+                    if (!lobbyKited.containsValue(all.getName())) {
                         Random rnd = new Random();
                         int rndKit = rnd.nextInt(activeKits);
                         all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
                         all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
                         all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                        kited.add(all.getName());
+                        lobbyKited.put(s, all.getName());
                         kitplayernames.put(kits.get(rndKit), all);
                         if (kits.get(rndKit).equals("Rich Kid")) {
                             richkidPlayers.add(all);
@@ -3067,11 +3071,11 @@ public class PotionGames extends JavaPlugin {
         playerLobby.remove(p);
         lobbyAmount.replace(s, lobbyAmount.get(s) - 1);
         if (lobbyAmount.get(s) == 0) {
-            teamed.remove(p.getName());
+            lobbyTeamed.remove(s, p.getName());
         }
         if (lobbyAmount.get(s) != 0) {
             if (lobbyActivateTeams.get(s)) {
-                if (teamed.contains(p.getName())) {
+                if (lobbyTeamed.containsValue(p.getName())) {
                     String teamname = null;
                     for (int i = 1; i <= lobbyteamAmount.get(s); i++) {
                         if (lobbyteamplayernames.get(s).containsKey(Integer.toString(i)) && lobbyteamplayernames.get(s).containsValue(p)) {
@@ -3095,7 +3099,7 @@ public class PotionGames extends JavaPlugin {
                             lobbyteams.get(s).remove(teamname);
                         }
                     }
-                    teamed.remove(p.getName());
+                    lobbyTeamed.remove(s, p.getName());
                 }
             }
             if (lobbyVoted.containsValue(p.getName())) {
