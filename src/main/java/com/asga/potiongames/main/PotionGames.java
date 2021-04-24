@@ -115,11 +115,9 @@ public class PotionGames extends JavaPlugin {
     public HashMap<String, String> lobbyVote = new HashMap<>();
     public HashMap<String, String> lobbyVotedarena = new HashMap<>();
     public HashMap<String, String> lobbyVoted = new HashMap<>();
-    public HashMap<String, Integer> lobbyteamplayers = new HashMap<>();
     public HashMap<String, HashMap<String, Integer>> lobbyteams = new HashMap<>();
     public HashMap<String, Player> lobbyteamplayernamesdata = new HashMap<>();
     public HashMap<String, HashMap<String, Player>> lobbyteamplayernames = new HashMap<>();
-    public HashMap<String, Integer> lobbyvoteplayers = new HashMap<>();
     public HashMap<String, HashMap<String, Integer>> lobbyvotes = new HashMap<>();
     public HashMap<String, Player> lobbyvoteplayernamesdata = new HashMap<>();
     public HashMap<String, HashMap<String, Player>> lobbyvoteplayernames = new HashMap<>();
@@ -304,6 +302,8 @@ public class PotionGames extends JavaPlugin {
         chat.add("Type lobby number in chat to remove it!");
         chat.add("Type arena name in chat to remove it!");
         chat.add("could not be teleported to a spawn!");
+        chat.add("This lobby does not exists!");
+        chat.add("Use /pg help for help!");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -804,26 +804,37 @@ public class PotionGames extends JavaPlugin {
                     lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
                     teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
                     lobbyteamAmount.put(s, teamAmountNumber);
-                    int team = 1;
-                    while (team <= lobbyteamAmount.get(s)) {
-                        String tname = Integer.toString(team);
-                        lobbyteamplayers.put(tname, 0);
-                        lobbyteamplayernamesdata.put(tname, null);
-                        team++;
+                    if (!lobbyVoteallowed.get(s)) {
+                        lobbyVoteallowed.replace(s, true);
+                        HashMap<String, Integer> temp = new HashMap<>();
+                        temp.put(chat.get(42), 0);
+                        for (int max = 1; max <= 1000; max++) {
+                            if (arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
+                                temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
+                                lobbyvoteplayernamesdata.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), null);
+                            }
+                        }
+                        lobbyvotes.put(s, temp);
+                        lobbyvoteplayernames.put(s, lobbyvoteplayernamesdata);
                     }
-                    lobbyteams.put(s, lobbyteamplayers);
-                    lobbyteamplayernames.put(s, lobbyteamplayernamesdata);
-                    lobbyvoteplayers.put(chat.get(42), 0);
-                    lobbyvoteplayernames.put(chat.get(42), null);
-                    for (int arena = 1; arena <= 1000; arena++) {
-                        if (arenadata.contains("pg.lobbies." + lobby + "." + arena)) {
-                            String aname = arenadata.getString("pg.lobbies." + lobby + "." + arena + ".name");
-                            lobbyvoteplayers.put(aname, 0);
-                            lobbyvoteplayernames.put(aname, null);
+                    if (!lobbyTeamallowed.get(s)) {
+                        lobbyTeamallowed.replace(s, true);
+                        HashMap<String, Integer> temp = new HashMap<>();
+                        temp.put(chat.get(42), 0);
+                        for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
+                            temp.put(Integer.toString(max), 0);
+                            lobbyteamplayernamesdata.put(Integer.toString(max), null);
+                        }
+                        lobbyteams.put(s, temp);
+                        lobbyteamplayernames.put(s, lobbyteamplayernamesdata);
+                    }
+                    if (!lobbyKitallowed.get(s)) {
+                        lobbyKitallowed.replace(s, true);
+                        kitplayers.put(chat.get(42), 0);
+                        for (String all : kits) {
+                            kitplayers.put(all, 0);
                         }
                     }
-                    lobbyvotes.put(s, lobbyvoteplayers);
-                    lobbyvoteplayernames.put(s, lobbyvoteplayernamesdata);
                     lobbyStates.put(s, GameStates.WAITING);
                     tickLobby(s);
                 }
@@ -1908,7 +1919,8 @@ public class PotionGames extends JavaPlugin {
                 if (!teamed.contains(all.getName())) {
                     while (!teamfound) {
                         Random rnd = new Random();
-                        int rndTeam = rnd.nextInt(teams.size() + 1);
+                        int rndTeam = rnd.nextInt(teams.size());
+                        rndTeam++;
                         if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers && teamplayers.get(Integer.toString(rndTeam)) >= 0) {
                             teamfound = true;
                             int players = teamplayers.get(Integer.toString(rndTeam));
@@ -2124,7 +2136,6 @@ public class PotionGames extends JavaPlugin {
     public void tickLobby(String s) {
         if (isArenaSystem()) {
             FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-            FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
             countdownLobby.put(s, getConfig().getInt("pg.countdown"));
             int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
             lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
@@ -2159,41 +2170,6 @@ public class PotionGames extends JavaPlugin {
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setPVP(false);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setGameRule(GameRule.FALL_DAMAGE, false);
-                            }
-                            if (!voteallowed) {
-                                voteallowed = true;
-                                for (int arena = 1; arena <= 1000; arena++) {
-                                    if (arenadata.contains("pg.lobbies." + s + "." + arena)) {
-                                        String name = arenadata.getString("pg.lobbies." + s + "." + arena + ".name");
-                                        arenas.add(name);
-                                    }
-                                }
-                                votes.put(chat.get(42), 0);
-                                for (String all : arenas) {
-                                    votes.put(all, 0);
-                                }
-                            }
-                            if (lobbyActivateTeams.get(s) && !teamallowed) {
-                                teamallowed = true;
-                                int team = 1;
-                                while (team <= lobbyteamAmount.get(s)) {
-                                    String tname = Integer.toString(team);
-                                    teams.add(tname);
-                                    team++;
-                                }
-                                teamplayers.put(chat.get(42), 0);
-                                for (String all : teams) {
-                                    teamplayers.put(all, 0);
-                                }
-                            }
-                            if (lobbyActivateKits.get(s) && !kitallowed) {
-                                kitallowed = true;
-                                int kit = 1;
-                                for (int i = 0; i < activeKits; i++) {
-                                    String kname = kitdata.getString("pg.kits." + kit + ".name");
-                                    kits.add(kname);
-                                    kit++;
-                                }
                             }
                             if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
                                 ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
@@ -2743,20 +2719,21 @@ public class PotionGames extends JavaPlugin {
                                 lobbyVoteallowed.replace(s, true);
                                 HashMap<String, Integer> temp = new HashMap<>();
                                 temp.put(chat.get(42), 0);
-                                for (int max = 1; max <= lobbyStates.keySet().size(); max++) {
-                                    temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
+                                for (int max = 1; max <= 1000; max++) {
+                                    if (arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
+                                        temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
+                                    }
                                 }
                                 lobbyvotes.replace(s, temp);
+                                lobbyVoted.remove(s);
                             }
                             if (!lobbyTeamallowed.get(s)) {
                                 lobbyTeamallowed.replace(s, true);
                                 HashMap<String, Integer> temp = new HashMap<>();
                                 for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
                                     temp.put(Integer.toString(max), 0);
-                                    lobbyteamplayernamesdata.put(Integer.toString(max), null);
                                 }
                                 lobbyteams.replace(s, temp);
-                                lobbyteamplayernames.replace(s, lobbyteamplayernamesdata);
                             }
                             if (!lobbyKitallowed.get(s)) {
                                 lobbyKitallowed.replace(s, true);
@@ -2899,7 +2876,8 @@ public class PotionGames extends JavaPlugin {
                     if (!teamed.contains(all.getName())) {
                         while (!teamfound) {
                             Random rnd = new Random();
-                            int rndTeam = rnd.nextInt(teams.size() + 1);
+                            int rndTeam = rnd.nextInt(lobbyteams.get(s).size());
+                            rndTeam++;
                             if (lobbyteams.get(s).get(Integer.toString(rndTeam)) < maxteamplayers && lobbyteams.get(s).get(Integer.toString(rndTeam)) >= 0 && lobbyteams.get(s).get(Integer.toString(rndTeam)) != null) {
                                 teamfound = true;
                                 int players = lobbyteams.get(s).get(Integer.toString(rndTeam));
@@ -3088,6 +3066,9 @@ public class PotionGames extends JavaPlugin {
         specLobby.remove(p);
         playerLobby.remove(p);
         lobbyAmount.replace(s, lobbyAmount.get(s) - 1);
+        if (lobbyAmount.get(s) == 0) {
+            teamed.remove(p.getName());
+        }
         if (lobbyAmount.get(s) != 0) {
             if (lobbyActivateTeams.get(s)) {
                 if (teamed.contains(p.getName())) {
@@ -3117,9 +3098,9 @@ public class PotionGames extends JavaPlugin {
                     teamed.remove(p.getName());
                 }
             }
-            if (voted.contains(p.getName())) {
+            if (lobbyVoted.containsValue(p.getName())) {
                 String arenaname = null;
-                for (int i = 1; i <= lobbyStates.keySet().size(); i++) {
+                for (int i = 1; i <= 1000; i++) {
                     if (lobbyvoteplayernames.get(s).containsKey(arenadata.getString("pg.arenas." + i + ".name")) && lobbyvoteplayernames.get(s).containsValue(p)) {
                         if (lobbyvoteplayernames.get(s).get(arenadata.getString("pg.arenas." + i + ".name")) == p) {
                             arenaname = arenadata.getString("pg.arenas." + i + ".name");
@@ -3133,13 +3114,13 @@ public class PotionGames extends JavaPlugin {
                 int randomvotes;
                 randomvotes = lobbyvotes.get(s).get(chat.get(42));
                 temp.put(chat.get(42), randomvotes);
-                for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
+                for (int max = 1; max <= 1000; max++) {
                     int oldplayers = lobbyvotes.get(s).get(arenadata.getString("pg.arenas." + max + ".name"));
                     temp.put(arenadata.getString("pg.arenas." + max + ".name"), oldplayers);
                 }
                 temp.put(arenaname, voteamount);
                 lobbyvotes.replace(s, temp);
-                voted.remove(p.getName());
+                lobbyVoted.remove(s, p.getName());
             }
         } else {
             lobbyStates.replace(s, GameStates.RESET);

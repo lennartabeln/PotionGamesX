@@ -208,9 +208,7 @@ public class Commands implements CommandExecutor {
             if (args[0].equalsIgnoreCase("join")) {
                 if (p.hasPermission("pg.join")) {
                     if (pg.isArenaSystem()) {
-                        if (p.hasPermission("pg.join")) {
                             p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
-                        }
                     } else {
                         if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
                             pg.onJoin(p);
@@ -222,7 +220,7 @@ public class Commands implements CommandExecutor {
                     if (pg.isArenaSystem()) {
                         if (pg.playerLobby.containsKey(p) && !pg.isStartOnJoin()) {
                             String s = null;
-                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                            for (int ii = 1; ii <= 1000; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
@@ -230,7 +228,7 @@ public class Commands implements CommandExecutor {
                             pg.leaveLobby(p, s);
                         } else if (pg.specLobby.containsKey(p) && !pg.isStartOnJoin()) {
                             String s = null;
-                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                            for (int ii = 1; ii <= 1000; ii++) {
                                 if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
@@ -248,7 +246,7 @@ public class Commands implements CommandExecutor {
                     if (pg.isArenaSystem()) {
                         if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                             String s = null;
-                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                            for (int ii = 1; ii <= 1000; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
@@ -290,7 +288,7 @@ public class Commands implements CommandExecutor {
                     if (pg.isArenaSystem()) {
                         if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                             String s = null;
-                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                            for (int ii = 1; ii <= 1000; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
@@ -350,7 +348,7 @@ public class Commands implements CommandExecutor {
                     if (pg.isArenaSystem()) {
                         if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                             String s = null;
-                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                            for (int ii = 1; ii <= 1000; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
@@ -414,6 +412,8 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24));
                     }
                 }
+            } else {
+                p.sendMessage(pg.prefix + ChatColor.GRAY + pg.chat.get(75));
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("setlobby")) {
@@ -452,8 +452,12 @@ public class Commands implements CommandExecutor {
                 if (pg.isArenaSystem()) {
                     String s = args[1];
                     if (p.hasPermission("pg.join")) {
-                        if (!pg.playerLobby.containsKey(p)) {
-                            pg.joinLobby(p, s);
+                        if (arenadata.contains("pg.lobbies." + s)) {
+                            if (!pg.playerLobby.containsKey(p)) {
+                                pg.joinLobby(p, s);
+                            }
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(74));
                         }
                     }
                 }
@@ -462,7 +466,7 @@ public class Commands implements CommandExecutor {
                     if (pg.isArenaSystem()) {
                         if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                             String s = null;
-                            for (int ii = 1; ii <= pg.lobbyAmount.keySet().size(); ii++) {
+                            for (int ii = 1; ii <= 1000; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
@@ -630,6 +634,8 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
                     }
                 }
+            } else {
+                p.sendMessage(pg.prefix + ChatColor.GRAY + pg.chat.get(75));
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("delarena")) {
@@ -731,7 +737,11 @@ public class Commands implements CommandExecutor {
                         }
                     }
                 }
+            } else {
+                p.sendMessage(pg.prefix + ChatColor.GRAY + pg.chat.get(75));
             }
+        } else {
+            p.sendMessage(pg.prefix + ChatColor.GRAY + pg.chat.get(75));
         }
         return false;
     }
