@@ -117,7 +117,7 @@ public class PotionGames extends JavaPlugin {
     public HashMap<String, String> lobbyVoted = new HashMap<>();
     public HashMap<String, String> lobbyTeamed = new HashMap<>();
     public HashMap<String, String> lobbyKited = new HashMap<>();
-    public HashMap<String, HashMap<String, Integer>> lobbyteams = new HashMap<>();
+    public HashMap<String, HashMap<Integer, Integer>> lobbyteams = new HashMap<>();
     public HashMap<String, Player> lobbyteamplayernamesdata = new HashMap<>();
     public HashMap<String, HashMap<String, Player>> lobbyteamplayernames = new HashMap<>();
     public HashMap<String, HashMap<String, Integer>> lobbyvotes = new HashMap<>();
@@ -830,10 +830,10 @@ public class PotionGames extends JavaPlugin {
                     }
                     if (!lobbyTeamallowed.get(s)) {
                         lobbyTeamallowed.replace(s, true);
-                        HashMap<String, Integer> temp = new HashMap<>();
-                        temp.put(chat.get(42), 0);
+                        HashMap<Integer, Integer> temp = new HashMap<>();
+                        //temp.put(chat.get(42), 0);
                         for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
-                            temp.put(Integer.toString(max), 0);
+                            temp.put(max, 0);
                             lobbyteamplayernamesdata.put(Integer.toString(max), null);
                         }
                         lobbyteams.put(s, temp);
@@ -2716,9 +2716,9 @@ public class PotionGames extends JavaPlugin {
                             }
                             if (!lobbyTeamallowed.get(s)) {
                                 lobbyTeamallowed.replace(s, true);
-                                HashMap<String, Integer> temp = new HashMap<>();
+                                HashMap<Integer, Integer> temp = new HashMap<>();
                                 for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
-                                    temp.put(Integer.toString(max), 0);
+                                    temp.put(max, 0);
                                 }
                                 lobbyteams.replace(s, temp);
                                 lobbyTeamed.remove(s);
@@ -2872,20 +2872,20 @@ public class PotionGames extends JavaPlugin {
                             Random rnd = new Random();
                             int rndTeam = rnd.nextInt(lobbyteams.get(s).size());
                             rndTeam++;
-                            if (lobbyteams.get(s).get(Integer.toString(rndTeam)) < maxteamplayers && lobbyteams.get(s).get(Integer.toString(rndTeam)) >= 0 && lobbyteams.get(s).get(Integer.toString(rndTeam)) != null) {
+                            if (lobbyteams.get(s).get(rndTeam) < maxteamplayers && lobbyteams.get(s).get(rndTeam) >= 0 && lobbyteams.get(s).get(rndTeam) != null) {
                                 teamfound = true;
-                                int players = lobbyteams.get(s).get(Integer.toString(rndTeam));
+                                int players = lobbyteams.get(s).get(rndTeam);
                                 players++;
-                                HashMap<String, Integer> temp = new HashMap<>();
+                                HashMap<Integer, Integer> temp = new HashMap<>();
                                 for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
-                                    int oldplayers = lobbyteams.get(s).get(Integer.toString(max));
-                                    temp.put(Integer.toString(max), oldplayers);
+                                    int oldplayers = lobbyteams.get(s).get(max);
+                                    temp.put(max, oldplayers);
                                 }
-                                temp.put(Integer.toString(rndTeam), players);
+                                temp.put(rndTeam, players);
                                 lobbyteams.replace(s, temp);
                                 all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
                                 all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + lobbyteams.get(s).get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                 all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
                                 lobbyTeamed.put(s, all.getName());
                                 lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), all);
@@ -2913,8 +2913,8 @@ public class PotionGames extends JavaPlugin {
             String teamname;
             for (int i = 1; i <= lobbyteamAmount.get(s); i++) {
                 teamname = Integer.toString(i);
-                if (lobbyteams.get(s).get(teamname) == 0) {
-                    lobbyteams.get(s).remove(teamname);
+                if (lobbyteams.get(s).get(Integer.valueOf(teamname)) == 0) {
+                    lobbyteams.get(s).remove(Integer.valueOf(teamname));
                 }
             }
         }
@@ -3075,18 +3075,19 @@ public class PotionGames extends JavaPlugin {
                         }
                     }
                     lobbyteamplayernames.get(s).remove(teamname, p);
-                    int teamamount = lobbyteams.get(s).get(teamname);
+                    assert teamname != null;
+                    int teamamount = lobbyteams.get(s).get(Integer.valueOf(teamname));
                     teamamount--;
-                    HashMap<String, Integer> temp = new HashMap<>();
+                    HashMap<Integer, Integer> temp = new HashMap<>();
                     for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
-                        int oldplayers = lobbyteams.get(s).get(Integer.toString(max));
-                        temp.put(Integer.toString(max), oldplayers);
+                        int oldplayers = lobbyteams.get(s).get(max);
+                        temp.put(max, oldplayers);
                     }
-                    temp.put(teamname, teamamount);
+                    temp.put(Integer.valueOf(teamname), teamamount);
                     lobbyteams.replace(s, temp);
                     if (lobbyStates.get(s) == GameStates.INGAME) {
-                        if (lobbyteams.get(s).get(teamname) == 0) {
-                            lobbyteams.get(s).remove(teamname);
+                        if (lobbyteams.get(s).get(Integer.valueOf(teamname)) == 0) {
+                            lobbyteams.get(s).remove(Integer.valueOf(teamname));
                         }
                     }
                     lobbyTeamed.remove(s, p.getName());

@@ -525,11 +525,12 @@ public class Events implements Listener {
                                     }
                                 }
                                 pg.lobbyteamplayernames.get(s).remove(teamname, p);
-                                int teamamount = pg.lobbyteams.get(s).get(teamname);
+                                assert teamname != null;
+                                int teamamount = pg.lobbyteams.get(s).get(Integer.valueOf(teamname));
                                 teamamount--;
-                                pg.lobbyteams.get(s).replace(teamname, teamamount);
-                                if (pg.lobbyteams.get(s).get(teamname) == 0) {
-                                    pg.lobbyteams.get(s).remove(teamname);
+                                pg.lobbyteams.get(s).replace(Integer.valueOf(teamname), teamamount);
+                                if (pg.lobbyteams.get(s).get(Integer.valueOf(teamname)) == 0) {
+                                    pg.lobbyteams.get(s).remove(Integer.valueOf(teamname));
                                 }
                                 pg.teamed.remove(p.getName());
                             }
@@ -1219,19 +1220,17 @@ public class Events implements Listener {
                             randombarrier.setItemMeta(randombarriermeta);
                             inv.setItem(0, randombarrier);
                             int slot = 1;
-                            for (String all : pg.lobbyteams.get(s).keySet()) {
-                                if (!all.equals(pg.chat.get(42))) {
-                                    ArrayList<String> arenalore = new ArrayList<>();
-                                    arenalore.add(0, ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(all));
-                                    ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
-                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                    assert arenamapmeta != null;
-                                    arenamapmeta.setDisplayName(all);
-                                    arenamapmeta.setLore(arenalore);
-                                    arenamap.setItemMeta(arenamapmeta);
-                                    inv.setItem(slot, arenamap);
-                                    slot++;
-                                }
+                            for (Integer all : pg.lobbyteams.get(s).keySet()) {
+                                ArrayList<String> arenalore = new ArrayList<>();
+                                arenalore.add(0, ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(all));
+                                ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
+                                ItemMeta arenamapmeta = arenamap.getItemMeta();
+                                assert arenamapmeta != null;
+                                arenamapmeta.setDisplayName(String.valueOf(all));
+                                arenamapmeta.setLore(arenalore);
+                                arenamap.setItemMeta(arenamapmeta);
+                                inv.setItem(slot, arenamap);
+                                slot++;
                             }
                             p.openInventory(inv);
                         }
@@ -1246,18 +1245,16 @@ public class Events implements Listener {
                             inv.setItem(0, randombarrier);
                             int slot = 1;
                             for (String all : pg.teams) {
-                                if (!all.equals(pg.chat.get(42))) {
-                                    ArrayList<String> arenalore = new ArrayList<>();
-                                    arenalore.add(0, ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(all).toString());
-                                    ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
-                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                    assert arenamapmeta != null;
-                                    arenamapmeta.setDisplayName(all);
-                                    arenamapmeta.setLore(arenalore);
-                                    arenamap.setItemMeta(arenamapmeta);
-                                    inv.setItem(slot, arenamap);
-                                    slot++;
-                                }
+                                ArrayList<String> arenalore = new ArrayList<>();
+                                arenalore.add(0, ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(all).toString());
+                                ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
+                                ItemMeta arenamapmeta = arenamap.getItemMeta();
+                                assert arenamapmeta != null;
+                                arenamapmeta.setDisplayName(all);
+                                arenamapmeta.setLore(arenalore);
+                                arenamap.setItemMeta(arenamapmeta);
+                                inv.setItem(slot, arenamap);
+                                slot++;
                             }
                             p.openInventory(inv);
                         }
@@ -1723,41 +1720,41 @@ public class Events implements Listener {
                                                 Random rnd = new Random();
                                                 int rndTeam = rnd.nextInt(pg.lobbyteams.get(s).size());
                                                 rndTeam++;
-                                                if (pg.lobbyteams.get(s).get(Integer.toString(rndTeam)) < maxteamplayers && pg.lobbyteams.get(s).get(Integer.toString(rndTeam)) >= 0 && pg.lobbyteams.get(s).get(Integer.toString(rndTeam)) != null) {
+                                                if (pg.lobbyteams.get(s).get(rndTeam) < maxteamplayers && pg.lobbyteams.get(s).get(rndTeam) >= 0 && pg.lobbyteams.get(s).get(rndTeam) != null) {
                                                     teamfound = true;
                                                     p.closeInventory();
-                                                    int players = pg.lobbyteams.get(s).get(Integer.toString(rndTeam));
+                                                    int players = pg.lobbyteams.get(s).get(rndTeam);
                                                     players++;
-                                                    HashMap<String, Integer> temp = new HashMap<>();
+                                                    HashMap<Integer, Integer> temp = new HashMap<>();
                                                     for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
-                                                        int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
-                                                        temp.put(Integer.toString(max), oldplayers);
+                                                        int oldplayers = pg.lobbyteams.get(s).get(max);
+                                                        temp.put(max, oldplayers);
                                                     }
-                                                    temp.put(Integer.toString(rndTeam), players);
+                                                    temp.put(rndTeam, players);
                                                     pg.lobbyteams.replace(s, temp);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
                                                     pg.lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), p);
                                                 }
                                             }
                                         } else {
-                                            if (pg.lobbyteams.get(s).get(displayname) < maxteamplayers) {
+                                            if (pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) < maxteamplayers) {
                                                 p.closeInventory();
-                                                int players = pg.lobbyteams.get(s).get(displayname);
+                                                int players = pg.lobbyteams.get(s).get(Integer.valueOf(displayname));
                                                 players++;
-                                                HashMap<String, Integer> temp = new HashMap<>();
+                                                HashMap<Integer, Integer> temp = new HashMap<>();
                                                 for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
-                                                    int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
-                                                    temp.put(Integer.toString(max), oldplayers);
+                                                    int oldplayers = pg.lobbyteams.get(s).get(max);
+                                                    temp.put(max, oldplayers);
                                                 }
-                                                temp.put(displayname, players);
+                                                temp.put(Integer.valueOf(displayname), players);
                                                 pg.lobbyteams.replace(s, temp);
                                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                 pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
                                                 pg.lobbyteamplayernames.get(s).put(displayname, p);
@@ -1777,14 +1774,15 @@ public class Events implements Listener {
                                             }
                                         }
                                         pg.lobbyteamplayernames.get(s).remove(teamname, p);
-                                        int teamamount = pg.lobbyteams.get(s).get(teamname);
+                                        assert teamname != null;
+                                        int teamamount = pg.lobbyteams.get(s).get(Integer.valueOf(teamname));
                                         teamamount--;
-                                        HashMap<String, Integer> tempold = new HashMap<>();
+                                        HashMap<Integer, Integer> tempold = new HashMap<>();
                                         for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
-                                            int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
-                                            tempold.put(Integer.toString(max), oldplayers);
+                                            int oldplayers = pg.lobbyteams.get(s).get(max);
+                                            tempold.put(max, oldplayers);
                                         }
-                                        tempold.put(teamname, teamamount);
+                                        tempold.put(Integer.valueOf(teamname), teamamount);
                                         pg.lobbyteams.replace(s, tempold);
                                         pg.lobbyTeamed.remove(s, p.getName());
                                         if (displayname.equals(pg.chat.get(42))) {
@@ -1793,41 +1791,41 @@ public class Events implements Listener {
                                                 Random rnd = new Random();
                                                 int rndTeam = rnd.nextInt(pg.lobbyteams.get(s).size());
                                                 rndTeam++;
-                                                if (pg.lobbyteams.get(s).get(Integer.toString(rndTeam)) < maxteamplayers && pg.lobbyteams.get(s).get(Integer.toString(rndTeam)) >= 0 && pg.lobbyteams.get(s).get(Integer.toString(rndTeam)) != null) {
+                                                if (pg.lobbyteams.get(s).get(rndTeam) < maxteamplayers && pg.lobbyteams.get(s).get(rndTeam) >= 0 && pg.lobbyteams.get(s).get(rndTeam) != null) {
                                                     teamfound = true;
                                                     p.closeInventory();
-                                                    int players = pg.lobbyteams.get(s).get(Integer.toString(rndTeam));
+                                                    int players = pg.lobbyteams.get(s).get(rndTeam);
                                                     players++;
-                                                    HashMap<String, Integer> temp = new HashMap<>();
+                                                    HashMap<Integer, Integer> temp = new HashMap<>();
                                                     for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
-                                                        int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
-                                                        temp.put(Integer.toString(max), oldplayers);
+                                                        int oldplayers = pg.lobbyteams.get(s).get(max);
+                                                        temp.put(max, oldplayers);
                                                     }
-                                                    temp.put(Integer.toString(rndTeam), players);
+                                                    temp.put(rndTeam, players);
                                                     pg.lobbyteams.replace(s, temp);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
                                                     pg.lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), p);
                                                 }
                                             }
                                         } else {
-                                            if (pg.lobbyteams.get(s).get(displayname) < maxteamplayers) {
+                                            if (pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) < maxteamplayers) {
                                                 p.closeInventory();
-                                                int players = pg.lobbyteams.get(s).get(displayname);
+                                                int players = pg.lobbyteams.get(s).get(Integer.valueOf(displayname));
                                                 players++;
-                                                HashMap<String, Integer> temp = new HashMap<>();
+                                                HashMap<Integer, Integer> temp = new HashMap<>();
                                                 for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
-                                                    int oldplayers = pg.lobbyteams.get(s).get(Integer.toString(max));
-                                                    temp.put(Integer.toString(max), oldplayers);
+                                                    int oldplayers = pg.lobbyteams.get(s).get(max);
+                                                    temp.put(max, oldplayers);
                                                 }
-                                                temp.put(displayname, players);
+                                                temp.put(Integer.valueOf(displayname), players);
                                                 pg.lobbyteams.replace(s, temp);
                                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                 pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
                                                 pg.lobbyteamplayernames.get(s).put(displayname, p);
