@@ -184,6 +184,7 @@ public class PotionGames extends JavaPlugin {
     public boolean delarena = false;
     private Connection con;
     private Statement st;
+
     public Thread checkUpdates = new Thread(() -> {
         String latest = null;
         getLogger().info("Checking for updates...");
@@ -223,7 +224,7 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
-    public static void spawnFireworks(Location loc, int amount) {
+    public void spawnFireworks(Location loc, int amount) {
         Firework fw = (Firework) Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.FIREWORK);
         FireworkMeta fwm = fw.getFireworkMeta();
         fwm.setPower(1);
@@ -1224,75 +1225,52 @@ public class PotionGames extends JavaPlugin {
             all.removePotionEffect(effect.getType());
             chestitem++;
         }
-        if (all.hasPotionEffect(PotionEffectType.SPEED)) {
+        if (all.hasPotionEffect(PotionEffectType.SPEED))
             all.removePotionEffect(PotionEffectType.SPEED);
-        }
-        if (all.hasPotionEffect(PotionEffectType.SLOW)) {
+        if (all.hasPotionEffect(PotionEffectType.SLOW))
             all.removePotionEffect(PotionEffectType.SLOW);
-        }
-        if (all.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE)) {
+        if (all.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE))
             all.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-        }
-        if (all.hasPotionEffect(PotionEffectType.HEAL)) {
+        if (all.hasPotionEffect(PotionEffectType.HEAL))
             all.removePotionEffect(PotionEffectType.HEAL);
-        }
-        if (all.hasPotionEffect(PotionEffectType.HARM)) {
+        if (all.hasPotionEffect(PotionEffectType.HARM))
             all.removePotionEffect(PotionEffectType.HARM);
-        }
-        if (all.hasPotionEffect(PotionEffectType.JUMP)) {
+        if (all.hasPotionEffect(PotionEffectType.JUMP))
             all.removePotionEffect(PotionEffectType.JUMP);
-        }
-        if (all.hasPotionEffect(PotionEffectType.CONFUSION)) {
+        if (all.hasPotionEffect(PotionEffectType.CONFUSION))
             all.removePotionEffect(PotionEffectType.CONFUSION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.REGENERATION)) {
+        if (all.hasPotionEffect(PotionEffectType.REGENERATION))
             all.removePotionEffect(PotionEffectType.REGENERATION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE)) {
+        if (all.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE))
             all.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-        }
-        if (all.hasPotionEffect(PotionEffectType.FIRE_RESISTANCE)) {
+        if (all.hasPotionEffect(PotionEffectType.FIRE_RESISTANCE))
             all.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
-        }
-        if (all.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+        if (all.hasPotionEffect(PotionEffectType.INVISIBILITY))
             all.removePotionEffect(PotionEffectType.INVISIBILITY);
-        }
-        if (all.hasPotionEffect(PotionEffectType.BLINDNESS)) {
+        if (all.hasPotionEffect(PotionEffectType.BLINDNESS))
             all.removePotionEffect(PotionEffectType.BLINDNESS);
-        }
-        if (all.hasPotionEffect(PotionEffectType.HUNGER)) {
+        if (all.hasPotionEffect(PotionEffectType.HUNGER))
             all.removePotionEffect(PotionEffectType.HUNGER);
-        }
-        if (all.hasPotionEffect(PotionEffectType.WEAKNESS)) {
+        if (all.hasPotionEffect(PotionEffectType.WEAKNESS))
             all.removePotionEffect(PotionEffectType.WEAKNESS);
-        }
-        if (all.hasPotionEffect(PotionEffectType.POISON)) {
+        if (all.hasPotionEffect(PotionEffectType.POISON))
             all.removePotionEffect(PotionEffectType.POISON);
-        }
-        if (all.hasPotionEffect(PotionEffectType.WITHER)) {
+        if (all.hasPotionEffect(PotionEffectType.WITHER))
             all.removePotionEffect(PotionEffectType.WITHER);
-        }
-        if (all.hasPotionEffect(PotionEffectType.ABSORPTION)) {
+        if (all.hasPotionEffect(PotionEffectType.ABSORPTION))
             all.removePotionEffect(PotionEffectType.ABSORPTION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.GLOWING)) {
+        if (all.hasPotionEffect(PotionEffectType.GLOWING))
             all.removePotionEffect(PotionEffectType.GLOWING);
-        }
-        if (all.hasPotionEffect(PotionEffectType.HEALTH_BOOST)) {
+        if (all.hasPotionEffect(PotionEffectType.HEALTH_BOOST))
             all.removePotionEffect(PotionEffectType.HEALTH_BOOST);
-        }
-        if (all.hasPotionEffect(PotionEffectType.DOLPHINS_GRACE)) {
+        if (all.hasPotionEffect(PotionEffectType.DOLPHINS_GRACE))
             all.removePotionEffect(PotionEffectType.DOLPHINS_GRACE);
-        }
-        if (all.hasPotionEffect(PotionEffectType.SATURATION)) {
+        if (all.hasPotionEffect(PotionEffectType.SATURATION))
             all.removePotionEffect(PotionEffectType.SATURATION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
+        if (all.hasPotionEffect(PotionEffectType.NIGHT_VISION))
             all.removePotionEffect(PotionEffectType.NIGHT_VISION);
-        }
-        if (all.hasPotionEffect(PotionEffectType.WATER_BREATHING)) {
+        if (all.hasPotionEffect(PotionEffectType.WATER_BREATHING))
             all.removePotionEffect(PotionEffectType.WATER_BREATHING);
-        }
     }
 
     public void setGameRules(String name) {
@@ -1762,8 +1740,7 @@ public class PotionGames extends JavaPlugin {
                             voted.clear();
                             voteallowed = false;
                             forcearena = false;
-                            if (activateTeams)
-                                teamed.clear();
+                            teamed.clear();
                             teamallowed = false;
                             teamplayernames.clear();
                             kited.clear();
@@ -1868,6 +1845,15 @@ public class PotionGames extends JavaPlugin {
                 winner = all;
             }
         }
+        ArrayList<Integer> arenaNumber = new ArrayList<>();
+        for (int ii = 0; ii < 1000; ii++) {
+            if (arenadata.contains("pg.arenas." + ii)) {
+                arenaNumber.add(ii);
+            }
+        }
+        Random generator = new Random();
+        int rndIndex = generator.nextInt(arenaNumber.size());
+        int rndArena = arenaNumber.get(rndIndex);
         if (!isForcearena() && !voted.isEmpty()) {
             boolean randomArena = false;
             int i = 1;
@@ -1877,8 +1863,6 @@ public class PotionGames extends JavaPlugin {
                 if (winner.equals(chat.get(42))) {
                     String arenaName = null;
                     while (arenaName == null) {
-                        Random rnd = new Random();
-                        int rndArena = rnd.nextInt(arenas.size() + 1);
                         winner = Integer.toString(rndArena);
                         arenaName = arenadata.getString("pg.arenas." + winner + ".name");
                         if (arenaName != null) {
@@ -1910,8 +1894,6 @@ public class PotionGames extends JavaPlugin {
         } else if (voted.isEmpty() && !isForcearena()) {
             String arenaName = null;
             while (arenaName == null) {
-                Random rnd = new Random();
-                int rndArena = rnd.nextInt(arenas.size() + 1);
                 winner = Integer.toString(rndArena);
                 arenaName = arenadata.getString("pg.arenas." + winner + ".name");
                 if (arenaName != null) {
@@ -2107,6 +2089,9 @@ public class PotionGames extends JavaPlugin {
         pgPlayers.remove(p);
         specPlayers.remove(p);
         setPlayerAmount(getPlayerAmount() - 1);
+        if (getPlayerAmount() == 0) {
+            teamed.remove(p.getName());
+        }
         if (getPlayerAmount() != 0) {
             if (activateTeams) {
                 if (teamed.contains(p.getName())) {
@@ -2806,6 +2791,15 @@ public class PotionGames extends JavaPlugin {
                 winner = all;
             }
         }
+        ArrayList<Integer> arenaNumber = new ArrayList<>();
+        for (int ii = 0; ii < 1000; ii++) {
+            if (arenadata.contains("pg.lobbies." + s + "." + ii)) {
+                arenaNumber.add(ii);
+            }
+        }
+        Random generator = new Random();
+        int rndIndex = generator.nextInt(arenaNumber.size());
+        int rndArena = arenaNumber.get(rndIndex);
         if (!lobbyForcearena.get(s) && lobbyVoted.get(s) != null) {
             boolean randomArena = false;
             int i = 1;
@@ -2815,8 +2809,6 @@ public class PotionGames extends JavaPlugin {
                 if (winner.equals(chat.get(42))) {
                     String arenaName = null;
                     while (arenaName == null) {
-                        Random rnd = new Random();
-                        int rndArena = rnd.nextInt(lobbyvotes.get(s).keySet().size() + 1);
                         winner = Integer.toString(rndArena);
                         arenaName = arenadata.getString("pg.lobbies." + s + "." + winner + ".name");
                         if (arenaName != null) {
@@ -2854,8 +2846,6 @@ public class PotionGames extends JavaPlugin {
         } else if (lobbyVoted.get(s) == null && !lobbyForcearena.get(s)) {
             String arenaName = null;
             while (arenaName == null) {
-                Random rnd = new Random();
-                int rndArena = rnd.nextInt(lobbyvotes.get(s).keySet().size() + 1);
                 winner = Integer.toString(rndArena);
                 arenaName = arenadata.getString("pg.lobbies." + s + "." + winner + ".name");
                 if (arenaName != null) {
