@@ -60,7 +60,7 @@ public class Events implements Listener {
                 lobby = e.getMessage();
                 e.setCancelled(true);
                 if (p.hasPermission("pg.setup")) {
-                    if (pg.isArenaSystem()) {
+                    if (pg.isLobbySystem()) {
                         arenadata.set("pg.lobbies." + lobby + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
                         arenadata.set("pg.lobbies." + lobby + ".coords", Objects.requireNonNull(p.getLocation()));
                         arenadata.set("pg.lobbies." + lobby + ".activateTeams", true);
@@ -85,7 +85,7 @@ public class Events implements Listener {
                 arena = e.getMessage();
                 e.setCancelled(true);
                 if (p.hasPermission("pg.setup")) {
-                    if (!pg.isArenaSystem()) {
+                    if (!pg.isLobbySystem()) {
                         int arenaNumber = 1;
                         try {
                             while (arenadata.contains("pg.arenas." + arenaNumber)) {
@@ -102,7 +102,7 @@ public class Events implements Listener {
                     }
                 }
                 if (p.hasPermission("pg.setup")) {
-                    if (pg.isArenaSystem()) {
+                    if (pg.isLobbySystem()) {
                         int arenaNumber = 1;
                         try {
                             while (arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber)) {
@@ -125,7 +125,7 @@ public class Events implements Listener {
                 lobby = e.getMessage();
                 e.setCancelled(true);
                 if (p.hasPermission("pg.setup")) {
-                    if (pg.isArenaSystem()) {
+                    if (pg.isLobbySystem()) {
                         arenadata.set("pg.lobbies." + lobby, null);
                         try {
                             arenadata.save(pg.arenadatafile);
@@ -142,7 +142,7 @@ public class Events implements Listener {
                 arena = e.getMessage();
                 e.setCancelled(true);
                 if (p.hasPermission("pg.setup")) {
-                    if (!pg.isArenaSystem()) {
+                    if (!pg.isLobbySystem()) {
                         int arenaNumber = 1;
                         try {
                             int i = 1;
@@ -165,7 +165,7 @@ public class Events implements Listener {
                     }
                 }
                 if (p.hasPermission("pg.setup")) {
-                    if (pg.isArenaSystem()) {
+                    if (pg.isLobbySystem()) {
                         int arenaNumber = 1;
                         try {
                             int i = 1;
@@ -191,7 +191,7 @@ public class Events implements Listener {
                 pg.setup(p);
             }
             if (pg.playerChannel.get(p).equals("Local")) {
-                if (pg.isArenaSystem()) {
+                if (pg.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 1000; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -341,7 +341,7 @@ public class Events implements Listener {
         if (pg.isGameServer()) {
             Player p = e.getPlayer();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-                if (pg.isArenaSystem()) {
+                if (pg.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 1000; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -378,7 +378,7 @@ public class Events implements Listener {
         if (pg.isGameServer()) {
             Player p = e.getPlayer();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-                if (pg.isArenaSystem()) {
+                if (pg.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 1000; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -444,7 +444,7 @@ public class Events implements Listener {
             Player p = e.getPlayer();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
 
-                if (pg.isArenaSystem()) {
+                if (pg.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 1000; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -509,7 +509,7 @@ public class Events implements Listener {
         if (pg.isGameServer()) {
             Player p = e.getEntity();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-                if (pg.isArenaSystem()) {
+                if (pg.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 1000; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -686,7 +686,7 @@ public class Events implements Listener {
                         String line1 = sign.getLine(0);
                         String line2 = sign.getLine(1);
                         String line3 = sign.getLine(2);
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             if (e.getClickedBlock().getLocation().equals(arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
                                 if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
                                     pg.joinLobby(p, line1);
@@ -725,7 +725,7 @@ public class Events implements Listener {
                 if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                     if (e.getHand() == EquipmentSlot.HAND) {
                         if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.chestblocks.normal")).toString())) {
-                            if (pg.isArenaSystem()) {
+                            if (pg.isLobbySystem()) {
                                 String s = null;
                                 for (int ii = 1; ii <= 1000; ii++) {
                                     if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -897,7 +897,7 @@ public class Events implements Listener {
                         while (chestdata.contains("pg.customchests." + chestnumber)) {
                             if (e.getClickedBlock().getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.customchests." + chestnumber + ".chesttype")).toString())) {
                                 if (chestdata.getBoolean("pg.customchests." + chestnumber + ".activate")) {
-                                    if (pg.isArenaSystem()) {
+                                    if (pg.isLobbySystem()) {
                                         int i = 1;
                                         String s = Integer.toString(i);
                                         if (pg.lobbyStates.get(s) == GameStates.INGAME) {
@@ -937,7 +937,7 @@ public class Events implements Listener {
                         }
                         if (pg.isActivateShop()) {
                             if ((e.getClickedBlock()).getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.chestblocks.shop")).toString())) {
-                                if (pg.isArenaSystem()) {
+                                if (pg.isLobbySystem()) {
                                     int ii = 1;
                                     String s = Integer.toString(ii);
                                     if (pg.lobbyStates.get(s) == GameStates.INGAME) {
@@ -1017,7 +1017,7 @@ public class Events implements Listener {
                                 }
                             }
                         }
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             String s = null;
                             for (int ii = 1; ii <= 1000; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -1038,7 +1038,7 @@ public class Events implements Listener {
                 if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
                     if (e.getHand() == EquipmentSlot.HAND) {
                         if (p.getInventory().getItemInMainHand().getType() == Material.MUSHROOM_STEW || p.getInventory().getItemInMainHand().getType() == Material.RABBIT_STEW || p.getInventory().getItemInMainHand().getType() == Material.BEETROOT_SOUP) {
-                            if (pg.isArenaSystem()) {
+                            if (pg.isLobbySystem()) {
                                 String s = null;
                                 for (int ii = 1; ii <= 1000; ii++) {
                                     if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -1087,7 +1087,7 @@ public class Events implements Listener {
                             }
                         }
                         if (p.getInventory().getItemInMainHand().getType() == Material.MILK_BUCKET) {
-                            if (pg.isArenaSystem()) {
+                            if (pg.isLobbySystem()) {
                                 int i = 1;
                                 String s = Integer.toString(i);
                                 if (pg.lobbyStates.get(s) == GameStates.INGAME) {
@@ -1102,7 +1102,7 @@ public class Events implements Listener {
                             }
                         }
                         if (p.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
-                            if (pg.isArenaSystem()) {
+                            if (pg.isLobbySystem()) {
                                 int i = 1;
                                 String s = Integer.toString(i);
                                 if (pg.lobbyStates.get(s) == GameStates.INGAME) {
@@ -1156,7 +1156,7 @@ public class Events implements Listener {
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.PAPER) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             String s = null;
                             for (int ii = 1; ii <= 1000; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -1223,7 +1223,7 @@ public class Events implements Listener {
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             String s = null;
                             for (int ii = 1; ii <= 1000; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -1280,7 +1280,7 @@ public class Events implements Listener {
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.ENDER_CHEST) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             int ii = 1;
                             String s = Integer.toString(ii);
                             if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
@@ -1329,7 +1329,7 @@ public class Events implements Listener {
                     if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby")) {
                             if (p.hasPermission("pg.setup")) {
-                                if (!pg.isArenaSystem()) {
+                                if (!pg.isLobbySystem()) {
                                     pg.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
                                     pg.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
                                     pg.saveConfig();
@@ -1337,7 +1337,7 @@ public class Events implements Listener {
                                 }
                             }
                             if (p.hasPermission("pg.setup")) {
-                                if (pg.isArenaSystem()) {
+                                if (pg.isLobbySystem()) {
                                     p.getInventory().clear();
                                     pg.setAddlobby(true);
                                     e.setCancelled(true);
@@ -1350,7 +1350,7 @@ public class Events implements Listener {
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(70));
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
                             if (p.hasPermission("pg.setup")) {
-                                if (!pg.isArenaSystem()) {
+                                if (!pg.isLobbySystem()) {
                                     int spawnNumber = 1;
                                     int arenaNumber = 1;
                                     try {
@@ -1376,7 +1376,7 @@ public class Events implements Listener {
                                 }
                             }
                             if (p.hasPermission("pg.setup")) {
-                                if (pg.isArenaSystem()) {
+                                if (pg.isLobbySystem()) {
                                     int spawnNumber = 1;
                                     int arenaNumber = 1;
                                     try {
@@ -1405,7 +1405,7 @@ public class Events implements Listener {
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Lobby")) {
-                            if (pg.isArenaSystem()) {
+                            if (pg.isLobbySystem()) {
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
                                 for (int slot = 1; slot <= 1000; slot++) {
                                     if (arenadata.contains("pg.lobbies." + slot)) {
@@ -1423,7 +1423,7 @@ public class Events implements Listener {
                             }
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
-                            if (pg.isArenaSystem()) {
+                            if (pg.isLobbySystem()) {
                                 for (int slot = 1; slot <= 1000; slot++) {
                                     if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
@@ -1456,14 +1456,14 @@ public class Events implements Listener {
                     if (p.getInventory().getItemInMainHand().getType() == Material.OAK_SIGN) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Set Join-Sign")) {
                             if (p.hasPermission("pg.setup")) {
-                                if (!pg.isArenaSystem()) {
+                                if (!pg.isLobbySystem()) {
                                     pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
                                     pg.saveConfig();
                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
                                 }
                             }
                             if (p.hasPermission("pg.setup")) {
-                                if (pg.isArenaSystem()) {
+                                if (pg.isLobbySystem()) {
                                     arenadata.set("pg.lobbies." + lobby + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
                                     try {
                                         arenadata.save(pg.arenadatafile);
@@ -1499,7 +1499,7 @@ public class Events implements Listener {
                 if (e.getHand() == EquipmentSlot.HAND) {
                     if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby")) {
-                            if (pg.isArenaSystem()) {
+                            if (pg.isLobbySystem()) {
                                 p.getInventory().clear();
                                 pg.setDellobby(true);
                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(71));
@@ -1510,7 +1510,7 @@ public class Events implements Listener {
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(72));
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
                             if (p.hasPermission("pg.setup")) {
-                                if (!pg.isArenaSystem()) {
+                                if (!pg.isLobbySystem()) {
                                     int arenaNumber = 1;
                                     int spawnNumber = 1;
                                     try {
@@ -1538,7 +1538,7 @@ public class Events implements Listener {
                                 }
                             }
                             if (p.hasPermission("pg.setup")) {
-                                if (pg.isArenaSystem()) {
+                                if (pg.isLobbySystem()) {
                                     int arenaNumber = 1;
                                     int spawnNumber = 1;
                                     try {
@@ -1569,7 +1569,7 @@ public class Events implements Listener {
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Lobby")) {
-                            if (pg.isArenaSystem()) {
+                            if (pg.isLobbySystem()) {
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
                                 for (int slot = 1; slot <= 1000; slot++) {
                                     if (arenadata.contains("pg.lobbies." + slot)) {
@@ -1587,7 +1587,7 @@ public class Events implements Listener {
                             }
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
-                            if (pg.isArenaSystem()) {
+                            if (pg.isLobbySystem()) {
                                 for (int slot = 1; slot <= 1000; slot++) {
                                     if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
@@ -1684,7 +1684,7 @@ public class Events implements Listener {
             FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
             Player p = (Player) e.getWhoClicked();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-                if (pg.isArenaSystem()) {
+                if (pg.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 1000; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -2288,7 +2288,7 @@ public class Events implements Listener {
         if (pg.isGameServer()) {
             Player p = e.getPlayer();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-                if (pg.isArenaSystem()) {
+                if (pg.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 1000; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -2346,7 +2346,7 @@ public class Events implements Listener {
     public void onMove(PlayerMoveEvent e) {
         if (pg.isGameServer()) {
             Player p = e.getPlayer();
-            if (pg.isArenaSystem()) {
+            if (pg.isLobbySystem()) {
                 if (pg.playerLobby.containsKey(p)) {
                     String s = null;
                     for (int ii = 1; ii <= 1000; ii++) {
@@ -2382,7 +2382,7 @@ public class Events implements Listener {
     public void onQuit(PlayerQuitEvent e) {
         if (pg.isGameServer()) {
             Player p = e.getPlayer();
-            if (pg.isArenaSystem()) {
+            if (pg.isLobbySystem()) {
                 if (pg.playerLobby.containsKey(p)) {
                     String s;
                     for (int ii = 1; ii <= 1000; ii++) {
@@ -2418,7 +2418,7 @@ public class Events implements Listener {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         if (pg.isGameServer()) {
             if (pg.isStartOnJoin()) {
-                if (!pg.isArenaSystem()) {
+                if (!pg.isLobbySystem()) {
                     e.setMaxPlayers(pg.getMaxPlayers());
                     if (pg.getGamestate() != GameStates.WAITING && pg.getGamestate() != GameStates.PREPARING) {
                         e.setMotd("" + ChatColor.DARK_RED + pg.getGamestate() + "\n" + ChatColor.DARK_AQUA + "Voting");

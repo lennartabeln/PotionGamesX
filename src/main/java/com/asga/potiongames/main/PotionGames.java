@@ -715,7 +715,7 @@ public class PotionGames extends JavaPlugin {
         coinmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(55));
         coin.setItemMeta(coinmeta);
         if (gameServer) {
-            if (!isArenaSystem()) {
+            if (!isLobbySystem()) {
                 setGamestate(GameStates.WAITING);
                 tickStarted = true;
                 tick();
@@ -1229,7 +1229,7 @@ public class PotionGames extends JavaPlugin {
         addlobbymeta.setDisplayName(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby");
         addlobby.setItemMeta(addlobbymeta);
         p.getInventory().setItem(1, addlobby);
-        if (isArenaSystem()) {
+        if (isLobbySystem()) {
             ItemStack chooselobby = new ItemStack(Material.CLOCK);
             ItemMeta chooselobbymeta = chooselobby.getItemMeta();
             assert chooselobbymeta != null;
@@ -1338,7 +1338,7 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void tick() {
-        if (!isArenaSystem()) {
+        if (!isLobbySystem()) {
             FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
             FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
             setCountdown(getConfig().getInt("pg.countdown"));
@@ -2186,7 +2186,7 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void tickLobby(String s) {
-        if (isArenaSystem()) {
+        if (isLobbySystem()) {
             FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
             countdownLobby.put(s, getConfig().getInt("pg.countdown"));
             int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
@@ -3568,7 +3568,7 @@ public class PotionGames extends JavaPlugin {
         return build;
     }
 
-    public boolean isArenaSystem() {
+    public boolean isLobbySystem() {
         return lobbySystem;
     }
 

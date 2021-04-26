@@ -30,7 +30,7 @@ public class Commands implements CommandExecutor {
             if (args.length == 0) {
                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
                 if (p.hasPermission("pg.setup")) {
-                    if (pg.isArenaSystem()) {
+                    if (pg.isLobbySystem()) {
                         p.sendMessage(pg.prefix + "/pg setup - Set up plugin");
                         p.sendMessage(pg.prefix + "/pg setlobby [lobbynumber] - Set lobby");
                         p.sendMessage(pg.prefix + "/pg dellobby [lobbynumber] - Remove lobby");
@@ -66,7 +66,7 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10");
                 }
                 if (p.hasPermission("pg.join")) {
-                    if (pg.isArenaSystem()) {
+                    if (pg.isLobbySystem()) {
                         p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
                     } else {
                         p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
@@ -106,7 +106,7 @@ public class Commands implements CommandExecutor {
                         pg.saveConfig();
                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
                     } else if (args[0].equalsIgnoreCase("joinsign")) {
-                        if (!pg.isArenaSystem()) {
+                        if (!pg.isLobbySystem()) {
                             pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
                             pg.saveConfig();
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
@@ -156,7 +156,7 @@ public class Commands implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("commands")) {
                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
                     if (p.hasPermission("pg.setup")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             p.sendMessage(pg.prefix + "/pg setup - Set up plugin");
                             p.sendMessage(pg.prefix + "/pg setlobby [lobbynumber] - Set lobby");
                             p.sendMessage(pg.prefix + "/pg dellobby [lobbynumber] - Remove lobby");
@@ -192,7 +192,7 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10");
                     }
                     if (p.hasPermission("pg.join")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
                         } else {
                             p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
@@ -208,7 +208,7 @@ public class Commands implements CommandExecutor {
                 }
                 if (args[0].equalsIgnoreCase("join")) {
                     if (p.hasPermission("pg.join")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
                         } else {
                             if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
@@ -218,7 +218,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("leave")) {
                     if (p.hasPermission("pg.leave")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p) && !pg.isStartOnJoin()) {
                                 String s = null;
                                 for (int ii = 1; ii <= 1000; ii++) {
@@ -244,7 +244,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("start")) {
                     if (p.hasPermission("pg.start")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                                 String s = null;
                                 for (int ii = 1; ii <= 1000; ii++) {
@@ -286,7 +286,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("pause")) {
                     if (p.hasPermission("pg.pause")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                                 String s = null;
                                 for (int ii = 1; ii <= 1000; ii++) {
@@ -346,7 +346,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("build")) {
                     if (p.hasPermission("pg.build")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                                 String s = null;
                                 for (int ii = 1; ii <= 1000; ii++) {
@@ -406,7 +406,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("setlobby")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (!pg.isArenaSystem()) {
+                        if (!pg.isLobbySystem()) {
                             pg.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
                             pg.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
                             pg.saveConfig();
@@ -419,7 +419,7 @@ public class Commands implements CommandExecutor {
             } else if (args.length == 2) {
                 if (args[0].equalsIgnoreCase("setlobby")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             arenadata.set("pg.lobbies." + args[1] + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
                             arenadata.set("pg.lobbies." + args[1] + ".coords", Objects.requireNonNull(p.getLocation()));
                             arenadata.set("pg.lobbies." + args[1] + ".activateTeams", true);
@@ -439,7 +439,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("dellobby")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             arenadata.set("pg.lobbies." + args[1], null);
                             try {
                                 arenadata.save(pg.arenadatafile);
@@ -450,7 +450,7 @@ public class Commands implements CommandExecutor {
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("join")) {
-                    if (pg.isArenaSystem()) {
+                    if (pg.isLobbySystem()) {
                         String s = args[1];
                         if (p.hasPermission("pg.join")) {
                             if (arenadata.contains("pg.lobbies." + s)) {
@@ -464,7 +464,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("force")) {
                     if (p.hasPermission("pg.force")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                                 String s = null;
                                 for (int ii = 1; ii <= 1000; ii++) {
@@ -526,7 +526,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("delarena")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (!pg.isArenaSystem()) {
+                        if (!pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             try {
                                 int i = 1;
@@ -550,7 +550,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("addarena")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (!pg.isArenaSystem()) {
+                        if (!pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             try {
                                 while (arenadata.contains("pg.arenas." + arenaNumber)) {
@@ -569,7 +569,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("addspawn")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (!pg.isArenaSystem()) {
+                        if (!pg.isLobbySystem()) {
                             int spawnNumber = 1;
                             int arenaNumber = 1;
                             try {
@@ -596,7 +596,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("delspawn")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (!pg.isArenaSystem()) {
+                        if (!pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             int spawnNumber = 1;
                             try {
@@ -625,7 +625,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("joinsign")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             arenadata.set("pg.lobbies." + args[1] + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
                             try {
                                 arenadata.save(pg.arenadatafile);
@@ -641,7 +641,7 @@ public class Commands implements CommandExecutor {
             } else if (args.length == 3) {
                 if (args[0].equalsIgnoreCase("delarena")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             try {
                                 int i = 1;
@@ -665,7 +665,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("addarena")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             try {
                                 while (arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber)) {
@@ -684,7 +684,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("addspawn")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             int spawnNumber = 1;
                             int arenaNumber = 1;
                             try {
@@ -711,7 +711,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("delspawn")) {
                     if (p.hasPermission("pg.setup")) {
-                        if (pg.isArenaSystem()) {
+                        if (pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             int spawnNumber = 1;
                             try {
