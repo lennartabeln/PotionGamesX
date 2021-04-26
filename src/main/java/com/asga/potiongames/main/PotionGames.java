@@ -178,7 +178,7 @@ public class PotionGames extends JavaPlugin {
     private boolean tickStarted = false;
     private boolean activateMySQL = false;
     private boolean lobbySystem = false;
-    private boolean hubServer = false;
+    private boolean gameServer = true;
     private boolean addlobby = false;
     private boolean addarena = false;
     private boolean dellobby = false;
@@ -220,10 +220,8 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void reset() {
-        if (startOnJoin && !hubServer) {
-            for (Player all : Bukkit.getOnlinePlayers()) {
-                all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
-            }
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
         }
     }
 
@@ -533,12 +531,12 @@ public class PotionGames extends JavaPlugin {
         } else {
             lobbySystem = getConfig().getBoolean("pg.lobbySystem");
         }
-        if (getConfig().get("pg.hubServer") == null) {
-            getConfig().addDefault("pg.hubServer", hubServer);
+        if (getConfig().get("pg.gameServer") == null) {
+            getConfig().addDefault("pg.gameServer", gameServer);
             getConfig().options().copyDefaults(true);
             saveConfig();
         } else {
-            hubServer = getConfig().getBoolean("pg.hubServer");
+            gameServer = getConfig().getBoolean("pg.gameServer");
         }
         if (getConfig().get("pg.maxPlayers") == null) {
             getConfig().addDefault("pg.maxPlayers", maxPlayers);
@@ -716,7 +714,7 @@ public class PotionGames extends JavaPlugin {
         assert coinmeta != null;
         coinmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(55));
         coin.setItemMeta(coinmeta);
-        if (!hubServer) {
+        if (gameServer) {
             if (!isArenaSystem()) {
                 setGamestate(GameStates.WAITING);
                 tickStarted = true;
@@ -3574,8 +3572,8 @@ public class PotionGames extends JavaPlugin {
         return lobbySystem;
     }
 
-    public boolean isHubServer() {
-        return hubServer;
+    public boolean isGameServer() {
+        return gameServer;
     }
 
     public boolean isAddlobby() {

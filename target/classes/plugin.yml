@@ -1,94 +1,10 @@
 name: PotionGames
 author: andersspielen
 main: com.asga.potiongames.main.PotionGames
-version: 4.1.3
+version: 4.2
 api-version: 1.16
 softdepend: [ Multiverse-Core ]
 commands:
   pg:
     description: Get list of commands + permissions
     aliases: [ potiongames, pgames, potiong ]
-  pg setlobby:
-    description: Set lobby
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg addarena:
-    description: Add an arena
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg addspawn:
-    description: Add a spawn
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg delarena:
-    description: Remove an arena
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg delspawn:
-    description: Remove last spawn
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg build:
-    description: Activate build mode
-    permission: pg.build
-    permission-message: You do not have permission to use this command.
-  pg pause:
-    description: Pause timer/countdown
-    permission: pg.pause
-    permission-message: You do not have permission to use this command.
-  pg force:
-    description: Force an arena
-    permission: pg.force
-    permission-message: You do not have permission to use this command.
-  pg start:
-    description: Set lobby countdown to 10
-    permission: pg.start
-    permission-message: You do not have permission to use this command.
-  pg join:
-    description: Join the game
-    permission: pg.join
-    permission-message: You do not have permission to use this command.
-  pg leave:
-    description: Leave the game
-    permission: pg.leave
-    permission-message: You do not have permission to use this command.
-  pg stats:
-    description: Show your stats
-    permission: pg.stats
-    permission-message: You do not have permission to use this command.
-  pg headp1:
-    description: Add Player 1 Head to Stats-Wall
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg headp2:
-    description: Add Player 2 Head to Stats-Wall
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg headp3:
-    description: Add Player 3 Head to Stats-Wall
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg signp1:
-    description: Add Player 1 Sign to Stats-Wall
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg signp2:
-    description: Add Player 2 Sign to Stats-Wall
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg signp3:
-    description: Add Player 3 Sign to Stats-Wall
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg joinsign:
-    description: Add Join-Sign
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg dellobby:
-    description: Remove lobby
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.
-  pg setup:
-    description: Set up plugin
-    permission: pg.setup
-    permission-message: You do not have permission to use this command.

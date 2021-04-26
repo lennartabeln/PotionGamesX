@@ -26,7 +26,7 @@ public class Commands implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         Player p = (Player) sender;
-        if (pg.isHubServer()) {
+        if (pg.isGameServer()) {
             if (args.length == 0) {
                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
                 if (p.hasPermission("pg.setup")) {
@@ -749,6 +749,10 @@ public class Commands implements CommandExecutor {
                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
                 if (p.hasPermission("pg.stats")) {
                     p.sendMessage(pg.prefix + "/pg stats - Show your stats");
+                }
+                if (p.hasPermission("pg.setup")) {
+                    p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
+                    p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                 }
                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
             } else if (args.length == 1) {
