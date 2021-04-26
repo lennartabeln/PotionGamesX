@@ -178,10 +178,11 @@ public class PotionGames extends JavaPlugin {
     private boolean tickStarted = false;
     private boolean activateMySQL = false;
     private boolean lobbySystem = false;
-    public boolean addlobby = false;
-    public boolean addarena = false;
-    public boolean dellobby = false;
-    public boolean delarena = false;
+    private boolean hubServer = false;
+    private boolean addlobby = false;
+    private boolean addarena = false;
+    private boolean dellobby = false;
+    private boolean delarena = false;
     private Connection con;
     private Statement st;
 
@@ -219,8 +220,10 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void reset() {
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
+        if (startOnJoin && !hubServer) {
+            for (Player all : Bukkit.getOnlinePlayers()) {
+                all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
+            }
         }
     }
 
@@ -530,6 +533,13 @@ public class PotionGames extends JavaPlugin {
         } else {
             lobbySystem = getConfig().getBoolean("pg.lobbySystem");
         }
+        if (getConfig().get("pg.hubServer") == null) {
+            getConfig().addDefault("pg.hubServer", hubServer);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            hubServer = getConfig().getBoolean("pg.hubServer");
+        }
         if (getConfig().get("pg.maxPlayers") == null) {
             getConfig().addDefault("pg.maxPlayers", maxPlayers);
             getConfig().options().copyDefaults(true);
@@ -609,6 +619,7 @@ public class PotionGames extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        checkUpdates.start();
         int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
             if (shopdata.get("pg.potions." + shopitem) == null) {
@@ -701,165 +712,209 @@ public class PotionGames extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Events(this), this);
         Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
-        if (!isArenaSystem()) {
-            setGamestate(GameStates.WAITING);
-            tickStarted = true;
-            tick();
-        } else {
-            for (int lobby = 1; lobby <= 1000; lobby++) {
-                if (arenadata.contains("pg.lobbies." + lobby)) {
-                    String s = Integer.toString(lobby);
-                    lobbyActivateTeams.put(s, true);
-                    lobbyActivateKits.put(s, true);
-                    lobbyActivateShop.put(s, true);
-                    lobbyJoinable.put(s, true);
-                    lobbyForcearena.put(s, false);
-                    lobbyMove.put(s, true);
-                    lobbyVoteallowed.put(s, false);
-                    lobbyTeamallowed.put(s, false);
-                    lobbyKitallowed.put(s, false);
-                    lobbyAmount.put(s, 0);
-                    lobbyTickstarted.put(s, true);
-                    lobbyVoted.put(s, null);
-                    lobbyBuild.put(s, false);
-                    lobbyPause.put(s, false);
-                    lobbyVote.put(s, null);
-                    lobbyVotedarena.put(s, null);
-                    lobbyteamSize.put(s, 2);
-                    lobbymaxPlayers.put(s, 24);
-                    int minPlayersNumber = lobbymaxPlayers.get(s) / 2;
-                    lobbyminPlayers.put(s, minPlayersNumber);
-                    int teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
-                    lobbyteamAmount.put(s, teamAmountNumber);
-                    lobbyroundTime.put(s, 30);
-                    int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
-                    lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
-                    if (arenadata.get("pg.lobbies." + s + ".activateTeams") == null) {
-                        arenadata.addDefault("pg.lobbies." + s + ".activateTeams", activateTeams);
-                        arenadata.options().copyDefaults(true);
-                        try {
-                            arenadata.save(arenadatafile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        lobbyActivateTeams.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateTeams"));
-                    }
-                    if (arenadata.get("pg.lobbies." + s + ".activateKits") == null) {
-                        arenadata.addDefault("pg.lobbies." + s + ".activateKits", activateKits);
-                        arenadata.options().copyDefaults(true);
-                        try {
-                            arenadata.save(arenadatafile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        lobbyActivateKits.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateKits"));
-                    }
-                    if (arenadata.get("pg.lobbies." + s + ".activateShop") == null) {
-                        arenadata.addDefault("pg.lobbies." + s + ".activateShop", activateShop);
-                        arenadata.options().copyDefaults(true);
-                        try {
-                            arenadata.save(arenadatafile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        lobbyActivateShop.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateShop"));
-                    }
-                    if (arenadata.get("pg.lobbies." + s + ".teamSize") == null) {
-                        arenadata.addDefault("pg.lobbies." + s + ".teamSize", teamSize);
-                        arenadata.options().copyDefaults(true);
-                        try {
-                            arenadata.save(arenadatafile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        lobbyteamSize.replace(s, arenadata.getInt("pg.lobbies." + s + ".teamSize"));
-                    }
-                    if (arenadata.get("pg.lobbies." + s + ".maxPlayers") == null) {
-                        arenadata.addDefault("pg.lobbies." + s + ".maxPlayers", maxPlayers);
-                        arenadata.options().copyDefaults(true);
-                        try {
-                            arenadata.save(arenadatafile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        lobbymaxPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".maxPlayers"));
-                    }
-                    if (arenadata.get("pg.lobbies." + s + ".minPlayers") == null) {
-                        arenadata.addDefault("pg.lobbies." + s + ".minPlayers", minPlayers);
-                        arenadata.options().copyDefaults(true);
-                        try {
-                            arenadata.save(arenadatafile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        lobbyminPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".minPlayers"));
-                    }
-                    if (arenadata.get("pg.lobbies." + s + ".roundTime") == null) {
-                        arenadata.addDefault("pg.lobbies." + s + ".roundTime", roundTime);
-                        arenadata.options().copyDefaults(true);
-                        try {
-                            arenadata.save(arenadatafile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        lobbyroundTime.replace(s, arenadata.getInt("pg.lobbies." + s + ".roundTime"));
-                    }
-                    roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
-                    lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
-                    teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
-                    lobbyteamAmount.put(s, teamAmountNumber);
-                    if (!lobbyVoteallowed.get(s)) {
-                        lobbyVoteallowed.replace(s, true);
-                        HashMap<String, Integer> temp = new HashMap<>();
-                        temp.put(chat.get(42), 0);
-                        for (int max = 1; max <= 1000; max++) {
-                            if (arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
-                                temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
-                                lobbyvoteplayernamesdata.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), null);
-                            }
-                        }
-                        lobbyvotes.put(s, temp);
-                        lobbyvoteplayernames.put(s, lobbyvoteplayernamesdata);
-                    }
-                    if (!lobbyTeamallowed.get(s)) {
-                        lobbyTeamallowed.replace(s, true);
-                        HashMap<Integer, Integer> temp = new HashMap<>();
-                        //temp.put(chat.get(42), 0);
-                        for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
-                            temp.put(max, 0);
-                            lobbyteamplayernamesdata.put(Integer.toString(max), null);
-                        }
-                        lobbyteams.put(s, temp);
-                        lobbyteamplayernames.put(s, lobbyteamplayernamesdata);
-                    }
-                    if (!lobbyKitallowed.get(s)) {
-                        lobbyKitallowed.replace(s, true);
-                        kitplayers.put(chat.get(42), 0);
-                        for (String all : kits) {
-                            kitplayers.put(all, 0);
-                        }
-                    }
-                    lobbyLiquidPlaced.put(s, lobbyLiquidPlacedData);
-                    lobbyPlacedBlocks.put(s, lobbyPlacedBlocksData);
-                    lobbyBreakedBlocks.put(s, lobbyBreakedBlocksData);
-                    lobbyWaterBlocks.put(s, lobbyWaterBlocksData);
-                    lobbyStates.put(s, GameStates.WAITING);
-                    tickLobby(s);
-                }
-            }
-        }
         ItemMeta coinmeta = coin.getItemMeta();
         assert coinmeta != null;
         coinmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(55));
         coin.setItemMeta(coinmeta);
-        checkUpdates.start();
+        if (!hubServer) {
+            if (!isArenaSystem()) {
+                setGamestate(GameStates.WAITING);
+                tickStarted = true;
+                tick();
+            } else {
+                for (int lobby = 1; lobby <= 1000; lobby++) {
+                    if (arenadata.contains("pg.lobbies." + lobby)) {
+                        String s = Integer.toString(lobby);
+                        lobbyActivateTeams.put(s, true);
+                        lobbyActivateKits.put(s, true);
+                        lobbyActivateShop.put(s, true);
+                        lobbyJoinable.put(s, true);
+                        lobbyForcearena.put(s, false);
+                        lobbyMove.put(s, true);
+                        lobbyVoteallowed.put(s, false);
+                        lobbyTeamallowed.put(s, false);
+                        lobbyKitallowed.put(s, false);
+                        lobbyAmount.put(s, 0);
+                        lobbyTickstarted.put(s, true);
+                        lobbyVoted.put(s, null);
+                        lobbyBuild.put(s, false);
+                        lobbyPause.put(s, false);
+                        lobbyVote.put(s, null);
+                        lobbyVotedarena.put(s, null);
+                        lobbyteamSize.put(s, 2);
+                        lobbymaxPlayers.put(s, 24);
+                        int minPlayersNumber = lobbymaxPlayers.get(s) / 2;
+                        lobbyminPlayers.put(s, minPlayersNumber);
+                        int teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
+                        lobbyteamAmount.put(s, teamAmountNumber);
+                        lobbyroundTime.put(s, 30);
+                        int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
+                        lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
+                        if (arenadata.get("pg.lobbies." + s + ".activateTeams") == null) {
+                            arenadata.addDefault("pg.lobbies." + s + ".activateTeams", activateTeams);
+                            arenadata.options().copyDefaults(true);
+                            try {
+                                arenadata.save(arenadatafile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            lobbyActivateTeams.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateTeams"));
+                        }
+                        if (arenadata.get("pg.lobbies." + s + ".activateKits") == null) {
+                            arenadata.addDefault("pg.lobbies." + s + ".activateKits", activateKits);
+                            arenadata.options().copyDefaults(true);
+                            try {
+                                arenadata.save(arenadatafile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            lobbyActivateKits.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateKits"));
+                        }
+                        if (arenadata.get("pg.lobbies." + s + ".activateShop") == null) {
+                            arenadata.addDefault("pg.lobbies." + s + ".activateShop", activateShop);
+                            arenadata.options().copyDefaults(true);
+                            try {
+                                arenadata.save(arenadatafile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            lobbyActivateShop.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateShop"));
+                        }
+                        if (arenadata.get("pg.lobbies." + s + ".teamSize") == null) {
+                            arenadata.addDefault("pg.lobbies." + s + ".teamSize", teamSize);
+                            arenadata.options().copyDefaults(true);
+                            try {
+                                arenadata.save(arenadatafile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            lobbyteamSize.replace(s, arenadata.getInt("pg.lobbies." + s + ".teamSize"));
+                        }
+                        if (arenadata.get("pg.lobbies." + s + ".maxPlayers") == null) {
+                            arenadata.addDefault("pg.lobbies." + s + ".maxPlayers", maxPlayers);
+                            arenadata.options().copyDefaults(true);
+                            try {
+                                arenadata.save(arenadatafile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            lobbymaxPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".maxPlayers"));
+                        }
+                        if (arenadata.get("pg.lobbies." + s + ".minPlayers") == null) {
+                            arenadata.addDefault("pg.lobbies." + s + ".minPlayers", minPlayers);
+                            arenadata.options().copyDefaults(true);
+                            try {
+                                arenadata.save(arenadatafile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            lobbyminPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".minPlayers"));
+                        }
+                        if (arenadata.get("pg.lobbies." + s + ".roundTime") == null) {
+                            arenadata.addDefault("pg.lobbies." + s + ".roundTime", roundTime);
+                            arenadata.options().copyDefaults(true);
+                            try {
+                                arenadata.save(arenadatafile);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            lobbyroundTime.replace(s, arenadata.getInt("pg.lobbies." + s + ".roundTime"));
+                        }
+                        roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
+                        lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
+                        teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
+                        lobbyteamAmount.put(s, teamAmountNumber);
+                        if (!lobbyVoteallowed.get(s)) {
+                            lobbyVoteallowed.replace(s, true);
+                            HashMap<String, Integer> temp = new HashMap<>();
+                            temp.put(chat.get(42), 0);
+                            for (int max = 1; max <= 1000; max++) {
+                                if (arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
+                                    temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
+                                    lobbyvoteplayernamesdata.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), null);
+                                }
+                            }
+                            lobbyvotes.put(s, temp);
+                            lobbyvoteplayernames.put(s, lobbyvoteplayernamesdata);
+                        }
+                        if (!lobbyTeamallowed.get(s)) {
+                            lobbyTeamallowed.replace(s, true);
+                            HashMap<Integer, Integer> temp = new HashMap<>();
+                            //temp.put(chat.get(42), 0);
+                            for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
+                                temp.put(max, 0);
+                                lobbyteamplayernamesdata.put(Integer.toString(max), null);
+                            }
+                            lobbyteams.put(s, temp);
+                            lobbyteamplayernames.put(s, lobbyteamplayernamesdata);
+                        }
+                        if (!lobbyKitallowed.get(s)) {
+                            lobbyKitallowed.replace(s, true);
+                            kitplayers.put(chat.get(42), 0);
+                            for (String all : kits) {
+                                kitplayers.put(all, 0);
+                            }
+                        }
+                        lobbyLiquidPlaced.put(s, lobbyLiquidPlacedData);
+                        lobbyPlacedBlocks.put(s, lobbyPlacedBlocksData);
+                        lobbyBreakedBlocks.put(s, lobbyBreakedBlocksData);
+                        lobbyWaterBlocks.put(s, lobbyWaterBlocksData);
+                        lobbyStates.put(s, GameStates.WAITING);
+                        tickLobby(s);
+                    }
+                }
+            }
+        } else {
+            hubStats();
+        }
+    }
+
+    public void hubStats() {
+        tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
+                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
+                int ii = 0;
+                try {
+                    while (rs.next()) {
+                        ii++;
+                        rank.put(ii, rs.getString("UUID"));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                for (int iii = 0; iii < rank.size(); iii++) {
+                    int id = iii + 1;
+                    Skull s = (Skull) rankhead.get(iii).getBlock().getState();
+                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    s.setOwningPlayer(name);
+                    s.update();
+                }
+                for (int iii = 0; iii < rank.size(); iii++) {
+                    int id = iii + 1;
+                    BlockState b = ranksign.get(iii).getBlock().getState();
+                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    Sign sign = (Sign) b;
+                    sign.setLine(0, chat.get(33) + " #" + id);
+                    sign.setLine(1, Objects.requireNonNull(name.getName()));
+                    sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                    sign.setLine(3, "K/D: " + getKD(rank.get(id)));
+                    sign.update();
+                }
+            }
+        }, 0, 20);
     }
 
     public void joinChannel(Player player, String channelName) {
@@ -3517,6 +3572,42 @@ public class PotionGames extends JavaPlugin {
 
     public boolean isArenaSystem() {
         return lobbySystem;
+    }
+
+    public boolean isHubServer() {
+        return hubServer;
+    }
+
+    public boolean isAddlobby() {
+        return addlobby;
+    }
+
+    public void setAddlobby(boolean addlobby) {
+        this.addlobby = addlobby;
+    }
+
+    public boolean isAddarena() {
+        return addarena;
+    }
+
+    public void setAddarena(boolean addarena) {
+        this.addarena = addarena;
+    }
+
+    public boolean isDellobby() {
+        return dellobby;
+    }
+
+    public void setDellobby(boolean dellobby) {
+        this.dellobby = dellobby;
+    }
+
+    public boolean isDelarena() {
+        return delarena;
+    }
+
+    public void setDelarena(boolean delarena) {
+        this.delarena = delarena;
     }
 
     public boolean isMove() {

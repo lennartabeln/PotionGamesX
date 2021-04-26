@@ -55,7 +55,7 @@ public class Events implements Listener {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         Player p = e.getPlayer();
         e.getRecipients().clear();
-        if (pg.addlobby) {
+        if (pg.isAddlobby()) {
             lobby = e.getMessage();
             e.setCancelled(true);
             if (p.hasPermission("pg.setup")) {
@@ -77,10 +77,10 @@ public class Events implements Listener {
                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                 }
             }
-            pg.addlobby = false;
+            pg.setAddlobby(false);
             pg.setup(p);
         }
-        if (pg.addarena) {
+        if (pg.isAddarena()) {
             arena = e.getMessage();
             e.setCancelled(true);
             if (p.hasPermission("pg.setup")) {
@@ -117,10 +117,10 @@ public class Events implements Listener {
                     }
                 }
             }
-            pg.addarena = false;
+            pg.setAddarena(false);
             pg.setup(p);
         }
-        if (pg.dellobby) {
+        if (pg.isDellobby()) {
             lobby = e.getMessage();
             e.setCancelled(true);
             if (p.hasPermission("pg.setup")) {
@@ -134,10 +134,10 @@ public class Events implements Listener {
                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(66) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                 }
             }
-            pg.dellobby = false;
+            pg.setDellobby(false);
             pg.setup(p);
         }
-        if (pg.delarena) {
+        if (pg.isDelarena()) {
             arena = e.getMessage();
             e.setCancelled(true);
             if (p.hasPermission("pg.setup")) {
@@ -186,7 +186,7 @@ public class Events implements Listener {
                     }
                 }
             }
-            pg.delarena = false;
+            pg.setDelarena(false);
             pg.setup(p);
         }
         if (pg.playerChannel.get(p).equals("Local")) {
@@ -667,16 +667,18 @@ public class Events implements Listener {
                     String line1 = sign.getLine(0);
                     String line2 = sign.getLine(1);
                     String line3 = sign.getLine(2);
-                    if (pg.isArenaSystem()) {
-                        if (e.getClickedBlock().getLocation().equals(arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
-                            if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
-                                pg.joinLobby(p, line1);
+                    if (pg.isHubServer()) {
+                        if (pg.isArenaSystem()) {
+                            if (e.getClickedBlock().getLocation().equals(arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
+                                if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
+                                    pg.joinLobby(p, line1);
+                                }
                             }
-                        }
-                    } else {
-                        if (e.getClickedBlock().getLocation().equals(pg.getConfig().getLocation("pg.Lobby.sign"))) {
-                            if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                                pg.onJoin(p);
+                        } else {
+                            if (e.getClickedBlock().getLocation().equals(pg.getConfig().getLocation("pg.Lobby.sign"))) {
+                                if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
+                                    pg.onJoin(p);
+                                }
                             }
                         }
                     }
@@ -1320,14 +1322,14 @@ public class Events implements Listener {
                         if (p.hasPermission("pg.setup")) {
                             if (pg.isArenaSystem()) {
                                 p.getInventory().clear();
-                                pg.addlobby = true;
+                                pg.setAddlobby(true);
                                 e.setCancelled(true);
                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(69));
                             }
                         }
                     } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena")) {
                         p.getInventory().clear();
-                        pg.addarena = true;
+                        pg.setAddarena(true);
                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(70));
                     } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
                         if (p.hasPermission("pg.setup")) {
@@ -1482,12 +1484,12 @@ public class Events implements Listener {
                     if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby")) {
                         if (pg.isArenaSystem()) {
                             p.getInventory().clear();
-                            pg.dellobby = true;
+                            pg.setDellobby(true);
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(71));
                         }
                     } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena")) {
                         p.getInventory().clear();
-                        pg.delarena = true;
+                        pg.setDelarena(true);
                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(72));
                     } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
                         if (p.hasPermission("pg.setup")) {
