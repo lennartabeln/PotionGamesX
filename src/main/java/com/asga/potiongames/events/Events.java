@@ -2420,14 +2420,19 @@ public class Events implements Listener {
             if (pg.isStartOnJoin()) {
                 if (!pg.isLobbySystem()) {
                     e.setMaxPlayers(pg.getMaxPlayers());
-                    if (pg.getGamestate() != GameStates.WAITING && pg.getGamestate() != GameStates.PREPARING) {
-                        e.setMotd("" + ChatColor.DARK_RED + pg.getGamestate() + "\n" + ChatColor.DARK_AQUA + "Voting");
-                    } else {
+                    if (pg.getGamestate() == GameStates.WAITING) {
+                        e.setMotd("" + ChatColor.GREEN + pg.getGamestate());
+                    } else if (pg.getGamestate() == GameStates.PREPARING) {
                         if (pg.getVote() != null) {
-                            e.setMotd("" + ChatColor.DARK_GREEN + pg.getGamestate() + "\n" + ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + pg.getVote() + ".name")));
+                            String motd = "" + ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + pg.getVote() + ".name"));
+                            e.setMotd(motd.toUpperCase());
                         } else {
-                            e.setMotd("" + ChatColor.DARK_GREEN + pg.getGamestate() + "\n" + ChatColor.DARK_AQUA + "Voting");
+                            e.setMotd("" + ChatColor.AQUA + "VOTING");
                         }
+                    } else if (pg.getGamestate() == GameStates.INGAME) {
+                        e.setMotd("" + ChatColor.RED + pg.getGamestate());
+                    } else {
+                        e.setMotd("" + ChatColor.DARK_RED + pg.getGamestate());
                     }
                 }
             }
