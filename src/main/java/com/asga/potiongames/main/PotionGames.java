@@ -214,15 +214,13 @@ public class PotionGames extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        reset();
         close();
-        getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
-    }
-
-    public void reset() {
-        for (Player all : Bukkit.getOnlinePlayers()) {
-            all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
+        if (gameServer) {
+            for (Player all : Bukkit.getOnlinePlayers()) {
+                all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
+            }
         }
+        getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
     }
 
     public void spawnFireworks(Location loc, int amount) {
