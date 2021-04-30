@@ -215,11 +215,6 @@ public class PotionGames extends JavaPlugin {
     @Override
     public void onDisable() {
         close();
-        if (gameServer) {
-            for (Player all : Bukkit.getOnlinePlayers()) {
-                all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
-            }
-        }
         getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
     }
 
@@ -843,7 +838,6 @@ public class PotionGames extends JavaPlugin {
                         if (!lobbyTeamallowed.get(s)) {
                             lobbyTeamallowed.replace(s, true);
                             HashMap<Integer, Integer> temp = new HashMap<>();
-                            //temp.put(chat.get(42), 0);
                             for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
                                 temp.put(max, 0);
                                 lobbyteamplayernamesdata.put(Integer.toString(max), null);

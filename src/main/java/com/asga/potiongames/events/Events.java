@@ -2307,7 +2307,6 @@ public class Events implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         if (pg.isGameServer()) {
             Player p = e.getPlayer();
-            pg.joinChannel(p, "General");
             pg.createPlayer(p.getUniqueId().toString());
             if (pg.isStartOnJoin()) {
                 pg.onJoin(p);
