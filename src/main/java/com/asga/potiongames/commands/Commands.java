@@ -66,14 +66,18 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10");
                 }
                 if (p.hasPermission("pg.join")) {
-                    if (pg.isLobbySystem()) {
-                        p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
-                    } else {
-                        p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
+                    if (pg.isStartOnJoin()) {
+                        if (pg.isLobbySystem()) {
+                            p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
+                        } else {
+                            p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
+                        }
                     }
                 }
                 if (p.hasPermission("pg.leave")) {
-                    p.sendMessage(pg.prefix + "/pg leave - Leave the game (startOnJoin = false)");
+                    if (pg.isStartOnJoin()) {
+                        p.sendMessage(pg.prefix + "/pg leave - Leave the game (startOnJoin = false)");
+                    }
                 }
                 if (p.hasPermission("pg.stats")) {
                     p.sendMessage(pg.prefix + "/pg stats - Show your stats");
@@ -192,14 +196,18 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10");
                     }
                     if (p.hasPermission("pg.join")) {
-                        if (pg.isLobbySystem()) {
-                            p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
-                        } else {
-                            p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
+                        if (pg.isStartOnJoin()) {
+                            if (pg.isLobbySystem()) {
+                                p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
+                            } else {
+                                p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
+                            }
                         }
                     }
                     if (p.hasPermission("pg.leave")) {
-                        p.sendMessage(pg.prefix + "/pg leave - Leave the game (startOnJoin = false)");
+                        if (pg.isStartOnJoin()) {
+                            p.sendMessage(pg.prefix + "/pg leave - Leave the game (startOnJoin = false)");
+                        }
                     }
                     if (p.hasPermission("pg.stats")) {
                         p.sendMessage(pg.prefix + "/pg stats - Show your stats");
@@ -208,37 +216,41 @@ public class Commands implements CommandExecutor {
                 }
                 if (args[0].equalsIgnoreCase("join")) {
                     if (p.hasPermission("pg.join")) {
-                        if (pg.isLobbySystem()) {
-                            p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
-                        } else {
-                            if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                                pg.onJoin(p);
+                        if (pg.isStartOnJoin()) {
+                            if (pg.isLobbySystem()) {
+                                p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
+                            } else {
+                                if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
+                                    pg.onJoin(p);
+                                }
                             }
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("leave")) {
                     if (p.hasPermission("pg.leave")) {
-                        if (pg.isLobbySystem()) {
-                            if (pg.playerLobby.containsKey(p) && !pg.isStartOnJoin()) {
-                                String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
-                                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                                        s = Integer.toString(ii);
+                        if (pg.isStartOnJoin()) {
+                            if (pg.isLobbySystem()) {
+                                if (pg.playerLobby.containsKey(p) && !pg.isStartOnJoin()) {
+                                    String s = null;
+                                    for (int ii = 1; ii <= 1000; ii++) {
+                                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                            s = Integer.toString(ii);
+                                        }
                                     }
-                                }
-                                pg.leaveLobby(p, s);
-                            } else if (pg.specLobby.containsKey(p) && !pg.isStartOnJoin()) {
-                                String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
-                                    if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
-                                        s = Integer.toString(ii);
+                                    pg.leaveLobby(p, s);
+                                } else if (pg.specLobby.containsKey(p) && !pg.isStartOnJoin()) {
+                                    String s = null;
+                                    for (int ii = 1; ii <= 1000; ii++) {
+                                        if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
+                                            s = Integer.toString(ii);
+                                        }
                                     }
+                                    pg.leaveLobby(p, s);
                                 }
-                                pg.leaveLobby(p, s);
-                            }
-                        } else {
-                            if (pg.pgPlayers.contains(p) && !pg.isStartOnJoin() || pg.specPlayers.contains(p) && !pg.isStartOnJoin()) {
-                                pg.onLeave(p);
+                            } else {
+                                if (pg.pgPlayers.contains(p) && !pg.isStartOnJoin() || pg.specPlayers.contains(p) && !pg.isStartOnJoin()) {
+                                    pg.onLeave(p);
+                                }
                             }
                         }
                     }
