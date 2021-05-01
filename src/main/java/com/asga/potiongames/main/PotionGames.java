@@ -137,6 +137,36 @@ public class PotionGames extends JavaPlugin {
     public HashMap<Location, Material> lobbyPlacedBlocksData = new HashMap<>();
     public HashMap<Location, Material> lobbyBreakedBlocksData = new HashMap<>();
     public HashMap<Location, BlockData> lobbyWaterBlocksData = new HashMap<>();
+    public File shopdatafile = new File(getDataFolder() + File.separator + "shopdata.yml");
+    public File kitdatafile = new File(getDataFolder() + File.separator + "kitdata.yml");
+    public File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
+    public File arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");
+    public File chestdatafile = new File(getDataFolder() + File.separator + "chestdata.yml");
+    public Thread checkUpdates = new Thread(() -> {
+        String latest = null;
+        getLogger().info("Checking for updates...");
+        try {
+            URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(url.openStream()));
+            StringBuilder stringBuilder = new StringBuilder();
+            String inputLine;
+            while ((inputLine = bufferedReader.readLine()) != null) {
+                stringBuilder.append(inputLine);
+                stringBuilder.append(System.lineSeparator());
+            }
+            bufferedReader.close();
+            latest = stringBuilder.toString().trim();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean upToDate = getDescription().getVersion().equals(latest);
+        if (upToDate) {
+            getLogger().info("Plugin is up to date! (" + getDescription().getVersion() + ")");
+        } else {
+            getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
+        }
+    });
     private int tick;
     private int countdown = 60;
     private int reset = 10;
@@ -149,11 +179,6 @@ public class PotionGames extends JavaPlugin {
     private int roundTimeSeconds = roundTime * 60;
     private int activePotions = 19;
     private int activeKits = 6;
-    public File shopdatafile = new File(getDataFolder() + File.separator + "shopdata.yml");
-    public File kitdatafile = new File(getDataFolder() + File.separator + "kitdata.yml");
-    public File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
-    public File arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");
-    public File chestdatafile = new File(getDataFolder() + File.separator + "chestdata.yml");
     private String language = "en_US";
     private String vote;
     private String votedArena;
@@ -185,32 +210,6 @@ public class PotionGames extends JavaPlugin {
     private boolean delarena = false;
     private Connection con;
     private Statement st;
-
-    public Thread checkUpdates = new Thread(() -> {
-        String latest = null;
-        getLogger().info("Checking for updates...");
-        try {
-            URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(url.openStream()));
-            StringBuilder stringBuilder = new StringBuilder();
-            String inputLine;
-            while ((inputLine = bufferedReader.readLine()) != null) {
-                stringBuilder.append(inputLine);
-                stringBuilder.append(System.lineSeparator());
-            }
-            bufferedReader.close();
-            latest = stringBuilder.toString().trim();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        boolean upToDate = getDescription().getVersion().equals(latest);
-        if (upToDate) {
-            getLogger().info("Plugin is up to date! (" + getDescription().getVersion() + ")");
-        } else {
-            getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
-        }
-    });
 
     @Override
     public void onDisable() {
