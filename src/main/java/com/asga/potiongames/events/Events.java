@@ -2305,38 +2305,38 @@ public class Events implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            Player p = e.getPlayer();
             pg.createPlayer(p.getUniqueId().toString());
             if (pg.isStartOnJoin()) {
                 pg.onJoin(p);
                 e.setJoinMessage(null);
             }
-            if (p.hasPermission("pg.update")) {
-                String latest = null;
-                try {
-                    URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String inputLine;
-                    while ((inputLine = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(inputLine);
-                        stringBuilder.append(System.lineSeparator());
-                    }
-                    bufferedReader.close();
-                    latest = stringBuilder.toString().trim();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+        }
+        if (p.hasPermission("pg.update")) {
+            String latest = null;
+            try {
+                URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+                StringBuilder stringBuilder = new StringBuilder();
+                String inputLine;
+                while ((inputLine = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(inputLine);
+                    stringBuilder.append(System.lineSeparator());
                 }
-                boolean upToDate = pg.getDescription().getVersion().equals(latest);
-                if (!upToDate) {
-                    TextComponent message = new TextComponent(TextComponent.fromLegacyText(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - "));
-                    TextComponent link = new TextComponent(TextComponent.fromLegacyText(ChatColor.GRAY + "Click here to download!"));
-                    link.setUnderlined(true);
-                    message.addExtra(link);
-                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/andersspielen/PotionGamesIssues/releases/latest"));
-                    p.spigot().sendMessage(message);
-                }
+                bufferedReader.close();
+                latest = stringBuilder.toString().trim();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            boolean upToDate = pg.getDescription().getVersion().equals(latest);
+            if (!upToDate) {
+                TextComponent message = new TextComponent(TextComponent.fromLegacyText(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - "));
+                TextComponent link = new TextComponent(TextComponent.fromLegacyText(ChatColor.GRAY + "Click here to download!"));
+                link.setUnderlined(true);
+                message.addExtra(link);
+                message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/andersspielen/PotionGamesIssues/releases/latest"));
+                p.spigot().sendMessage(message);
             }
         }
     }
