@@ -43,8 +43,8 @@ public class Events implements Listener {
     private final PotionGames pg;
     private int amount;
     private int bottle;
-    String lobby;
-    String arena;
+    private String lobby;
+    private String arena;
 
     public Events(PotionGames pg) {
         this.pg = pg;
