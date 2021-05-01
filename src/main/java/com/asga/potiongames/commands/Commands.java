@@ -66,17 +66,17 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10");
                 }
                 if (p.hasPermission("pg.join")) {
-                    if (pg.isStartOnJoin()) {
+                    if (!pg.isStartOnJoin()) {
                         if (pg.isLobbySystem()) {
-                            p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
+                            p.sendMessage(pg.prefix + "/pg join # - Join a game");
                         } else {
-                            p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
+                            p.sendMessage(pg.prefix + "/pg join - Join the game");
                         }
                     }
                 }
                 if (p.hasPermission("pg.leave")) {
-                    if (pg.isStartOnJoin()) {
-                        p.sendMessage(pg.prefix + "/pg leave - Leave the game (startOnJoin = false)");
+                    if (!pg.isStartOnJoin()) {
+                        p.sendMessage(pg.prefix + "/pg leave - Leave the game");
                     }
                 }
                 if (p.hasPermission("pg.stats")) {
@@ -196,17 +196,17 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg start - Set lobby countdown to 10");
                     }
                     if (p.hasPermission("pg.join")) {
-                        if (pg.isStartOnJoin()) {
+                        if (!pg.isStartOnJoin()) {
                             if (pg.isLobbySystem()) {
-                                p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
+                                p.sendMessage(pg.prefix + "/pg join # - Join a game");
                             } else {
-                                p.sendMessage(pg.prefix + "/pg join - Join the game (startOnJoin = false)");
+                                p.sendMessage(pg.prefix + "/pg join - Join the game");
                             }
                         }
                     }
                     if (p.hasPermission("pg.leave")) {
-                        if (pg.isStartOnJoin()) {
-                            p.sendMessage(pg.prefix + "/pg leave - Leave the game (startOnJoin = false)");
+                        if (!pg.isStartOnJoin()) {
+                            p.sendMessage(pg.prefix + "/pg leave - Leave the game");
                         }
                     }
                     if (p.hasPermission("pg.stats")) {
@@ -216,9 +216,9 @@ public class Commands implements CommandExecutor {
                 }
                 if (args[0].equalsIgnoreCase("join")) {
                     if (p.hasPermission("pg.join")) {
-                        if (pg.isStartOnJoin()) {
+                        if (!pg.isStartOnJoin()) {
                             if (pg.isLobbySystem()) {
-                                p.sendMessage(pg.prefix + "/pg join # - Join a game (startOnJoin = false)");
+                                p.sendMessage(pg.prefix + "/pg join # - Join a game");
                             } else {
                                 if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
                                     pg.onJoin(p);
@@ -228,7 +228,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("leave")) {
                     if (p.hasPermission("pg.leave")) {
-                        if (pg.isStartOnJoin()) {
+                        if (!pg.isStartOnJoin()) {
                             if (pg.isLobbySystem()) {
                                 if (pg.playerLobby.containsKey(p) && !pg.isStartOnJoin()) {
                                     String s = null;
@@ -256,42 +256,44 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("start")) {
                     if (p.hasPermission("pg.start")) {
-                        if (pg.isLobbySystem()) {
-                            if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
-                                String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
-                                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                                        s = Integer.toString(ii);
+                        if (!pg.isStartOnJoin()) {
+                            if (pg.isLobbySystem()) {
+                                if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
+                                    String s = null;
+                                    for (int ii = 1; ii <= 1000; ii++) {
+                                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                            s = Integer.toString(ii);
+                                        }
+                                    }
+                                    if (pg.lobbyAmount.get(s) >= pg.lobbyminPlayers.get(s)) {
+                                        if (pg.countdownLobby.get(s) >= 10) {
+                                            pg.countdownLobby.replace(s, 10);
+                                            for (Player all : pg.playerLobby.keySet()) {
+                                                if (pg.playerLobby.get(all).equals(s)) {
+                                                    all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
+                                                }
+                                            }
+                                        } else {
+                                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
+                                        }
+                                    } else {
+                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(21));
                                     }
                                 }
-                                if (pg.lobbyAmount.get(s) >= pg.lobbyminPlayers.get(s)) {
-                                    if (pg.countdownLobby.get(s) >= 10) {
-                                        pg.countdownLobby.replace(s, 10);
-                                        for (Player all : pg.playerLobby.keySet()) {
-                                            if (pg.playerLobby.get(all).equals(s)) {
+                            } else {
+                                if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                                    if (pg.pgPlayers.size() >= pg.getMinPlayers()) {
+                                        if (pg.getCountdown() >= 10) {
+                                            pg.setCountdown(10);
+                                            for (Player all : pg.pgPlayers) {
                                                 all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
                                             }
+                                        } else {
+                                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
                                         }
                                     } else {
-                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
+                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(21));
                                     }
-                                } else {
-                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(21));
-                                }
-                            }
-                        } else {
-                            if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
-                                if (pg.pgPlayers.size() >= pg.getMinPlayers()) {
-                                    if (pg.getCountdown() >= 10) {
-                                        pg.setCountdown(10);
-                                        for (Player all : pg.pgPlayers) {
-                                            all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(20));
-                                        }
-                                    } else {
-                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(19));
-                                    }
-                                } else {
-                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(21));
                                 }
                             }
                         }
