@@ -237,7 +237,7 @@ public class Commands implements CommandExecutor {
                                             s = Integer.toString(ii);
                                         }
                                     }
-                                    pg.leaveLobby(p, s);
+                                    pg.onLeaveLobby(p, s);
                                 } else if (pg.specLobby.containsKey(p) && !pg.isStartOnJoin()) {
                                     String s = null;
                                     for (int ii = 1; ii <= 1000; ii++) {
@@ -245,7 +245,7 @@ public class Commands implements CommandExecutor {
                                             s = Integer.toString(ii);
                                         }
                                     }
-                                    pg.leaveLobby(p, s);
+                                    pg.onLeaveLobby(p, s);
                                 }
                             } else {
                                 if (pg.pgPlayers.contains(p) && !pg.isStartOnJoin() || pg.specPlayers.contains(p) && !pg.isStartOnJoin()) {
@@ -469,7 +469,7 @@ public class Commands implements CommandExecutor {
                         if (p.hasPermission("pg.join")) {
                             if (arenadata.contains("pg.lobbies." + s)) {
                                 if (!pg.playerLobby.containsKey(p)) {
-                                    pg.joinLobby(p, s);
+                                    pg.onJoinLobby(p, s);
                                 }
                             } else {
                                 p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(74));

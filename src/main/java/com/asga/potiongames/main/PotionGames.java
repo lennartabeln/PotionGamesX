@@ -42,7 +42,7 @@ import java.util.Map.Entry;
 public class PotionGames extends JavaPlugin {
     private final ItemStack coin = new ItemStack(Material.GOLD_NUGGET);
     private final ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
-    public String prefixNoColor = "[PotionGames]";
+    public ArrayList<String> worlds = new ArrayList<>();
     public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
     public ArrayList<Player> pgPlayers = new ArrayList<>();
     public ArrayList<Player> specPlayers = new ArrayList<>();
@@ -72,6 +72,7 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<ItemStack> weapons1 = new ArrayList<>();
     public ArrayList<ItemStack> weapons2 = new ArrayList<>();
     public ArrayList<PotionEffect> potions = new ArrayList<>();
+    private String prefixNoColor = "[PotionGames]";
     public HashMap<Integer, String> rank = new HashMap<>();
     public HashMap<String, Integer> votes = new HashMap<>();
     public HashMap<String, Player> voteplayernames = new HashMap<>();
@@ -210,25 +211,6 @@ public class PotionGames extends JavaPlugin {
     private boolean delarena = false;
     private Connection con;
     private Statement st;
-
-    @Override
-    public void onDisable() {
-        close();
-        getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
-    }
-
-    public void spawnFireworks(Location loc, int amount) {
-        Firework fw = (Firework) Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.FIREWORK);
-        FireworkMeta fwm = fw.getFireworkMeta();
-        fwm.setPower(1);
-        fwm.addEffect(FireworkEffect.builder().flicker(true).with(Type.STAR).withColor(Color.GREEN, Color.AQUA, Color.RED, Color.PURPLE, Color.YELLOW).build());
-        fw.setFireworkMeta(fwm);
-        fw.detonate();
-        for (int i = 0; i < amount; i++) {
-            Firework fw2 = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
-            fw2.setFireworkMeta(fwm);
-        }
-    }
 
     @Override
     public void onEnable() {
@@ -865,6 +847,51 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
+    @Override
+    public void onDisable() {
+        close();
+        if (gameServer && startOnJoin && !lobbySystem) {
+            for (Player all : Bukkit.getOnlinePlayers()) {
+                all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
+            }
+        }
+        getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
+    }
+
+    public void joinChannel(Player player, String channelName) {
+        if (playerChannel.get(player) != null) {
+            String prevChannel = playerChannel.get(player);
+            leaveChannel(player, prevChannel);
+        }
+        ArrayList<Player> players = channels.get(channelName);
+        if (players == null) {
+            players = new ArrayList<>();
+        }
+        players.add(player);
+        channels.put(channelName, players);
+        playerChannel.put(player, channelName);
+    }
+
+    public void leaveChannel(Player player, String channelName) {
+        ArrayList<Player> players = channels.get(channelName);
+        players.remove(player);
+        channels.put(channelName, players);
+        playerChannel.remove(player);
+    }
+
+    public void spawnFirework(Location loc, int amount) {
+        Firework fw = (Firework) Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.FIREWORK);
+        FireworkMeta fwm = fw.getFireworkMeta();
+        fwm.setPower(1);
+        fwm.addEffect(FireworkEffect.builder().flicker(true).with(Type.STAR).withColor(Color.GREEN, Color.AQUA, Color.RED, Color.PURPLE, Color.YELLOW).build());
+        fw.setFireworkMeta(fwm);
+        fw.detonate();
+        for (int i = 0; i < amount; i++) {
+            Firework fw2 = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+            fw2.setFireworkMeta(fwm);
+        }
+    }
+
     public void hubStats() {
         tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
@@ -904,27 +931,6 @@ public class PotionGames extends JavaPlugin {
                 }
             }
         }, 0, 20);
-    }
-
-    public void joinChannel(Player player, String channelName) {
-        if (playerChannel.get(player) != null) {
-            String prevChannel = playerChannel.get(player);
-            leaveChannel(player, prevChannel);
-        }
-        ArrayList<Player> players = channels.get(channelName);
-        if (players == null) {
-            players = new ArrayList<>();
-        }
-        players.add(player);
-        channels.put(channelName, players);
-        playerChannel.put(player, channelName);
-    }
-
-    public void leaveChannel(Player player, String channelName) {
-        ArrayList<Player> players = channels.get(channelName);
-        players.remove(player);
-        channels.put(channelName, players);
-        playerChannel.remove(player);
     }
 
     public void chestData() {
@@ -1357,6 +1363,7 @@ public class PotionGames extends JavaPlugin {
                             setMove(true);
                             setJoinable(true);
                             if (getConfig().contains("pg.Lobby.world")) {
+                                worlds.add(getConfig().getString("pg.Lobby.world"));
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setGameRule(GameRule.FALL_DAMAGE, false);
@@ -1516,6 +1523,7 @@ public class PotionGames extends JavaPlugin {
                                 if (arenadata.contains("pg.arenas." + setting)) {
                                     String name = arenadata.getString("pg.arenas." + setting + ".world");
                                     assert name != null;
+                                    worlds.add(name);
                                     Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
                                     Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
                                     Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
@@ -1682,7 +1690,7 @@ public class PotionGames extends JavaPlugin {
                                         for (Player all : specPlayers) {
                                             all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
                                         }
-                                        spawnFireworks(winner.getLocation(), 1);
+                                        spawnFirework(winner.getLocation(), 1);
                                         addWins(winner.getUniqueId().toString(), 1);
                                         setCountdown(-3);
                                     }
@@ -2210,6 +2218,7 @@ public class PotionGames extends JavaPlugin {
                             lobbyMove.replace(s, true);
                             lobbyJoinable.replace(s, true);
                             if (arenadata.contains("pg.lobbies." + s + ".world")) {
+                                worlds.add(getConfig().getString("pg.lobbies." + s + ".world"));
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setPVP(false);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setGameRule(GameRule.FALL_DAMAGE, false);
@@ -2295,7 +2304,7 @@ public class PotionGames extends JavaPlugin {
                                             all.setLevel(countdownLobby.get(s));
                                         }
                                     }
-                                    voteResults(s);
+                                    voteResultsLobby(s);
                                 }
                                 if (countdownLobby.get(s) < 10) {
                                     for (Player all : playerLobby.keySet()) {
@@ -2310,7 +2319,7 @@ public class PotionGames extends JavaPlugin {
                                             all.setLevel(countdownLobby.get(s));
                                         }
                                     }
-                                    teleportAndStart(s);
+                                    teleportAndStartLobby(s);
                                     countdownLobby.replace(s, 11);
                                     lobbyStates.replace(s, GameStates.INGAME);
                                     lobbyMove.replace(s, false);
@@ -2344,6 +2353,7 @@ public class PotionGames extends JavaPlugin {
                                 if (arenadata.contains("pg.lobbies." + s + "." + setting)) {
                                     String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
                                     assert wname != null;
+                                    worlds.add(wname);
                                     Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
                                     Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
                                     Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
@@ -2576,7 +2586,7 @@ public class PotionGames extends JavaPlugin {
                                             for (Player win : playerLobby.keySet()) {
                                                 if (playerLobby.get(win).equals(s)) {
                                                     winner = win;
-                                                    spawnFireworks(winner.getLocation(), 1);
+                                                    spawnFirework(winner.getLocation(), 1);
                                                     addWins(winner.getUniqueId().toString(), 1);
                                                     all.sendMessage(prefix + ChatColor.AQUA + winner.getName() + ChatColor.GREEN + " " + chat.get(4));
                                                 }
@@ -2821,7 +2831,7 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
-    public void voteResults(String s) {
+    public void voteResultsLobby(String s) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         int max = 0;
         for (int i : lobbyvotes.get(s).values()) {
@@ -2904,7 +2914,7 @@ public class PotionGames extends JavaPlugin {
         lobbyVote.replace(s, winner);
     }
 
-    public void teleportAndStart(String s) {
+    public void teleportAndStartLobby(String s) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         for (Player all : playerLobby.keySet()) {
             if (playerLobby.get(all).equals(s)) {
@@ -2984,7 +2994,7 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
-    public void joinLobby(Player p, String s) {
+    public void onJoinLobby(Player p, String s) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         joinChannel(p.getPlayer(), "Local");
         PlayerInventory inventory = p.getInventory();
@@ -3083,7 +3093,7 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
-    public void leaveLobby(Player p, String s) {
+    public void onLeaveLobby(Player p, String s) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         joinChannel(p.getPlayer(), "Global");
         if (lobbyStates.get(s) == GameStates.INGAME && lobbyAmount.get(s) > 1 && playerLobby.containsKey(p)) {

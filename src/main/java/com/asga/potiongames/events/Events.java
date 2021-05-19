@@ -51,7 +51,7 @@ public class Events implements Listener {
     }
 
     @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent e) {
+    public void onChat(AsyncPlayerChatEvent e) {
         if (pg.isGameServer()) {
             FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
             Player p = e.getPlayer();
@@ -307,17 +307,20 @@ public class Events implements Listener {
     @EventHandler
     public void onLeavesDecay(LeavesDecayEvent e) {
         if (pg.isGameServer()) {
-            switch (e.getBlock().getType()) {
-                case ACACIA_LEAVES:
-                case BIRCH_LEAVES:
-                case DARK_OAK_LEAVES:
-                case JUNGLE_LEAVES:
-                case OAK_LEAVES:
-                case SPRUCE_LEAVES:
-                    e.setCancelled(true);
-                    break;
-                default:
-                    break;
+            if (pg.worlds.contains(e.getBlock().getWorld().getName())) {
+                switch (e.getBlock().getType()) {
+                    case ACACIA_LEAVES:
+                    case BIRCH_LEAVES:
+                    case DARK_OAK_LEAVES:
+                    case JUNGLE_LEAVES:
+                    case OAK_LEAVES:
+                    case SPRUCE_LEAVES:
+                        e.setCancelled(true);
+                        break;
+                    default:
+                        e.setCancelled(false);
+                        break;
+                }
             }
         }
     }
@@ -325,14 +328,18 @@ public class Events implements Listener {
     @EventHandler
     public void onBlockFade(BlockFadeEvent e) {
         if (pg.isGameServer()) {
-            e.setCancelled(true);
+            if (pg.worlds.contains(e.getBlock().getWorld().getName())) {
+                e.setCancelled(true);
+            }
         }
     }
 
     @EventHandler
-    public void onWaterPassTrough(BlockFromToEvent e) {
+    public void onBlockFromTo(BlockFromToEvent e) {
         if (pg.isGameServer()) {
-            e.setCancelled(true);
+            if (pg.worlds.contains(e.getBlock().getWorld().getName())) {
+                e.setCancelled(true);
+            }
         }
     }
 
@@ -657,7 +664,9 @@ public class Events implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         if (pg.isGameServer()) {
-            e.setCancelled(e.getDamager() instanceof LightningStrike || e.getDamager() instanceof Firework);
+            if (pg.worlds.contains(e.getDamager().getWorld().getName())) {
+                e.setCancelled(e.getDamager() instanceof LightningStrike || e.getDamager() instanceof Firework);
+            }
         }
     }
 
@@ -689,7 +698,7 @@ public class Events implements Listener {
                         if (pg.isLobbySystem()) {
                             if (e.getClickedBlock().getLocation().equals(arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
                                 if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
-                                    pg.joinLobby(p, line1);
+                                    pg.onJoinLobby(p, line1);
                                 }
                             }
                         } else {
@@ -2284,7 +2293,7 @@ public class Events implements Listener {
     }
 
     @EventHandler
-    public void onPlayerDropItem(PlayerDropItemEvent e) {
+    public void onDropItem(PlayerDropItemEvent e) {
         if (pg.isGameServer()) {
             Player p = e.getPlayer();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
@@ -2306,8 +2315,8 @@ public class Events implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
+        pg.createPlayer(p.getUniqueId().toString());
         if (pg.isGameServer()) {
-            pg.createPlayer(p.getUniqueId().toString());
             if (pg.isStartOnJoin()) {
                 pg.onJoin(p);
                 e.setJoinMessage(null);
@@ -2387,7 +2396,7 @@ public class Events implements Listener {
                     for (int ii = 1; ii <= 1000; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
-                            pg.leaveLobby(p, s);
+                            pg.onLeaveLobby(p, s);
                             e.setQuitMessage(null);
                             break;
                         }
@@ -2397,7 +2406,7 @@ public class Events implements Listener {
                     for (int ii = 1; ii <= 1000; ii++) {
                         if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
-                            pg.leaveLobby(p, s);
+                            pg.onLeaveLobby(p, s);
                             e.setQuitMessage(null);
                             break;
                         }
