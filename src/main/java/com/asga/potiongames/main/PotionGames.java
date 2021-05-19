@@ -44,6 +44,7 @@ public class PotionGames extends JavaPlugin {
     private final ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
     public ArrayList<String> worlds = new ArrayList<>();
     public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
+    private String prefixNoColor = "[PotionGames]";
     public ArrayList<Player> pgPlayers = new ArrayList<>();
     public ArrayList<Player> specPlayers = new ArrayList<>();
     public ArrayList<Player> richkidPlayers = new ArrayList<>();
@@ -72,7 +73,6 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<ItemStack> weapons1 = new ArrayList<>();
     public ArrayList<ItemStack> weapons2 = new ArrayList<>();
     public ArrayList<PotionEffect> potions = new ArrayList<>();
-    private String prefixNoColor = "[PotionGames]";
     public HashMap<Integer, String> rank = new HashMap<>();
     public HashMap<String, Integer> votes = new HashMap<>();
     public HashMap<String, Player> voteplayernames = new HashMap<>();
