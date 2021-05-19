@@ -42,8 +42,8 @@ import java.util.Map.Entry;
 public class PotionGames extends JavaPlugin {
     private final ItemStack coin = new ItemStack(Material.GOLD_NUGGET);
     private final ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
-    public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
     private String prefixNoColor = "[PotionGames]";
+    public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
     public ArrayList<String> worlds = new ArrayList<>();
     public ArrayList<Player> pgPlayers = new ArrayList<>();
     public ArrayList<Player> specPlayers = new ArrayList<>();
