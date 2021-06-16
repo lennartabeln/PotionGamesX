@@ -228,9 +228,8 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("leave")) {
                     if (p.hasPermission("pg.leave")) {
-                        if (!pg.isStartOnJoin()) {
                             if (pg.isLobbySystem()) {
-                                if (pg.playerLobby.containsKey(p) && !pg.isStartOnJoin()) {
+                                if (pg.playerLobby.containsKey(p)) {
                                     String s = null;
                                     for (int ii = 1; ii <= 1000; ii++) {
                                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
@@ -238,7 +237,7 @@ public class Commands implements CommandExecutor {
                                         }
                                     }
                                     pg.onLeaveLobby(p, s);
-                                } else if (pg.specLobby.containsKey(p) && !pg.isStartOnJoin()) {
+                                } else if (pg.specLobby.containsKey(p)) {
                                     String s = null;
                                     for (int ii = 1; ii <= 1000; ii++) {
                                         if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
@@ -252,7 +251,6 @@ public class Commands implements CommandExecutor {
                                     pg.onLeave(p);
                                 }
                             }
-                        }
                     }
                 } else if (args[0].equalsIgnoreCase("start")) {
                     if (p.hasPermission("pg.start")) {
