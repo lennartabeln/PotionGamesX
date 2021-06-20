@@ -190,7 +190,10 @@ public class Events implements Listener {
                 pg.setDelarena(false);
                 pg.setup(p);
             }
-            if (pg.playerChannel.get(p).equals("Local")) {
+            if (pg.playerChannel.get(p) == null) {
+                pg.joinChannel(p.getPlayer(), "Global");
+            }
+            if (pg.playerChannel.get(p).equals("Local") && pg.playerChannel.get(p) != null) {
                 if (pg.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 1000; ii++) {
@@ -298,7 +301,6 @@ public class Events implements Listener {
                         }
                     }
                 }
-                return;
             }
             pg.getChannel(p).forEach(player -> e.getRecipients().add(player));
         }
@@ -2126,7 +2128,6 @@ public class Events implements Listener {
                                                     Random rnd = new Random();
                                                     int rndTeam = rnd.nextInt(pg.teams.size());
                                                     rndTeam++;
-                                                    assert pg.teamplayers != null;
                                                     if (pg.teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers) {
                                                         teamfound = true;
                                                         p.closeInventory();
