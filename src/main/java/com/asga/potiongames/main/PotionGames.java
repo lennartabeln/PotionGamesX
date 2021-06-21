@@ -167,7 +167,6 @@ public class PotionGames extends JavaPlugin {
             getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
         }
     });
-    private String prefixNoColor = "[PotionGames]";
     private int tick;
     private int countdown = 60;
     private int reset = 10;
@@ -203,6 +202,7 @@ public class PotionGames extends JavaPlugin {
     private boolean activateShop = false;
     private boolean tickStarted = false;
     private boolean activateMySQL = false;
+    private boolean mySQL = false;
     private boolean lobbySystem = false;
     private boolean gameServer = true;
     private boolean addlobby = false;
@@ -254,8 +254,8 @@ public class PotionGames extends JavaPlugin {
         chat.add("Connection to database failed! Error");
         chat.add("Connection to database closed!");
         chat.add("Failed to close connection to database! Error");
-        chat.add("started successfully!");
-        chat.add("stopped successfully!");
+        chat.add("Plugin started successfully!");
+        chat.add("Plugin stopped successfully!");
         chat.add("Random");
         chat.add("Team-Selector");
         chat.add("Player");
@@ -569,12 +569,6 @@ public class PotionGames extends JavaPlugin {
         } else {
             prefix = messages.getString("pg.messages." + language + ".prefix");
         }
-        if (messages.get("pg.messages." + language + ".prefixNoColor") == null) {
-            messages.addDefault("pg.messages." + language + ".prefixNoColor", prefixNoColor);
-            messages.options().copyDefaults(true);
-        } else {
-            prefixNoColor = messages.getString("pg.messages." + language + ".prefixNoColor");
-        }
         int message = 1;
         for (int i = 0; i < chat.size(); i++) {
             if (messages.get("pg.messages." + language + "." + message) == null) {
@@ -680,7 +674,6 @@ public class PotionGames extends JavaPlugin {
         }
         connect();
         ConnectMySQL();
-        getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_GREEN + chat.get(40));
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Events(this), this);
         Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
@@ -845,6 +838,11 @@ public class PotionGames extends JavaPlugin {
         } else {
             hubStats();
         }
+        if (activateMySQL && !mySQL) {
+            Bukkit.getPluginManager().disablePlugin(this);
+        } else {
+            getServer().getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chat.get(40));
+        }
     }
 
     @Override
@@ -855,7 +853,7 @@ public class PotionGames extends JavaPlugin {
                 all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
             }
         }
-        getServer().getConsoleSender().sendMessage(prefix + ChatColor.DARK_RED + chat.get(41));
+        getServer().getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(41));
     }
 
     public void joinChannel(Player player, String channelName) {
@@ -1351,11 +1349,11 @@ public class PotionGames extends JavaPlugin {
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, "PotionGames");
                                 if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.DARK_GREEN + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.GREEN + getGamestate().toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.DARK_RED + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.RED + getGamestate().toString());
                                 }
-                                sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                                sign.setLine(2, ChatColor.AQUA + "Voting");
                                 sign.setLine(3, "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                 sign.update();
                             }
@@ -1458,14 +1456,14 @@ public class PotionGames extends JavaPlugin {
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, "PotionGames");
                                 if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.DARK_GREEN + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.GREEN + getGamestate().toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.DARK_RED + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.RED + getGamestate().toString());
                                 }
                                 if (getVote() != null) {
                                     sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
                                 } else {
-                                    sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                                    sign.setLine(2, ChatColor.AQUA + "Voting");
                                 }
                                 sign.setLine(3, "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                 sign.update();
@@ -1507,14 +1505,14 @@ public class PotionGames extends JavaPlugin {
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, "PotionGames");
                                 if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.DARK_GREEN + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.GREEN + getGamestate().toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.DARK_RED + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.RED + getGamestate().toString());
                                 }
                                 if (getVote() != null) {
                                     sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
                                 } else {
-                                    sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                                    sign.setLine(2, ChatColor.AQUA + "Voting");
                                 }
                                 sign.setLine(3, "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                 sign.update();
@@ -1735,11 +1733,11 @@ public class PotionGames extends JavaPlugin {
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, "PotionGames");
                                 if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.DARK_GREEN + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.GREEN + getGamestate().toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.DARK_RED + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.RED + getGamestate().toString());
                                 }
-                                sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                                sign.setLine(2, ChatColor.AQUA + "Voting");
                                 sign.setLine(3, "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                 sign.update();
                             }
@@ -2202,11 +2200,11 @@ public class PotionGames extends JavaPlugin {
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, s);
                                 if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.DARK_GREEN + lobbyStates.get(s).toString());
+                                    sign.setLine(1, ChatColor.GREEN + lobbyStates.get(s).toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.DARK_RED + lobbyStates.get(s).toString());
+                                    sign.setLine(1, ChatColor.RED + lobbyStates.get(s).toString());
                                 }
-                                sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                                sign.setLine(2, ChatColor.AQUA + "Voting");
                                 sign.setLine(3, "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]");
                                 sign.update();
                             }
@@ -2280,14 +2278,14 @@ public class PotionGames extends JavaPlugin {
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, s);
                                 if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.DARK_GREEN + lobbyStates.get(s).toString());
+                                    sign.setLine(1, ChatColor.GREEN + lobbyStates.get(s).toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.DARK_RED + lobbyStates.get(s).toString());
+                                    sign.setLine(1, ChatColor.RED + lobbyStates.get(s).toString());
                                 }
                                 if (lobbyVote.get(s) != null) {
                                     sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString());
                                 } else {
-                                    sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                                    sign.setLine(2, ChatColor.AQUA + "Voting");
                                 }
                                 sign.setLine(3, "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]");
                                 sign.update();
@@ -2337,14 +2335,14 @@ public class PotionGames extends JavaPlugin {
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, s);
                                 if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.DARK_GREEN + lobbyStates.get(s).toString());
+                                    sign.setLine(1, ChatColor.GREEN + lobbyStates.get(s).toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.DARK_RED + lobbyStates.get(s).toString());
+                                    sign.setLine(1, ChatColor.RED + lobbyStates.get(s).toString());
                                 }
                                 if (lobbyVote.get(s) != null) {
                                     sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString());
                                 } else {
-                                    sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                                    sign.setLine(2, ChatColor.AQUA + "Voting");
                                 }
                                 sign.setLine(3, "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]");
                                 sign.update();
@@ -2657,11 +2655,11 @@ public class PotionGames extends JavaPlugin {
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, s);
                                 if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.DARK_GREEN + lobbyStates.get(s).toString());
+                                    sign.setLine(1, ChatColor.GREEN + lobbyStates.get(s).toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.DARK_RED + lobbyStates.get(s).toString());
+                                    sign.setLine(1, ChatColor.RED + lobbyStates.get(s).toString());
                                 }
-                                sign.setLine(2, ChatColor.DARK_AQUA + "Voting");
+                                sign.setLine(2, ChatColor.AQUA + "Voting");
                                 sign.setLine(3, "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]");
                                 sign.update();
                             }
@@ -3180,9 +3178,11 @@ public class PotionGames extends JavaPlugin {
         if (activateMySQL) {
             try {
                 con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
-                System.out.println(prefixNoColor + " " + chat.get(36));
+                System.out.println(prefix + ChatColor.GREEN + chat.get(36));
+                mySQL = true;
             } catch (SQLException e) {
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                mySQL = false;
             }
         } else {
             con = null;
@@ -3191,9 +3191,9 @@ public class PotionGames extends JavaPlugin {
                 String url = "jdbc:sqlite:" + dbFile.getPath();
                 con = DriverManager.getConnection(url);
                 st = con.createStatement();
-                System.out.println(prefixNoColor + " " + chat.get(36));
+                System.out.println(prefix + ChatColor.GREEN + chat.get(36));
             } catch (SQLException e) {
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         }
     }
@@ -3202,55 +3202,61 @@ public class PotionGames extends JavaPlugin {
         try {
             if (con != null) {
                 con.close();
-                System.out.println(prefixNoColor + " " + chat.get(38));
+                System.out.println(prefix + ChatColor.GREEN + chat.get(38));
             }
         } catch (SQLException e) {
-            System.out.println(prefixNoColor + " " + chat.get(39) + ": " + e.getMessage());
+            System.out.println(prefix + ChatColor.RED + chat.get(39) + ": " + e.getMessage());
         }
     }
 
     public void update(String qry) {
         if (activateMySQL) {
-            try {
-                st = con.createStatement();
-                st.executeUpdate(qry);
-                st.close();
-            } catch (SQLException e) {
-                connect();
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            if (con != null) {
+                try {
+                    st = con.createStatement();
+                    st.executeUpdate(qry);
+                    st.close();
+                } catch (SQLException e) {
+                    connect();
+                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                }
             }
         } else {
             try {
                 st.execute(qry);
             } catch (SQLException e) {
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         }
     }
 
     public ResultSet query(String qry) {
         if (activateMySQL) {
-            ResultSet rs = null;
-            try {
-                st = con.createStatement();
-                rs = st.executeQuery(qry);
-            } catch (SQLException e) {
-                connect();
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+            if (con != null) {
+                ResultSet rs = null;
+                try {
+                    st = con.createStatement();
+                    rs = st.executeQuery(qry);
+                } catch (SQLException e) {
+                    connect();
+                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                }
+                return rs;
             }
-            return rs;
         } else {
             try {
                 return st.executeQuery(qry);
             } catch (SQLException e) {
-                System.out.println(prefixNoColor + " " + chat.get(37) + ": " + e.getMessage());
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
-            return null;
         }
+        return null;
     }
 
     public void ConnectMySQL() {
-        update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSTS int, KILLS int, DEATHS int, KD double);");
+        if (con != null) {
+            update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSTS int, KILLS int, DEATHS int, KD double);");
+        }
     }
 
     public boolean playerExists(String uuid) {

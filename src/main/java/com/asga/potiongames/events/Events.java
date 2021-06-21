@@ -2440,9 +2440,9 @@ public class Events implements Listener {
                             e.setMotd("" + ChatColor.AQUA + "VOTING");
                         }
                     } else if (pg.getGamestate() == GameStates.INGAME) {
-                        e.setMotd("" + ChatColor.RED + pg.getGamestate());
+                        e.setMotd("" + ChatColor.GRAY + pg.getGamestate());
                     } else {
-                        e.setMotd("" + ChatColor.DARK_RED + pg.getGamestate());
+                        e.setMotd("" + ChatColor.RED + pg.getGamestate());
                     }
                 }
             }

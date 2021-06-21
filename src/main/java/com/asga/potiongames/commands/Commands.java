@@ -84,79 +84,6 @@ public class Commands implements CommandExecutor {
                 }
                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
             } else if (args.length == 1) {
-                if (p.hasPermission("pg.setup")) {
-                    if (args[0].equalsIgnoreCase("headp1")) {
-                        pg.getConfig().set("pg.RankWall.headp1", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                        pg.saveConfig();
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(34));
-                    } else if (args[0].equalsIgnoreCase("headp2")) {
-                        pg.getConfig().set("pg.RankWall.headp2", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                        pg.saveConfig();
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(34));
-                    } else if (args[0].equalsIgnoreCase("headp3")) {
-                        pg.getConfig().set("pg.RankWall.headp3", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                        pg.saveConfig();
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(34));
-                    } else if (args[0].equalsIgnoreCase("signp1")) {
-                        pg.getConfig().set("pg.RankWall.signp1", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                        pg.saveConfig();
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
-                    } else if (args[0].equalsIgnoreCase("signp2")) {
-                        pg.getConfig().set("pg.RankWall.signp2", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                        pg.saveConfig();
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
-                    } else if (args[0].equalsIgnoreCase("signp3")) {
-                        pg.getConfig().set("pg.RankWall.signp3", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                        pg.saveConfig();
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
-                    } else if (args[0].equalsIgnoreCase("joinsign")) {
-                        if (!pg.isLobbySystem()) {
-                            pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                            pg.saveConfig();
-                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
-                        }
-                    } else if (args[0].equalsIgnoreCase("setup")) {
-                        PlayerInventory inventory = p.getInventory();
-                        pg.inv.put(p.getName(), p.getInventory().getContents());
-                        pg.armor.put(p.getName(), p.getInventory().getArmorContents());
-                        pg.lvl.put(p.getName(), p.getLevel());
-                        pg.exp.put(p.getName(), p.getExp());
-                        pg.loc.put(p.getName(), p.getLocation());
-                        pg.gm.put(p.getName(), p.getGameMode());
-                        inventory.clear();
-                        inventory.setHelmet(null);
-                        inventory.setChestplate(null);
-                        inventory.setLeggings(null);
-                        inventory.setBoots(null);
-                        p.setHealth(20);
-                        p.setFoodLevel(20);
-                        p.setLevel(0);
-                        p.setExp(0);
-                        p.setGameMode(GameMode.ADVENTURE);
-                        pg.clearEffects(p);
-                        p.setFireTicks(0);
-                        pg.setup(p);
-                        p.setAllowFlight(true);
-                    }
-                }
-                if (p.hasPermission("pg.stats")) {
-                    if (args[0].equalsIgnoreCase("stats")) {
-                        int wins = pg.getWins(p.getUniqueId().toString());
-                        int losts = pg.getLosts(p.getUniqueId().toString());
-                        int rounds = pg.getRounds(p.getUniqueId().toString());
-                        int kills = pg.getKills(p.getUniqueId().toString());
-                        int deaths = pg.getDeaths(p.getUniqueId().toString());
-                        double kd = pg.getKD(p.getUniqueId().toString());
-                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                        p.sendMessage(pg.prefix + pg.chat.get(65) + ": " + ChatColor.AQUA + rounds);
-                        p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
-                        p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
-                        p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
-                        p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
-                        p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
-                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                    }
-                }
                 if (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("commands")) {
                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
                     if (p.hasPermission("pg.setup")) {
@@ -213,8 +140,75 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg stats - Show your stats");
                     }
                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
-                }
-                if (args[0].equalsIgnoreCase("join")) {
+                } else if (args[0].equalsIgnoreCase("headp1")) {
+                    if (p.hasPermission("pg.setup")) {
+                        pg.getConfig().set("pg.RankWall.headp1", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                        pg.saveConfig();
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(34));
+                    }
+                } else if (args[0].equalsIgnoreCase("headp2")) {
+                    if (p.hasPermission("pg.setup")) {
+                        pg.getConfig().set("pg.RankWall.headp2", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                        pg.saveConfig();
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(34));
+                    }
+                } else if (args[0].equalsIgnoreCase("headp3")) {
+                    if (p.hasPermission("pg.setup")) {
+                        pg.getConfig().set("pg.RankWall.headp3", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                        pg.saveConfig();
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(34));
+                    }
+                } else if (args[0].equalsIgnoreCase("signp1")) {
+                    if (p.hasPermission("pg.setup")) {
+                        pg.getConfig().set("pg.RankWall.signp1", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                        pg.saveConfig();
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                    }
+                } else if (args[0].equalsIgnoreCase("signp2")) {
+                    if (p.hasPermission("pg.setup")) {
+                        pg.getConfig().set("pg.RankWall.signp2", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                        pg.saveConfig();
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                    }
+                } else if (args[0].equalsIgnoreCase("signp3")) {
+                    if (p.hasPermission("pg.setup")) {
+                        pg.getConfig().set("pg.RankWall.signp3", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                        pg.saveConfig();
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                    }
+                } else if (args[0].equalsIgnoreCase("joinsign")) {
+                    if (p.hasPermission("pg.setup")) {
+                        if (!pg.isLobbySystem()) {
+                            pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                            pg.saveConfig();
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                        }
+                    }
+                } else if (args[0].equalsIgnoreCase("setup")) {
+                    if (p.hasPermission("pg.setup")) {
+                        PlayerInventory inventory = p.getInventory();
+                        pg.inv.put(p.getName(), p.getInventory().getContents());
+                        pg.armor.put(p.getName(), p.getInventory().getArmorContents());
+                        pg.lvl.put(p.getName(), p.getLevel());
+                        pg.exp.put(p.getName(), p.getExp());
+                        pg.loc.put(p.getName(), p.getLocation());
+                        pg.gm.put(p.getName(), p.getGameMode());
+                        inventory.clear();
+                        inventory.setHelmet(null);
+                        inventory.setChestplate(null);
+                        inventory.setLeggings(null);
+                        inventory.setBoots(null);
+                        p.setHealth(20);
+                        p.setFoodLevel(20);
+                        p.setLevel(0);
+                        p.setExp(0);
+                        p.setGameMode(GameMode.ADVENTURE);
+                        pg.clearEffects(p);
+                        p.setFireTicks(0);
+                        pg.setup(p);
+                        p.setAllowFlight(true);
+                    }
+                } else if (args[0].equalsIgnoreCase("join")) {
                     if (p.hasPermission("pg.join")) {
                         if (!pg.isStartOnJoin()) {
                             if (pg.isLobbySystem()) {
@@ -422,6 +416,23 @@ public class Commands implements CommandExecutor {
                             pg.saveConfig();
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24));
                         }
+                    }
+                } else if (args[0].equalsIgnoreCase("stats")) {
+                    if (p.hasPermission("pg.stats")) {
+                        int wins = pg.getWins(p.getUniqueId().toString());
+                        int losts = pg.getLosts(p.getUniqueId().toString());
+                        int rounds = pg.getRounds(p.getUniqueId().toString());
+                        int kills = pg.getKills(p.getUniqueId().toString());
+                        int deaths = pg.getDeaths(p.getUniqueId().toString());
+                        double kd = pg.getKD(p.getUniqueId().toString());
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                        p.sendMessage(pg.prefix + pg.chat.get(65) + ": " + ChatColor.AQUA + rounds);
+                        p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
+                        p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
+                        p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
+                        p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
+                        p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
                     }
                 } else {
                     p.sendMessage(pg.prefix + ChatColor.GRAY + pg.chat.get(75));
