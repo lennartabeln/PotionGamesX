@@ -225,7 +225,7 @@ public class Commands implements CommandExecutor {
                         if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p)) {
                                 String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
+                                for (int ii = 1; ii <= 27; ii++) {
                                     if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
@@ -233,7 +233,7 @@ public class Commands implements CommandExecutor {
                                 pg.onLeaveLobby(p, s);
                             } else if (pg.specLobby.containsKey(p)) {
                                 String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
+                                for (int ii = 1; ii <= 27; ii++) {
                                     if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
@@ -251,7 +251,7 @@ public class Commands implements CommandExecutor {
                         if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                                 String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
+                                for (int ii = 1; ii <= 27; ii++) {
                                     if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
@@ -293,7 +293,7 @@ public class Commands implements CommandExecutor {
                         if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                                 String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
+                                for (int ii = 1; ii <= 27; ii++) {
                                     if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
@@ -353,7 +353,7 @@ public class Commands implements CommandExecutor {
                         if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                                 String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
+                                for (int ii = 1; ii <= 27; ii++) {
                                     if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
@@ -488,7 +488,7 @@ public class Commands implements CommandExecutor {
                         if (pg.isLobbySystem()) {
                             if (pg.playerLobby.containsKey(p) || pg.specLobby.containsKey(p)) {
                                 String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
+                                for (int ii = 1; ii <= 27; ii++) {
                                     if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }

@@ -196,7 +196,7 @@ public class Events implements Listener {
             if (pg.playerChannel.get(p).equals("Local") && pg.playerChannel.get(p) != null) {
                 if (pg.isLobbySystem()) {
                     String s = null;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
@@ -352,7 +352,7 @@ public class Events implements Listener {
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
@@ -389,7 +389,7 @@ public class Events implements Listener {
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
@@ -455,7 +455,7 @@ public class Events implements Listener {
 
                 if (pg.isLobbySystem()) {
                     String s = null;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
@@ -520,7 +520,7 @@ public class Events implements Listener {
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
@@ -738,7 +738,7 @@ public class Events implements Listener {
                         if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.chestblocks.normal")).toString())) {
                             if (pg.isLobbySystem()) {
                                 String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
+                                for (int ii = 1; ii <= 27; ii++) {
                                     if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
@@ -1030,7 +1030,7 @@ public class Events implements Listener {
                         }
                         if (pg.isLobbySystem()) {
                             String s = null;
-                            for (int ii = 1; ii <= 1000; ii++) {
+                            for (int ii = 1; ii <= 27; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
@@ -1051,7 +1051,7 @@ public class Events implements Listener {
                         if (p.getInventory().getItemInMainHand().getType() == Material.MUSHROOM_STEW || p.getInventory().getItemInMainHand().getType() == Material.RABBIT_STEW || p.getInventory().getItemInMainHand().getType() == Material.BEETROOT_SOUP) {
                             if (pg.isLobbySystem()) {
                                 String s = null;
-                                for (int ii = 1; ii <= 1000; ii++) {
+                                for (int ii = 1; ii <= 27; ii++) {
                                     if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
@@ -1169,7 +1169,7 @@ public class Events implements Listener {
                     if (p.getInventory().getItemInMainHand().getType() == Material.PAPER) {
                         if (pg.isLobbySystem()) {
                             String s = null;
-                            for (int ii = 1; ii <= 1000; ii++) {
+                            for (int ii = 1; ii <= 27; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
@@ -1236,7 +1236,7 @@ public class Events implements Listener {
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
                         if (pg.isLobbySystem()) {
                             String s = null;
-                            for (int ii = 1; ii <= 1000; ii++) {
+                            for (int ii = 1; ii <= 27; ii++) {
                                 if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
@@ -1418,7 +1418,7 @@ public class Events implements Listener {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Lobby")) {
                             if (pg.isLobbySystem()) {
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
-                                for (int slot = 1; slot <= 1000; slot++) {
+                                for (int slot = 1; slot <= 27; slot++) {
                                     if (arenadata.contains("pg.lobbies." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1435,7 +1435,7 @@ public class Events implements Listener {
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
                             if (pg.isLobbySystem()) {
-                                for (int slot = 1; slot <= 1000; slot++) {
+                                for (int slot = 1; slot <= 27; slot++) {
                                     if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1448,7 +1448,7 @@ public class Events implements Listener {
                                     }
                                 }
                             } else {
-                                for (int slot = 1; slot <= 1000; slot++) {
+                                for (int slot = 1; slot <= 27; slot++) {
                                     if (arenadata.contains("pg.arenas." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1582,7 +1582,7 @@ public class Events implements Listener {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Lobby")) {
                             if (pg.isLobbySystem()) {
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
-                                for (int slot = 1; slot <= 1000; slot++) {
+                                for (int slot = 1; slot <= 27; slot++) {
                                     if (arenadata.contains("pg.lobbies." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1599,7 +1599,7 @@ public class Events implements Listener {
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
                             if (pg.isLobbySystem()) {
-                                for (int slot = 1; slot <= 1000; slot++) {
+                                for (int slot = 1; slot <= 27; slot++) {
                                     if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1612,7 +1612,7 @@ public class Events implements Listener {
                                     }
                                 }
                             } else {
-                                for (int slot = 1; slot <= 1000; slot++) {
+                                for (int slot = 1; slot <= 27; slot++) {
                                     if (arenadata.contains("pg.arenas." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1697,7 +1697,7 @@ public class Events implements Listener {
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
@@ -1715,7 +1715,7 @@ public class Events implements Listener {
                                         HashMap<String, Integer> temp = new HashMap<>();
                                         randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                         temp.put(pg.chat.get(42), randomvotes);
-                                        for (int max = 1; max <= 1000; max++) {
+                                        for (int max = 1; max <= 27; max++) {
                                             if (arenadata.contains("pg.lobbies." + s + "." + max)) {
                                                 int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
                                                 temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
@@ -1745,7 +1745,7 @@ public class Events implements Listener {
                                         HashMap<String, Integer> tempold = new HashMap<>();
                                         randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                         tempold.put(pg.chat.get(42), randomvotes);
-                                        for (int max = 1; max <= 1000; max++) {
+                                        for (int max = 1; max <= 27; max++) {
                                             if (arenadata.contains("pg.lobbies." + s + "." + max)) {
                                                 int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
                                                 tempold.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
@@ -1759,7 +1759,7 @@ public class Events implements Listener {
                                         HashMap<String, Integer> temp = new HashMap<>();
                                         randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                         temp.put(pg.chat.get(42), randomvotes);
-                                        for (int max = 1; max <= 1000; max++) {
+                                        for (int max = 1; max <= 27; max++) {
                                             if (arenadata.contains("pg.lobbies." + s + "." + max)) {
                                                 int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
                                                 temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
@@ -2300,7 +2300,7 @@ public class Events implements Listener {
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
@@ -2359,7 +2359,7 @@ public class Events implements Listener {
             if (pg.isLobbySystem()) {
                 if (pg.playerLobby.containsKey(p)) {
                     String s = null;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
@@ -2395,7 +2395,7 @@ public class Events implements Listener {
             if (pg.isLobbySystem()) {
                 if (pg.playerLobby.containsKey(p)) {
                     String s;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                             pg.onLeaveLobby(p, s);
@@ -2405,7 +2405,7 @@ public class Events implements Listener {
                     }
                 } else if (pg.specLobby.containsKey(p)) {
                     String s;
-                    for (int ii = 1; ii <= 1000; ii++) {
+                    for (int ii = 1; ii <= 27; ii++) {
                         if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                             pg.onLeaveLobby(p, s);
