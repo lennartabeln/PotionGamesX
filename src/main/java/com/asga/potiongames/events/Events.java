@@ -1435,7 +1435,7 @@ public class Events implements Listener {
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
                             if (pg.isLobbySystem()) {
-                                for (int slot = 1; slot <= 27; slot++) {
+                                for (int slot = 1; slot < 27; slot++) {
                                     if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1448,7 +1448,7 @@ public class Events implements Listener {
                                     }
                                 }
                             } else {
-                                for (int slot = 1; slot <= 27; slot++) {
+                                for (int slot = 1; slot < 27; slot++) {
                                     if (arenadata.contains("pg.arenas." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1599,7 +1599,7 @@ public class Events implements Listener {
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
                             if (pg.isLobbySystem()) {
-                                for (int slot = 1; slot <= 27; slot++) {
+                                for (int slot = 1; slot < 27; slot++) {
                                     if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1612,7 +1612,7 @@ public class Events implements Listener {
                                     }
                                 }
                             } else {
-                                for (int slot = 1; slot <= 27; slot++) {
+                                for (int slot = 1; slot < 27; slot++) {
                                     if (arenadata.contains("pg.arenas." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
@@ -1715,7 +1715,7 @@ public class Events implements Listener {
                                         HashMap<String, Integer> temp = new HashMap<>();
                                         randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                         temp.put(pg.chat.get(42), randomvotes);
-                                        for (int max = 1; max <= 27; max++) {
+                                        for (int max = 1; max < 27; max++) {
                                             if (arenadata.contains("pg.lobbies." + s + "." + max)) {
                                                 int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
                                                 temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
@@ -1745,7 +1745,7 @@ public class Events implements Listener {
                                         HashMap<String, Integer> tempold = new HashMap<>();
                                         randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                         tempold.put(pg.chat.get(42), randomvotes);
-                                        for (int max = 1; max <= 27; max++) {
+                                        for (int max = 1; max < 27; max++) {
                                             if (arenadata.contains("pg.lobbies." + s + "." + max)) {
                                                 int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
                                                 tempold.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
@@ -1759,7 +1759,7 @@ public class Events implements Listener {
                                         HashMap<String, Integer> temp = new HashMap<>();
                                         randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                         temp.put(pg.chat.get(42), randomvotes);
-                                        for (int max = 1; max <= 27; max++) {
+                                        for (int max = 1; max < 27; max++) {
                                             if (arenadata.contains("pg.lobbies." + s + "." + max)) {
                                                 int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
                                                 temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
@@ -2273,6 +2273,13 @@ public class Events implements Listener {
                         e.setCancelled(true);
                     }
                 }
+            }
+            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Lobby List")) {
+                if (e.getCurrentItem() != null) {
+                    p.closeInventory();
+                    pg.onJoinLobby(p, Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName());
+                }
+                e.setCancelled(true);
             }
             if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby")) {
                 if (e.getCurrentItem() != null) {

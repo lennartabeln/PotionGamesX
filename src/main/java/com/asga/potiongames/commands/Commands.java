@@ -1,18 +1,24 @@
 package com.asga.potiongames.commands;
 
 import com.asga.potiongames.main.PotionGames;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Commands implements CommandExecutor {
@@ -69,6 +75,7 @@ public class Commands implements CommandExecutor {
                     if (!pg.isStartOnJoin()) {
                         if (pg.isLobbySystem()) {
                             p.sendMessage(pg.prefix + "/pg join # - Join a game");
+                            p.sendMessage(pg.prefix + "/pg list - List of all lobbies");
                         } else {
                             p.sendMessage(pg.prefix + "/pg join - Join the game");
                         }
@@ -126,6 +133,7 @@ public class Commands implements CommandExecutor {
                         if (!pg.isStartOnJoin()) {
                             if (pg.isLobbySystem()) {
                                 p.sendMessage(pg.prefix + "/pg join # - Join a game");
+                                p.sendMessage(pg.prefix + "/pg list - List of all lobbies");
                             } else {
                                 p.sendMessage(pg.prefix + "/pg join - Join the game");
                             }
@@ -207,6 +215,28 @@ public class Commands implements CommandExecutor {
                         p.setFireTicks(0);
                         pg.setup(p);
                         p.setAllowFlight(true);
+                    }
+                } else if (args[0].equalsIgnoreCase("list")) {
+                    if (p.hasPermission("pg.join")) {
+                        if (pg.isLobbySystem()) {
+                            if (!pg.playerLobby.containsKey(p)) {
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Lobby List");
+                                for (int slot = 1; slot <= 27; slot++) {
+                                    if (arenadata.contains("pg.lobbies." + slot)) {
+                                        ArrayList<String> arenalore = new ArrayList<>();
+                                        ItemStack arenamap = new ItemStack(Material.MAP);
+                                        ItemMeta arenamapmeta = arenamap.getItemMeta();
+                                        assert arenamapmeta != null;
+                                        arenamapmeta.setDisplayName(String.valueOf(slot));
+                                        arenalore.add(pg.infoLobby.get(String.valueOf(slot)));
+                                        arenamapmeta.setLore(arenalore);
+                                        arenamap.setItemMeta(arenamapmeta);
+                                        inv.setItem(slot - 1, arenamap);
+                                    }
+                                }
+                                p.openInventory(inv);
+                            }
+                        }
                     }
                 } else if (args[0].equalsIgnoreCase("join")) {
                     if (p.hasPermission("pg.join")) {
