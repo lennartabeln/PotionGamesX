@@ -52,9 +52,9 @@ public class Events implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+        Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-            Player p = e.getPlayer();
             e.getRecipients().clear();
             if (pg.isAddlobby()) {
                 lobby = e.getMessage();
@@ -347,8 +347,8 @@ public class Events implements Listener {
 
     @EventHandler
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
+        Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            Player p = e.getPlayer();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
@@ -384,8 +384,8 @@ public class Events implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
+        Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            Player p = e.getPlayer();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
@@ -449,10 +449,9 @@ public class Events implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
+        Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            Player p = e.getPlayer();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-
                 if (pg.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 27; ii++) {
@@ -515,8 +514,8 @@ public class Events implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
+        Player p = e.getEntity();
         if (pg.isGameServer()) {
-            Player p = e.getEntity();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
@@ -674,11 +673,11 @@ public class Events implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(pg.kitdatafile);
+        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(pg.chestdatafile);
+        Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-            FileConfiguration kitdata = YamlConfiguration.loadConfiguration(pg.kitdatafile);
-            FileConfiguration chestdata = YamlConfiguration.loadConfiguration(pg.chestdatafile);
-            Player p = e.getPlayer();
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (e.getHand() == EquipmentSlot.HAND) {
                     if (Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_SIGN
@@ -1649,7 +1648,6 @@ public class Events implements Listener {
                 }
             }
         } else {
-            Player p = e.getPlayer();
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (e.getHand() == EquipmentSlot.HAND) {
                     if (Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_SIGN
@@ -1691,9 +1689,9 @@ public class Events implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+        Player p = (Player) e.getWhoClicked();
         if (pg.isGameServer()) {
-            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-            Player p = (Player) e.getWhoClicked();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
@@ -2302,8 +2300,8 @@ public class Events implements Listener {
 
     @EventHandler
     public void onDropItem(PlayerDropItemEvent e) {
+        Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            Player p = e.getPlayer();
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (pg.isLobbySystem()) {
                     String s = null;
@@ -2325,11 +2323,9 @@ public class Events implements Listener {
         Player p = e.getPlayer();
         pg.createPlayer(p.getUniqueId().toString());
         pg.joinChannel(p.getPlayer(), "Global");
-        if (pg.isGameServer()) {
-            if (pg.isStartOnJoin() && !pg.isLobbySystem()) {
-                pg.onJoin(p);
-                e.setJoinMessage(null);
-            }
+        if (pg.isGameServer() && pg.isStartOnJoin() && !pg.isLobbySystem()) {
+            pg.onJoin(p);
+            e.setJoinMessage(null);
         }
         if (p.hasPermission("pg.update")) {
             String latest = null;
@@ -2361,8 +2357,8 @@ public class Events implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            Player p = e.getPlayer();
             if (pg.isLobbySystem()) {
                 if (pg.playerLobby.containsKey(p)) {
                     String s = null;
@@ -2397,8 +2393,8 @@ public class Events implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            Player p = e.getPlayer();
             if (pg.isLobbySystem()) {
                 if (pg.playerLobby.containsKey(p)) {
                     String s;
@@ -2433,25 +2429,21 @@ public class Events implements Listener {
     @EventHandler
     public void onPing(ServerListPingEvent e) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-        if (pg.isGameServer()) {
-            if (pg.isStartOnJoin()) {
-                if (!pg.isLobbySystem()) {
-                    e.setMaxPlayers(pg.getMaxPlayers());
-                    if (pg.getGamestate() == GameStates.WAITING) {
-                        e.setMotd("" + ChatColor.GREEN + pg.getGamestate());
-                    } else if (pg.getGamestate() == GameStates.PREPARING) {
-                        if (pg.getVote() != null) {
-                            String motd = "" + ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + pg.getVote() + ".name"));
-                            e.setMotd(motd.toUpperCase());
-                        } else {
-                            e.setMotd("" + ChatColor.AQUA + "VOTING");
-                        }
-                    } else if (pg.getGamestate() == GameStates.INGAME) {
-                        e.setMotd("" + ChatColor.GRAY + pg.getGamestate());
-                    } else {
-                        e.setMotd("" + ChatColor.RED + pg.getGamestate());
-                    }
+        if (pg.isGameServer() && pg.isStartOnJoin() && !pg.isLobbySystem()) {
+            e.setMaxPlayers(pg.getMaxPlayers());
+            if (pg.getGamestate() == GameStates.WAITING) {
+                e.setMotd("" + ChatColor.GREEN + pg.getGamestate());
+            } else if (pg.getGamestate() == GameStates.PREPARING) {
+                if (pg.getVote() != null) {
+                    String motd = "" + ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + pg.getVote() + ".name"));
+                    e.setMotd(motd.toUpperCase());
+                } else {
+                    e.setMotd("" + ChatColor.AQUA + "VOTING");
                 }
+            } else if (pg.getGamestate() == GameStates.INGAME) {
+                e.setMotd("" + ChatColor.GRAY + pg.getGamestate());
+            } else {
+                e.setMotd("" + ChatColor.RED + pg.getGamestate());
             }
         }
     }

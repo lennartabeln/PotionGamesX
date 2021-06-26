@@ -40,9 +40,6 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class PotionGames extends JavaPlugin {
-    private final ItemStack coin = new ItemStack(Material.GOLD_NUGGET);
-    private final ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
-    public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
     public final ArrayList<String> worlds = new ArrayList<>();
     public final ArrayList<Player> pgPlayers = new ArrayList<>();
     public final ArrayList<Player> specPlayers = new ArrayList<>();
@@ -168,6 +165,9 @@ public class PotionGames extends JavaPlugin {
             getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
         }
     });
+    private final ItemStack coin = new ItemStack(Material.GOLD_NUGGET);
+    private final ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
+    public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
     private int tick;
     private int countdown = 60;
     private int reset = 10;
@@ -682,7 +682,7 @@ public class PotionGames extends JavaPlugin {
         assert coinmeta != null;
         coinmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(55));
         coin.setItemMeta(coinmeta);
-        if (gameServer) {
+        if (isGameServer()) {
             if (!isLobbySystem()) {
                 setGamestate(GameStates.WAITING);
                 tickStarted = true;
@@ -850,7 +850,7 @@ public class PotionGames extends JavaPlugin {
     @Override
     public void onDisable() {
         close();
-        if (gameServer && startOnJoin && !lobbySystem) {
+        if (isGameServer() && isStartOnJoin() && !isLobbySystem()) {
             for (Player all : Bukkit.getOnlinePlayers()) {
                 all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
             }
