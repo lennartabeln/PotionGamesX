@@ -252,6 +252,8 @@ public class Commands implements CommandExecutor {
                             message.addExtra(link);
                             message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/andersspielen/PotionGamesIssues/releases/latest"));
                             p.spigot().sendMessage(message);
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(77) + ": " + ChatColor.AQUA + pg.getDescription().getVersion());
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("list")) {

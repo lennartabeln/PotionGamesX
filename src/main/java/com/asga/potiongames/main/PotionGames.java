@@ -142,7 +142,7 @@ public class PotionGames extends JavaPlugin {
     public final File chestdatafile = new File(getDataFolder() + File.separator + "chestdata.yml");
     public final Thread checkUpdates = new Thread(() -> {
         String latest = null;
-        getLogger().info("Checking for updates...");
+        getLogger().info(chat.get(76));
         try {
             URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
             BufferedReader bufferedReader = new BufferedReader(
@@ -160,7 +160,7 @@ public class PotionGames extends JavaPlugin {
         }
         boolean upToDate = getDescription().getVersion().equals(latest);
         if (upToDate) {
-            getLogger().info("Plugin is up to date! (" + getDescription().getVersion() + ")");
+            getLogger().info(chat.get(77) + ": " + getDescription().getVersion());
         } else {
             getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
         }
@@ -291,6 +291,8 @@ public class PotionGames extends JavaPlugin {
         chat.add("could not be teleported to a spawn!");
         chat.add("This lobby does not exists!");
         chat.add("Use /pg help for help!");
+        chat.add("Checking for updates...");
+        chat.add("Plugin is up to date");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
