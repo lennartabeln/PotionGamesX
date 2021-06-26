@@ -1379,7 +1379,7 @@ public class Events implements Listener {
                                         }
                                         arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
                                         arenadata.save(pg.arenadatafile);
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(30));
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29));
                                     } catch (Exception ex) {
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.RED + " " + pg.chat.get(31));
                                     }
@@ -1405,7 +1405,7 @@ public class Events implements Listener {
                                         }
                                         arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
                                         arenadata.save(pg.arenadatafile);
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(30) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
                                     } catch (Exception ex) {
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
                                     }
@@ -1541,7 +1541,7 @@ public class Events implements Listener {
                                         }
                                         arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
                                         arenadata.save(pg.arenadatafile);
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(32));
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28));
                                     } catch (Exception ex) {
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(31));
                                     }
@@ -1569,7 +1569,7 @@ public class Events implements Listener {
                                         }
                                         arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
                                         arenadata.save(pg.arenadatafile);
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(32) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                                     } catch (Exception ex) {
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                                     }

@@ -232,7 +232,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Arena-Selector");
         chat.add("Votes");
         chat.add("You have voted for");
-        chat.add("You have already voted!");
+        chat.add("null"); //Removed 17 //18
         chat.add("could not be teleported to the lobby!");
         chat.add("The game has already started!");
         chat.add("The game has been started!");
@@ -245,9 +245,9 @@ public class PotionGames extends JavaPlugin {
         chat.add("is not an arena!");
         chat.add("successfully removed!");
         chat.add("successfully set!");
-        chat.add("successfully set!");
+        chat.add("null"); //Removed 30 //31
         chat.add("is not a valid spawn!");
-        chat.add("successfully removed!");
+        chat.add("null"); //Removed 32 //33
         chat.add("Place");
         chat.add("Head successfully set!");
         chat.add("Sign successfully set!");
@@ -263,7 +263,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("You are now in team");
         chat.add("You now have the kit");
         chat.add("This team is already full!");
-        chat.add("You are already in a team!");
+        chat.add("null"); //Removed 48 //49
         chat.add("Shop");
         chat.add("Duration");
         chat.add("Price");
@@ -278,7 +278,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Deaths");
         chat.add("K/D");
         chat.add("Kit Selector");
-        chat.add("You already have a kit!");
+        chat.add("null"); //Removed 63 //64
         chat.add("Commands");
         chat.add("Rounds");
         chat.add("Lobby successfully removed!");
