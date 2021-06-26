@@ -3435,21 +3435,21 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
-    public void setWins(String uuid, int deaths) {
+    public void setWins(String uuid, int wins) {
         if (playerExists(uuid)) {
-            update("UPDATE Stats SET WINS= '" + deaths + "' WHERE UUID= '" + uuid + "';");
+            update("UPDATE Stats SET WINS= '" + wins + "' WHERE UUID= '" + uuid + "';");
         } else {
             createPlayer(uuid);
-            setDeaths(uuid, deaths);
+            setWins(uuid, wins);
         }
     }
 
-    public void setLosts(String uuid, int deaths) {
+    public void setLosts(String uuid, int losts) {
         if (playerExists(uuid)) {
-            update("UPDATE Stats SET LOSTS= '" + deaths + "' WHERE UUID= '" + uuid + "';");
+            update("UPDATE Stats SET LOSTS= '" + losts + "' WHERE UUID= '" + uuid + "';");
         } else {
             createPlayer(uuid);
-            setDeaths(uuid, deaths);
+            setLosts(uuid, losts);
         }
     }
 
