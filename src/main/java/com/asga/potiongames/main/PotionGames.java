@@ -156,7 +156,7 @@ public class PotionGames extends JavaPlugin {
             bufferedReader.close();
             latest = stringBuilder.toString().trim();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().warning(chat.get(48) + ": " + e.getMessage());
         }
         boolean upToDate = getDescription().getVersion().equals(latest);
         if (upToDate) {
@@ -232,7 +232,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Arena-Selector");
         chat.add("Votes");
         chat.add("You have voted for");
-        chat.add("null"); //Removed 17 //18
+        chat.add("in spectator mode");
         chat.add("could not be teleported to the lobby!");
         chat.add("The game has already started!");
         chat.add("The game has been started!");
@@ -245,9 +245,9 @@ public class PotionGames extends JavaPlugin {
         chat.add("is not an arena!");
         chat.add("successfully removed!");
         chat.add("successfully set!");
-        chat.add("null"); //Removed 30 //31
+        chat.add("Successfully joined lobby");
         chat.add("is not a valid spawn!");
-        chat.add("null"); //Removed 32 //33
+        chat.add("Successfully left lobby");
         chat.add("Place");
         chat.add("Head successfully set!");
         chat.add("Sign successfully set!");
@@ -263,7 +263,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("You are now in team");
         chat.add("You now have the kit");
         chat.add("This team is already full!");
-        chat.add("null"); //Removed 48 //49
+        chat.add("Update-Checker-Error");
         chat.add("Shop");
         chat.add("Duration");
         chat.add("Price");
@@ -278,7 +278,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Deaths");
         chat.add("K/D");
         chat.add("Kit Selector");
-        chat.add("null"); //Removed 63 //64
+        chat.add("File loading / saving fail! Error");
         chat.add("Commands");
         chat.add("Rounds");
         chat.add("Lobby successfully removed!");
@@ -584,7 +584,7 @@ public class PotionGames extends JavaPlugin {
         try {
             messages.save(messagesfile);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         checkUpdates.start();
         int shopitem = 1;
@@ -617,12 +617,12 @@ public class PotionGames extends JavaPlugin {
         try {
             shopdata.save(shopdatafile);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         try {
             arenadata.save(arenadatafile);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         if (!kitallowed) {
             kitallowed = true;
@@ -655,7 +655,7 @@ public class PotionGames extends JavaPlugin {
         try {
             kitdata.save(kitdatafile);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         chestData();
         if (getConfig().get("pg.mysql") == null) {
@@ -722,7 +722,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyActivateTeams.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateTeams"));
@@ -733,7 +733,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyActivateKits.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateKits"));
@@ -744,7 +744,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyActivateShop.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateShop"));
@@ -755,7 +755,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyteamSize.replace(s, arenadata.getInt("pg.lobbies." + s + ".teamSize"));
@@ -766,7 +766,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbymaxPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".maxPlayers"));
@@ -777,7 +777,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyminPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".minPlayers"));
@@ -788,7 +788,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyroundTime.replace(s, arenadata.getInt("pg.lobbies." + s + ".roundTime"));
@@ -903,7 +903,7 @@ public class PotionGames extends JavaPlugin {
                         rank.put(ii, rs.getString("UUID"));
                     }
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
                 }
                 rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
                 rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
@@ -1215,7 +1215,7 @@ public class PotionGames extends JavaPlugin {
         try {
             chestdata.save(chestdatafile);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + ex.getMessage());
         }
     }
 
@@ -1411,7 +1411,7 @@ public class PotionGames extends JavaPlugin {
                                         rank.put(ii, rs.getString("UUID"));
                                     }
                                 } catch (SQLException e) {
-                                    e.printStackTrace();
+                                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
                                 }
                                 rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
                                 rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
@@ -2092,6 +2092,7 @@ public class PotionGames extends JavaPlugin {
             votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
             votepaper.setItemMeta(votepapaermeta);
             p.getInventory().setItem(8, votepaper);
+            p.sendMessage(prefix + ChatColor.GREEN + chat.get(30));
         }
         if (!joinable) {
             specPlayers.add(p);
@@ -2117,6 +2118,7 @@ public class PotionGames extends JavaPlugin {
             p.setFoodLevel(20);
             p.setCanPickupItems(false);
             p.setCollidable(false);
+            p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + chat.get(17));
         }
     }
 
@@ -2182,6 +2184,7 @@ public class PotionGames extends JavaPlugin {
         } else {
             setGamestate(GameStates.RESET);
         }
+        p.sendMessage(prefix + ChatColor.GREEN + chat.get(32));
     }
 
     public void tickLobby(String s) {
@@ -2233,7 +2236,7 @@ public class PotionGames extends JavaPlugin {
                                         rank.put(ii, rs.getString("UUID"));
                                     }
                                 } catch (SQLException e) {
-                                    e.printStackTrace();
+                                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
                                 }
                                 rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
                                 rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
@@ -3067,6 +3070,7 @@ public class PotionGames extends JavaPlugin {
             votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
             votepaper.setItemMeta(votepapaermeta);
             p.getInventory().setItem(8, votepaper);
+            p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + ChatColor.AQUA + s);
         }
         if (!lobbyJoinable.get(s)) {
             specLobby.put(p, s);
@@ -3094,6 +3098,7 @@ public class PotionGames extends JavaPlugin {
             p.setFoodLevel(20);
             p.setCanPickupItems(false);
             p.setCollidable(false);
+            p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + ChatColor.AQUA + s + " " + ChatColor.GREEN + chat.get(17));
         }
     }
 
@@ -3178,6 +3183,7 @@ public class PotionGames extends JavaPlugin {
         } else {
             lobbyStates.replace(s, GameStates.RESET);
         }
+        p.sendMessage(prefix + ChatColor.GREEN + chat.get(32) + " " + ChatColor.AQUA + s);
     }
 
     public void connect() {
@@ -3273,7 +3279,7 @@ public class PotionGames extends JavaPlugin {
             }
             return false;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
         }
         return false;
     }
@@ -3294,7 +3300,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("KILLS");
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3313,7 +3319,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("DEATHS");
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3332,7 +3338,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getDouble("KD");
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3351,7 +3357,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("WINS");
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3370,7 +3376,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("LOSTS");
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3389,7 +3395,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("ROUNDS");
             } catch (SQLException e) {
-                e.printStackTrace();
+                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);

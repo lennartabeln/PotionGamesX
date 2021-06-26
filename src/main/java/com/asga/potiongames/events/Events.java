@@ -73,7 +73,7 @@ public class Events implements Listener {
                         try {
                             arenadata.save(pg.arenadatafile);
                         } catch (IOException ex) {
-                            ex.printStackTrace();
+                            System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
                         }
                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                     }
@@ -130,7 +130,7 @@ public class Events implements Listener {
                         try {
                             arenadata.save(pg.arenadatafile);
                         } catch (IOException ex) {
-                            ex.printStackTrace();
+                            System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
                         }
                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(66) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                     }
@@ -234,24 +234,24 @@ public class Events implements Listener {
                             e.setCancelled(true);
                             for (Player pgchat : pg.playerLobby.keySet()) {
                                 if (pg.playerLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.AQUA + p.getDisplayName() + ": " + message);
                                 }
                             }
                             for (Player pgchat : pg.specLobby.keySet()) {
                                 if (pg.specLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.AQUA + p.getDisplayName() + ": " + message);
                                 }
                             }
                         } else if (pg.specPlayers.contains(p)) {
                             e.setCancelled(true);
                             for (Player pgchat : pg.playerLobby.keySet()) {
                                 if (pg.playerLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.DARK_GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.DARK_GRAY + "] " + ChatColor.AQUA + p.getDisplayName() + ": " + message);
                                 }
                             }
                             for (Player pgchat : pg.specLobby.keySet()) {
                                 if (pg.specLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.DARK_GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.DARK_GRAY + "] " + ChatColor.AQUA + p.getDisplayName() + ": " + message);
                                 }
                             }
                         }
@@ -285,18 +285,18 @@ public class Events implements Listener {
                         if (pg.pgPlayers.contains(p)) {
                             e.setCancelled(true);
                             for (Player pgchat : pg.pgPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                pgchat.sendMessage(pg.prefix + ChatColor.AQUA + p.getDisplayName() + ": " + message);
                             }
                             for (Player pgchat : pg.specPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                pgchat.sendMessage(pg.prefix + ChatColor.AQUA + p.getDisplayName() + ": " + message);
                             }
                         } else if (pg.specPlayers.contains(p)) {
                             e.setCancelled(true);
                             for (Player pgchat : pg.pgPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.DARK_GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.DARK_GRAY + "] " + ChatColor.AQUA + p.getDisplayName() + ": " + message);
                             }
                             for (Player pgchat : pg.specPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.DARK_GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.DARK_GRAY + "] " + ChatColor.AQUA + p.getDisplayName() + ": " + message);
                             }
                         }
                     }
@@ -1478,7 +1478,7 @@ public class Events implements Listener {
                                     try {
                                         arenadata.save(pg.arenadatafile);
                                     } catch (IOException ex) {
-                                        ex.printStackTrace();
+                                        System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
                                     }
                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                                 }
@@ -2341,7 +2341,7 @@ public class Events implements Listener {
                 bufferedReader.close();
                 latest = stringBuilder.toString().trim();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(48) + ": " + ex.getMessage());
             }
             boolean upToDate = pg.getDescription().getVersion().equals(latest);
             if (!upToDate) {
