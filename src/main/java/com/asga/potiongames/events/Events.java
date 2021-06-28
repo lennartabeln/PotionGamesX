@@ -234,24 +234,24 @@ public class Events implements Listener {
                             e.setCancelled(true);
                             for (Player pgchat : pg.playerLobby.keySet()) {
                                 if (pg.playerLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
                             }
                             for (Player pgchat : pg.specLobby.keySet()) {
                                 if (pg.specLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
                             }
                         } else if (pg.specPlayers.contains(p)) {
                             e.setCancelled(true);
                             for (Player pgchat : pg.playerLobby.keySet()) {
                                 if (pg.playerLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
                             }
                             for (Player pgchat : pg.specLobby.keySet()) {
                                 if (pg.specLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
                             }
                         }
@@ -285,18 +285,18 @@ public class Events implements Listener {
                         if (pg.pgPlayers.contains(p)) {
                             e.setCancelled(true);
                             for (Player pgchat : pg.pgPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.AQUA + p.getDisplayName() + ": " + message);
+                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                             }
                             for (Player pgchat : pg.specPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.AQUA + p.getDisplayName() + ": " + message);
+                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                             }
                         } else if (pg.specPlayers.contains(p)) {
                             e.setCancelled(true);
                             for (Player pgchat : pg.pgPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.AQUA + p.getDisplayName() + ": " + message);
+                                pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                             }
                             for (Player pgchat : pg.specPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.AQUA + p.getDisplayName() + ": " + message);
+                                pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                             }
                         }
                     }
