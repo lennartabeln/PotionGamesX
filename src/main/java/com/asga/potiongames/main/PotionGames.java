@@ -140,31 +140,6 @@ public class PotionGames extends JavaPlugin {
     public final File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
     public final File arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");
     public final File chestdatafile = new File(getDataFolder() + File.separator + "chestdata.yml");
-    public final Thread checkUpdates = new Thread(() -> {
-        String latest = null;
-        getLogger().info(chat.get(76));
-        try {
-            URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(url.openStream()));
-            StringBuilder stringBuilder = new StringBuilder();
-            String inputLine;
-            while ((inputLine = bufferedReader.readLine()) != null) {
-                stringBuilder.append(inputLine);
-                stringBuilder.append(System.lineSeparator());
-            }
-            bufferedReader.close();
-            latest = stringBuilder.toString().trim();
-        } catch (Exception e) {
-            getLogger().warning(chat.get(48) + ": " + e.getMessage());
-        }
-        boolean upToDate = getDescription().getVersion().equals(latest);
-        if (upToDate) {
-            getLogger().info(chat.get(77) + ": " + getDescription().getVersion());
-        } else {
-            getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
-        }
-    });
     private final ItemStack coin = new ItemStack(Material.GOLD_NUGGET);
     private final ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
     public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
@@ -210,11 +185,20 @@ public class PotionGames extends JavaPlugin {
     private boolean addarena = false;
     private boolean dellobby = false;
     private boolean delarena = false;
+    private boolean reload = false;
     private Connection con;
     private Statement st;
 
     @Override
     public void onEnable() {
+        FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
+        FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new Events(this), this);
+        Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
+        setReload(false);
         chat.add("Waiting for players!");
         chat.add("The game starts in");
         chat.add("Player-Finder");
@@ -292,7 +276,8 @@ public class PotionGames extends JavaPlugin {
         chat.add("This lobby does not exists!");
         chat.add("Use /pg help for help!");
         chat.add("Checking for updates...");
-        chat.add("Plugin is up to date");
+        chat.add("Plugin is up to date!");
+        chat.add("Plugin successfully reloaded!");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -455,10 +440,6 @@ public class PotionGames extends JavaPlugin {
         shopkit.add("Fighter");
         shopcost.add(4);
         shopsale.add(2);
-        FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
-        FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         if (getConfig().get("pg.activateMySQL") == null) {
             getConfig().addDefault("pg.activateMySQL", activateMySQL);
             getConfig().options().copyDefaults(true);
@@ -588,7 +569,6 @@ public class PotionGames extends JavaPlugin {
         } catch (IOException e) {
             System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
-        checkUpdates.start();
         int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
             if (shopdata.get("pg.potions." + shopitem) == null) {
@@ -677,9 +657,6 @@ public class PotionGames extends JavaPlugin {
         }
         connect();
         ConnectMySQL();
-        PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new Events(this), this);
-        Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
         ItemMeta coinmeta = coin.getItemMeta();
         assert coinmeta != null;
         coinmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(55));
@@ -846,6 +823,405 @@ public class PotionGames extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         } else {
             getServer().getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chat.get(40));
+        }
+        String latest = null;
+        getLogger().info(chat.get(76));
+        try {
+            URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(url.openStream()));
+            StringBuilder stringBuilder = new StringBuilder();
+            String inputLine;
+            while ((inputLine = bufferedReader.readLine()) != null) {
+                stringBuilder.append(inputLine);
+                stringBuilder.append(System.lineSeparator());
+            }
+            bufferedReader.close();
+            latest = stringBuilder.toString().trim();
+        } catch (Exception e) {
+            getLogger().warning(chat.get(48) + ": " + e.getMessage());
+        }
+        boolean upToDate = getDescription().getVersion().equals(latest);
+        if (upToDate) {
+            getLogger().info(chat.get(77) + ": " + getDescription().getVersion());
+        } else {
+            getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
+        }
+    }
+
+    public void onReload() {
+        FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
+        FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
+        if (getConfig().get("pg.activateMySQL") == null) {
+            getConfig().addDefault("pg.activateMySQL", activateMySQL);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateMySQL = getConfig().getBoolean("pg.activateMySQL");
+        }
+        if (getConfig().get("pg.countdown") == null) {
+            getConfig().addDefault("pg.countdown", countdown);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            countdown = getConfig().getInt("pg.countdown");
+        }
+        if (getConfig().get("pg.startOnJoin") == null) {
+            getConfig().addDefault("pg.startOnJoin", startOnJoin);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            startOnJoin = getConfig().getBoolean("pg.startOnJoin");
+        }
+        if (getConfig().get("pg.activateTeams") == null) {
+            getConfig().addDefault("pg.activateTeams", activateTeams);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateTeams = getConfig().getBoolean("pg.activateTeams");
+        }
+        if (getConfig().get("pg.activateKits") == null) {
+            getConfig().addDefault("pg.activateKits", activateKits);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateKits = getConfig().getBoolean("pg.activateKits");
+        }
+        if (getConfig().get("pg.activateShop") == null) {
+            getConfig().addDefault("pg.activateShop", activateShop);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateShop = getConfig().getBoolean("pg.activateShop");
+        }
+        if (getConfig().get("pg.lobbySystem") == null) {
+            getConfig().addDefault("pg.lobbySystem", lobbySystem);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            lobbySystem = getConfig().getBoolean("pg.lobbySystem");
+        }
+        if (getConfig().get("pg.gameServer") == null) {
+            getConfig().addDefault("pg.gameServer", gameServer);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            gameServer = getConfig().getBoolean("pg.gameServer");
+        }
+        if (getConfig().get("pg.maxPlayers") == null) {
+            getConfig().addDefault("pg.maxPlayers", maxPlayers);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            maxPlayers = getConfig().getInt("pg.maxPlayers");
+        }
+        if (getConfig().get("pg.minPlayers") == null) {
+            getConfig().addDefault("pg.minPlayers", minPlayers);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            minPlayers = getConfig().getInt("pg.minPlayers");
+        }
+        if (getConfig().get("pg.teamSize") == null) {
+            getConfig().addDefault("pg.teamSize", teamSize);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            teamSize = getConfig().getInt("pg.teamSize");
+            teamAmount = maxPlayers / teamSize;
+        }
+        if (getConfig().get("pg.roundTime") == null) {
+            getConfig().addDefault("pg.roundTime", roundTime);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            roundTime = getConfig().getInt("pg.roundTime");
+            roundTimeSeconds = roundTime * 60;
+        }
+        if (getConfig().get("pg.activePotions") == null) {
+            getConfig().addDefault("pg.activePotions", activePotions);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activePotions = getConfig().getInt("pg.activePotions");
+        }
+        if (getConfig().get("pg.activeKits") == null) {
+            getConfig().addDefault("pg.activeKits", activeKits);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activeKits = getConfig().getInt("pg.activeKits");
+        }
+        if (getConfig().get("pg.language") == null) {
+            getConfig().addDefault("pg.language", language);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            language = getConfig().getString("pg.language");
+        }
+        if (messages.get("pg.messages." + language + ".prefix") == null) {
+            messages.addDefault("pg.messages." + language + ".prefix", prefix);
+            messages.options().copyDefaults(true);
+        } else {
+            prefix = messages.getString("pg.messages." + language + ".prefix");
+        }
+        int message = 1;
+        for (int i = 0; i < chat.size(); i++) {
+            if (messages.get("pg.messages." + language + "." + message) == null) {
+                messages.addDefault("pg.messages." + language + "." + message, chat.get(message - 1));
+                messages.options().copyDefaults(true);
+            } else {
+                String name = messages.getString("pg.messages." + language + "." + message);
+                chat.set(message - 1, name);
+            }
+            message++;
+        }
+        try {
+            messages.save(messagesfile);
+        } catch (IOException e) {
+            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+        }
+        int shopitem = 1;
+        for (int i = 0; i < shop.size(); i++) {
+            if (shopdata.get("pg.potions." + shopitem) == null) {
+                shopdata.addDefault("pg.potions." + shopitem, shop.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + ".name", shop.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + "." + "shoppotion", shoppotion.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + "." + "shoppotiontype", shoppotiontype.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + ".kit", shopkit.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + ".cost", shopcost.get(shopitem - 1));
+                shopdata.addDefault("pg.potions." + shopitem + ".sale", shopsale.get(shopitem - 1));
+                shopdata.options().copyDefaults(true);
+            } else {
+                String name = shopdata.getString("pg.potions." + shopitem + ".name");
+                shop.set(shopitem - 1, name);
+                PotionEffect potion = (PotionEffect) shopdata.get("pg.potions." + shopitem + "." + "shoppotion");
+                shoppotion.set(shopitem - 1, potion);
+                ItemStack potiontype = (ItemStack) shopdata.get("pg.potions." + shopitem + "." + "shoppotiontype");
+                shoppotiontype.set(shopitem - 1, potiontype);
+                String kit = shopdata.getString("pg.potions." + shopitem + ".kit");
+                shopkit.set(shopitem - 1, kit);
+                Integer cost = (Integer) shopdata.get("pg.potions." + shopitem + ".cost");
+                shopcost.set(shopitem - 1, cost);
+                Integer sale = (Integer) shopdata.get("pg.potions." + shopitem + ".sale");
+                shopsale.set(shopitem - 1, sale);
+            }
+            shopitem++;
+        }
+        try {
+            shopdata.save(shopdatafile);
+        } catch (IOException e) {
+            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+        }
+        try {
+            arenadata.save(arenadatafile);
+        } catch (IOException e) {
+            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+        }
+        kits.clear();
+        kitplayers.clear();
+        kitplayernames.clear();
+        kited.clear();
+        if (!kitallowed) {
+            kitallowed = true;
+            kits.add("Rich Kid");
+            kits.add("Fighter");
+            kits.add("Healer");
+            kits.add("Looter");
+            kits.add("Ghost");
+            kits.add("Tank");
+            for (int i = 7; i < 27; i++) {
+                kits.add("kit" + i);
+            }
+            kitplayers.put(chat.get(42), 0);
+            for (String all : kits) {
+                kitplayers.put(all, 0);
+            }
+        }
+        int kititem = 1;
+        for (int i = 0; i < kits.size(); i++) {
+            if (kitdata.get("pg.kits." + kititem) == null) {
+                kitdata.addDefault("pg.kits." + kititem, kits.get(kititem - 1));
+                kitdata.addDefault("pg.kits." + kititem + ".name", kits.get(kititem - 1));
+                kitdata.options().copyDefaults(true);
+            } else {
+                String name = kitdata.getString("pg.kits." + kititem + ".name");
+                kits.set(kititem - 1, name);
+            }
+            kititem++;
+        }
+        try {
+            kitdata.save(kitdatafile);
+        } catch (IOException e) {
+            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+        }
+        chestData();
+        if (getConfig().get("pg.mysql") == null) {
+            getConfig().addDefault("pg.mysql.host", "localhost");
+            getConfig().addDefault("pg.mysql.port", "3306");
+            getConfig().addDefault("pg.mysql.database", "potiongames");
+            getConfig().addDefault("pg.mysql.user", "root");
+            getConfig().addDefault("pg.mysql.password", "");
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            host = getConfig().getString("pg.mysql.host");
+            port = getConfig().getString("pg.mysql.port");
+            database = getConfig().getString("pg.mysql.database");
+            user = getConfig().getString("pg.mysql.user");
+            password = getConfig().getString("pg.mysql.password");
+        }
+        if (isLobbySystem()) {
+            for (int lobby = 1; lobby <= 27; lobby++) {
+                if (arenadata.contains("pg.lobbies." + lobby)) {
+                    String s = Integer.toString(lobby);
+                    lobbyActivateTeams.put(s, true);
+                    lobbyActivateKits.put(s, true);
+                    lobbyActivateShop.put(s, true);
+                    lobbyJoinable.put(s, true);
+                    lobbyForcearena.put(s, false);
+                    lobbyMove.put(s, true);
+                    lobbyVoteallowed.put(s, false);
+                    lobbyTeamallowed.put(s, false);
+                    lobbyKitallowed.put(s, false);
+                    lobbyAmount.put(s, 0);
+                    lobbyTickstarted.put(s, true);
+                    lobbyVoted.put(s, null);
+                    lobbyBuild.put(s, false);
+                    lobbyPause.put(s, false);
+                    lobbyVote.put(s, null);
+                    lobbyVotedarena.put(s, null);
+                    lobbyteamSize.put(s, 2);
+                    lobbymaxPlayers.put(s, 24);
+                    int minPlayersNumber = lobbymaxPlayers.get(s) / 2;
+                    lobbyminPlayers.put(s, minPlayersNumber);
+                    int teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
+                    lobbyteamAmount.put(s, teamAmountNumber);
+                    lobbyroundTime.put(s, 30);
+                    int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
+                    lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
+                    if (arenadata.get("pg.lobbies." + s + ".activateTeams") == null) {
+                        arenadata.addDefault("pg.lobbies." + s + ".activateTeams", activateTeams);
+                        arenadata.options().copyDefaults(true);
+                        try {
+                            arenadata.save(arenadatafile);
+                        } catch (IOException e) {
+                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                        }
+                    } else {
+                        lobbyActivateTeams.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateTeams"));
+                    }
+                    if (arenadata.get("pg.lobbies." + s + ".activateKits") == null) {
+                        arenadata.addDefault("pg.lobbies." + s + ".activateKits", activateKits);
+                        arenadata.options().copyDefaults(true);
+                        try {
+                            arenadata.save(arenadatafile);
+                        } catch (IOException e) {
+                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                        }
+                    } else {
+                        lobbyActivateKits.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateKits"));
+                    }
+                    if (arenadata.get("pg.lobbies." + s + ".activateShop") == null) {
+                        arenadata.addDefault("pg.lobbies." + s + ".activateShop", activateShop);
+                        arenadata.options().copyDefaults(true);
+                        try {
+                            arenadata.save(arenadatafile);
+                        } catch (IOException e) {
+                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                        }
+                    } else {
+                        lobbyActivateShop.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateShop"));
+                    }
+                    if (arenadata.get("pg.lobbies." + s + ".teamSize") == null) {
+                        arenadata.addDefault("pg.lobbies." + s + ".teamSize", teamSize);
+                        arenadata.options().copyDefaults(true);
+                        try {
+                            arenadata.save(arenadatafile);
+                        } catch (IOException e) {
+                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                        }
+                    } else {
+                        lobbyteamSize.replace(s, arenadata.getInt("pg.lobbies." + s + ".teamSize"));
+                    }
+                    if (arenadata.get("pg.lobbies." + s + ".maxPlayers") == null) {
+                        arenadata.addDefault("pg.lobbies." + s + ".maxPlayers", maxPlayers);
+                        arenadata.options().copyDefaults(true);
+                        try {
+                            arenadata.save(arenadatafile);
+                        } catch (IOException e) {
+                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                        }
+                    } else {
+                        lobbymaxPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".maxPlayers"));
+                    }
+                    if (arenadata.get("pg.lobbies." + s + ".minPlayers") == null) {
+                        arenadata.addDefault("pg.lobbies." + s + ".minPlayers", minPlayers);
+                        arenadata.options().copyDefaults(true);
+                        try {
+                            arenadata.save(arenadatafile);
+                        } catch (IOException e) {
+                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                        }
+                    } else {
+                        lobbyminPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".minPlayers"));
+                    }
+                    if (arenadata.get("pg.lobbies." + s + ".roundTime") == null) {
+                        arenadata.addDefault("pg.lobbies." + s + ".roundTime", roundTime);
+                        arenadata.options().copyDefaults(true);
+                        try {
+                            arenadata.save(arenadatafile);
+                        } catch (IOException e) {
+                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                        }
+                    } else {
+                        lobbyroundTime.replace(s, arenadata.getInt("pg.lobbies." + s + ".roundTime"));
+                    }
+                    roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
+                    lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
+                    teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
+                    lobbyteamAmount.put(s, teamAmountNumber);
+                    if (!lobbyVoteallowed.get(s)) {
+                        lobbyVoteallowed.replace(s, true);
+                        HashMap<String, Integer> temp = new HashMap<>();
+                        temp.put(chat.get(42), 0);
+                        for (int max = 1; max < 27; max++) {
+                            if (arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
+                                temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
+                                lobbyvoteplayernamesdata.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), null);
+                            }
+                        }
+                        lobbyvotes.put(s, temp);
+                        lobbyvoteplayernames.put(s, lobbyvoteplayernamesdata);
+                    }
+                    if (!lobbyTeamallowed.get(s)) {
+                        lobbyTeamallowed.replace(s, true);
+                        HashMap<Integer, Integer> temp = new HashMap<>();
+                        for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
+                            temp.put(max, 0);
+                            lobbyteamplayernamesdata.put(Integer.toString(max), null);
+                        }
+                        lobbyteams.put(s, temp);
+                        lobbyteamplayernames.put(s, lobbyteamplayernamesdata);
+                    }
+                    if (!lobbyKitallowed.get(s)) {
+                        lobbyKitallowed.replace(s, true);
+                        kitplayers.put(chat.get(42), 0);
+                        for (String all : kits) {
+                            kitplayers.put(all, 0);
+                        }
+                    }
+                    lobbyLiquidPlaced.put(s, lobbyLiquidPlacedData);
+                    lobbyPlacedBlocks.put(s, lobbyPlacedBlocksData);
+                    lobbyBreakedBlocks.put(s, lobbyBreakedBlocksData);
+                    lobbyWaterBlocks.put(s, lobbyWaterBlocksData);
+                    infoLobby.put(s, null + " , " + null + " , " + null);
+                    lobbyStates.put(s, GameStates.WAITING);
+                    tickLobby(s);
+                }
+            }
         }
     }
 
@@ -1176,7 +1552,7 @@ public class PotionGames extends JavaPlugin {
         ItemStack firebow = new ItemStack(Material.BOW);
         ItemMeta firebowmeta = firebow.getItemMeta();
         assert firebowmeta != null;
-        firebowmeta.setDisplayName(ChatColor.LIGHT_PURPLE + chat.get(11));
+        firebowmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(11));
         firebow.setItemMeta(firebowmeta);
         firebow.addEnchantment(Enchantment.ARROW_FIRE, 1);
         if (chestdata.get("pg.customchests." + 2) == null) {
@@ -2127,7 +2503,7 @@ public class PotionGames extends JavaPlugin {
     public void onLeave(Player p) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         joinChannel(p.getPlayer(), "Global");
-        if (getGamestate() == GameStates.INGAME && pgPlayers.size() > 1) {
+        if (getGamestate() == GameStates.INGAME && pgPlayers.size() > 1 && isReload()) {
             addLosts(p.getUniqueId().toString(), 1);
         }
         p.getInventory().setContents(inv.get(p.getName()));
@@ -3107,7 +3483,7 @@ public class PotionGames extends JavaPlugin {
     public void onLeaveLobby(Player p, String s) {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         joinChannel(p.getPlayer(), "Global");
-        if (lobbyStates.get(s) == GameStates.INGAME && lobbyAmount.get(s) > 1 && playerLobby.containsKey(p)) {
+        if (lobbyStates.get(s) == GameStates.INGAME && lobbyAmount.get(s) > 1 && playerLobby.containsKey(p) && isReload()) {
             addLosts(p.getUniqueId().toString(), 1);
         }
         p.getInventory().setContents(inv.get(p.getName()));
@@ -3627,6 +4003,14 @@ public class PotionGames extends JavaPlugin {
 
     public void setDelarena(boolean delarena) {
         this.delarena = delarena;
+    }
+
+    public boolean isReload() {
+        return reload;
+    }
+
+    public void setReload(boolean reload) {
+        this.reload = reload;
     }
 
     public boolean isMove() {

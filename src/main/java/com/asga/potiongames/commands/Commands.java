@@ -52,6 +52,7 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg joinsign [lobbynumber] - Add Join-Sign");
+                        p.sendMessage(pg.prefix + "/pg reload - Reload all configs");
                     } else {
                         p.sendMessage(pg.prefix + "/pg setup - Set up plugin");
                         p.sendMessage(pg.prefix + "/pg setlobby - Set lobby");
@@ -62,6 +63,7 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg joinsign - Set Join-Sign");
+                        p.sendMessage(pg.prefix + "/pg reload - Reload all configs");
                     }
                 }
                 if (p.hasPermission("pg.build")) {
@@ -95,7 +97,7 @@ public class Commands implements CommandExecutor {
                     p.sendMessage(pg.prefix + "/pg stats - Show your stats");
                 }
                 if (p.hasPermission("pg.update")) {
-                    p.sendMessage(pg.prefix + "/pg version - Shows your and latest version of plugin");
+                    p.sendMessage(pg.prefix + "/pg version - Show your and latest version of plugin");
                 }
                 p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
             } else if (args.length == 1) {
@@ -113,6 +115,7 @@ public class Commands implements CommandExecutor {
                             p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
                             p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                             p.sendMessage(pg.prefix + "/pg joinsign [lobbynumber] - Add Join-Sign");
+                            p.sendMessage(pg.prefix + "/pg reload - Reload all configs");
                         } else {
                             p.sendMessage(pg.prefix + "/pg setup - Set up plugin");
                             p.sendMessage(pg.prefix + "/pg setlobby - Set lobby");
@@ -123,6 +126,7 @@ public class Commands implements CommandExecutor {
                             p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
                             p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                             p.sendMessage(pg.prefix + "/pg joinsign - Set Join-Sign");
+                            p.sendMessage(pg.prefix + "/pg reload - Reload all configs");
                         }
                     }
                     if (p.hasPermission("pg.build")) {
@@ -156,7 +160,7 @@ public class Commands implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg stats - Show your stats");
                     }
                     if (p.hasPermission("pg.update")) {
-                        p.sendMessage(pg.prefix + "/pg version - Shows your and latest version of plugin");
+                        p.sendMessage(pg.prefix + "/pg version - Show your and latest version of plugin");
                     }
                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(64) + "--------------");
                 } else if (args[0].equalsIgnoreCase("headp1")) {
@@ -226,6 +230,44 @@ public class Commands implements CommandExecutor {
                         p.setFireTicks(0);
                         pg.setup(p);
                         p.setAllowFlight(true);
+                    }
+                } else if (args[0].equalsIgnoreCase("reload")) {
+                    if (p.hasPermission("pg.setup")) {
+                        pg.setReload(true);
+                        pg.close();
+                        if (pg.isLobbySystem()) {
+                            if (pg.playerLobby.containsKey(p)) {
+                                String s;
+                                for (int ii = 1; ii <= 27; ii++) {
+                                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                        s = Integer.toString(ii);
+                                        pg.onLeaveLobby(p, s);
+                                        break;
+                                    }
+                                }
+                            } else if (pg.specLobby.containsKey(p)) {
+                                String s;
+                                for (int ii = 1; ii <= 27; ii++) {
+                                    if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
+                                        s = Integer.toString(ii);
+                                        pg.onLeaveLobby(p, s);
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                                pg.onLeave(p);
+                                if (pg.isStartOnJoin()) {
+                                    p.kickPlayer(pg.prefix + ChatColor.RED + pg.chat.get(25));
+                                }
+                            }
+                        }
+                        pg.connect();
+                        pg.ConnectMySQL();
+                        pg.onReload();
+                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(78));
+                        pg.setReload(false);
                     }
                 } else if (args[0].equalsIgnoreCase("version")) {
                     if (p.hasPermission("pg.update")) {
