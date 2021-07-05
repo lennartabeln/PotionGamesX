@@ -309,8 +309,8 @@ public class Commands implements CommandExecutor {
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(String.valueOf(slot));
-                                        arenalore.add(pg.infoLobby.get(String.valueOf(slot)));
+                                        arenamapmeta.setDisplayName(Integer.toString(slot));
+                                        arenalore.add(pg.infoLobby.get(Integer.toString(slot)));
                                         arenamapmeta.setLore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);

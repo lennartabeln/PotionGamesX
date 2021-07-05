@@ -1255,7 +1255,7 @@ public class Events implements Listener {
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
-                                    arenamapmeta.setDisplayName(String.valueOf(all));
+                                    arenamapmeta.setDisplayName(Integer.toString(all));
                                     arenamapmeta.setLore(arenalore);
                                     arenamap.setItemMeta(arenamapmeta);
                                     inv.setItem(slot, arenamap);
@@ -1423,7 +1423,7 @@ public class Events implements Listener {
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(String.valueOf(slot));
+                                        arenamapmeta.setDisplayName(Integer.toString(slot));
                                         arenamapmeta.setLore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
@@ -1587,7 +1587,7 @@ public class Events implements Listener {
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(String.valueOf(slot));
+                                        arenamapmeta.setDisplayName(Integer.toString(slot));
                                         arenamapmeta.setLore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);

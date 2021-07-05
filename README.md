@@ -119,6 +119,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `/pg signp1(2;3)` - Add Player Sign to Stats-Wall - Permission: `pg.setup`
 * `/pg joinsign [lobbynumber]` - Set Join-Sign - Permission: `pg.setup`
 * `/pg setup` - Set up the plugin - Permission: `pg.setup`
+* `/pg settings` - Change all settings ingame - Permission: `pg.setup`
 
 
 * Colored name in player and spectator chat - Permission: `pg.admin`
@@ -146,6 +147,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `/pg signp1(2;3)` - Add Player Sign to Stats-Wall - Permission: `pg.setup`
 * `/pg joinsign` - Set Join-Sign - Permission: `pg.setup`
 * `/pg setup` - Set up the plugin - Permission: `pg.setup`
+* `/pg settings` - Change all settings ingame - Permission: `pg.setup`
 
 
 * Colored name in player and spectator chat - Permission: `pg.admin`
@@ -181,6 +183,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 
 ## Release History
 
+* 5.0
+  * ADD: /pg settings command
 * 4.6
   * ADD: /pg reload command
 * 4.5
@@ -251,6 +255,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * ~~ADD: Join lobby via gui - (Version 4.4)~~
 * ~~ADD: /pg version command - (Version 4.5)~~
 * ~~ADD: /pg reload command - (Version 4.6)~~
+* ~~ADD: /pg settings command - (Version 5.0)~~
 
 ## Issues
 
