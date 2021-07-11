@@ -209,6 +209,7 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("setup")) {
                     if (p.hasPermission("pg.setup")) {
+                        pg.setupPlayer.add(p);
                         PlayerInventory inventory = p.getInventory();
                         pg.inv.put(p.getName(), p.getInventory().getContents());
                         pg.armor.put(p.getName(), p.getInventory().getArmorContents());

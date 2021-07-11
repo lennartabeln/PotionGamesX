@@ -44,6 +44,7 @@ public class PotionGames extends JavaPlugin {
     public final ArrayList<Player> pgPlayers = new ArrayList<>();
     public final ArrayList<Player> specPlayers = new ArrayList<>();
     public final ArrayList<Player> richkidPlayers = new ArrayList<>();
+    public final ArrayList<Player> setupPlayer = new ArrayList<>();
     public final ArrayList<String> arenas = new ArrayList<>();
     public final ArrayList<String> voted = new ArrayList<>();
     public final ArrayList<String> teams = new ArrayList<>();
@@ -262,7 +263,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Kills");
         chat.add("Deaths");
         chat.add("K/D");
-        chat.add("Kit Selector");
+        chat.add("Kit-Selector");
         chat.add("File loading / saving fail! Error");
         chat.add("Commands");
         chat.add("Rounds");
@@ -279,6 +280,8 @@ public class PotionGames extends JavaPlugin {
         chat.add("Checking for updates...");
         chat.add("Plugin is up to date!");
         chat.add("Plugin successfully reloaded!");
+        chat.add("Extremely explosive TNT");
+        chat.add("Leave");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -1400,7 +1403,12 @@ public class PotionGames extends JavaPlugin {
         itemStack.setItemMeta(itemMeta);
         weapons1.add(itemStack);
         weapons1.add(new ItemStack(Material.COBWEB, 3));
-        weapons1.add(new ItemStack(Material.TNT, 1));
+        ItemStack itemStack2 = new ItemStack(Material.TNT, 1);
+        ItemMeta itemMeta2 = itemStack2.getItemMeta();
+        assert itemMeta2 != null;
+        itemMeta2.setDisplayName(ChatColor.DARK_AQUA + chat.get(79));
+        itemStack2.setItemMeta(itemMeta2);
+        weapons1.add(itemStack2);
         weapons1.add(new ItemStack(Material.WOODEN_SWORD, 1));
         weapons1.add(new ItemStack(Material.STONE_SWORD, 1));
         weapons1.add(new ItemStack(Material.WOODEN_AXE, 1));
@@ -1411,12 +1419,12 @@ public class PotionGames extends JavaPlugin {
         weapons2.add(new ItemStack(Material.IRON_AXE, 1));
         weapons2.add(new ItemStack(Material.DIAMOND_SWORD, 1));
         weapons2.add(new ItemStack(Material.DIAMOND_AXE, 1));
-        ItemStack itemStack2 = new ItemStack(Material.COMPASS, 1);
-        ItemMeta itemMeta2 = itemStack2.getItemMeta();
-        assert itemMeta2 != null;
-        itemMeta2.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
-        itemStack2.setItemMeta(itemMeta2);
-        weapons2.add(itemStack2);
+        ItemStack itemStack3 = new ItemStack(Material.COMPASS, 1);
+        ItemMeta itemMeta3 = itemStack3.getItemMeta();
+        assert itemMeta3 != null;
+        itemMeta3.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
+        itemStack3.setItemMeta(itemMeta3);
+        weapons2.add(itemStack3);
         potions.add(new PotionEffect(PotionEffectType.SPEED, 40 * 20, 2));
         potions.add(new PotionEffect(PotionEffectType.SLOW, 40 * 20, 0));
         potions.add(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 40 * 20, 0));
@@ -2199,7 +2207,7 @@ public class PotionGames extends JavaPlugin {
                                     assert teamselectormeta != null;
                                     teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                                     teamselector.setItemMeta(teamselectormeta);
-                                    inv.setItem(4, teamselector);
+                                    inv.setItem(1, teamselector);
                                 }
                                 if (activateKits) {
                                     ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
@@ -2207,14 +2215,22 @@ public class PotionGames extends JavaPlugin {
                                     assert kitselectormeta != null;
                                     kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
                                     kitselector.setItemMeta(kitselectormeta);
-                                    inv.setItem(0, kitselector);
+                                    inv.setItem(3, kitselector);
                                 }
                                 ItemStack votepaper = new ItemStack(Material.PAPER);
                                 ItemMeta votepapaermeta = votepaper.getItemMeta();
                                 assert votepapaermeta != null;
                                 votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
                                 votepaper.setItemMeta(votepapaermeta);
-                                inv.setItem(8, votepaper);
+                                inv.setItem(5, votepaper);
+                                if (!startOnJoin) {
+                                    ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
+                                    ItemMeta leavemeta = leave.getItemMeta();
+                                    assert leavemeta != null;
+                                    leavemeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(80));
+                                    leave.setItemMeta(leavemeta);
+                                    inv.setItem(7, leave);
+                                }
                             }
                             specPlayers.clear();
                             chests.clear();
@@ -2505,7 +2521,7 @@ public class PotionGames extends JavaPlugin {
                 assert teamselectormeta != null;
                 teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                 teamselector.setItemMeta(teamselectormeta);
-                p.getInventory().setItem(4, teamselector);
+                p.getInventory().setItem(1, teamselector);
             }
             if (activateKits) {
                 ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
@@ -2513,14 +2529,22 @@ public class PotionGames extends JavaPlugin {
                 assert kitselectormeta != null;
                 kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
                 kitselector.setItemMeta(kitselectormeta);
-                p.getInventory().setItem(0, kitselector);
+                p.getInventory().setItem(3, kitselector);
             }
             ItemStack votepaper = new ItemStack(Material.PAPER);
             ItemMeta votepapaermeta = votepaper.getItemMeta();
             assert votepapaermeta != null;
             votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
             votepaper.setItemMeta(votepapaermeta);
-            p.getInventory().setItem(8, votepaper);
+            p.getInventory().setItem(5, votepaper);
+            if (!startOnJoin) {
+                ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
+                ItemMeta leavemeta = leave.getItemMeta();
+                assert leavemeta != null;
+                leavemeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(80));
+                leave.setItemMeta(leavemeta);
+                p.getInventory().setItem(7, leave);
+            }
             p.sendMessage(prefix + ChatColor.GREEN + chat.get(30));
         }
         if (!joinable) {
@@ -2806,7 +2830,9 @@ public class PotionGames extends JavaPlugin {
                                             assert playercompassmeta != null;
                                             playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
                                             playercompass.setItemMeta(playercompassmeta);
-                                            all.getInventory().setItem(8, playercompass);
+                                            if (!isCompassOnSpawn()) {
+                                                all.getInventory().setItem(8, playercompass);
+                                            }
                                         }
                                     }
                                     for (Player rich : richkidPlayers) {
@@ -3123,28 +3149,36 @@ public class PotionGames extends JavaPlugin {
                                     all.setFoodLevel(20);
                                     clearEffects(all);
                                     all.setFireTicks(0);
-                                    if (lobbyActivateTeams.get(s)) {
+                                    if (activateTeams) {
                                         ItemStack teamselector = new ItemStack(Material.CLOCK);
                                         ItemMeta teamselectormeta = teamselector.getItemMeta();
                                         assert teamselectormeta != null;
                                         teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                                         teamselector.setItemMeta(teamselectormeta);
-                                        inv.setItem(4, teamselector);
+                                        inv.setItem(1, teamselector);
                                     }
-                                    if (lobbyActivateKits.get(s)) {
+                                    if (activateKits) {
                                         ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
                                         ItemMeta kitselectormeta = kitselector.getItemMeta();
                                         assert kitselectormeta != null;
                                         kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
                                         kitselector.setItemMeta(kitselectormeta);
-                                        inv.setItem(0, kitselector);
+                                        inv.setItem(3, kitselector);
                                     }
                                     ItemStack votepaper = new ItemStack(Material.PAPER);
                                     ItemMeta votepapaermeta = votepaper.getItemMeta();
                                     assert votepapaermeta != null;
                                     votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
                                     votepaper.setItemMeta(votepapaermeta);
-                                    inv.setItem(8, votepaper);
+                                    inv.setItem(5, votepaper);
+                                    if (!startOnJoin) {
+                                        ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
+                                        ItemMeta leavemeta = leave.getItemMeta();
+                                        assert leavemeta != null;
+                                        leavemeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(80));
+                                        leave.setItemMeta(leavemeta);
+                                        inv.setItem(7, leave);
+                                    }
                                 }
                             }
                             for (Player all : specLobby.keySet()) {
@@ -3477,28 +3511,36 @@ public class PotionGames extends JavaPlugin {
             setGameRules(name);
             assert name != null;
             Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
-            if (lobbyActivateTeams.get(s)) {
+            if (activateTeams) {
                 ItemStack teamselector = new ItemStack(Material.CLOCK);
                 ItemMeta teamselectormeta = teamselector.getItemMeta();
                 assert teamselectormeta != null;
                 teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                 teamselector.setItemMeta(teamselectormeta);
-                p.getInventory().setItem(4, teamselector);
+                p.getInventory().setItem(1, teamselector);
             }
-            if (lobbyActivateKits.get(s)) {
+            if (activateKits) {
                 ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
                 ItemMeta kitselectormeta = kitselector.getItemMeta();
                 assert kitselectormeta != null;
                 kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
                 kitselector.setItemMeta(kitselectormeta);
-                p.getInventory().setItem(0, kitselector);
+                p.getInventory().setItem(3, kitselector);
             }
             ItemStack votepaper = new ItemStack(Material.PAPER);
             ItemMeta votepapaermeta = votepaper.getItemMeta();
             assert votepapaermeta != null;
             votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
             votepaper.setItemMeta(votepapaermeta);
-            p.getInventory().setItem(8, votepaper);
+            p.getInventory().setItem(5, votepaper);
+            if (!startOnJoin) {
+                ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
+                ItemMeta leavemeta = leave.getItemMeta();
+                assert leavemeta != null;
+                leavemeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(80));
+                leave.setItemMeta(leavemeta);
+                p.getInventory().setItem(7, leave);
+            }
             p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + ChatColor.AQUA + s);
         }
         if (!lobbyJoinable.get(s)) {

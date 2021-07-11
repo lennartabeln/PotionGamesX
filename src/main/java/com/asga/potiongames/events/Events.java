@@ -11,10 +11,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.LightningStrike;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
@@ -55,139 +52,141 @@ public class Events implements Listener {
         Player p = e.getPlayer();
         if (pg.isGameServer()) {
             e.getRecipients().clear();
-            if (pg.isAddlobby()) {
-                lobby = e.getMessage();
-                e.setCancelled(true);
-                if (p.hasPermission("pg.setup")) {
-                    if (pg.isLobbySystem()) {
-                        arenadata.set("pg.lobbies." + lobby + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
-                        arenadata.set("pg.lobbies." + lobby + ".coords", Objects.requireNonNull(p.getLocation()));
-                        arenadata.set("pg.lobbies." + lobby + ".activateTeams", true);
-                        arenadata.set("pg.lobbies." + lobby + ".activateKits", true);
-                        arenadata.set("pg.lobbies." + lobby + ".activateShop", true);
-                        arenadata.set("pg.lobbies." + lobby + ".teamSize", 2);
-                        arenadata.set("pg.lobbies." + lobby + ".maxPlayers", 24);
-                        arenadata.set("pg.lobbies." + lobby + ".minPlayers", 12);
-                        arenadata.set("pg.lobbies." + lobby + ".roundTime", 30);
-                        try {
-                            arenadata.save(pg.arenadatafile);
-                        } catch (IOException ex) {
-                            System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
-                        }
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
-                    }
-                }
-                pg.setAddlobby(false);
-                pg.setup(p);
-            }
-            if (pg.isAddarena()) {
-                arena = e.getMessage();
-                e.setCancelled(true);
-                if (p.hasPermission("pg.setup")) {
-                    if (!pg.isLobbySystem()) {
-                        int arenaNumber = 1;
-                        try {
-                            while (arenadata.contains("pg.arenas." + arenaNumber)) {
-                                arenaNumber++;
+            if (pg.setupPlayer.contains(p)) {
+                if (pg.isAddlobby()) {
+                    lobby = e.getMessage();
+                    e.setCancelled(true);
+                    if (p.hasPermission("pg.setup")) {
+                        if (pg.isLobbySystem()) {
+                            arenadata.set("pg.lobbies." + lobby + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
+                            arenadata.set("pg.lobbies." + lobby + ".coords", Objects.requireNonNull(p.getLocation()));
+                            arenadata.set("pg.lobbies." + lobby + ".activateTeams", true);
+                            arenadata.set("pg.lobbies." + lobby + ".activateKits", true);
+                            arenadata.set("pg.lobbies." + lobby + ".activateShop", true);
+                            arenadata.set("pg.lobbies." + lobby + ".teamSize", 2);
+                            arenadata.set("pg.lobbies." + lobby + ".maxPlayers", 24);
+                            arenadata.set("pg.lobbies." + lobby + ".minPlayers", 12);
+                            arenadata.set("pg.lobbies." + lobby + ".roundTime", 30);
+                            try {
+                                arenadata.save(pg.arenadatafile);
+                            } catch (IOException ex) {
+                                System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
                             }
-                            arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
-                            arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
-                            arenadata.set("pg.arenas." + arenaNumber + ".name", arena);
-                            arenadata.save(pg.arenadatafile);
-                            p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29));
-                        } catch (Exception ex) {
-                            p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                         }
                     }
+                    pg.setAddlobby(false);
+                    pg.setup(p);
                 }
-                if (p.hasPermission("pg.setup")) {
-                    if (pg.isLobbySystem()) {
-                        int arenaNumber = 1;
-                        try {
-                            while (arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber)) {
-                                arenaNumber++;
-                            }
-                            arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, p.getWorld());
-                            arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".world", p.getWorld().getName());
-                            arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".name", arena);
-                            arenadata.save(pg.arenadatafile);
-                            p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
-                        } catch (Exception ex) {
-                            p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
-                        }
-                    }
-                }
-                pg.setAddarena(false);
-                pg.setup(p);
-            }
-            if (pg.isDellobby()) {
-                lobby = e.getMessage();
-                e.setCancelled(true);
-                if (p.hasPermission("pg.setup")) {
-                    if (pg.isLobbySystem()) {
-                        arenadata.set("pg.lobbies." + lobby, null);
-                        try {
-                            arenadata.save(pg.arenadatafile);
-                        } catch (IOException ex) {
-                            System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
-                        }
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(66) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
-                    }
-                }
-                pg.setDellobby(false);
-                pg.setup(p);
-            }
-            if (pg.isDelarena()) {
-                arena = e.getMessage();
-                e.setCancelled(true);
-                if (p.hasPermission("pg.setup")) {
-                    if (!pg.isLobbySystem()) {
-                        int arenaNumber = 1;
-                        try {
-                            int i = 1;
-                            boolean arenaID = false;
-                            while (!arenaID) {
-                                if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
-                                    arenaNumber = i;
-                                    arenaID = true;
-                                } else {
-                                    i++;
+                if (pg.isAddarena()) {
+                    arena = e.getMessage();
+                    e.setCancelled(true);
+                    if (p.hasPermission("pg.setup")) {
+                        if (!pg.isLobbySystem()) {
+                            int arenaNumber = 1;
+                            try {
+                                while (arenadata.contains("pg.arenas." + arenaNumber)) {
+                                    arenaNumber++;
                                 }
+                                arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
+                                arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
+                                arenadata.set("pg.arenas." + arenaNumber + ".name", arena);
+                                arenadata.save(pg.arenadatafile);
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29));
+                            } catch (Exception ex) {
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
                             }
-                            String arenaName = arena;
-                            arenadata.set("pg.arenas." + arenaNumber, null);
-                            arenadata.save(pg.arenadatafile);
-                            p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28));
-                        } catch (Exception ex) {
-                            p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
                         }
                     }
-                }
-                if (p.hasPermission("pg.setup")) {
-                    if (pg.isLobbySystem()) {
-                        int arenaNumber = 1;
-                        try {
-                            int i = 1;
-                            boolean arenaID = false;
-                            while (!arenaID) {
-                                if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
-                                    arenaNumber = i;
-                                    arenaID = true;
-                                } else {
-                                    i++;
+                    if (p.hasPermission("pg.setup")) {
+                        if (pg.isLobbySystem()) {
+                            int arenaNumber = 1;
+                            try {
+                                while (arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber)) {
+                                    arenaNumber++;
                                 }
+                                arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, p.getWorld());
+                                arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".world", p.getWorld().getName());
+                                arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".name", arena);
+                                arenadata.save(pg.arenadatafile);
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                            } catch (Exception ex) {
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                             }
-                            String arenaName = arena;
-                            arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, null);
-                            arenadata.save(pg.arenadatafile);
-                            p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
-                        } catch (Exception ex) {
-                            p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                         }
                     }
+                    pg.setAddarena(false);
+                    pg.setup(p);
                 }
-                pg.setDelarena(false);
-                pg.setup(p);
+                if (pg.isDellobby()) {
+                    lobby = e.getMessage();
+                    e.setCancelled(true);
+                    if (p.hasPermission("pg.setup")) {
+                        if (pg.isLobbySystem()) {
+                            arenadata.set("pg.lobbies." + lobby, null);
+                            try {
+                                arenadata.save(pg.arenadatafile);
+                            } catch (IOException ex) {
+                                System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
+                            }
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(66) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                        }
+                    }
+                    pg.setDellobby(false);
+                    pg.setup(p);
+                }
+                if (pg.isDelarena()) {
+                    arena = e.getMessage();
+                    e.setCancelled(true);
+                    if (p.hasPermission("pg.setup")) {
+                        if (!pg.isLobbySystem()) {
+                            int arenaNumber = 1;
+                            try {
+                                int i = 1;
+                                boolean arenaID = false;
+                                while (!arenaID) {
+                                    if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaID = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
+                                String arenaName = arena;
+                                arenadata.set("pg.arenas." + arenaNumber, null);
+                                arenadata.save(pg.arenadatafile);
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28));
+                            } catch (Exception ex) {
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
+                            }
+                        }
+                    }
+                    if (p.hasPermission("pg.setup")) {
+                        if (pg.isLobbySystem()) {
+                            int arenaNumber = 1;
+                            try {
+                                int i = 1;
+                                boolean arenaID = false;
+                                while (!arenaID) {
+                                    if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaID = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
+                                String arenaName = arena;
+                                arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, null);
+                                arenadata.save(pg.arenadatafile);
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                            } catch (Exception ex) {
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                            }
+                        }
+                    }
+                    pg.setDelarena(false);
+                    pg.setup(p);
+                }
             }
             if (pg.playerChannel.get(p) == null) {
                 pg.joinChannel(p.getPlayer(), "Global");
@@ -635,7 +634,9 @@ public class Events implements Listener {
                             } else if (e.getBlock().getType() == Material.TNT) {
                                 e.setCancelled(true);
                                 p.getInventory().getItemInMainHand().setAmount(0);
-                                e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                                Entity tnt = e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                                TNTPrimed tnt2 = (TNTPrimed) tnt;
+                                tnt2.setFuseTicks(40);
                             } else {
                                 e.setCancelled(true);
                             }
@@ -662,7 +663,9 @@ public class Events implements Listener {
                             } else if (e.getBlock().getType() == Material.TNT) {
                                 e.setCancelled(true);
                                 p.getInventory().getItemInMainHand().setAmount(0);
-                                e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                                Entity tnt = e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                                TNTPrimed tnt2 = (TNTPrimed) tnt;
+                                tnt2.setFuseTicks(40);
                             } else {
                                 e.setCancelled(true);
                             }
@@ -699,6 +702,14 @@ public class Events implements Listener {
         if (pg.isGameServer()) {
             if (pg.worlds.contains(e.getDamager().getWorld().getName())) {
                 e.setCancelled(e.getDamager() instanceof LightningStrike || e.getDamager() instanceof Firework);
+                if (e.getEntity() instanceof Player && e.getDamager() instanceof TNTPrimed) {
+                    Player p = (Player) e.getEntity();
+                    if (p.getHealth() - 4 <= 0) {
+                        p.setHealth(p.getHealth() - 4);
+                    } else {
+                        p.setHealth(p.getHealth() - 4 <= 0 ? 0D : p.getHealth() - 4);
+                    }
+                }
             }
         }
     }
@@ -1365,6 +1376,19 @@ public class Events implements Listener {
                         }
                     }
                 }
+                if (p.getInventory().getItemInMainHand().getType() == Material.MAGMA_CREAM) {
+                    if (pg.isLobbySystem()) {
+                        int ii = 1;
+                        String s = Integer.toString(ii);
+                        if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
+                            pg.onLeaveLobby(p, s);
+                        }
+                    } else {
+                        if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
+                            pg.onLeave(p);
+                        }
+                    }
+                }
             }
             if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
                 if (e.getHand() == EquipmentSlot.HAND) {
@@ -1533,6 +1557,7 @@ public class Events implements Listener {
                             pg.exp.remove(p.getName());
                             pg.gm.remove(p.getName());
                             p.setAllowFlight(false);
+                            pg.setupPlayer.remove(p);
                         }
                     }
                 }
