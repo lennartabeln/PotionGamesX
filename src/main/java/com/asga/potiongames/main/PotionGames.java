@@ -186,6 +186,7 @@ public class PotionGames extends JavaPlugin {
     private boolean dellobby = false;
     private boolean delarena = false;
     private boolean reload = false;
+    private boolean compassOnSpawn = false;
     private Connection con;
     private Statement st;
 
@@ -460,6 +461,13 @@ public class PotionGames extends JavaPlugin {
             saveConfig();
         } else {
             startOnJoin = getConfig().getBoolean("pg.startOnJoin");
+        }
+        if (getConfig().get("pg.compassOnSpawn") == null) {
+            getConfig().addDefault("pg.compassOnSpawn", compassOnSpawn);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            compassOnSpawn = getConfig().getBoolean("pg.compassOnSpawn");
         }
         if (getConfig().get("pg.activateTeams") == null) {
             getConfig().addDefault("pg.activateTeams", activateTeams);
@@ -875,6 +883,13 @@ public class PotionGames extends JavaPlugin {
         } else {
             startOnJoin = getConfig().getBoolean("pg.startOnJoin");
         }
+        if (getConfig().get("pg.compassOnSpawn") == null) {
+            getConfig().addDefault("pg.compassOnSpawn", compassOnSpawn);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            compassOnSpawn = getConfig().getBoolean("pg.compassOnSpawn");
+        }
         if (getConfig().get("pg.activateTeams") == null) {
             getConfig().addDefault("pg.activateTeams", activateTeams);
             getConfig().options().copyDefaults(true);
@@ -1233,6 +1248,35 @@ public class PotionGames extends JavaPlugin {
                 all.kickPlayer(prefix + ChatColor.RED + chat.get(25));
             }
         }
+        if (!isStartOnJoin()) {
+            for (Iterator<Player> it = pgPlayers.iterator(); it.hasNext(); ) {
+                Player all = it.next();
+                it.remove();
+                onLeave(all);
+            }
+            for (Iterator<Player> it = specPlayers.iterator(); it.hasNext(); ) {
+                Player all = it.next();
+                it.remove();
+                onLeave(all);
+            }
+        }
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            String s;
+            for (int i = 1; i <= 27; i++) {
+                if (playerLobby.get(all) != null) {
+                    if (playerLobby.get(all).contains(Integer.toString(i))) {
+                        s = Integer.toString(i);
+                        onLeaveLobby(all, s);
+                    }
+                }
+                if (specLobby.get(all) != null) {
+                    if (specLobby.get(all).contains(Integer.toString(i))) {
+                        s = Integer.toString(i);
+                        onLeaveLobby(all, s);
+                    }
+                }
+            }
+        }
         getServer().getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(41));
     }
 
@@ -1356,8 +1400,7 @@ public class PotionGames extends JavaPlugin {
         itemStack.setItemMeta(itemMeta);
         weapons1.add(itemStack);
         weapons1.add(new ItemStack(Material.COBWEB, 3));
-        weapons1.add(new ItemStack(Material.WATER_BUCKET, 1));
-        weapons1.add(new ItemStack(Material.LAVA_BUCKET, 1));
+        weapons1.add(new ItemStack(Material.TNT, 1));
         weapons1.add(new ItemStack(Material.WOODEN_SWORD, 1));
         weapons1.add(new ItemStack(Material.STONE_SWORD, 1));
         weapons1.add(new ItemStack(Material.WOODEN_AXE, 1));
@@ -1368,6 +1411,12 @@ public class PotionGames extends JavaPlugin {
         weapons2.add(new ItemStack(Material.IRON_AXE, 1));
         weapons2.add(new ItemStack(Material.DIAMOND_SWORD, 1));
         weapons2.add(new ItemStack(Material.DIAMOND_AXE, 1));
+        ItemStack itemStack2 = new ItemStack(Material.COMPASS, 1);
+        ItemMeta itemMeta2 = itemStack2.getItemMeta();
+        assert itemMeta2 != null;
+        itemMeta2.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
+        itemStack2.setItemMeta(itemMeta2);
+        weapons2.add(itemStack2);
         potions.add(new PotionEffect(PotionEffectType.SPEED, 40 * 20, 2));
         potions.add(new PotionEffect(PotionEffectType.SLOW, 40 * 20, 0));
         potions.add(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 40 * 20, 0));
@@ -1918,7 +1967,9 @@ public class PotionGames extends JavaPlugin {
                                         assert playercompassmeta != null;
                                         playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
                                         playercompass.setItemMeta(playercompassmeta);
-                                        all.getInventory().setItem(8, playercompass);
+                                        if (isCompassOnSpawn()) {
+                                            all.getInventory().setItem(8, playercompass);
+                                        }
                                     }
                                     for (Player rich : richkidPlayers) {
                                         for (int i = 0; i < 5; i++) {
@@ -3963,6 +4014,10 @@ public class PotionGames extends JavaPlugin {
 
     public boolean isBuild() {
         return build;
+    }
+
+    public boolean isCompassOnSpawn() {
+        return compassOnSpawn;
     }
 
     public boolean isLobbySystem() {

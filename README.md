@@ -119,7 +119,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `/pg signp1(2;3)` - Add Player Sign to Stats-Wall - Permission: `pg.setup`
 * `/pg joinsign [lobbynumber]` - Set Join-Sign - Permission: `pg.setup`
 * `/pg setup` - Set up the plugin - Permission: `pg.setup`
-* `/pg settings` - Change all settings ingame - Permission: `pg.setup`
+* `/pg settings` - Change all settings ingame - Permission: `pg.setup` - TODO
 
 
 * Colored name in player and spectator chat - Permission: `pg.admin`
@@ -147,7 +147,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `/pg signp1(2;3)` - Add Player Sign to Stats-Wall - Permission: `pg.setup`
 * `/pg joinsign` - Set Join-Sign - Permission: `pg.setup`
 * `/pg setup` - Set up the plugin - Permission: `pg.setup`
-* `/pg settings` - Change all settings ingame - Permission: `pg.setup`
+* `/pg settings` - Change all settings ingame - Permission: `pg.setup` - TODO
 
 
 * Colored name in player and spectator chat - Permission: `pg.admin`
@@ -173,6 +173,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `activePotions: 19` - Change amount of used slots in the Potion-Shop (Maximum: `27`)
 * `activeKits: 6` - Change amount of used slots in the Kit-Chooser (Maximum: `26`)
   * `Rich Kid` is hard coded and can only be deactivated
+* `compassOnSpawn: false` - Add Player-Finder to inventory on round start `false` or `true`
 
 ### Messages
 
@@ -183,8 +184,10 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 
 ## Release History
 
-* 5.0
+* 5.0 - TODO
   * ADD: /pg settings command
+* 4.7
+  * ADD: Primed TNT to loot table
 * 4.6
   * ADD: /pg reload command
 * 4.5
@@ -255,7 +258,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * ~~ADD: Join lobby via gui - (Version 4.4)~~
 * ~~ADD: /pg version command - (Version 4.5)~~
 * ~~ADD: /pg reload command - (Version 4.6)~~
-* ~~ADD: /pg settings command - (Version 5.0)~~
+* ~~ADD: Primed TNT to loot table - (Version 4.7)~~
+* ADD: /pg settings command - (Version 5.0)
 
 ## Issues
 

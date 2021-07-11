@@ -11,6 +11,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -18,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
@@ -34,10 +36,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class Events implements Listener {
     private final PotionGames pg;
@@ -382,70 +381,7 @@ public class Events implements Listener {
         }
     }
 
-    @EventHandler
-    public void onBlockPlace(BlockPlaceEvent e) {
-        Player p = e.getPlayer();
-        if (pg.isGameServer()) {
-            if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
-                if (pg.isLobbySystem()) {
-                    String s = null;
-                    for (int ii = 1; ii <= 27; ii++) {
-                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
-                        }
-                    }
-                    if (!pg.lobbyBuild.get(s)) {
-                        if (pg.lobbyStates.get(s) == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
-                                    || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
-                                    || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
-                                    || e.getBlock().getType() == Material.ACACIA_LEAVES
-                                    || e.getBlock().getType() == Material.BIRCH_LEAVES
-                                    || e.getBlock().getType() == Material.DARK_OAK_LEAVES
-                                    || e.getBlock().getType() == Material.JUNGLE_LEAVES
-                                    || e.getBlock().getType() == Material.OAK_LEAVES
-                                    || e.getBlock().getType() == Material.SPRUCE_LEAVES
-                                    || e.getBlock().getType() == Material.WARPED_FUNGUS
-                                    || e.getBlock().getType() == Material.CRIMSON_FUNGUS
-                                    || e.getBlock().getType() == Material.BROWN_MUSHROOM
-                                    || e.getBlock().getType() == Material.RED_MUSHROOM) {
-                                pg.lobbyPlacedBlocksData.put(e.getBlock().getLocation(), e.getBlock().getType());
-                                pg.lobbyPlacedBlocks.put(s, pg.lobbyPlacedBlocksData);
-                                e.setCancelled(false);
-                            } else {
-                                e.setCancelled(true);
-                            }
-                        }
-                    }
-                } else {
-                    if (!pg.isBuild()) {
-                        if (pg.getGamestate() == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
-                                    || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
-                                    || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
-                                    || e.getBlock().getType() == Material.ACACIA_LEAVES
-                                    || e.getBlock().getType() == Material.BIRCH_LEAVES
-                                    || e.getBlock().getType() == Material.DARK_OAK_LEAVES
-                                    || e.getBlock().getType() == Material.JUNGLE_LEAVES
-                                    || e.getBlock().getType() == Material.OAK_LEAVES
-                                    || e.getBlock().getType() == Material.SPRUCE_LEAVES
-                                    || e.getBlock().getType() == Material.WARPED_FUNGUS
-                                    || e.getBlock().getType() == Material.CRIMSON_FUNGUS
-                                    || e.getBlock().getType() == Material.BROWN_MUSHROOM
-                                    || e.getBlock().getType() == Material.RED_MUSHROOM) {
-                                pg.getPlacedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
-                                e.setCancelled(false);
-                            } else {
-                                e.setCancelled(true);
-                            }
-                        } else {
-                            e.setCancelled(true);
-                        }
-                    }
-                }
-            }
-        }
-    }
+    private static final Set<Material> toDestroy = new HashSet<>();
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
@@ -656,6 +592,102 @@ public class Events implements Listener {
                                 p.setCollidable(false);
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    static {
+        toDestroy.add(Material.AIR);
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent e) {
+        Player p = e.getPlayer();
+        if (pg.isGameServer()) {
+            if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
+                if (pg.isLobbySystem()) {
+                    String s = null;
+                    for (int ii = 1; ii <= 27; ii++) {
+                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                            s = Integer.toString(ii);
+                        }
+                    }
+                    if (!pg.lobbyBuild.get(s)) {
+                        if (pg.lobbyStates.get(s) == GameStates.INGAME) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
+                                    || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
+                                    || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
+                                    || e.getBlock().getType() == Material.ACACIA_LEAVES
+                                    || e.getBlock().getType() == Material.BIRCH_LEAVES
+                                    || e.getBlock().getType() == Material.DARK_OAK_LEAVES
+                                    || e.getBlock().getType() == Material.JUNGLE_LEAVES
+                                    || e.getBlock().getType() == Material.OAK_LEAVES
+                                    || e.getBlock().getType() == Material.SPRUCE_LEAVES
+                                    || e.getBlock().getType() == Material.WARPED_FUNGUS
+                                    || e.getBlock().getType() == Material.CRIMSON_FUNGUS
+                                    || e.getBlock().getType() == Material.BROWN_MUSHROOM
+                                    || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                                pg.lobbyPlacedBlocksData.put(e.getBlock().getLocation(), e.getBlock().getType());
+                                pg.lobbyPlacedBlocks.put(s, pg.lobbyPlacedBlocksData);
+                                e.setCancelled(false);
+                            } else if (e.getBlock().getType() == Material.TNT) {
+                                e.setCancelled(true);
+                                p.getInventory().getItemInMainHand().setAmount(0);
+                                e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                            } else {
+                                e.setCancelled(true);
+                            }
+                        }
+                    }
+                } else {
+                    if (!pg.isBuild()) {
+                        if (pg.getGamestate() == GameStates.INGAME) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
+                                    || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
+                                    || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
+                                    || e.getBlock().getType() == Material.ACACIA_LEAVES
+                                    || e.getBlock().getType() == Material.BIRCH_LEAVES
+                                    || e.getBlock().getType() == Material.DARK_OAK_LEAVES
+                                    || e.getBlock().getType() == Material.JUNGLE_LEAVES
+                                    || e.getBlock().getType() == Material.OAK_LEAVES
+                                    || e.getBlock().getType() == Material.SPRUCE_LEAVES
+                                    || e.getBlock().getType() == Material.WARPED_FUNGUS
+                                    || e.getBlock().getType() == Material.CRIMSON_FUNGUS
+                                    || e.getBlock().getType() == Material.BROWN_MUSHROOM
+                                    || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                                pg.getPlacedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
+                                e.setCancelled(false);
+                            } else if (e.getBlock().getType() == Material.TNT) {
+                                e.setCancelled(true);
+                                p.getInventory().getItemInMainHand().setAmount(0);
+                                e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                            } else {
+                                e.setCancelled(true);
+                            }
+                        } else {
+                            e.setCancelled(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onEntityExplode(EntityExplodeEvent e) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+        String s;
+        String number;
+        for (int ii = 1; ii <= 27; ii++) {
+            s = Integer.toString(ii);
+            for (int i = 1; i < 27; i++) {
+                number = Integer.toString(i);
+                if (Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(pg.getConfig().getString("pg.Lobby.world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(arenadata.getString("pg.arenas." + s + ".world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(arenadata.getString("pg.lobbies." + s + ".world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(arenadata.getString("pg.lobbies." + s + "." + number + ".world"))) {
+                    if (e.getEntity().getType() == EntityType.PRIMED_TNT) {
+                        List<Block> destroyed = e.blockList();
+                        destroyed.removeIf(block -> !toDestroy.contains(block.getType()));
                     }
                 }
             }
