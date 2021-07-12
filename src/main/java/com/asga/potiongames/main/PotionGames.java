@@ -843,20 +843,28 @@ public class PotionGames extends JavaPlugin {
         } else {
             getServer().getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chat.get(40));
         }
+        long start = System.currentTimeMillis();
+        long end = start + 5 * 1000;
+        boolean success = false;
         String latest = null;
         getLogger().info(chat.get(76));
         try {
             URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(url.openStream()));
-            StringBuilder stringBuilder = new StringBuilder();
-            String inputLine;
-            while ((inputLine = bufferedReader.readLine()) != null) {
-                stringBuilder.append(inputLine);
-                stringBuilder.append(System.lineSeparator());
+            while (System.currentTimeMillis() < end) {
+                if (success) {
+                    break;
+                }
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+                StringBuilder stringBuilder = new StringBuilder();
+                String inputLine;
+                while ((inputLine = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(inputLine);
+                    stringBuilder.append(System.lineSeparator());
+                }
+                bufferedReader.close();
+                latest = stringBuilder.toString().trim();
+                success = true;
             }
-            bufferedReader.close();
-            latest = stringBuilder.toString().trim();
         } catch (Exception e) {
             getLogger().warning(chat.get(48) + ": " + e.getMessage());
         }

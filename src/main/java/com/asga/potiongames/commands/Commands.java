@@ -272,18 +272,27 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("version")) {
                     if (p.hasPermission("pg.update")) {
+                        long start = System.currentTimeMillis();
+                        long end = start + 5 * 1000;
+                        boolean success = false;
                         String latest = null;
                         try {
                             URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-                            StringBuilder stringBuilder = new StringBuilder();
-                            String inputLine;
-                            while ((inputLine = bufferedReader.readLine()) != null) {
-                                stringBuilder.append(inputLine);
-                                stringBuilder.append(System.lineSeparator());
+                            while (System.currentTimeMillis() < end) {
+                                if (success) {
+                                    break;
+                                }
+                                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+                                StringBuilder stringBuilder = new StringBuilder();
+                                String inputLine;
+                                while ((inputLine = bufferedReader.readLine()) != null) {
+                                    stringBuilder.append(inputLine);
+                                    stringBuilder.append(System.lineSeparator());
+                                }
+                                bufferedReader.close();
+                                latest = stringBuilder.toString().trim();
+                                success = true;
                             }
-                            bufferedReader.close();
-                            latest = stringBuilder.toString().trim();
                         } catch (Exception ex) {
                             System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(48) + ": " + ex.getMessage());
                         }
