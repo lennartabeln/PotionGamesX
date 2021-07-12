@@ -3,7 +3,6 @@ package com.asga.potiongames.events;
 import com.asga.potiongames.gamestates.GameStates;
 import com.asga.potiongames.main.PotionGames;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -29,10 +28,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.*;
 
 public class Events implements Listener {
@@ -2418,17 +2414,13 @@ public class Events implements Listener {
             pg.onJoin(p);
             e.setJoinMessage(null);
         }
-        if (p.hasPermission("pg.update")) {
+        /*if (p.hasPermission("pg.update")) {
             long start = System.currentTimeMillis();
             long end = start + 5 * 1000;
-            boolean success = false;
             String latest = null;
             try {
                 URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
                 while (System.currentTimeMillis() < end) {
-                    if (success) {
-                        break;
-                    }
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
                     StringBuilder stringBuilder = new StringBuilder();
                     String inputLine;
@@ -2438,21 +2430,23 @@ public class Events implements Listener {
                     }
                     bufferedReader.close();
                     latest = stringBuilder.toString().trim();
-                    success = true;
+                    break;
                 }
             } catch (Exception ex) {
                 System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(48) + ": " + ex.getMessage());
             }
-            boolean upToDate = pg.getDescription().getVersion().equals(latest);
-            if (!upToDate) {
-                TextComponent message = new TextComponent(TextComponent.fromLegacyText(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - "));
-                TextComponent link = new TextComponent(TextComponent.fromLegacyText(ChatColor.GRAY + "Click here to download!"));
-                link.setUnderlined(true);
-                message.addExtra(link);
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/andersspielen/PotionGamesIssues/releases/latest"));
-                p.spigot().sendMessage(message);
+            if (latest != null) {
+                boolean upToDate = pg.getDescription().getVersion().equals(latest);
+                if (!upToDate) {
+                    TextComponent message = new TextComponent(TextComponent.fromLegacyText(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - "));
+                    TextComponent link = new TextComponent(TextComponent.fromLegacyText(ChatColor.GRAY + "Click here to download!"));
+                    link.setUnderlined(true);
+                    message.addExtra(link);
+                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/andersspielen/PotionGamesIssues/releases/latest"));
+                    p.spigot().sendMessage(message);
+                }
             }
-        }
+        }*/
     }
 
     @EventHandler

@@ -272,40 +272,33 @@ public class Commands implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("version")) {
                     if (p.hasPermission("pg.update")) {
-                        long start = System.currentTimeMillis();
-                        long end = start + 5 * 1000;
-                        boolean success = false;
                         String latest = null;
                         try {
                             URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
-                            while (System.currentTimeMillis() < end) {
-                                if (success) {
-                                    break;
-                                }
-                                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-                                StringBuilder stringBuilder = new StringBuilder();
-                                String inputLine;
-                                while ((inputLine = bufferedReader.readLine()) != null) {
-                                    stringBuilder.append(inputLine);
-                                    stringBuilder.append(System.lineSeparator());
-                                }
-                                bufferedReader.close();
-                                latest = stringBuilder.toString().trim();
-                                success = true;
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+                            StringBuilder stringBuilder = new StringBuilder();
+                            String inputLine;
+                            while ((inputLine = bufferedReader.readLine()) != null) {
+                                stringBuilder.append(inputLine);
+                                stringBuilder.append(System.lineSeparator());
                             }
+                            bufferedReader.close();
+                            latest = stringBuilder.toString().trim();
                         } catch (Exception ex) {
                             System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(48) + ": " + ex.getMessage());
                         }
-                        boolean upToDate = pg.getDescription().getVersion().equals(latest);
-                        if (!upToDate) {
-                            TextComponent message = new TextComponent(TextComponent.fromLegacyText(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - "));
-                            TextComponent link = new TextComponent(TextComponent.fromLegacyText(ChatColor.GRAY + "Click here to download!"));
-                            link.setUnderlined(true);
-                            message.addExtra(link);
-                            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/andersspielen/PotionGamesIssues/releases/latest"));
-                            p.spigot().sendMessage(message);
-                        } else {
-                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(77) + ": " + ChatColor.AQUA + pg.getDescription().getVersion());
+                        if (latest != null) {
+                            boolean upToDate = pg.getDescription().getVersion().equals(latest);
+                            if (!upToDate) {
+                                TextComponent message = new TextComponent(TextComponent.fromLegacyText(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - "));
+                                TextComponent link = new TextComponent(TextComponent.fromLegacyText(ChatColor.GRAY + "Click here to download!"));
+                                link.setUnderlined(true);
+                                message.addExtra(link);
+                                message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/andersspielen/PotionGamesIssues/releases/latest"));
+                                p.spigot().sendMessage(message);
+                            } else {
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(77) + ": " + ChatColor.AQUA + pg.getDescription().getVersion());
+                            }
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("list")) {

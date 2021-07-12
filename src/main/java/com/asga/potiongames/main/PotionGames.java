@@ -30,11 +30,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
@@ -843,17 +840,13 @@ public class PotionGames extends JavaPlugin {
         } else {
             getServer().getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chat.get(40));
         }
-        long start = System.currentTimeMillis();
+        /*long start = System.currentTimeMillis();
         long end = start + 5 * 1000;
-        boolean success = false;
         String latest = null;
         getLogger().info(chat.get(76));
         try {
             URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
             while (System.currentTimeMillis() < end) {
-                if (success) {
-                    break;
-                }
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
                 StringBuilder stringBuilder = new StringBuilder();
                 String inputLine;
@@ -863,17 +856,19 @@ public class PotionGames extends JavaPlugin {
                 }
                 bufferedReader.close();
                 latest = stringBuilder.toString().trim();
-                success = true;
+                break;
             }
         } catch (Exception e) {
             getLogger().warning(chat.get(48) + ": " + e.getMessage());
         }
-        boolean upToDate = getDescription().getVersion().equals(latest);
-        if (upToDate) {
-            getLogger().info(chat.get(77) + ": " + getDescription().getVersion());
-        } else {
-            getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
-        }
+        if (latest != null) {
+            boolean upToDate = getDescription().getVersion().equals(latest);
+            if (upToDate) {
+                getLogger().info(chat.get(77) + ": " + getDescription().getVersion());
+            } else {
+                getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
+            }
+        }*/
     }
 
     public void onReload() {
