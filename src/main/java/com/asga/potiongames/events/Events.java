@@ -51,7 +51,6 @@ public class Events implements Listener {
         FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
         Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            e.getRecipients().clear();
             if (pg.setupPlayer.contains(p)) {
                 if (pg.isAddlobby()) {
                     lobby = e.getMessage();
@@ -192,115 +191,118 @@ public class Events implements Listener {
                 pg.joinChannel(p.getPlayer(), "Global");
             }
             if (pg.playerChannel.get(p).equals("Local") && pg.playerChannel.get(p) != null) {
-                if (pg.isLobbySystem()) {
-                    String s = null;
-                    for (int ii = 1; ii <= 27; ii++) {
-                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
+                if (!pg.isAllowOutsideChat()) {
+                    e.getRecipients().clear();
+                    if (pg.isLobbySystem()) {
+                        String s = null;
+                        for (int ii = 1; ii <= 27; ii++) {
+                            if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                s = Integer.toString(ii);
+                            }
                         }
-                    }
-                    pg.playerLobby.keySet().forEach(ent -> {
-                        if (ent != null) {
-                            e.getRecipients().add(ent);
-                        }
-                    });
-                    pg.specLobby.keySet().forEach(ent -> {
-                        if (ent != null) {
-                            e.getRecipients().add(ent);
-                        }
-                    });
-                    e.getRecipients().add(p);
-                    String message = ChatColor.WHITE + e.getMessage();
-                    if (!p.hasPermission("pg.admin")) {
-                        if (pg.playerLobby.containsKey(p)) {
-                            e.setCancelled(true);
-                            for (Player pgchat : pg.playerLobby.keySet()) {
-                                if (pg.playerLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
+                        pg.playerLobby.keySet().forEach(ent -> {
+                            if (ent != null) {
+                                e.getRecipients().add(ent);
+                            }
+                        });
+                        pg.specLobby.keySet().forEach(ent -> {
+                            if (ent != null) {
+                                e.getRecipients().add(ent);
+                            }
+                        });
+                        e.getRecipients().add(p);
+                        String message = ChatColor.WHITE + e.getMessage();
+                        if (!p.hasPermission("pg.admin")) {
+                            if (pg.playerLobby.containsKey(p)) {
+                                e.setCancelled(true);
+                                for (Player pgchat : pg.playerLobby.keySet()) {
+                                    if (pg.playerLobby.get(pgchat).equals(s)) {
+                                        pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
+                                    }
+                                }
+                                for (Player pgchat : pg.specLobby.keySet()) {
+                                    if (pg.specLobby.get(pgchat).equals(s)) {
+                                        pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
+                                    }
+                                }
+                            } else if (pg.specLobby.containsKey(p)) {
+                                e.setCancelled(true);
+                            }
+                        } else {
+                            if (pg.playerLobby.containsKey(p)) {
+                                e.setCancelled(true);
+                                for (Player pgchat : pg.playerLobby.keySet()) {
+                                    if (pg.playerLobby.get(pgchat).equals(s)) {
+                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    }
+                                }
+                                for (Player pgchat : pg.specLobby.keySet()) {
+                                    if (pg.specLobby.get(pgchat).equals(s)) {
+                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    }
+                                }
+                            } else if (pg.specPlayers.contains(p)) {
+                                e.setCancelled(true);
+                                for (Player pgchat : pg.playerLobby.keySet()) {
+                                    if (pg.playerLobby.get(pgchat).equals(s)) {
+                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    }
+                                }
+                                for (Player pgchat : pg.specLobby.keySet()) {
+                                    if (pg.specLobby.get(pgchat).equals(s)) {
+                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    }
                                 }
                             }
-                            for (Player pgchat : pg.specLobby.keySet()) {
-                                if (pg.specLobby.get(pgchat).equals(s)) {
-                                    pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
-                                }
-                            }
-                        } else if (pg.specLobby.containsKey(p)) {
-                            e.setCancelled(true);
                         }
                     } else {
-                        if (pg.playerLobby.containsKey(p)) {
-                            e.setCancelled(true);
-                            for (Player pgchat : pg.playerLobby.keySet()) {
-                                if (pg.playerLobby.get(pgchat).equals(s)) {
+                        pg.pgPlayers.forEach(ent -> {
+                            if (ent != null) {
+                                e.getRecipients().add(ent);
+                            }
+                        });
+                        pg.specPlayers.forEach(ent -> {
+                            if (ent != null) {
+                                e.getRecipients().add(ent);
+                            }
+                        });
+                        e.getRecipients().add(p);
+                        String message = ChatColor.WHITE + e.getMessage();
+                        if (!p.hasPermission("pg.admin")) {
+                            if (pg.pgPlayers.contains(p)) {
+                                e.setCancelled(true);
+                                for (Player pgchat : pg.pgPlayers) {
+                                    pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
+                                }
+                                for (Player pgchat : pg.specPlayers) {
+                                    pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
+                                }
+                            } else if (pg.specPlayers.contains(p)) {
+                                e.setCancelled(true);
+                            }
+                        } else {
+                            if (pg.pgPlayers.contains(p)) {
+                                e.setCancelled(true);
+                                for (Player pgchat : pg.pgPlayers) {
                                     pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
-                            }
-                            for (Player pgchat : pg.specLobby.keySet()) {
-                                if (pg.specLobby.get(pgchat).equals(s)) {
+                                for (Player pgchat : pg.specPlayers) {
                                     pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
-                            }
-                        } else if (pg.specPlayers.contains(p)) {
-                            e.setCancelled(true);
-                            for (Player pgchat : pg.playerLobby.keySet()) {
-                                if (pg.playerLobby.get(pgchat).equals(s)) {
+                            } else if (pg.specPlayers.contains(p)) {
+                                e.setCancelled(true);
+                                for (Player pgchat : pg.pgPlayers) {
                                     pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
-                            }
-                            for (Player pgchat : pg.specLobby.keySet()) {
-                                if (pg.specLobby.get(pgchat).equals(s)) {
+                                for (Player pgchat : pg.specPlayers) {
                                     pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
-                            }
-                        }
-                    }
-                } else {
-                    pg.pgPlayers.forEach(ent -> {
-                        if (ent != null) {
-                            e.getRecipients().add(ent);
-                        }
-                    });
-                    pg.specPlayers.forEach(ent -> {
-                        if (ent != null) {
-                            e.getRecipients().add(ent);
-                        }
-                    });
-                    e.getRecipients().add(p);
-                    String message = ChatColor.WHITE + e.getMessage();
-                    if (!p.hasPermission("pg.admin")) {
-                        if (pg.pgPlayers.contains(p)) {
-                            e.setCancelled(true);
-                            for (Player pgchat : pg.pgPlayers) {
-                                pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
-                            }
-                            for (Player pgchat : pg.specPlayers) {
-                                pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
-                            }
-                        } else if (pg.specPlayers.contains(p)) {
-                            e.setCancelled(true);
-                        }
-                    } else {
-                        if (pg.pgPlayers.contains(p)) {
-                            e.setCancelled(true);
-                            for (Player pgchat : pg.pgPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
-                            }
-                            for (Player pgchat : pg.specPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
-                            }
-                        } else if (pg.specPlayers.contains(p)) {
-                            e.setCancelled(true);
-                            for (Player pgchat : pg.pgPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
-                            }
-                            for (Player pgchat : pg.specPlayers) {
-                                pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                             }
                         }
                     }
                 }
+                pg.getChannel(p).forEach(player -> e.getRecipients().add(player));
             }
-            pg.getChannel(p).forEach(player -> e.getRecipients().add(player));
         }
     }
 

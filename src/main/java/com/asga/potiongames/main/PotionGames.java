@@ -188,6 +188,7 @@ public class PotionGames extends JavaPlugin {
     private boolean delarena = false;
     private boolean reload = false;
     private boolean compassOnSpawn = false;
+    private boolean allowOutsideChat = false;
     private Connection con;
     private Statement st;
 
@@ -471,6 +472,13 @@ public class PotionGames extends JavaPlugin {
             saveConfig();
         } else {
             compassOnSpawn = getConfig().getBoolean("pg.compassOnSpawn");
+        }
+        if (getConfig().get("pg.allowOutsideChat") == null) {
+            getConfig().addDefault("pg.allowOutsideChat", allowOutsideChat);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            allowOutsideChat = getConfig().getBoolean("pg.allowOutsideChat");
         }
         if (getConfig().get("pg.activateTeams") == null) {
             getConfig().addDefault("pg.activateTeams", activateTeams);
@@ -892,6 +900,13 @@ public class PotionGames extends JavaPlugin {
             saveConfig();
         } else {
             compassOnSpawn = getConfig().getBoolean("pg.compassOnSpawn");
+        }
+        if (getConfig().get("pg.allowOutsideChat") == null) {
+            getConfig().addDefault("pg.allowOutsideChat", allowOutsideChat);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            allowOutsideChat = getConfig().getBoolean("pg.allowOutsideChat");
         }
         if (getConfig().get("pg.activateTeams") == null) {
             getConfig().addDefault("pg.activateTeams", activateTeams);
@@ -4060,6 +4075,10 @@ public class PotionGames extends JavaPlugin {
 
     public boolean isCompassOnSpawn() {
         return compassOnSpawn;
+    }
+
+    public boolean isAllowOutsideChat() {
+        return allowOutsideChat;
     }
 
     public boolean isLobbySystem() {
