@@ -8,6 +8,8 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,6 +32,12 @@ import java.io.IOException;
 import java.util.*;
 
 public class Events implements Listener {
+    private static final Set<Material> toDestroy = new HashSet<>();
+
+    static {
+        toDestroy.add(Material.AIR);
+    }
+
     private final PotionGames pg;
     private int amount;
     private int bottle;
@@ -50,17 +58,18 @@ public class Events implements Listener {
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (pg.isLobbySystem()) {
-                            pg.arenadata.set("pg.lobbies." + lobby + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
-                            pg.arenadata.set("pg.lobbies." + lobby + ".coords", Objects.requireNonNull(p.getLocation()));
-                            pg.arenadata.set("pg.lobbies." + lobby + ".activateTeams", true);
-                            pg.arenadata.set("pg.lobbies." + lobby + ".activateKits", true);
-                            pg.arenadata.set("pg.lobbies." + lobby + ".activateShop", true);
-                            pg.arenadata.set("pg.lobbies." + lobby + ".teamSize", 2);
-                            pg.arenadata.set("pg.lobbies." + lobby + ".maxPlayers", 24);
-                            pg.arenadata.set("pg.lobbies." + lobby + ".minPlayers", 12);
-                            pg.arenadata.set("pg.lobbies." + lobby + ".roundTime", 30);
+                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                            arenadata.set("pg.lobbies." + lobby + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
+                            arenadata.set("pg.lobbies." + lobby + ".coords", Objects.requireNonNull(p.getLocation()));
+                            arenadata.set("pg.lobbies." + lobby + ".activateTeams", true);
+                            arenadata.set("pg.lobbies." + lobby + ".activateKits", true);
+                            arenadata.set("pg.lobbies." + lobby + ".activateShop", true);
+                            arenadata.set("pg.lobbies." + lobby + ".teamSize", 2);
+                            arenadata.set("pg.lobbies." + lobby + ".maxPlayers", 24);
+                            arenadata.set("pg.lobbies." + lobby + ".minPlayers", 12);
+                            arenadata.set("pg.lobbies." + lobby + ".roundTime", 30);
                             try {
-                                pg.arenadata.save(pg.arenadatafile);
+                                arenadata.save(pg.arenadatafile);
                             } catch (IOException ex) {
                                 System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
                             }
@@ -77,13 +86,14 @@ public class Events implements Listener {
                         if (!pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             try {
-                                while (pg.arenadata.contains("pg.arenas." + arenaNumber)) {
+                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                while (arenadata.contains("pg.arenas." + arenaNumber)) {
                                     arenaNumber++;
                                 }
-                                pg.arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
-                                pg.arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
-                                pg.arenadata.set("pg.arenas." + arenaNumber + ".name", arena);
-                                pg.arenadata.save(pg.arenadatafile);
+                                arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
+                                arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
+                                arenadata.set("pg.arenas." + arenaNumber + ".name", arena);
+                                arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29));
                             } catch (Exception ex) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
@@ -94,13 +104,14 @@ public class Events implements Listener {
                         if (pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             try {
-                                while (pg.arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber)) {
+                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                while (arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber)) {
                                     arenaNumber++;
                                 }
-                                pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, p.getWorld());
-                                pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".world", p.getWorld().getName());
-                                pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".name", arena);
-                                pg.arenadata.save(pg.arenadatafile);
+                                arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, p.getWorld());
+                                arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".world", p.getWorld().getName());
+                                arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".name", arena);
+                                arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                             } catch (Exception ex) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
@@ -115,9 +126,10 @@ public class Events implements Listener {
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (pg.isLobbySystem()) {
-                            pg.arenadata.set("pg.lobbies." + lobby, null);
+                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                            arenadata.set("pg.lobbies." + lobby, null);
                             try {
-                                pg.arenadata.save(pg.arenadatafile);
+                                arenadata.save(pg.arenadatafile);
                             } catch (IOException ex) {
                                 System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
                             }
@@ -136,8 +148,9 @@ public class Events implements Listener {
                             try {
                                 int i = 1;
                                 boolean arenaID = false;
+                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaID) {
-                                    if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                    if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
                                         arenaNumber = i;
                                         arenaID = true;
                                     } else {
@@ -145,8 +158,8 @@ public class Events implements Listener {
                                     }
                                 }
                                 String arenaName = arena;
-                                pg.arenadata.set("pg.arenas." + arenaNumber, null);
-                                pg.arenadata.save(pg.arenadatafile);
+                                arenadata.set("pg.arenas." + arenaNumber, null);
+                                arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28));
                             } catch (Exception ex) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
@@ -159,8 +172,9 @@ public class Events implements Listener {
                             try {
                                 int i = 1;
                                 boolean arenaID = false;
+                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaID) {
-                                    if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                    if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
                                         arenaNumber = i;
                                         arenaID = true;
                                     } else {
@@ -168,8 +182,8 @@ public class Events implements Listener {
                                     }
                                 }
                                 String arenaName = arena;
-                                pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, null);
-                                pg.arenadata.save(pg.arenadatafile);
+                                arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, null);
+                                arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                             } catch (Exception ex) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
@@ -304,17 +318,8 @@ public class Events implements Listener {
         if (pg.isGameServer()) {
             if (pg.worlds.contains(e.getBlock().getWorld().getName())) {
                 switch (e.getBlock().getType()) {
-                    case ACACIA_LEAVES:
-                    case BIRCH_LEAVES:
-                    case DARK_OAK_LEAVES:
-                    case JUNGLE_LEAVES:
-                    case OAK_LEAVES:
-                    case SPRUCE_LEAVES:
-                        e.setCancelled(true);
-                        break;
-                    default:
-                        e.setCancelled(false);
-                        break;
+                    case ACACIA_LEAVES, BIRCH_LEAVES, DARK_OAK_LEAVES, JUNGLE_LEAVES, OAK_LEAVES, SPRUCE_LEAVES -> e.setCancelled(true);
+                    default -> e.setCancelled(false);
                 }
             }
         }
@@ -374,8 +379,6 @@ public class Events implements Listener {
             }
         }
     }
-
-    private static final Set<Material> toDestroy = new HashSet<>();
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
@@ -440,10 +443,6 @@ public class Events implements Listener {
                 }
             }
         }
-    }
-
-    static {
-        toDestroy.add(Material.AIR);
     }
 
     @EventHandler
@@ -713,7 +712,8 @@ public class Events implements Listener {
             s = Integer.toString(ii);
             for (int i = 1; i < 27; i++) {
                 number = Integer.toString(i);
-                if (Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(pg.getConfig().getString("pg.Lobby.world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(pg.arenadata.getString("pg.arenas." + s + ".world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(pg.arenadata.getString("pg.lobbies." + s + ".world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(pg.arenadata.getString("pg.lobbies." + s + "." + number + ".world"))) {
+                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                if (Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(pg.getConfig().getString("pg.Lobby.world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(arenadata.getString("pg.arenas." + s + ".world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(arenadata.getString("pg.lobbies." + s + ".world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(arenadata.getString("pg.lobbies." + s + "." + number + ".world"))) {
                     if (e.getEntity().getType() == EntityType.PRIMED_TNT) {
                         List<Block> destroyed = e.blockList();
                         destroyed.removeIf(block -> !toDestroy.contains(block.getType()));
@@ -728,8 +728,7 @@ public class Events implements Listener {
         if (pg.isGameServer()) {
             if (pg.worlds.contains(e.getDamager().getWorld().getName())) {
                 e.setCancelled(e.getDamager() instanceof LightningStrike || e.getDamager() instanceof Firework);
-                if (e.getEntity() instanceof Player && e.getDamager() instanceof TNTPrimed) {
-                    Player p = (Player) e.getEntity();
+                if (e.getEntity() instanceof Player p && e.getDamager() instanceof TNTPrimed) {
                     if (p.getHealth() - 4 <= 0) {
                         p.setHealth(p.getHealth() - 4);
                     } else {
@@ -763,7 +762,8 @@ public class Events implements Listener {
                         String line2 = sign.getLine(1);
                         String line3 = sign.getLine(2);
                         if (pg.isLobbySystem()) {
-                            if (e.getClickedBlock().getLocation().equals(pg.arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
+                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                            if (e.getClickedBlock().getLocation().equals(arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
                                 if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
                                     pg.onJoinLobby(p, line1);
                                 }
@@ -800,7 +800,8 @@ public class Events implements Listener {
                 }
                 if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                     if (e.getHand() == EquipmentSlot.HAND) {
-                        if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(pg.chestdata.get("pg.chestblocks.normal")).toString())) {
+                        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(pg.chestdatafile);
+                        if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.chestblocks.normal")).toString())) {
                             if (pg.isLobbySystem()) {
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
@@ -970,21 +971,21 @@ public class Events implements Listener {
                         }
                         int chestnumber = 1;
                         int chestitem = 1;
-                        while (pg.chestdata.contains("pg.customchests." + chestnumber)) {
-                            if (e.getClickedBlock().getType().toString().equals(Objects.requireNonNull(pg.chestdata.get("pg.customchests." + chestnumber + ".chesttype")).toString())) {
-                                if (pg.chestdata.getBoolean("pg.customchests." + chestnumber + ".activate")) {
+                        while (chestdata.contains("pg.customchests." + chestnumber)) {
+                            if (e.getClickedBlock().getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.customchests." + chestnumber + ".chesttype")).toString())) {
+                                if (chestdata.getBoolean("pg.customchests." + chestnumber + ".activate")) {
                                     if (pg.isLobbySystem()) {
                                         int i = 1;
                                         String s = Integer.toString(i);
                                         if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                             if (!pg.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                                 Inventory inv;
-                                                inv = Bukkit.createInventory(p, pg.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), pg.prefix);
+                                                inv = Bukkit.createInventory(p, chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), pg.prefix);
                                                 pg.lobbychests.put(e.getClickedBlock().getLocation(), s);
                                                 pg.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
                                                 p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
-                                                while (pg.chestdata.contains("pg.customchests." + chestnumber + "." + chestitem)) {
-                                                    inv.setItem(pg.chestdata.getInt("pg.customchests." + chestnumber + "." + chestitem + ".slot") - 1, pg.chestdata.getItemStack("pg.customchests." + chestnumber + "." + chestitem + ".item"));
+                                                while (chestdata.contains("pg.customchests." + chestnumber + "." + chestitem)) {
+                                                    inv.setItem(chestdata.getInt("pg.customchests." + chestnumber + "." + chestitem + ".slot") - 1, chestdata.getItemStack("pg.customchests." + chestnumber + "." + chestitem + ".item"));
                                                     chestitem++;
                                                 }
                                             } else {
@@ -995,11 +996,11 @@ public class Events implements Listener {
                                         if (pg.getGamestate() == GameStates.INGAME) {
                                             if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
                                                 Inventory inv;
-                                                inv = Bukkit.createInventory(p, pg.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), pg.prefix);
+                                                inv = Bukkit.createInventory(p, chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), pg.prefix);
                                                 pg.chests.put(e.getClickedBlock().getLocation(), inv);
                                                 p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
-                                                while (pg.chestdata.contains("pg.customchests." + chestnumber + "." + chestitem)) {
-                                                    inv.setItem(pg.chestdata.getInt("pg.customchests." + chestnumber + "." + chestitem + ".slot") - 1, pg.chestdata.getItemStack("pg.customchests." + chestnumber + "." + chestitem + ".item"));
+                                                while (chestdata.contains("pg.customchests." + chestnumber + "." + chestitem)) {
+                                                    inv.setItem(chestdata.getInt("pg.customchests." + chestnumber + "." + chestitem + ".slot") - 1, chestdata.getItemStack("pg.customchests." + chestnumber + "." + chestitem + ".item"));
                                                     chestitem++;
                                                 }
                                             } else {
@@ -1012,7 +1013,7 @@ public class Events implements Listener {
                             chestnumber++;
                         }
                         if (pg.isActivateShop()) {
-                            if ((e.getClickedBlock()).getType().toString().equals(Objects.requireNonNull(pg.chestdata.get("pg.chestblocks.shop")).toString())) {
+                            if ((e.getClickedBlock()).getType().toString().equals(Objects.requireNonNull(chestdata.get("pg.chestblocks.shop")).toString())) {
                                 if (pg.isLobbySystem()) {
                                     int ii = 1;
                                     String s = Integer.toString(ii);
@@ -1371,7 +1372,8 @@ public class Events implements Listener {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
-                                    arenamapmeta.setDisplayName(pg.kitdata.getString("pg.kits." + i + ".name"));
+                                    FileConfiguration kitdata = YamlConfiguration.loadConfiguration(pg.kitdatafile);
+                                    arenamapmeta.setDisplayName(kitdata.getString("pg.kits." + i + ".name"));
                                     arenamap.setItemMeta(arenamapmeta);
                                     inv.setItem(i, arenamap);
                                 }
@@ -1390,7 +1392,8 @@ public class Events implements Listener {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
-                                    arenamapmeta.setDisplayName(pg.kitdata.getString("pg.kits." + i + ".name"));
+                                    FileConfiguration kitdata = YamlConfiguration.loadConfiguration(pg.kitdatafile);
+                                    arenamapmeta.setDisplayName(kitdata.getString("pg.kits." + i + ".name"));
                                     arenamap.setItemMeta(arenamapmeta);
                                     inv.setItem(i, arenamap);
                                 }
@@ -1445,19 +1448,20 @@ public class Events implements Listener {
                                     try {
                                         int i = 1;
                                         boolean arenaName = false;
+                                        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                         while (!arenaName) {
-                                            if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                            if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
                                                 arenaNumber = i;
                                                 arenaName = true;
                                             } else {
                                                 i++;
                                             }
                                         }
-                                        while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
+                                        while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
                                             spawnNumber++;
                                         }
-                                        pg.arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
-                                        pg.arenadata.save(pg.arenadatafile);
+                                        arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
+                                        arenadata.save(pg.arenadatafile);
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29));
                                     } catch (Exception ex) {
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.RED + " " + pg.chat.get(31));
@@ -1471,19 +1475,20 @@ public class Events implements Listener {
                                     try {
                                         int i = 1;
                                         boolean arenaName = false;
+                                        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                         while (!arenaName) {
-                                            if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                            if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
                                                 arenaNumber = i;
                                                 arenaName = true;
                                             } else {
                                                 i++;
                                             }
                                         }
-                                        while (pg.arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber)) {
+                                        while (arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber)) {
                                             spawnNumber++;
                                         }
-                                        pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
-                                        pg.arenadata.save(pg.arenadatafile);
+                                        arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
+                                        arenadata.save(pg.arenadatafile);
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
                                     } catch (Exception ex) {
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
@@ -1497,7 +1502,8 @@ public class Events implements Listener {
                             if (pg.isLobbySystem()) {
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
                                 for (int slot = 1; slot <= 27; slot++) {
-                                    if (pg.arenadata.contains("pg.lobbies." + slot)) {
+                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                    if (arenadata.contains("pg.lobbies." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
@@ -1514,12 +1520,13 @@ public class Events implements Listener {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
                             if (pg.isLobbySystem()) {
                                 for (int slot = 1; slot < 27; slot++) {
-                                    if (pg.arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
+                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                    if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(pg.arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"));
+                                        arenamapmeta.setDisplayName(arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"));
                                         arenamapmeta.setLore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
@@ -1527,12 +1534,13 @@ public class Events implements Listener {
                                 }
                             } else {
                                 for (int slot = 1; slot < 27; slot++) {
-                                    if (pg.arenadata.contains("pg.arenas." + slot)) {
+                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                    if (arenadata.contains("pg.arenas." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(pg.arenadata.getString("pg.arenas." + slot + ".name"));
+                                        arenamapmeta.setDisplayName(arenadata.getString("pg.arenas." + slot + ".name"));
                                         arenamapmeta.setLore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
@@ -1553,9 +1561,10 @@ public class Events implements Listener {
                             }
                             if (p.hasPermission("pg.setup")) {
                                 if (pg.isLobbySystem()) {
-                                    pg.arenadata.set("pg.lobbies." + lobby + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                    arenadata.set("pg.lobbies." + lobby + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
                                     try {
-                                        pg.arenadata.save(pg.arenadatafile);
+                                        arenadata.save(pg.arenadatafile);
                                     } catch (IOException ex) {
                                         System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
                                     }
@@ -1606,8 +1615,9 @@ public class Events implements Listener {
                                     try {
                                         int i = 1;
                                         boolean arenaName = false;
+                                        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                         while (!arenaName) {
-                                            if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                            if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
                                                 arenaNumber = i;
                                                 arenaName = true;
                                             } else {
@@ -1615,12 +1625,12 @@ public class Events implements Listener {
                                             }
                                         }
                                         int max = 1;
-                                        while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + max)) {
+                                        while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + max)) {
                                             spawnNumber = max;
                                             max++;
                                         }
-                                        pg.arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
-                                        pg.arenadata.save(pg.arenadatafile);
+                                        arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
+                                        arenadata.save(pg.arenadatafile);
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28));
                                     } catch (Exception ex) {
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(31));
@@ -1634,8 +1644,9 @@ public class Events implements Listener {
                                     try {
                                         int i = 1;
                                         boolean arenaName = false;
+                                        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                         while (!arenaName) {
-                                            if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                            if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
                                                 arenaNumber = i;
                                                 arenaName = true;
                                             } else {
@@ -1643,12 +1654,12 @@ public class Events implements Listener {
                                             }
                                         }
                                         int max = 1;
-                                        while (pg.arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + max)) {
+                                        while (arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + max)) {
                                             spawnNumber = max;
                                             max++;
                                         }
-                                        pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
-                                        pg.arenadata.save(pg.arenadatafile);
+                                        arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
+                                        arenadata.save(pg.arenadatafile);
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                                     } catch (Exception ex) {
                                         p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
@@ -1662,7 +1673,8 @@ public class Events implements Listener {
                             if (pg.isLobbySystem()) {
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
                                 for (int slot = 1; slot <= 27; slot++) {
-                                    if (pg.arenadata.contains("pg.lobbies." + slot)) {
+                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                    if (arenadata.contains("pg.lobbies." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
@@ -1679,12 +1691,13 @@ public class Events implements Listener {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
                             if (pg.isLobbySystem()) {
                                 for (int slot = 1; slot < 27; slot++) {
-                                    if (pg.arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
+                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                    if (arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(pg.arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"));
+                                        arenamapmeta.setDisplayName(arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"));
                                         arenamapmeta.setLore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
@@ -1692,12 +1705,13 @@ public class Events implements Listener {
                                 }
                             } else {
                                 for (int slot = 1; slot < 27; slot++) {
-                                    if (pg.arenadata.contains("pg.arenas." + slot)) {
+                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                    if (arenadata.contains("pg.arenas." + slot)) {
                                         ArrayList<String> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(pg.arenadata.getString("pg.arenas." + slot + ".name"));
+                                        arenamapmeta.setDisplayName(arenadata.getString("pg.arenas." + slot + ".name"));
                                         arenamapmeta.setLore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
@@ -1793,9 +1807,10 @@ public class Events implements Listener {
                                         randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                         temp.put(pg.chat.get(42), randomvotes);
                                         for (int max = 1; max < 27; max++) {
-                                            if (pg.arenadata.contains("pg.lobbies." + s + "." + max)) {
-                                                int oldvotes = pg.lobbyvotes.get(s).get(pg.arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
-                                                temp.put(pg.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
+                                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                            if (arenadata.contains("pg.lobbies." + s + "." + max)) {
+                                                int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                                                temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
                                             }
                                         }
                                         temp.put(displayname, votes);
@@ -1823,9 +1838,10 @@ public class Events implements Listener {
                                         randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                         tempold.put(pg.chat.get(42), randomvotes);
                                         for (int max = 1; max < 27; max++) {
-                                            if (pg.arenadata.contains("pg.lobbies." + s + "." + max)) {
-                                                int oldvotes = pg.lobbyvotes.get(s).get(pg.arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
-                                                tempold.put(pg.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
+                                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                            if (arenadata.contains("pg.lobbies." + s + "." + max)) {
+                                                int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                                                tempold.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
                                             }
                                         }
                                         tempold.put(arenaname, votes);
@@ -1837,9 +1853,10 @@ public class Events implements Listener {
                                         randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
                                         temp.put(pg.chat.get(42), randomvotes);
                                         for (int max = 1; max < 27; max++) {
-                                            if (pg.arenadata.contains("pg.lobbies." + s + "." + max)) {
-                                                int oldvotes = pg.lobbyvotes.get(s).get(pg.arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
-                                                temp.put(pg.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
+                                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                            if (arenadata.contains("pg.lobbies." + s + "." + max)) {
+                                                int oldvotes = pg.lobbyvotes.get(s).get(arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                                                temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
                                             }
                                         }
                                         temp.put(displayname, votes);
@@ -2115,8 +2132,9 @@ public class Events implements Listener {
                                         p.closeInventory();
                                         String arenaname = null;
                                         for (int i = 0; i <= pg.arenas.size(); i++) {
-                                            if (pg.arenadata.contains("pg.arenas." + i)) {
-                                                String name = pg.arenadata.getString("pg.arenas." + i + ".name");
+                                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                                            if (arenadata.contains("pg.arenas." + i)) {
+                                                String name = arenadata.getString("pg.arenas." + i + ".name");
                                                 if (pg.voteplayernames.containsKey(name) && pg.voteplayernames.containsValue(p)) {
                                                     arenaname = name;
                                                 }
@@ -2520,7 +2538,8 @@ public class Events implements Listener {
                 e.setMotd("" + ChatColor.GREEN + pg.getGamestate());
             } else if (pg.getGamestate() == GameStates.PREPARING) {
                 if (pg.getVote() != null) {
-                    String motd = "" + ChatColor.GOLD + Objects.requireNonNull(pg.arenadata.get("pg.arenas." + pg.getVote() + ".name"));
+                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
+                    String motd = "" + ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + pg.getVote() + ".name"));
                     e.setMotd(motd.toUpperCase());
                 } else {
                     e.setMotd("" + ChatColor.AQUA + "VOTING");
