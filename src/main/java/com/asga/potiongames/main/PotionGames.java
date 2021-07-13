@@ -138,6 +138,11 @@ public class PotionGames extends JavaPlugin {
     public final File messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
     public final File arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");
     public final File chestdatafile = new File(getDataFolder() + File.separator + "chestdata.yml");
+    public final FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
+    public final FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
+    public final FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+    public final FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
+    public final FileConfiguration chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
     private final ItemStack coin = new ItemStack(Material.GOLD_NUGGET);
     private final ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
     public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
@@ -191,10 +196,6 @@ public class PotionGames extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
-        FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Events(this), this);
         Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
@@ -872,10 +873,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void onReload() {
-        FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
-        FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         if (getConfig().get("pg.activateMySQL") == null) {
             getConfig().addDefault("pg.activateMySQL", activateMySQL);
             getConfig().options().copyDefaults(true);
@@ -1377,7 +1374,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void chestData() {
-        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
         food1.add(new ItemStack(Material.CAKE, 1));
         food1.add(new ItemStack(Material.BREAD, 3));
         food1.add(new ItemStack(Material.PUMPKIN_PIE, 3));
@@ -1720,7 +1716,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void clearEffects(Player all) {
-        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
         int chestitem = 1;
         while (chestdata.contains("pg.potions" + chestitem)) {
             PotionEffect effect = (PotionEffect) chestdata.get("pg.potions." + chestitem);
@@ -1789,8 +1784,6 @@ public class PotionGames extends JavaPlugin {
 
     public void tick() {
         if (!isLobbySystem()) {
-            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-            FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
             setCountdown(getConfig().getInt("pg.countdown"));
             roundTimeSeconds = roundTime * 60;
             tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
@@ -2347,7 +2340,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void voteResults() {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         int max = 0;
         for (int i : votes.values()) {
             if (i > max) {
@@ -2422,7 +2414,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void teleportAndStart() {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         for (Player all : pgPlayers) {
             int maxteamplayers = teamSize;
             boolean teamfound = false;
@@ -2489,7 +2480,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void onJoin(Player p) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         joinChannel(p.getPlayer(), "Local");
         PlayerInventory inventory = p.getInventory();
         inv.put(p.getName(), p.getInventory().getContents());
@@ -2594,7 +2584,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void onLeave(Player p) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         joinChannel(p.getPlayer(), "Global");
         if (getGamestate() == GameStates.INGAME && pgPlayers.size() > 1 && isReload()) {
             addLosts(p.getUniqueId().toString(), 1);
@@ -2660,7 +2649,6 @@ public class PotionGames extends JavaPlugin {
 
     public void tickLobby(String s) {
         if (isLobbySystem()) {
-            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
             countdownLobby.put(s, getConfig().getInt("pg.countdown"));
             int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
             lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
@@ -3320,7 +3308,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void voteResultsLobby(String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         int max = 0;
         for (int i : lobbyvotes.get(s).values()) {
             if (i > max) {
@@ -3403,7 +3390,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void teleportAndStartLobby(String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         for (Player all : playerLobby.keySet()) {
             if (playerLobby.get(all).equals(s)) {
                 int maxteamplayers = teamSize;
@@ -3483,7 +3469,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void onJoinLobby(Player p, String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         joinChannel(p.getPlayer(), "Local");
         PlayerInventory inventory = p.getInventory();
         inv.put(p.getName(), p.getInventory().getContents());
@@ -3592,7 +3577,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void onLeaveLobby(Player p, String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         joinChannel(p.getPlayer(), "Global");
         if (lobbyStates.get(s) == GameStates.INGAME && lobbyAmount.get(s) > 1 && playerLobby.containsKey(p) && isReload()) {
             addLosts(p.getUniqueId().toString(), 1);
