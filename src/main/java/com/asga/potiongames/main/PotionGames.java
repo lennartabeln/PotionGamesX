@@ -186,6 +186,7 @@ public class PotionGames extends JavaPlugin {
     private boolean reload = false;
     private boolean compassOnSpawn = false;
     private boolean allowOutsideChat = false;
+    private boolean changeGamerules = true;
     private Connection con;
     private Statement st;
 
@@ -475,6 +476,13 @@ public class PotionGames extends JavaPlugin {
             saveConfig();
         } else {
             allowOutsideChat = getConfig().getBoolean("pg.allowOutsideChat");
+        }
+        if (getConfig().get("pg.changeGamerules") == null) {
+            getConfig().addDefault("pg.changeGamerules", changeGamerules);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            changeGamerules = getConfig().getBoolean("pg.changeGamerules");
         }
         if (getConfig().get("pg.activateTeams") == null) {
             getConfig().addDefault("pg.activateTeams", activateTeams);
@@ -1979,6 +1987,7 @@ public class PotionGames extends JavaPlugin {
                                     Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
                                     Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
                                     Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                    Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
                                 }
                             }
                             setJoinable(false);
@@ -2836,6 +2845,7 @@ public class PotionGames extends JavaPlugin {
                                     Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
                                     Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
                                     Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                    Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
                                 }
                             }
                             lobbyJoinable.replace(s, false);
@@ -4090,6 +4100,10 @@ public class PotionGames extends JavaPlugin {
 
     public boolean isAllowOutsideChat() {
         return allowOutsideChat;
+    }
+
+    public boolean isChangeGamerules() {
+        return changeGamerules;
     }
 
     public boolean isLobbySystem() {
