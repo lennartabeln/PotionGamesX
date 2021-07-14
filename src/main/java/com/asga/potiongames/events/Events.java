@@ -706,19 +706,10 @@ public class Events implements Listener {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e) {
-        String s;
-        String number;
-        for (int ii = 1; ii <= 27; ii++) {
-            s = Integer.toString(ii);
-            for (int i = 1; i < 27; i++) {
-                number = Integer.toString(i);
-                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                if (Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(pg.getConfig().getString("pg.Lobby.world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(arenadata.getString("pg.arenas." + s + ".world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(arenadata.getString("pg.lobbies." + s + ".world")) || Objects.requireNonNull(e.getLocation().getWorld()).getName().equals(arenadata.getString("pg.lobbies." + s + "." + number + ".world"))) {
-                    if (e.getEntity().getType() == EntityType.PRIMED_TNT) {
-                        List<Block> destroyed = e.blockList();
-                        destroyed.removeIf(block -> !toDestroy.contains(block.getType()));
-                    }
-                }
+        if (pg.worlds.contains(Objects.requireNonNull(Objects.requireNonNull(e.getLocation().getWorld())).getName())) {
+            if (e.getEntity().getType() == EntityType.PRIMED_TNT) {
+                List<Block> destroyed = e.blockList();
+                destroyed.removeIf(block -> !toDestroy.contains(block.getType()));
             }
         }
     }

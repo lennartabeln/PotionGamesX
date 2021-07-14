@@ -1787,6 +1787,8 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void tick() {
+        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         if (!isLobbySystem()) {
             setCountdown(getConfig().getInt("pg.countdown"));
             roundTimeSeconds = roundTime * 60;
@@ -1821,7 +1823,6 @@ public class PotionGames extends JavaPlugin {
                             if (!voteallowed) {
                                 voteallowed = true;
                                 for (int arena = 1; arena < 27; arena++) {
-                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                                     if (arenadata.contains("pg.arenas." + arena)) {
                                         String name = arenadata.getString("pg.arenas." + arena + ".name");
                                         arenas.add(name);
@@ -1849,7 +1850,6 @@ public class PotionGames extends JavaPlugin {
                             }
                             int kit = 1;
                             for (int i = 0; i < activeKits; i++) {
-                                FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
                                 String name = kitdata.getString("pg.kits." + kit + ".name");
                                 kits.add(name);
                                 kit++;
@@ -1915,7 +1915,6 @@ public class PotionGames extends JavaPlugin {
                                     sign.setLine(1, ChatColor.RED + getGamestate().toString());
                                 }
                                 if (getVote() != null) {
-                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                                     sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
                                 } else {
                                     sign.setLine(2, ChatColor.AQUA + "Voting");
@@ -1965,7 +1964,6 @@ public class PotionGames extends JavaPlugin {
                                     sign.setLine(1, ChatColor.RED + getGamestate().toString());
                                 }
                                 if (getVote() != null) {
-                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                                     sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
                                 } else {
                                     sign.setLine(2, ChatColor.AQUA + "Voting");
@@ -1974,7 +1972,6 @@ public class PotionGames extends JavaPlugin {
                                 sign.update();
                             }
                             for (int setting = 1; setting < 27; setting++) {
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                                 if (arenadata.contains("pg.arenas." + setting)) {
                                     String name = arenadata.getString("pg.arenas." + setting + ".world");
                                     assert name != null;
@@ -2267,7 +2264,6 @@ public class PotionGames extends JavaPlugin {
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
                             for (int gamerule = 1; gamerule < 27; gamerule++) {
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                                 if (arenadata.contains("pg.arenas." + gamerule)) {
                                     String name = arenadata.getString("pg.arenas." + gamerule + ".world");
                                     setGameRules(name);
@@ -2322,7 +2318,6 @@ public class PotionGames extends JavaPlugin {
                                 loc.getBlock().setBlockData(data);
                             }
                             for (int worldName = 1; worldName < 27; worldName++) {
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                                 if (arenadata.contains("pg.arenas." + worldName)) {
                                     String name = arenadata.getString("pg.arenas." + worldName + ".world");
                                     assert name != null;
@@ -2666,6 +2661,7 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void tickLobby(String s) {
+        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         if (isLobbySystem()) {
             countdownLobby.put(s, getConfig().getInt("pg.countdown"));
             int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
@@ -2675,7 +2671,6 @@ public class PotionGames extends JavaPlugin {
                 if (!lobbyPause.get(s)) {
                     switch (lobbyStates.get(s)) {
                         case WAITING -> {
-                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                             if (arenadata.contains("pg.lobbies." + s) && arenadata.getLocation("pg.lobbies." + s + ".sign") != null) {
                                 Location loc = arenadata.getLocation("pg.lobbies." + s + ".sign");
                                 assert loc != null;
@@ -2755,7 +2750,6 @@ public class PotionGames extends JavaPlugin {
                             }
                         }
                         case PREPARING -> {
-                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                             if (arenadata.contains("pg.lobbies." + s) && arenadata.getLocation("pg.lobbies." + s + ".sign") != null) {
                                 Location loc = arenadata.getLocation("pg.lobbies." + s + ".sign");
                                 assert loc != null;
@@ -2814,7 +2808,6 @@ public class PotionGames extends JavaPlugin {
                             }
                         }
                         case INGAME -> {
-                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                             if (arenadata.contains("pg.lobbies." + s) && arenadata.getLocation("pg.lobbies." + s + ".sign") != null) {
                                 Location loc = arenadata.getLocation("pg.lobbies." + s + ".sign");
                                 assert loc != null;
@@ -3138,7 +3131,6 @@ public class PotionGames extends JavaPlugin {
                             }
                         }
                         case RESET -> {
-                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                             if (arenadata.contains("pg.lobbies." + s) && arenadata.getLocation("pg.lobbies." + s + ".sign") != null) {
                                 Location loc = arenadata.getLocation("pg.lobbies." + s + ".sign");
                                 assert loc != null;
