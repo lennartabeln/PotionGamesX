@@ -686,7 +686,7 @@ public class PotionGames extends JavaPlugin {
         coin.setItemMeta(coinmeta);
         if (isGameServer()) {
             if (!isLobbySystem()) {
-                setGamestate(GameStates.WAITING);
+                gamestate = GameStates.WAITING;
                 tickStarted = true;
                 tick();
             } else {
@@ -1810,22 +1810,22 @@ public class PotionGames extends JavaPlugin {
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, "PotionGames");
-                                if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.GREEN + getGamestate().toString());
+                                if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
+                                    sign.setLine(1, ChatColor.GREEN + gamestate.toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.RED + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.RED + gamestate.toString());
                                 }
                                 sign.setLine(2, ChatColor.AQUA + "Voting");
                                 sign.setLine(3, ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                 sign.update();
                             }
                             specPlayers.clear();
-                            setMove(true);
-                            setJoinable(true);
+                            move = true;
+                            joinable = true;
                             if (getConfig().contains("pg.Lobby.world")) {
                                 worlds.add(getConfig().getString("pg.Lobby.world"));
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
-                                if (isChangeGamerules()) {
+                                if (changeGamerules) {
                                     setGameRules(getConfig().getString("pg.Lobby.world"));
                                     Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                                     Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setGameRule(GameRule.FALL_DAMAGE, false);
@@ -1901,7 +1901,7 @@ public class PotionGames extends JavaPlugin {
                                     sign.update();
                                 }
                             }
-                            setJoinable(true);
+                            joinable = true;
                             if (getPlayerAmount() < minPlayers) {
                                 for (Player all : pgPlayers) {
                                     all.setLevel(0);
@@ -1910,7 +1910,7 @@ public class PotionGames extends JavaPlugin {
                                 }
                                 setCountdown(getConfig().getInt("pg.countdown"));
                             } else {
-                                setGamestate(GameStates.PREPARING);
+                                gamestate = GameStates.PREPARING;
                             }
                         }
                         case PREPARING -> {
@@ -1920,10 +1920,10 @@ public class PotionGames extends JavaPlugin {
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, "PotionGames");
-                                if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.GREEN + getGamestate().toString());
+                                if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
+                                    sign.setLine(1, ChatColor.GREEN + gamestate.toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.RED + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.RED + gamestate.toString());
                                 }
                                 if (getVote() != null) {
                                     sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
@@ -1954,12 +1954,12 @@ public class PotionGames extends JavaPlugin {
                                     }
                                     teleportAndStart();
                                     setCountdown(11);
-                                    setGamestate(GameStates.INGAME);
-                                    setMove(false);
+                                    gamestate = GameStates.INGAME;
+                                    move = false;
                                 }
                                 countdown--;
                             } else {
-                                setGamestate(GameStates.WAITING);
+                                gamestate = GameStates.WAITING;
                             }
                         }
                         case INGAME -> {
@@ -1969,10 +1969,10 @@ public class PotionGames extends JavaPlugin {
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, "PotionGames");
-                                if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.GREEN + getGamestate().toString());
+                                if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
+                                    sign.setLine(1, ChatColor.GREEN + gamestate.toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.RED + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.RED + gamestate.toString());
                                 }
                                 if (getVote() != null) {
                                     sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
@@ -1988,14 +1988,14 @@ public class PotionGames extends JavaPlugin {
                                     assert name != null;
                                     worlds.add(name);
                                     Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
-                                    if (isChangeGamerules()) {
+                                    if (changeGamerules) {
                                         setGameRules(name);
                                         Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
                                         Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                                     }
                                 }
                             }
-                            setJoinable(false);
+                            joinable = false;
                             if (getPlayerAmount() != 0) {
                                 if (countdown == 10) {
                                     for (Player all : pgPlayers) {
@@ -2006,7 +2006,7 @@ public class PotionGames extends JavaPlugin {
                                         assert playercompassmeta != null;
                                         playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
                                         playercompass.setItemMeta(playercompassmeta);
-                                        if (isCompassOnSpawn()) {
+                                        if (compassOnSpawn) {
                                             all.getInventory().setItem(8, playercompass);
                                         }
                                     }
@@ -2025,7 +2025,7 @@ public class PotionGames extends JavaPlugin {
                                     }
                                     countdown--;
                                 } else if (countdown == 0) {
-                                    setMove(true);
+                                    move = true;
                                     for (Player all : pgPlayers) {
                                         all.sendMessage(prefix + ChatColor.GREEN + chat.get(3));
                                         all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
@@ -2163,36 +2163,36 @@ public class PotionGames extends JavaPlugin {
                                         setCountdown(-3);
                                     }
                                 } else if (countdown == -3) {
-                                    if (getReset() == 10) {
+                                    if (reset == 10) {
                                         for (Player all : pgPlayers) {
-                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + getReset());
+                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + reset);
                                         }
                                         for (Player all : specPlayers) {
-                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + getReset());
+                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + reset);
                                         }
                                         reset--;
-                                    } else if (getReset() <= 9 && getReset() > 5) {
+                                    } else if (reset <= 9 && reset > 5) {
                                         reset--;
-                                    } else if (getReset() <= 5 && getReset() > 0) {
+                                    } else if (reset <= 5 && reset > 0) {
                                         for (Player all : pgPlayers) {
-                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + getReset());
+                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + reset);
                                         }
                                         for (Player all : specPlayers) {
-                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + getReset());
+                                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(5) + " " + ChatColor.AQUA + reset);
                                         }
                                         reset--;
-                                    } else if (getReset() == 0) {
+                                    } else if (reset == 0) {
                                         for (Player all : pgPlayers) {
                                             all.sendMessage(prefix + ChatColor.GREEN + chat.get(6));
                                         }
                                         for (Player all : specPlayers) {
                                             all.sendMessage(prefix + ChatColor.GREEN + chat.get(6));
                                         }
-                                        setGamestate(GameStates.RESET);
+                                        gamestate = GameStates.RESET;
                                     }
                                 }
                             } else {
-                                setGamestate(GameStates.RESET);
+                                gamestate = GameStates.RESET;
                             }
                         }
                         case RESET -> {
@@ -2202,16 +2202,16 @@ public class PotionGames extends JavaPlugin {
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
                                 sign.setLine(0, "PotionGames");
-                                if (getGamestate() == GameStates.WAITING || getGamestate() == GameStates.PREPARING) {
-                                    sign.setLine(1, ChatColor.GREEN + getGamestate().toString());
+                                if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
+                                    sign.setLine(1, ChatColor.GREEN + gamestate.toString());
                                 } else {
-                                    sign.setLine(1, ChatColor.RED + getGamestate().toString());
+                                    sign.setLine(1, ChatColor.RED + gamestate.toString());
                                 }
                                 sign.setLine(2, ChatColor.AQUA + "Voting");
                                 sign.setLine(3, ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                 sign.update();
                             }
-                            setReset(10);
+                            reset = 10;
                             setCountdown(getConfig().getInt("pg.countdown"));
                             roundTimeSeconds = roundTime * 60;
                             setVote(null);
@@ -2276,7 +2276,7 @@ public class PotionGames extends JavaPlugin {
                             kitplayernames.clear();
                             richkidPlayers.clear();
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
-                            if (isChangeGamerules()) {
+                            if (changeGamerules) {
                                 setGameRules(getConfig().getString("pg.Lobby.world"));
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setGameRule(GameRule.FALL_DAMAGE, false);
@@ -2343,7 +2343,7 @@ public class PotionGames extends JavaPlugin {
                                     }
                                 }
                             }
-                            setGamestate(GameStates.WAITING);
+                            gamestate = GameStates.WAITING;
                         }
                         default -> {
                             Bukkit.getScheduler().cancelTask(tick);
@@ -2378,7 +2378,7 @@ public class PotionGames extends JavaPlugin {
         Random generator = new Random();
         int rndIndex = generator.nextInt(arenaNumber.size());
         int rndArena = arenaNumber.get(rndIndex);
-        if (!isForcearena() && !voted.isEmpty()) {
+        if (!forcearena && !voted.isEmpty()) {
             boolean randomArena = false;
             int i = 1;
             boolean votedArena = false;
@@ -2412,12 +2412,12 @@ public class PotionGames extends JavaPlugin {
                     }
                 }
             }
-        } else if (isForcearena() && !voted.isEmpty() || isForcearena() && voted.isEmpty()) {
+        } else if (forcearena) {
             winner = getVote();
             for (Player all : pgPlayers) {
-                all.sendMessage(prefix + ChatColor.AQUA + getVotedArena() + ChatColor.GREEN + " " + chat.get(7));
+                all.sendMessage(prefix + ChatColor.AQUA + votedArena + ChatColor.GREEN + " " + chat.get(7));
             }
-        } else if (voted.isEmpty() && !isForcearena()) {
+        } else {
             String arenaName = null;
             while (arenaName == null) {
                 winner = Integer.toString(rndArena);
@@ -2521,14 +2521,14 @@ public class PotionGames extends JavaPlugin {
         p.setGameMode(GameMode.ADVENTURE);
         clearEffects(p);
         p.setFireTicks(0);
-        addPlayerAmount();
+        playerAmount++;
         if (joinable) {
             pgPlayers.add(p);
             try {
                 Location loc = (Location) getConfig().get("pg.Lobby.coords");
                 assert loc != null;
                 p.teleport(loc);
-                setGamestate(GameStates.WAITING);
+                gamestate = GameStates.WAITING;
                 if (!tickStarted) {
                     tick();
                     tickStarted = true;
@@ -2603,7 +2603,7 @@ public class PotionGames extends JavaPlugin {
 
     public void onLeave(Player p) {
         joinChannel(p.getPlayer(), "Global");
-        if (getGamestate() == GameStates.INGAME && pgPlayers.size() > 1 && isReload()) {
+        if (gamestate == GameStates.INGAME && pgPlayers.size() > 1 && reload) {
             addLosts(p.getUniqueId().toString(), 1);
         }
         p.getInventory().setContents(inv.get(p.getName()));
@@ -2620,7 +2620,7 @@ public class PotionGames extends JavaPlugin {
         gm.remove(p.getName());
         pgPlayers.remove(p);
         specPlayers.remove(p);
-        setPlayerAmount(getPlayerAmount() - 1);
+        playerAmount--;
         if (getPlayerAmount() == 0) {
             teamed.remove(p.getName());
         }
@@ -2636,7 +2636,7 @@ public class PotionGames extends JavaPlugin {
                     teamplayernames.remove(teamname, p);
                     int teamamount = teamplayers.get(teamname) - 1;
                     teamplayers.put(teamname, teamamount);
-                    if (getGamestate() == GameStates.INGAME) {
+                    if (gamestate == GameStates.INGAME) {
                         if (teamplayers.get(teamname) == 0) {
                             teams.remove(teamname);
                         }
@@ -2661,7 +2661,7 @@ public class PotionGames extends JavaPlugin {
                 voted.remove(p.getName());
             }
         } else {
-            setGamestate(GameStates.RESET);
+            gamestate = GameStates.RESET;
         }
         p.sendMessage(prefix + ChatColor.GREEN + chat.get(32));
     }
@@ -2703,7 +2703,7 @@ public class PotionGames extends JavaPlugin {
                             if (arenadata.contains("pg.lobbies." + s + ".world")) {
                                 worlds.add(getConfig().getString("pg.lobbies." + s + ".world"));
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setPVP(false);
-                                if (isChangeGamerules()) {
+                                if (changeGamerules) {
                                     setGameRules(arenadata.getString("pg.lobbies." + s + ".world"));
                                     Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
                                     Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setGameRule(GameRule.FALL_DAMAGE, false);
@@ -2843,7 +2843,7 @@ public class PotionGames extends JavaPlugin {
                                     assert wname != null;
                                     worlds.add(wname);
                                     Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
-                                    if (isChangeGamerules()) {
+                                    if (changeGamerules) {
                                         setGameRules(wname);
                                         Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
                                         Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
@@ -2862,7 +2862,7 @@ public class PotionGames extends JavaPlugin {
                                             assert playercompassmeta != null;
                                             playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(2));
                                             playercompass.setItemMeta(playercompassmeta);
-                                            if (!isCompassOnSpawn()) {
+                                            if (compassOnSpawn) {
                                                 all.getInventory().setItem(8, playercompass);
                                             }
                                         }
@@ -3249,7 +3249,7 @@ public class PotionGames extends JavaPlugin {
                                 }
                             }
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setPVP(false);
-                            if (isChangeGamerules()) {
+                            if (changeGamerules) {
                                 setGameRules(arenadata.getString("pg.lobbies." + s + ".world"));
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setGameRule(GameRule.FALL_DAMAGE, false);
@@ -3603,7 +3603,7 @@ public class PotionGames extends JavaPlugin {
 
     public void onLeaveLobby(Player p, String s) {
         joinChannel(p.getPlayer(), "Global");
-        if (lobbyStates.get(s) == GameStates.INGAME && lobbyAmount.get(s) > 1 && playerLobby.containsKey(p) && isReload()) {
+        if (lobbyStates.get(s) == GameStates.INGAME && lobbyAmount.get(s) > 1 && playerLobby.containsKey(p) && reload) {
             addLosts(p.getUniqueId().toString(), 1);
         }
         p.getInventory().setContents(inv.get(p.getName()));
@@ -4015,10 +4015,6 @@ public class PotionGames extends JavaPlugin {
         return gamestate;
     }
 
-    public void setGamestate(GameStates gamestate) {
-        this.gamestate = gamestate;
-    }
-
     public int getMaxPlayers() {
         return maxPlayers;
     }
@@ -4035,10 +4031,6 @@ public class PotionGames extends JavaPlugin {
         return minPlayers;
     }
 
-    public void setJoinable(boolean joinable) {
-        this.joinable = joinable;
-    }
-
     public int getTeamSize() {
         return teamSize;
     }
@@ -4053,14 +4045,6 @@ public class PotionGames extends JavaPlugin {
 
     public void setCountdown(int countdown) {
         this.countdown = countdown;
-    }
-
-    public int getReset() {
-        return reset;
-    }
-
-    public void setReset(int reset) {
-        this.reset = reset;
     }
 
     public int getActivePotions() {
@@ -4087,24 +4071,16 @@ public class PotionGames extends JavaPlugin {
         return build;
     }
 
-    public boolean isCompassOnSpawn() {
-        return compassOnSpawn;
-    }
-
-    public boolean isAllowOutsideChat() {
-        return allowOutsideChat;
-    }
-
-    public boolean isChangeGamerules() {
-        return changeGamerules;
-    }
-
     public boolean isLobbySystem() {
         return lobbySystem;
     }
 
     public boolean isGameServer() {
         return gameServer;
+    }
+
+    public boolean isAllowOutsideChat() {
+        return allowOutsideChat;
     }
 
     public boolean isAddlobby() {
@@ -4139,10 +4115,6 @@ public class PotionGames extends JavaPlugin {
         this.delarena = delarena;
     }
 
-    public boolean isReload() {
-        return reload;
-    }
-
     public void setReload(boolean reload) {
         this.reload = reload;
     }
@@ -4151,20 +4123,8 @@ public class PotionGames extends JavaPlugin {
         return move;
     }
 
-    public void setMove(boolean move) {
-        this.move = move;
-    }
-
     public int getPlayerAmount() {
         return playerAmount;
-    }
-
-    public void setPlayerAmount(int playerAmount) {
-        this.playerAmount = playerAmount;
-    }
-
-    public void addPlayerAmount() {
-        playerAmount++;
     }
 
     public String getVote() {
@@ -4175,16 +4135,8 @@ public class PotionGames extends JavaPlugin {
         this.vote = vote;
     }
 
-    public boolean isForcearena() {
-        return forcearena;
-    }
-
     public void setForcearena(boolean forcearena) {
         this.forcearena = forcearena;
-    }
-
-    public String getVotedArena() {
-        return votedArena;
     }
 
     public void setVotedArena(String votedArena) {
