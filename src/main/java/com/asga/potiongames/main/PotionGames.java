@@ -1824,9 +1824,12 @@ public class PotionGames extends JavaPlugin {
                             setJoinable(true);
                             if (getConfig().contains("pg.Lobby.world")) {
                                 worlds.add(getConfig().getString("pg.Lobby.world"));
-                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
-                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setGameRule(GameRule.FALL_DAMAGE, false);
+                                if (isChangeGamerules()) {
+                                    setGameRules(getConfig().getString("pg.Lobby.world"));
+                                    Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
+                                    Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setGameRule(GameRule.FALL_DAMAGE, false);
+                                }
                             }
                             if (!voteallowed) {
                                 voteallowed = true;
@@ -1984,10 +1987,12 @@ public class PotionGames extends JavaPlugin {
                                     String name = arenadata.getString("pg.arenas." + setting + ".world");
                                     assert name != null;
                                     worlds.add(name);
-                                    Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
                                     Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
-                                    Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
-                                    Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
+                                    if (isChangeGamerules()) {
+                                        setGameRules(name);
+                                        Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
+                                        Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                    }
                                 }
                             }
                             setJoinable(false);
@@ -2270,15 +2275,11 @@ public class PotionGames extends JavaPlugin {
                             kitallowed = false;
                             kitplayernames.clear();
                             richkidPlayers.clear();
-                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
-                            for (int gamerule = 1; gamerule < 27; gamerule++) {
-                                if (arenadata.contains("pg.arenas." + gamerule)) {
-                                    String name = arenadata.getString("pg.arenas." + gamerule + ".world");
-                                    setGameRules(name);
-                                    assert name != null;
-                                    Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
-                                }
+                            if (isChangeGamerules()) {
+                                setGameRules(getConfig().getString("pg.Lobby.world"));
+                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
+                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setGameRule(GameRule.FALL_DAMAGE, false);
                             }
                             if (!voteallowed) {
                                 voteallowed = true;
@@ -2539,10 +2540,6 @@ public class PotionGames extends JavaPlugin {
                     }
                 }
             }
-            String name = getConfig().getString("pg.Lobby.world");
-            setGameRules(name);
-            assert name != null;
-            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
             if (activateTeams) {
                 ItemStack teamselector = new ItemStack(Material.CLOCK);
                 ItemMeta teamselectormeta = teamselector.getItemMeta();
@@ -2705,9 +2702,12 @@ public class PotionGames extends JavaPlugin {
                             lobbyJoinable.replace(s, true);
                             if (arenadata.contains("pg.lobbies." + s + ".world")) {
                                 worlds.add(getConfig().getString("pg.lobbies." + s + ".world"));
-                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
                                 Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setPVP(false);
-                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setGameRule(GameRule.FALL_DAMAGE, false);
+                                if (isChangeGamerules()) {
+                                    setGameRules(arenadata.getString("pg.lobbies." + s + ".world"));
+                                    Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
+                                    Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setGameRule(GameRule.FALL_DAMAGE, false);
+                                }
                             }
                             if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
                                 ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
@@ -2842,10 +2842,12 @@ public class PotionGames extends JavaPlugin {
                                     String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
                                     assert wname != null;
                                     worlds.add(wname);
-                                    Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
                                     Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
-                                    Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
-                                    Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
+                                    if (isChangeGamerules()) {
+                                        setGameRules(wname);
+                                        Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
+                                        Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                    }
                                 }
                             }
                             lobbyJoinable.replace(s, false);
@@ -3246,15 +3248,11 @@ public class PotionGames extends JavaPlugin {
                                     richkidPlayers.remove(all);
                                 }
                             }
-                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setPVP(false);
-                            for (int gamerule = 1; gamerule < 27; gamerule++) {
-                                if (arenadata.contains("pg.lobbies." + s + "." + gamerule)) {
-                                    String gname = arenadata.getString("pg.lobbies." + s + "." + gamerule + ".world");
-                                    setGameRules(gname);
-                                    assert gname != null;
-                                    Objects.requireNonNull(Bukkit.getWorld(gname)).setGameRule(GameRule.FALL_DAMAGE, true);
-                                }
+                            if (isChangeGamerules()) {
+                                setGameRules(arenadata.getString("pg.lobbies." + s + ".world"));
+                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
+                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setGameRule(GameRule.FALL_DAMAGE, false);
                             }
                             if (!lobbyVoteallowed.get(s)) {
                                 lobbyVoteallowed.replace(s, true);
@@ -3540,11 +3538,6 @@ public class PotionGames extends JavaPlugin {
                     }
                 }
             }
-            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-            String name = arenadata.getString("pg.lobbies." + s + ".world");
-            setGameRules(name);
-            assert name != null;
-            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
             if (activateTeams) {
                 ItemStack teamselector = new ItemStack(Material.CLOCK);
                 ItemMeta teamselectormeta = teamselector.getItemMeta();
