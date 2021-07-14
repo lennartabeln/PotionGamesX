@@ -26,12 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Commands implements CommandExecutor {
-    private final PotionGames pg;
-
-    public Commands(PotionGames pg) {
-        this.pg = pg;
-    }
+public record Commands(PotionGames pg) implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
