@@ -478,7 +478,7 @@ public class Events implements Listener {
                                 e.setCancelled(false);
                             } else if (e.getBlock().getType() == Material.TNT) {
                                 e.setCancelled(true);
-                                p.getInventory().getItemInMainHand().setAmount(0);
+                                p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
                                 Entity tnt = e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
                                 TNTPrimed tnt2 = (TNTPrimed) tnt;
                                 tnt2.setFuseTicks(40);
@@ -507,7 +507,7 @@ public class Events implements Listener {
                                 e.setCancelled(false);
                             } else if (e.getBlock().getType() == Material.TNT) {
                                 e.setCancelled(true);
-                                p.getInventory().getItemInMainHand().setAmount(0);
+                                p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
                                 Entity tnt = e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
                                 TNTPrimed tnt2 = (TNTPrimed) tnt;
                                 tnt2.setFuseTicks(40);
@@ -707,7 +707,7 @@ public class Events implements Listener {
 
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e) {
-        if (pg.worlds.contains(Objects.requireNonNull(Objects.requireNonNull(e.getLocation().getWorld())).getName())) {
+        if (pg.worlds.contains(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(e.getLocation().getWorld()).getName())))) {
             if (e.getEntity().getType() == EntityType.PRIMED_TNT) {
                 List<Block> destroyed = e.blockList();
                 destroyed.removeIf(block -> !toDestroy.contains(block.getType()));

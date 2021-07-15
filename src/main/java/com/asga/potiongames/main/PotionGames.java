@@ -1981,11 +1981,11 @@ public class PotionGames extends JavaPlugin {
                                     String name = arenadata.getString("pg.arenas." + setting + ".world");
                                     assert name != null;
                                     worlds.add(name);
-                                    Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
+                                    Objects.requireNonNull(getServer().getWorld(name)).setPVP(false);
                                     if (changeGamerules) {
                                         setGameRules(name);
-                                        Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
-                                        Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                        Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
+                                        Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
                                     }
                                 }
                             }
@@ -2019,6 +2019,19 @@ public class PotionGames extends JavaPlugin {
                                     }
                                     countdown--;
                                 } else if (countdown == 0) {
+                                    for (int setting = 1; setting < 27; setting++) {
+                                        if (arenadata.contains("pg.arenas." + setting)) {
+                                            String name = arenadata.getString("pg.arenas." + setting + ".world");
+                                            assert name != null;
+                                            worlds.add(name);
+                                            Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
+                                            if (changeGamerules) {
+                                                setGameRules(name);
+                                                Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
+                                                Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                            }
+                                        }
+                                    }
                                     move = true;
                                     for (Player all : pgPlayers) {
                                         all.sendMessage(prefix + ChatColor.GREEN + chat.get(3));
@@ -2832,11 +2845,11 @@ public class PotionGames extends JavaPlugin {
                                     String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
                                     assert wname != null;
                                     worlds.add(wname);
-                                    Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
+                                    Objects.requireNonNull(getServer().getWorld(wname)).setPVP(false);
                                     if (changeGamerules) {
                                         setGameRules(wname);
-                                        Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
-                                        Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                        Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.PEACEFUL);
+                                        Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, false);
                                     }
                                 }
                             }
@@ -2876,6 +2889,19 @@ public class PotionGames extends JavaPlugin {
                                     }
                                     countdownLobby.replace(s, countdownLobby.get(s) - 1);
                                 } else if (countdownLobby.get(s) == 0) {
+                                    for (int setting = 1; setting < 27; setting++) {
+                                        if (arenadata.contains("pg.lobbies." + s + "." + setting)) {
+                                            String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
+                                            assert wname != null;
+                                            worlds.add(wname);
+                                            Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
+                                            if (changeGamerules) {
+                                                setGameRules(wname);
+                                                Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
+                                                Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                            }
+                                        }
+                                    }
                                     lobbyMove.replace(s, true);
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
