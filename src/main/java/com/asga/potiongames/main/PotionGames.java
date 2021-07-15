@@ -2245,7 +2245,7 @@ public class PotionGames extends JavaPlugin {
                                     assert teamselectormeta != null;
                                     teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                                     teamselector.setItemMeta(teamselectormeta);
-                                    inv.setItem(5, teamselector);
+                                    inv.setItem(4, teamselector);
                                 }
                                 if (activateKits) {
                                     ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
@@ -2253,22 +2253,28 @@ public class PotionGames extends JavaPlugin {
                                     assert kitselectormeta != null;
                                     kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
                                     kitselector.setItemMeta(kitselectormeta);
-                                    inv.setItem(3, kitselector);
+                                    inv.setItem(2, kitselector);
                                 }
                                 ItemStack votepaper = new ItemStack(Material.PAPER);
                                 ItemMeta votepapaermeta = votepaper.getItemMeta();
                                 assert votepapaermeta != null;
                                 votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
                                 votepaper.setItemMeta(votepapaermeta);
-                                inv.setItem(1, votepaper);
+                                inv.setItem(0, votepaper);
                                 if (!startOnJoin) {
                                     ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
                                     ItemMeta leavemeta = leave.getItemMeta();
                                     assert leavemeta != null;
                                     leavemeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(80));
                                     leave.setItemMeta(leavemeta);
-                                    inv.setItem(7, leave);
+                                    inv.setItem(8, leave);
                                 }
+                                ItemStack stats = new ItemStack(Material.EMERALD);
+                                ItemMeta statsmeta = votepaper.getItemMeta();
+                                assert statsmeta != null;
+                                statsmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(56));
+                                stats.setItemMeta(statsmeta);
+                                inv.setItem(6, stats);
                             }
                             specPlayers.clear();
                             chests.clear();
@@ -2577,6 +2583,12 @@ public class PotionGames extends JavaPlugin {
                 leave.setItemMeta(leavemeta);
                 p.getInventory().setItem(7, leave);
             }
+            ItemStack stats = new ItemStack(Material.EMERALD);
+            ItemMeta statsmeta = votepaper.getItemMeta();
+            assert statsmeta != null;
+            statsmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(56));
+            stats.setItemMeta(statsmeta);
+            p.getInventory().setItem(6, stats);
             p.sendMessage(prefix + ChatColor.GREEN + chat.get(30));
         }
         if (!joinable) {
@@ -3227,6 +3239,12 @@ public class PotionGames extends JavaPlugin {
                                         leave.setItemMeta(leavemeta);
                                         inv.setItem(7, leave);
                                     }
+                                    ItemStack stats = new ItemStack(Material.EMERALD);
+                                    ItemMeta statsmeta = votepaper.getItemMeta();
+                                    assert statsmeta != null;
+                                    statsmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(56));
+                                    stats.setItemMeta(statsmeta);
+                                    inv.setItem(6, stats);
                                 }
                             }
                             for (Player all : specLobby.keySet()) {
@@ -3584,6 +3602,12 @@ public class PotionGames extends JavaPlugin {
                 leave.setItemMeta(leavemeta);
                 p.getInventory().setItem(7, leave);
             }
+            ItemStack stats = new ItemStack(Material.EMERALD);
+            ItemMeta statsmeta = votepaper.getItemMeta();
+            assert statsmeta != null;
+            statsmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(56));
+            stats.setItemMeta(statsmeta);
+            p.getInventory().setItem(6, stats);
             p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + ChatColor.AQUA + s);
         }
         if (!lobbyJoinable.get(s)) {

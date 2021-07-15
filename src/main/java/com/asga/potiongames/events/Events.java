@@ -1407,6 +1407,24 @@ public class Events implements Listener {
                         }
                     }
                 }
+                if (p.getInventory().getItemInMainHand().getType() == Material.EMERALD) {
+                    if (p.hasPermission("pg.stats")) {
+                        int wins = pg.getWins(p.getUniqueId().toString());
+                        int losts = pg.getLosts(p.getUniqueId().toString());
+                        int rounds = pg.getRounds(p.getUniqueId().toString());
+                        int kills = pg.getKills(p.getUniqueId().toString());
+                        int deaths = pg.getDeaths(p.getUniqueId().toString());
+                        double kd = pg.getKD(p.getUniqueId().toString());
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                        p.sendMessage(pg.prefix + pg.chat.get(65) + ": " + ChatColor.AQUA + rounds);
+                        p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
+                        p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
+                        p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
+                        p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
+                        p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
+                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                    }
+                }
             }
             if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
                 if (e.getHand() == EquipmentSlot.HAND) {

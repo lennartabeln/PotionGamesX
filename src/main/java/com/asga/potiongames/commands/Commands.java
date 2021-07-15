@@ -78,10 +78,8 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                         }
                     }
                 }
-                if (p.hasPermission("pg.leave")) {
-                    if (!pg.isStartOnJoin()) {
-                        p.sendMessage(pg.prefix + "/pg leave - Leave the game");
-                    }
+                if (!pg.isStartOnJoin()) {
+                    p.sendMessage(pg.prefix + "/pg leave - Leave the game");
                 }
                 if (p.hasPermission("pg.stats")) {
                     p.sendMessage(pg.prefix + "/pg stats - Show your stats");
@@ -141,10 +139,8 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             }
                         }
                     }
-                    if (p.hasPermission("pg.leave")) {
-                        if (!pg.isStartOnJoin()) {
-                            p.sendMessage(pg.prefix + "/pg leave - Leave the game");
-                        }
+                    if (!pg.isStartOnJoin()) {
+                        p.sendMessage(pg.prefix + "/pg leave - Leave the game");
                     }
                     if (p.hasPermission("pg.stats")) {
                         p.sendMessage(pg.prefix + "/pg stats - Show your stats");
@@ -306,29 +302,27 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("leave")) {
-                    if (p.hasPermission("pg.leave")) {
-                        if (pg.isLobbySystem()) {
-                            if (pg.playerLobby.containsKey(p)) {
-                                String s = null;
-                                for (int ii = 1; ii <= 27; ii++) {
-                                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                                        s = Integer.toString(ii);
-                                    }
+                    if (pg.isLobbySystem()) {
+                        if (pg.playerLobby.containsKey(p)) {
+                            String s = null;
+                            for (int ii = 1; ii <= 27; ii++) {
+                                if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
                                 }
-                                pg.onLeaveLobby(p, s);
-                            } else if (pg.specLobby.containsKey(p)) {
-                                String s = null;
-                                for (int ii = 1; ii <= 27; ii++) {
-                                    if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
-                                        s = Integer.toString(ii);
-                                    }
+                            }
+                            pg.onLeaveLobby(p, s);
+                        } else if (pg.specLobby.containsKey(p)) {
+                            String s = null;
+                            for (int ii = 1; ii <= 27; ii++) {
+                                if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
                                 }
-                                pg.onLeaveLobby(p, s);
                             }
-                        } else {
-                            if (pg.pgPlayers.contains(p) && !pg.isStartOnJoin() || pg.specPlayers.contains(p) && !pg.isStartOnJoin()) {
-                                pg.onLeave(p);
-                            }
+                            pg.onLeaveLobby(p, s);
+                        }
+                    } else {
+                        if (pg.pgPlayers.contains(p) && !pg.isStartOnJoin() || pg.specPlayers.contains(p) && !pg.isStartOnJoin()) {
+                            pg.onLeave(p);
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("start")) {
