@@ -22,4 +22,5 @@ public record UpdateChecker(JavaPlugin plugin, int resourceId) {
             }
         });
     }
+
 }

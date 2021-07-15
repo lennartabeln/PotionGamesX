@@ -4051,12 +4051,9 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
-    public GameStates getGamestate() {
-        return gamestate;
-    }
-
-    public int getMaxPlayers() {
-        return maxPlayers;
+    public ArrayList<Player> getChannel(Player player) {
+        String channelName = playerChannel.get(player);
+        return channels.get(channelName);
     }
 
     public ItemStack getCoin() {
@@ -4067,12 +4064,28 @@ public class PotionGames extends JavaPlugin {
         return bottle;
     }
 
+    public GameStates getGamestate() {
+        return gamestate;
+    }
+
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+
     public int getMinPlayers() {
         return minPlayers;
     }
 
     public int getTeamSize() {
         return teamSize;
+    }
+
+    public int getPlayerAmount() {
+        return playerAmount;
+    }
+
+    public ArrayList<Player> getPgPlayers() {
+        return pgPlayers;
     }
 
     public int getTeamAmount() {
@@ -4087,6 +4100,10 @@ public class PotionGames extends JavaPlugin {
         this.countdown = countdown;
     }
 
+    public void setReload(boolean reload) {
+        this.reload = reload;
+    }
+
     public int getActivePotions() {
         return activePotions;
     }
@@ -4095,20 +4112,48 @@ public class PotionGames extends JavaPlugin {
         return activeKits;
     }
 
-    public void changePause() {
-        pause = !pause;
+    public String getVote() {
+        return vote;
     }
 
-    public boolean isPause() {
-        return pause;
+    public void setVote(String vote) {
+        this.vote = vote;
     }
 
-    public void changeBuild() {
-        build = !build;
+    public void setForcearena(boolean forcearena) {
+        this.forcearena = forcearena;
     }
 
-    public boolean isBuild() {
-        return build;
+    public void setVotedArena(String votedArena) {
+        this.votedArena = votedArena;
+    }
+
+    public HashMap<Location, Material> getPlacedBlocks() {
+        return placedBlocks;
+    }
+
+    public HashMap<Location, Material> getBreakedBlocks() {
+        return breakedBlocks;
+    }
+
+    public HashMap<Location, BlockData> getWaterBlocks() {
+        return waterBlocks;
+    }
+
+    public HashMap<Location, Block> getLiquidPlaced() {
+        return liquidPlaced;
+    }
+
+    public boolean isStartOnJoin() {
+        return startOnJoin;
+    }
+
+    public boolean isActivateTeams() {
+        return activateTeams;
+    }
+
+    public boolean isActivateShop() {
+        return activateShop;
     }
 
     public boolean isLobbySystem() {
@@ -4121,6 +4166,26 @@ public class PotionGames extends JavaPlugin {
 
     public boolean isAllowOutsideChat() {
         return allowOutsideChat;
+    }
+
+    public boolean isMove() {
+        return move;
+    }
+
+    public boolean isPause() {
+        return pause;
+    }
+
+    public void changePause() {
+        pause = !pause;
+    }
+
+    public boolean isBuild() {
+        return build;
+    }
+
+    public void changeBuild() {
+        build = !build;
     }
 
     public boolean isAddlobby() {
@@ -4153,71 +4218,6 @@ public class PotionGames extends JavaPlugin {
 
     public void setDelarena(boolean delarena) {
         this.delarena = delarena;
-    }
-
-    public void setReload(boolean reload) {
-        this.reload = reload;
-    }
-
-    public boolean isMove() {
-        return move;
-    }
-
-    public int getPlayerAmount() {
-        return playerAmount;
-    }
-
-    public String getVote() {
-        return vote;
-    }
-
-    public void setVote(String vote) {
-        this.vote = vote;
-    }
-
-    public void setForcearena(boolean forcearena) {
-        this.forcearena = forcearena;
-    }
-
-    public void setVotedArena(String votedArena) {
-        this.votedArena = votedArena;
-    }
-
-    public ArrayList<Player> getPgPlayers() {
-        return pgPlayers;
-    }
-
-    public HashMap<Location, Material> getPlacedBlocks() {
-        return placedBlocks;
-    }
-
-    public HashMap<Location, Material> getBreakedBlocks() {
-        return breakedBlocks;
-    }
-
-    public HashMap<Location, BlockData> getWaterBlocks() {
-        return waterBlocks;
-    }
-
-    public HashMap<Location, Block> getLiquidPlaced() {
-        return liquidPlaced;
-    }
-
-    public boolean isStartOnJoin() {
-        return startOnJoin;
-    }
-
-    public boolean isActivateTeams() {
-        return activateTeams;
-    }
-
-    public boolean isActivateShop() {
-        return activateShop;
-    }
-
-    public ArrayList<Player> getChannel(Player player) {
-        String channelName = playerChannel.get(player);
-        return channels.get(channelName);
     }
 
 }
