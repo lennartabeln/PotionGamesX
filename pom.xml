@@ -6,7 +6,7 @@
 
     <groupId>com.asga.potiongames</groupId>
     <artifactId>PotionGames</artifactId>
-    <version>4.7.3</version>
+    <version>4.7.3.1</version>
 
     <repositories>
         <repository>

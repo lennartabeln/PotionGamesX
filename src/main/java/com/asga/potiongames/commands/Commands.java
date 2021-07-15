@@ -1,8 +1,7 @@
 package com.asga.potiongames.commands;
 
 import com.asga.potiongames.main.PotionGames;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import com.asga.potiongames.updatechecker.UpdateChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -19,10 +18,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -266,34 +262,13 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("version")) {
                     if (p.hasPermission("pg.update")) {
-                        String latest = null;
-                        try {
-                            URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
-                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-                            StringBuilder stringBuilder = new StringBuilder();
-                            String inputLine;
-                            while ((inputLine = bufferedReader.readLine()) != null) {
-                                stringBuilder.append(inputLine);
-                                stringBuilder.append(System.lineSeparator());
-                            }
-                            bufferedReader.close();
-                            latest = stringBuilder.toString().trim();
-                        } catch (Exception ex) {
-                            System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(48) + ": " + ex.getMessage());
-                        }
-                        if (latest != null) {
-                            boolean upToDate = pg.getDescription().getVersion().equals(latest);
-                            if (!upToDate) {
-                                TextComponent message = new TextComponent(TextComponent.fromLegacyText(pg.prefix + "There is a newer version available: " + latest + ", you're on: " + pg.getDescription().getVersion() + " - "));
-                                TextComponent link = new TextComponent(TextComponent.fromLegacyText(ChatColor.GRAY + "Click here to download!"));
-                                link.setUnderlined(true);
-                                message.addExtra(link);
-                                message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/andersspielen/PotionGamesIssues/releases/latest"));
-                                p.spigot().sendMessage(message);
+                        new UpdateChecker(pg, 87633).getVersion(version -> {
+                            if (pg.getDescription().getVersion().equalsIgnoreCase(version)) {
+                                p.sendMessage(pg.prefix + ChatColor.GRAY + pg.chat.get(76) + " " + pg.getDescription().getVersion());
                             } else {
-                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(77) + ": " + ChatColor.AQUA + pg.getDescription().getVersion());
+                                p.sendMessage(pg.prefix + ChatColor.GRAY + pg.chat.get(77) + " " + pg.getDescription().getVersion() + " -> " + version);
                             }
-                        }
+                        });
                     }
                 } else if (args[0].equalsIgnoreCase("list")) {
                     if (p.hasPermission("pg.join")) {
@@ -564,7 +539,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             try {
                                 arenadata.save(pg.arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + e.getMessage());
                             }
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
                         }
@@ -577,7 +552,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             try {
                                 arenadata.save(pg.arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + e.getMessage());
                             }
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(66) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
                         }
@@ -771,7 +746,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             try {
                                 arenadata.save(pg.arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + e.getMessage());
                             }
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
                         }

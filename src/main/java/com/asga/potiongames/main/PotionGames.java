@@ -3,6 +3,7 @@ package com.asga.potiongames.main;
 import com.asga.potiongames.commands.Commands;
 import com.asga.potiongames.events.Events;
 import com.asga.potiongames.gamestates.GameStates;
+import com.asga.potiongames.updatechecker.UpdateChecker;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -275,8 +276,8 @@ public class PotionGames extends JavaPlugin {
         chat.add("could not be teleported to a spawn!");
         chat.add("This lobby does not exists!");
         chat.add("Use /pg help for help!");
-        chat.add("Checking for updates...");
-        chat.add("Plugin is up to date!");
+        chat.add("There is not a new update available.");
+        chat.add("There is a new update available.");
         chat.add("Plugin successfully reloaded!");
         chat.add("Extremely explosive TNT");
         chat.add("Leave");
@@ -590,7 +591,7 @@ public class PotionGames extends JavaPlugin {
         try {
             messages.save(messagesfile);
         } catch (IOException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
@@ -622,12 +623,12 @@ public class PotionGames extends JavaPlugin {
         try {
             shopdata.save(shopdatafile);
         } catch (IOException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         try {
             arenadata.save(arenadatafile);
         } catch (IOException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         if (!kitallowed) {
             kitallowed = true;
@@ -660,7 +661,7 @@ public class PotionGames extends JavaPlugin {
         try {
             kitdata.save(kitdatafile);
         } catch (IOException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         chestData();
         if (getConfig().get("pg.mysql") == null) {
@@ -724,7 +725,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyActivateTeams.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateTeams"));
@@ -735,7 +736,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyActivateKits.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateKits"));
@@ -746,7 +747,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyActivateShop.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateShop"));
@@ -757,7 +758,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyteamSize.replace(s, arenadata.getInt("pg.lobbies." + s + ".teamSize"));
@@ -768,7 +769,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbymaxPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".maxPlayers"));
@@ -779,7 +780,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyminPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".minPlayers"));
@@ -790,7 +791,7 @@ public class PotionGames extends JavaPlugin {
                             try {
                                 arenadata.save(arenadatafile);
                             } catch (IOException e) {
-                                System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                             }
                         } else {
                             lobbyroundTime.replace(s, arenadata.getInt("pg.lobbies." + s + ".roundTime"));
@@ -847,35 +848,13 @@ public class PotionGames extends JavaPlugin {
         } else {
             getServer().getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chat.get(40));
         }
-        /*long start = System.currentTimeMillis();
-        long end = start + 5 * 1000;
-        String latest = null;
-        getLogger().info(chat.get(76));
-        try {
-            URL url = new URL("https://raw.githubusercontent.com/andersspielen/PotionGamesIssues/master/version.txt");
-            while (System.currentTimeMillis() < end) {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-                StringBuilder stringBuilder = new StringBuilder();
-                String inputLine;
-                while ((inputLine = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(inputLine);
-                    stringBuilder.append(System.lineSeparator());
-                }
-                bufferedReader.close();
-                latest = stringBuilder.toString().trim();
-                break;
-            }
-        } catch (Exception e) {
-            getLogger().warning(chat.get(48) + ": " + e.getMessage());
-        }
-        if (latest != null) {
-            boolean upToDate = getDescription().getVersion().equals(latest);
-            if (upToDate) {
-                getLogger().info(chat.get(77) + ": " + getDescription().getVersion());
+        new UpdateChecker(this, 87633).getVersion(version -> {
+            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GRAY + chat.get(76) + " " + this.getDescription().getVersion());
             } else {
-                getLogger().warning("There is a newer version available: " + latest + ", you're on: " + getDescription().getVersion() + " - Download it here: https://github.com/andersspielen/PotionGamesIssues/releases/latest");
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GRAY + chat.get(77) + " " + this.getDescription().getVersion() + " -> " + version);
             }
-        }*/
+        });
     }
 
     public void onReload() {
@@ -1024,7 +1003,7 @@ public class PotionGames extends JavaPlugin {
         try {
             messages.save(messagesfile);
         } catch (IOException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
@@ -1056,12 +1035,12 @@ public class PotionGames extends JavaPlugin {
         try {
             shopdata.save(shopdatafile);
         } catch (IOException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         try {
             arenadata.save(arenadatafile);
         } catch (IOException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         kits.clear();
         kitplayers.clear();
@@ -1098,7 +1077,7 @@ public class PotionGames extends JavaPlugin {
         try {
             kitdata.save(kitdatafile);
         } catch (IOException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
         }
         chestData();
         if (getConfig().get("pg.mysql") == null) {
@@ -1151,7 +1130,7 @@ public class PotionGames extends JavaPlugin {
                         try {
                             arenadata.save(arenadatafile);
                         } catch (IOException e) {
-                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                         }
                     } else {
                         lobbyActivateTeams.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateTeams"));
@@ -1162,7 +1141,7 @@ public class PotionGames extends JavaPlugin {
                         try {
                             arenadata.save(arenadatafile);
                         } catch (IOException e) {
-                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                         }
                     } else {
                         lobbyActivateKits.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateKits"));
@@ -1173,7 +1152,7 @@ public class PotionGames extends JavaPlugin {
                         try {
                             arenadata.save(arenadatafile);
                         } catch (IOException e) {
-                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                         }
                     } else {
                         lobbyActivateShop.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateShop"));
@@ -1184,7 +1163,7 @@ public class PotionGames extends JavaPlugin {
                         try {
                             arenadata.save(arenadatafile);
                         } catch (IOException e) {
-                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                         }
                     } else {
                         lobbyteamSize.replace(s, arenadata.getInt("pg.lobbies." + s + ".teamSize"));
@@ -1195,7 +1174,7 @@ public class PotionGames extends JavaPlugin {
                         try {
                             arenadata.save(arenadatafile);
                         } catch (IOException e) {
-                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                         }
                     } else {
                         lobbymaxPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".maxPlayers"));
@@ -1206,7 +1185,7 @@ public class PotionGames extends JavaPlugin {
                         try {
                             arenadata.save(arenadatafile);
                         } catch (IOException e) {
-                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                         }
                     } else {
                         lobbyminPlayers.replace(s, arenadata.getInt("pg.lobbies." + s + ".minPlayers"));
@@ -1217,7 +1196,7 @@ public class PotionGames extends JavaPlugin {
                         try {
                             arenadata.save(arenadatafile);
                         } catch (IOException e) {
-                            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
+                            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + e.getMessage());
                         }
                     } else {
                         lobbyroundTime.replace(s, arenadata.getInt("pg.lobbies." + s + ".roundTime"));
@@ -1353,7 +1332,7 @@ public class PotionGames extends JavaPlugin {
                         rank.put(ii, rs.getString("UUID"));
                     }
                 } catch (SQLException e) {
-                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
                 }
                 rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
                 rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
@@ -1675,7 +1654,7 @@ public class PotionGames extends JavaPlugin {
         try {
             chestdata.save(chestdatafile);
         } catch (IOException ex) {
-            System.out.println(prefix + ChatColor.RED + chat.get(63) + ": " + ex.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(63) + ": " + ex.getMessage());
         }
     }
 
@@ -1874,7 +1853,7 @@ public class PotionGames extends JavaPlugin {
                                         rank.put(ii, rs.getString("UUID"));
                                     }
                                 } catch (SQLException e) {
-                                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
                                 }
                                 rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
                                 rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
@@ -2718,7 +2697,7 @@ public class PotionGames extends JavaPlugin {
                                         rank.put(ii, rs.getString("UUID"));
                                     }
                                 } catch (SQLException e) {
-                                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
                                 }
                                 rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
                                 rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
@@ -3690,10 +3669,10 @@ public class PotionGames extends JavaPlugin {
         if (activateMySQL) {
             try {
                 con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
-                System.out.println(prefix + ChatColor.GREEN + chat.get(36));
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chat.get(36));
                 mySQL = true;
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
                 mySQL = false;
             }
         } else {
@@ -3703,9 +3682,9 @@ public class PotionGames extends JavaPlugin {
                 String url = "jdbc:sqlite:" + dbFile.getPath();
                 con = DriverManager.getConnection(url);
                 st = con.createStatement();
-                System.out.println(prefix + ChatColor.GREEN + chat.get(36));
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chat.get(36));
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         }
     }
@@ -3714,10 +3693,10 @@ public class PotionGames extends JavaPlugin {
         try {
             if (con != null) {
                 con.close();
-                System.out.println(prefix + ChatColor.GREEN + chat.get(38));
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chat.get(38));
             }
         } catch (SQLException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(39) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(39) + ": " + e.getMessage());
         }
     }
 
@@ -3730,14 +3709,14 @@ public class PotionGames extends JavaPlugin {
                     st.close();
                 } catch (SQLException e) {
                     connect();
-                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
                 }
             }
         } else {
             try {
                 st.execute(qry);
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         }
     }
@@ -3751,7 +3730,7 @@ public class PotionGames extends JavaPlugin {
                     rs = st.executeQuery(qry);
                 } catch (SQLException e) {
                     connect();
-                    System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
                 }
                 return rs;
             }
@@ -3759,7 +3738,7 @@ public class PotionGames extends JavaPlugin {
             try {
                 return st.executeQuery(qry);
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         }
         return null;
@@ -3779,7 +3758,7 @@ public class PotionGames extends JavaPlugin {
             }
             return false;
         } catch (SQLException e) {
-            System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
         }
         return false;
     }
@@ -3800,7 +3779,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("KILLS");
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3819,7 +3798,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("DEATHS");
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3838,7 +3817,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getDouble("KD");
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3857,7 +3836,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("WINS");
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3876,7 +3855,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("LOSTS");
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
@@ -3895,7 +3874,7 @@ public class PotionGames extends JavaPlugin {
                 }
                 i = rs.getInt("ROUNDS");
             } catch (SQLException e) {
-                System.out.println(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
