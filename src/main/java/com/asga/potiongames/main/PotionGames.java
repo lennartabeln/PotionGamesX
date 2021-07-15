@@ -2232,7 +2232,7 @@ public class PotionGames extends JavaPlugin {
                                     assert teamselectormeta != null;
                                     teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                                     teamselector.setItemMeta(teamselectormeta);
-                                    inv.setItem(1, teamselector);
+                                    inv.setItem(5, teamselector);
                                 }
                                 if (activateKits) {
                                     ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
@@ -2247,7 +2247,7 @@ public class PotionGames extends JavaPlugin {
                                 assert votepapaermeta != null;
                                 votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
                                 votepaper.setItemMeta(votepapaermeta);
-                                inv.setItem(5, votepaper);
+                                inv.setItem(1, votepaper);
                                 if (!startOnJoin) {
                                     ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
                                     ItemMeta leavemeta = leave.getItemMeta();
@@ -2540,7 +2540,7 @@ public class PotionGames extends JavaPlugin {
                 assert teamselectormeta != null;
                 teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                 teamselector.setItemMeta(teamselectormeta);
-                p.getInventory().setItem(1, teamselector);
+                p.getInventory().setItem(5, teamselector);
             }
             if (activateKits) {
                 ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
@@ -2555,7 +2555,7 @@ public class PotionGames extends JavaPlugin {
             assert votepapaermeta != null;
             votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
             votepaper.setItemMeta(votepapaermeta);
-            p.getInventory().setItem(5, votepaper);
+            p.getInventory().setItem(1, votepaper);
             if (!startOnJoin) {
                 ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
                 ItemMeta leavemeta = leave.getItemMeta();
@@ -3177,7 +3177,7 @@ public class PotionGames extends JavaPlugin {
                                         assert teamselectormeta != null;
                                         teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                                         teamselector.setItemMeta(teamselectormeta);
-                                        inv.setItem(1, teamselector);
+                                        inv.setItem(5, teamselector);
                                     }
                                     if (activateKits) {
                                         ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
@@ -3192,7 +3192,7 @@ public class PotionGames extends JavaPlugin {
                                     assert votepapaermeta != null;
                                     votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
                                     votepaper.setItemMeta(votepapaermeta);
-                                    inv.setItem(5, votepaper);
+                                    inv.setItem(1, votepaper);
                                     if (!startOnJoin) {
                                         ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
                                         ItemMeta leavemeta = leave.getItemMeta();
@@ -3534,7 +3534,7 @@ public class PotionGames extends JavaPlugin {
                 assert teamselectormeta != null;
                 teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
                 teamselector.setItemMeta(teamselectormeta);
-                p.getInventory().setItem(1, teamselector);
+                p.getInventory().setItem(5, teamselector);
             }
             if (activateKits) {
                 ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
@@ -3549,7 +3549,7 @@ public class PotionGames extends JavaPlugin {
             assert votepapaermeta != null;
             votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
             votepaper.setItemMeta(votepapaermeta);
-            p.getInventory().setItem(5, votepaper);
+            p.getInventory().setItem(1, votepaper);
             if (!startOnJoin) {
                 ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
                 ItemMeta leavemeta = leave.getItemMeta();
