@@ -827,10 +827,10 @@ public class Events implements Listener {
                                                         int item1 = rnd.nextInt(pg.food1.size());
                                                         inv.setItem(slot, pg.food1.get(item1));
                                                     } else if (item < 4) {
-                                                        int item1 = rnd.nextInt(potions1.size());
+                                                        int item1 = 0;
                                                         inv.setItem(slot, potions1.get(item1));
                                                     } else {
-                                                        int item1 = rnd.nextInt(potions2.size());
+                                                        int item1 = 0;
                                                         inv.setItem(slot, potions2.get(item1));
                                                     }
                                                 } else {
@@ -907,10 +907,10 @@ public class Events implements Listener {
                                                         int item1 = rnd.nextInt(pg.food1.size());
                                                         inv.setItem(slot, pg.food1.get(item1));
                                                     } else if (item < 4) {
-                                                        int item1 = rnd.nextInt(potions1.size());
+                                                        int item1 = 0;
                                                         inv.setItem(slot, potions1.get(item1));
                                                     } else {
-                                                        int item1 = rnd.nextInt(potions2.size());
+                                                        int item1 = 0;
                                                         inv.setItem(slot, potions2.get(item1));
                                                     }
                                                 } else {
@@ -1117,17 +1117,17 @@ public class Events implements Listener {
                                 if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                     double health = p.getHealth();
                                     int foodlvl = p.getFoodLevel();
-                                    if (health == 20 && foodlvl >= 13) {
+                                    if (health >= 20 && foodlvl >= 13) {
                                         p.setFoodLevel(20);
                                         p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
-                                    } else if (health == 20 && foodlvl < 13) {
+                                    } else if (foodlvl < 13) {
                                         p.setFoodLevel(foodlvl + 7);
                                         p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
                                     } else {
                                         if (health < 20 && health >= 13) {
                                             p.setHealth(20);
                                             p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
-                                        } else if (health < 20 && health < 13) {
+                                        } else if (health < 13) {
                                             p.setHealth(health + 7);
                                             p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
                                         }
@@ -1140,14 +1140,14 @@ public class Events implements Listener {
                                     if (health == 20 && foodlvl >= 13) {
                                         p.setFoodLevel(20);
                                         p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
-                                    } else if (health == 20 && foodlvl < 13) {
+                                    } else if (foodlvl < 13) {
                                         p.setFoodLevel(foodlvl + 7);
                                         p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
                                     } else {
                                         if (health < 20 && health >= 13) {
                                             p.setHealth(20);
                                             p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
-                                        } else if (health < 20 && health < 13) {
+                                        } else if (health < 13) {
                                             p.setHealth(health + 7);
                                             p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
                                         }
