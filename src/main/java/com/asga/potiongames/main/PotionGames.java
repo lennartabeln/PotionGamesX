@@ -3294,7 +3294,7 @@ public class PotionGames extends JavaPlugin {
                                         kitselector.setItemMeta(kitselectormeta);
                                         inv.setItem(2, kitselector);
                                     }
-                                    if (lobbySingleArena.get(s)) {
+                                    if (!lobbySingleArena.get(s)) {
                                         ItemStack votepaper = new ItemStack(Material.PAPER);
                                         ItemMeta votepapaermeta = votepaper.getItemMeta();
                                         assert votepapaermeta != null;
@@ -3661,7 +3661,7 @@ public class PotionGames extends JavaPlugin {
                 kitselector.setItemMeta(kitselectormeta);
                 p.getInventory().setItem(2, kitselector);
             }
-            if (lobbySingleArena.get(s)) {
+            if (!lobbySingleArena.get(s)) {
                 ItemStack votepaper = new ItemStack(Material.PAPER);
                 ItemMeta votepapaermeta = votepaper.getItemMeta();
                 assert votepapaermeta != null;
