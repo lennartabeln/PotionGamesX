@@ -151,11 +151,15 @@ public class Events implements Listener {
                                 boolean arenaID = false;
                                 FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaID) {
-                                    if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
-                                        arenaNumber = i;
-                                        arenaID = true;
-                                    } else {
+                                    if (arenadata.getString("pg.arenas." + i + ".name") == null) {
                                         i++;
+                                    } else {
+                                        if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                            arenaNumber = i;
+                                            arenaID = true;
+                                        } else {
+                                            i++;
+                                        }
                                     }
                                 }
                                 String arenaName = arena;
@@ -175,11 +179,15 @@ public class Events implements Listener {
                                 boolean arenaID = false;
                                 FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaID) {
-                                    if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
-                                        arenaNumber = i;
-                                        arenaID = true;
-                                    } else {
+                                    if (arenadata.getString("pg.lobbies." + lobby + "." + i + ".name") == null) {
                                         i++;
+                                    } else {
+                                        if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                            arenaNumber = i;
+                                            arenaID = true;
+                                        } else {
+                                            i++;
+                                        }
                                     }
                                 }
                                 String arenaName = arena;
@@ -187,7 +195,7 @@ public class Events implements Listener {
                                 arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                             } catch (Exception ex) {
-                                p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                             }
                         }
                     }
@@ -198,7 +206,7 @@ public class Events implements Listener {
             if (pg.playerChannel.get(p) == null) {
                 pg.joinChannel(p.getPlayer(), "Global");
             }
-            if (pg.playerChannel.get(p).equals("Local") && pg.playerChannel.get(p) != null) {
+            if (pg.playerChannel.get(p).equals("Local") && pg.playerChannel.get(p) != null && !pg.setupPlayer.contains(p)) {
                 if (!pg.isAllowOutsideChat()) {
                     e.getRecipients().clear();
                     if (pg.isLobbySystem()) {
@@ -1598,7 +1606,6 @@ public class Events implements Listener {
                             pg.lvl.remove(p.getName());
                             pg.exp.remove(p.getName());
                             pg.gm.remove(p.getName());
-                            p.setAllowFlight(false);
                             pg.setupPlayer.remove(p);
                         }
                     }
@@ -1746,7 +1753,7 @@ public class Events implements Listener {
                             pg.lvl.remove(p.getName());
                             pg.exp.remove(p.getName());
                             pg.gm.remove(p.getName());
-                            p.setAllowFlight(false);
+                            pg.setupPlayer.remove(p);
                         }
                     }
                 }

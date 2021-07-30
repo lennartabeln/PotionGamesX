@@ -217,6 +217,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                         p.setFireTicks(0);
                         pg.setup(p);
                         p.setAllowFlight(true);
+                        p.setFlying(true);
                     }
                 } else if (args[0].equalsIgnoreCase("reload")) {
                     if (p.hasPermission("pg.setup")) {
@@ -638,11 +639,15 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                 boolean arenaID = false;
                                 FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaID) {
-                                    if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
-                                        arenaNumber = i;
-                                        arenaID = true;
-                                    } else {
+                                    if (arenadata.getString("pg.arenas." + i + ".name") == null) {
                                         i++;
+                                    } else {
+                                        if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                            arenaNumber = i;
+                                            arenaID = true;
+                                        } else {
+                                            i++;
+                                        }
                                     }
                                 }
                                 String arenaName = args[1];
@@ -758,11 +763,15 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                 boolean arenaID = false;
                                 FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaID) {
-                                    if (args[2].matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
-                                        arenaNumber = i;
-                                        arenaID = true;
-                                    } else {
+                                    if (arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name") == null) {
                                         i++;
+                                    } else {
+                                        if (args[2].matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                            arenaNumber = i;
+                                            arenaID = true;
+                                        } else {
+                                            i++;
+                                        }
                                     }
                                 }
                                 String arenaName = args[2];
