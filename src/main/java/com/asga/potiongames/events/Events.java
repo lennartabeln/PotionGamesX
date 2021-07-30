@@ -1404,8 +1404,12 @@ public class Events implements Listener {
                 }
                 if (p.getInventory().getItemInMainHand().getType() == Material.MAGMA_CREAM) {
                     if (pg.isLobbySystem()) {
-                        int ii = 1;
-                        String s = Integer.toString(ii);
+                        String s = null;
+                        for (int ii = 1; ii <= 27; ii++) {
+                            if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                s = Integer.toString(ii);
+                            }
+                        }
                         if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
                             pg.onLeaveLobby(p, s);
                         }
