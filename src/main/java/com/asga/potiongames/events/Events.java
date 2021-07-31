@@ -549,6 +549,11 @@ public class Events implements Listener {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
                                 pg.addLosts(p.getUniqueId().toString(), 1);
                                 pg.addKills(p.getKiller().getUniqueId().toString(), 1);
+                                String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).getPrefix();
+                                tempString = ChatColor.stripColor(tempString);
+                                int tempInt = Integer.parseInt(tempString);
+                                tempInt++;
+                                Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills")).setPrefix("" + ChatColor.DARK_AQUA + tempInt);
                             } else {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
                                 pg.addLosts(p.getUniqueId().toString(), 1);
@@ -641,7 +646,11 @@ public class Events implements Listener {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
                                 pg.addLosts(p.getUniqueId().toString(), 1);
                                 pg.addKills(p.getKiller().getUniqueId().toString(), 1);
-                                Objects.requireNonNull(p.getScoreboard().getTeam("kills")).setPrefix(ChatColor.DARK_AQUA + Objects.requireNonNull(p.getScoreboard().getTeam("kills")).getPrefix() + 1);
+                                String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).getPrefix();
+                                tempString = ChatColor.stripColor(tempString);
+                                int tempInt = Integer.parseInt(tempString);
+                                tempInt++;
+                                Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills")).setPrefix("" + ChatColor.DARK_AQUA + tempInt);
                             } else {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
                                 pg.addLosts(p.getUniqueId().toString(), 1);
@@ -1924,6 +1933,7 @@ public class Events implements Listener {
                                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                         pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
                                                         pg.lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), p);
+                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                                     }
                                                 }
                                             } else {
@@ -1944,6 +1954,7 @@ public class Events implements Listener {
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
                                                     pg.lobbyteamplayernames.get(s).put(displayname, p);
+                                                    Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                                 } else {
                                                     p.closeInventory();
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
@@ -1995,6 +2006,7 @@ public class Events implements Listener {
                                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                         pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
                                                         pg.lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), p);
+                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                                     }
                                                 }
                                             } else {
@@ -2015,6 +2027,7 @@ public class Events implements Listener {
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
                                                     pg.lobbyteamplayernames.get(s).put(displayname, p);
+                                                    Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                                 } else {
                                                     p.closeInventory();
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
@@ -2041,6 +2054,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.lobbyKited.put(s, e.getWhoClicked().getName());
                                             pg.kitplayernames.put(pg.kits.get(rndKit), p);
+                                            Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
                                             if (pg.kits.get(rndKit).equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
                                             }
@@ -2051,6 +2065,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.lobbyKited.put(s, e.getWhoClicked().getName());
                                             pg.kitplayernames.put(displayname, p);
+                                            Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                             if (displayname.equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
                                             }
@@ -2074,6 +2089,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.lobbyKited.put(s, e.getWhoClicked().getName());
                                             pg.kitplayernames.put(pg.kits.get(rndKit), p);
+                                            Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
                                             if (pg.kits.get(rndKit).equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
                                             }
@@ -2084,6 +2100,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.lobbyKited.put(s, e.getWhoClicked().getName());
                                             pg.kitplayernames.put(displayname, p);
+                                            Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                             if (displayname.equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
                                             }
