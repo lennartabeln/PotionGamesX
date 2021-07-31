@@ -573,7 +573,7 @@ public class PotionGames extends JavaPlugin {
             activeKits = getConfig().getInt("pg.activeKits");
         }
         if (getConfig().get("pg.activateScoreboard") == null) {
-            getConfig().addDefault("pg.activeKits", activateScoreboard);
+            getConfig().addDefault("pg.activateScoreboard", activateScoreboard);
             getConfig().options().copyDefaults(true);
             saveConfig();
         } else {
