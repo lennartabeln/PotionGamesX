@@ -2887,7 +2887,7 @@ public class PotionGames extends JavaPlugin {
                                     sign.setLine(2, ChatColor.AQUA + "Voting");
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
-                                            Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.AQUA + "Voting");
+                                            Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + "Voting");
                                         }
                                     }
                                 }
@@ -3010,7 +3010,7 @@ public class PotionGames extends JavaPlugin {
                                     sign.setLine(2, ChatColor.AQUA + "Voting");
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
-                                            Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.AQUA + "Voting");
+                                            Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + "Voting");
                                         }
                                     }
                                 }
