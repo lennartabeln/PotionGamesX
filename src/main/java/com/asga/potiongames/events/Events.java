@@ -567,13 +567,13 @@ public class Events implements Listener {
                                 if (pg.lobbyActivateTeams.get(s)) {
                                     String teamname = null;
                                     for (int i = 1; i <= pg.lobbyteamAmount.get(s); i++) {
-                                        if (pg.lobbyteamplayernames.get(s).containsKey(Integer.toString(i)) && pg.lobbyteamplayernames.get(s).containsValue(p)) {
-                                            if (pg.lobbyteamplayernames.get(s).get(Integer.toString(i)) == p) {
+                                        if (pg.lobbyteamplayernames.get(s).containsKey(p) && pg.lobbyteamplayernames.get(s).containsValue(Integer.toString(i))) {
+                                            if (Objects.equals(pg.lobbyteamplayernames.get(s).get(p), Integer.toString(i))) {
                                                 teamname = Integer.toString(i);
                                             }
                                         }
                                     }
-                                    pg.lobbyteamplayernames.get(s).remove(teamname, p);
+                                    pg.lobbyteamplayernames.get(s).remove(p, teamname);
                                     assert teamname != null;
                                     int teamamount = pg.lobbyteams.get(s).get(Integer.valueOf(teamname));
                                     teamamount--;
@@ -666,11 +666,11 @@ public class Events implements Listener {
                                 if (pg.isActivateTeams()) {
                                     String teamname = null;
                                     for (int i = 1; i <= pg.getTeamAmount(); i++) {
-                                        if (pg.teamplayernames.containsKey(Integer.toString(i)) && pg.teamplayernames.containsValue(p)) {
+                                        if (pg.teamplayernames.containsKey(p) && pg.teamplayernames.containsValue(Integer.toString(i))) {
                                             teamname = Integer.toString(i);
                                         }
                                     }
-                                    pg.teamplayernames.remove(teamname, p);
+                                    pg.teamplayernames.remove(p, teamname);
                                     int teamamount = pg.teamplayers.get(teamname) - 1;
                                     pg.teamplayers.put(teamname, teamamount);
                                     if (pg.teamplayers.get(teamname) == 0) {
@@ -747,6 +747,53 @@ public class Events implements Listener {
                         p.setHealth(p.getHealth() - 4);
                     } else {
                         p.setHealth(p.getHealth() - 4 <= 0 ? 0D : p.getHealth() - 4);
+                    }
+                }
+                if (pg.isFriendlyFire()) {
+                    if (e.getEntity() instanceof Player p && e.getDamager() instanceof Player d) {
+                        if (!pg.isLobbySystem()) {
+                            String teamname1 = "a";
+                            for (int i = 1; i <= pg.getTeamAmount(); i++) {
+                                if (pg.teamplayernames.containsKey(p) && pg.teamplayernames.containsValue(Integer.toString(i))) {
+                                    teamname1 = Integer.toString(i);
+                                }
+                            }
+                            String teamname2 = "b";
+                            for (int i = 1; i <= pg.getTeamAmount(); i++) {
+                                if (pg.teamplayernames.containsKey(d) && pg.teamplayernames.containsValue(Integer.toString(i))) {
+                                    teamname2 = Integer.toString(i);
+                                }
+                            }
+                            if (Objects.equals(teamname1, teamname2)) {
+                                e.setCancelled(true);
+                            }
+                        } else {
+                            String s = null;
+                            for (int ii = 1; ii <= 27; ii++) {
+                                if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
+                                }
+                            }
+                            String teamname1 = "a";
+                            for (int i = 1; i <= pg.lobbyteamAmount.get(s); i++) {
+                                if (pg.lobbyteamplayernames.get(s).containsKey(p) && pg.lobbyteamplayernames.get(s).containsValue(Integer.toString(i))) {
+                                    if (Objects.equals(pg.lobbyteamplayernames.get(s).get(p), Integer.toString(i))) {
+                                        teamname1 = Integer.toString(i);
+                                    }
+                                }
+                            }
+                            String teamname2 = "b";
+                            for (int i = 1; i <= pg.lobbyteamAmount.get(s); i++) {
+                                if (pg.lobbyteamplayernames.get(s).containsKey(d) && pg.lobbyteamplayernames.get(s).containsValue(Integer.toString(i))) {
+                                    if (Objects.equals(pg.lobbyteamplayernames.get(s).get(d), Integer.toString(i))) {
+                                        teamname2 = Integer.toString(i);
+                                    }
+                                }
+                            }
+                            if (Objects.equals(teamname1, teamname2)) {
+                                e.setCancelled(true);
+                            }
+                        }
                     }
                 }
             }
@@ -1912,7 +1959,7 @@ public class Events implements Listener {
                                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                                         String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
                                         int maxteamplayers = pg.lobbyteamSize.get(s);
-                                        if (!pg.lobbyTeamed.containsValue(p.getName())) {
+                                        if (!pg.lobbyTeamed.containsKey(p)) {
                                             if (displayname.equals(pg.chat.get(42))) {
                                                 boolean teamfound = false;
                                                 while (!teamfound) {
@@ -1935,8 +1982,8 @@ public class Events implements Listener {
                                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
                                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                        pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
-                                                        pg.lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), p);
+                                                        pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
+                                                        pg.lobbyteamplayernames.get(s).put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
                                                             Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                                         }
@@ -1958,8 +2005,8 @@ public class Events implements Listener {
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
-                                                    pg.lobbyteamplayernames.get(s).put(displayname, p);
+                                                    pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
+                                                    pg.lobbyteamplayernames.get(s).put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
                                                         Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                                     }
@@ -1973,12 +2020,12 @@ public class Events implements Listener {
                                         } else {
                                             p.closeInventory();
                                             String teamname = null;
-                                            for (String all : pg.lobbyteamplayernames.get(s).keySet()) {
-                                                if (pg.lobbyteamplayernames.get(s).get(all) == p) {
+                                            for (String all : pg.lobbyteamplayernames.get(s).values()) {
+                                                if (Objects.equals(pg.lobbyteamplayernames.get(s).get(p), all)) {
                                                     teamname = all;
                                                 }
                                             }
-                                            pg.lobbyteamplayernames.get(s).remove(teamname, p);
+                                            pg.lobbyteamplayernames.get(s).remove(p, teamname);
                                             assert teamname != null;
                                             int teamamount = pg.lobbyteams.get(s).get(Integer.valueOf(teamname));
                                             teamamount--;
@@ -1989,7 +2036,7 @@ public class Events implements Listener {
                                             }
                                             tempold.put(Integer.valueOf(teamname), teamamount);
                                             pg.lobbyteams.replace(s, tempold);
-                                            pg.lobbyTeamed.remove(s, p.getName());
+                                            pg.lobbyTeamed.remove(p, s);
                                             if (displayname.equals(pg.chat.get(42))) {
                                                 boolean teamfound = false;
                                                 while (!teamfound) {
@@ -2012,8 +2059,8 @@ public class Events implements Listener {
                                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
                                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                        pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
-                                                        pg.lobbyteamplayernames.get(s).put(Integer.toString(rndTeam), p);
+                                                        pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
+                                                        pg.lobbyteamplayernames.get(s).put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
                                                             Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                                         }
@@ -2035,8 +2082,8 @@ public class Events implements Listener {
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    pg.lobbyTeamed.put(s, e.getWhoClicked().getName());
-                                                    pg.lobbyteamplayernames.get(s).put(displayname, p);
+                                                    pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
+                                                    pg.lobbyteamplayernames.get(s).put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
                                                         Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                                     }
@@ -2242,7 +2289,7 @@ public class Events implements Listener {
                                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                         pg.teamed.add(e.getWhoClicked().getName());
-                                                        pg.teamplayernames.put(Integer.toString(rndTeam), p);
+                                                        pg.teamplayernames.put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
                                                             Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                                         }
@@ -2259,7 +2306,7 @@ public class Events implements Listener {
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     pg.teamed.add(e.getWhoClicked().getName());
-                                                    pg.teamplayernames.put(displayname, p);
+                                                    pg.teamplayernames.put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
                                                         Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                                     }
@@ -2274,11 +2321,11 @@ public class Events implements Listener {
                                             p.closeInventory();
                                             String teamname = null;
                                             for (int i = 1; i <= pg.getTeamAmount(); i++) {
-                                                if (pg.teamplayernames.containsKey(Integer.toString(i)) && pg.teamplayernames.containsValue(p)) {
+                                                if (pg.teamplayernames.containsKey(p) && pg.teamplayernames.containsValue(Integer.toString(i))) {
                                                     teamname = Integer.toString(i);
                                                 }
                                             }
-                                            pg.teamplayernames.remove(teamname, p);
+                                            pg.teamplayernames.remove(p, teamname);
                                             int teamamount = pg.teamplayers.get(teamname) - 1;
                                             pg.teamplayers.put(teamname, teamamount);
                                             pg.teamed.remove(p.getName());
@@ -2299,7 +2346,7 @@ public class Events implements Listener {
                                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                         pg.teamed.add(e.getWhoClicked().getName());
-                                                        pg.teamplayernames.put(Integer.toString(rndTeam), p);
+                                                        pg.teamplayernames.put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
                                                             Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                                         }
@@ -2316,7 +2363,7 @@ public class Events implements Listener {
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     pg.teamed.add(e.getWhoClicked().getName());
-                                                    pg.teamplayernames.put(displayname, p);
+                                                    pg.teamplayernames.put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
                                                         Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                                     }
