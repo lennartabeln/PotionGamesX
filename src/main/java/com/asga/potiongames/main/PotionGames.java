@@ -146,6 +146,11 @@ public class PotionGames extends JavaPlugin {
     public final File chestdatafile = new File(getDataFolder() + File.separator + "chestdata.yml");
     private final ItemStack coin = new ItemStack(Material.GOLD_NUGGET);
     private final ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
+    public FileConfiguration messages;
+    public FileConfiguration shopdata;
+    public FileConfiguration arenadata;
+    public FileConfiguration kitdata;
+    public FileConfiguration chestdata;
     public String prefix = ChatColor.DARK_GRAY + "[" + ChatColor.DARK_PURPLE + "Potion" + ChatColor.GOLD + "Games" + ChatColor.DARK_GRAY + "] " + ChatColor.GRAY;
     private int tick;
     private int countdown = 60;
@@ -197,15 +202,17 @@ public class PotionGames extends JavaPlugin {
     private boolean singleArena = false;
     private boolean activateScoreboard = true;
     private boolean friendlyFire = false;
+    private boolean joinStarted = false;
     private Connection con;
     private Statement st;
 
     @Override
     public void onEnable() {
-        FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
-        FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
+        messages = YamlConfiguration.loadConfiguration(messagesfile);
+        shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
+        arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
+        kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
+        chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Events(this), this);
         Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
@@ -587,6 +594,13 @@ public class PotionGames extends JavaPlugin {
         } else {
             friendlyFire = getConfig().getBoolean("pg.friendlyFire");
         }
+        if (getConfig().get("pg.joinStarted") == null) {
+            getConfig().addDefault("pg.joinStarted", joinStarted);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            joinStarted = getConfig().getBoolean("pg.joinStarted");
+        }
         if (getConfig().get("pg.language") == null) {
             getConfig().addDefault("pg.language", language);
             getConfig().options().copyDefaults(true);
@@ -883,10 +897,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void onReload() {
-        FileConfiguration messages = YamlConfiguration.loadConfiguration(messagesfile);
-        FileConfiguration shopdata = YamlConfiguration.loadConfiguration(shopdatafile);
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
-        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         Bukkit.getScheduler().cancelTasks(this);
         reloadConfig();
         if (getConfig().get("pg.activateMySQL") == null) {
@@ -1023,6 +1033,13 @@ public class PotionGames extends JavaPlugin {
             saveConfig();
         } else {
             friendlyFire = getConfig().getBoolean("pg.friendlyFire");
+        }
+        if (getConfig().get("pg.joinStarted") == null) {
+            getConfig().addDefault("pg.joinStarted", joinStarted);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            joinStarted = getConfig().getBoolean("pg.joinStarted");
         }
         if (getConfig().get("pg.language") == null) {
             getConfig().addDefault("pg.language", language);
@@ -1423,7 +1440,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void chestData() {
-        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
         food1.add(new ItemStack(Material.CAKE, 1));
         food1.add(new ItemStack(Material.BREAD, 3));
         food1.add(new ItemStack(Material.PUMPKIN_PIE, 3));
@@ -1766,7 +1782,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void clearEffects(Player all) {
-        FileConfiguration chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
         int chestitem = 1;
         while (chestdata.contains("pg.potions" + chestitem)) {
             PotionEffect effect = (PotionEffect) chestdata.get("pg.potions." + chestitem);
@@ -1834,8 +1849,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void tick() {
-        FileConfiguration kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         if (!lobbySystem) {
             setCountdown(getConfig().getInt("pg.countdown"));
             roundTimeSeconds = roundTime * 60;
@@ -2547,7 +2560,6 @@ public class PotionGames extends JavaPlugin {
         }
         ArrayList<Integer> arenaNumber = new ArrayList<>();
         for (int ii = 0; ii < 26; ii++) {
-            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
             if (arenadata.contains("pg.arenas." + ii)) {
                 arenaNumber.add(ii);
             }
@@ -2565,7 +2577,6 @@ public class PotionGames extends JavaPlugin {
                     String arenaName = null;
                     while (arenaName == null) {
                         winner = Integer.toString(rndArena);
-                        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                         arenaName = arenadata.getString("pg.arenas." + winner + ".name");
                         if (arenaName != null) {
                             for (Player all : pgPlayers) {
@@ -2577,7 +2588,6 @@ public class PotionGames extends JavaPlugin {
                     }
                 }
                 if (!randomArena) {
-                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                     if (winner.equals(arenadata.getString("pg.arenas." + i + ".name"))) {
                         winner = Integer.toString(i);
                         for (Player all : pgPlayers) {
@@ -2598,7 +2608,6 @@ public class PotionGames extends JavaPlugin {
             String arenaName = null;
             while (arenaName == null) {
                 winner = Integer.toString(rndArena);
-                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                 arenaName = arenadata.getString("pg.arenas." + winner + ".name");
                 if (arenaName != null) {
                     for (Player all : pgPlayers) {
@@ -2633,6 +2642,11 @@ public class PotionGames extends JavaPlugin {
                             teamplayernames.put(all, Integer.toString(rndTeam));
                             if (activateScoreboard) {
                                 Objects.requireNonNull(all.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
+                            }
+                            if (!all.hasPermission("pg.admin")) {
+                                all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + all.getName());
+                            } else {
+                                all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + all.getName());
                             }
                         }
                     }
@@ -2669,7 +2683,6 @@ public class PotionGames extends JavaPlugin {
             Player p = pgPlayers.get(i - 1);
             try {
                 String vote = getVote();
-                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                 Location loc = arenadata.getLocation("pg.arenas." + vote + ".spawns." + i);
                 assert loc != null;
                 p.teleport(loc);
@@ -2726,7 +2739,7 @@ public class PotionGames extends JavaPlugin {
         clearEffects(p);
         p.setFireTicks(0);
         playerAmount++;
-        if (joinable) {
+        if (joinable && playerAmount <= maxPlayers) {
             pgPlayers.add(p);
             try {
                 Location loc = (Location) getConfig().get("pg.Lobby.coords");
@@ -2784,11 +2797,10 @@ public class PotionGames extends JavaPlugin {
             p.getInventory().setItem(6, stats);
             p.sendMessage(prefix + ChatColor.GREEN + chat.get(30));
         }
-        if (!joinable) {
+        if (!joinable && playerAmount <= maxPlayers && joinStarted) {
             specPlayers.add(p);
             try {
                 String vote = getVote();
-                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                 Location loc = arenadata.getLocation("pg.arenas." + vote + ".spawns." + 1);
                 assert loc != null;
                 p.teleport(loc);
@@ -2860,7 +2872,6 @@ public class PotionGames extends JavaPlugin {
         if (voted.contains(p.getName())) {
             String arenaname = null;
             for (int i = 0; i <= arenas.size(); i++) {
-                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                 if (arenadata.contains("pg.arenas." + i)) {
                     if (voteplayernames.containsKey(arenadata.getString("pg.arenas." + i + ".name")) && voteplayernames.containsValue(p)) {
                         arenaname = arenadata.getString("pg.arenas." + i + ".name");
@@ -2880,7 +2891,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void tickLobby(String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         if (lobbySystem) {
             countdownLobby.put(s, getConfig().getInt("pg.countdown"));
             int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
@@ -3715,7 +3725,6 @@ public class PotionGames extends JavaPlugin {
         }
         ArrayList<Integer> arenaNumber = new ArrayList<>();
         for (int ii = 0; ii < 26; ii++) {
-            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
             if (arenadata.contains("pg.lobbies." + s + "." + ii)) {
                 arenaNumber.add(ii);
             }
@@ -3733,7 +3742,6 @@ public class PotionGames extends JavaPlugin {
                     String arenaName = null;
                     while (arenaName == null) {
                         winner = Integer.toString(rndArena);
-                        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                         arenaName = arenadata.getString("pg.lobbies." + s + "." + winner + ".name");
                         if (arenaName != null) {
                             for (Player all : playerLobby.keySet()) {
@@ -3747,7 +3755,6 @@ public class PotionGames extends JavaPlugin {
                     }
                 }
                 if (!randomArena) {
-                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                     if (winner.equals(arenadata.getString("pg.lobbies." + s + "." + i + ".name"))) {
                         winner = Integer.toString(i);
                         for (Player all : playerLobby.keySet()) {
@@ -3772,7 +3779,6 @@ public class PotionGames extends JavaPlugin {
             String arenaName = null;
             while (arenaName == null) {
                 winner = Integer.toString(rndArena);
-                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                 arenaName = arenadata.getString("pg.lobbies." + s + "." + winner + ".name");
                 if (arenaName != null) {
                     for (Player all : playerLobby.keySet()) {
@@ -3787,7 +3793,6 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void teleportAndStartLobby(String s) {
-        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         for (Player all : playerLobby.keySet()) {
             if (playerLobby.get(all).equals(s)) {
                 int maxteamplayers = teamSize;
@@ -3817,6 +3822,11 @@ public class PotionGames extends JavaPlugin {
                                 lobbyteamplayernames.get(s).put(all, Integer.toString(rndTeam));
                                 if (activateScoreboard) {
                                     Objects.requireNonNull(all.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
+                                }
+                                if (!all.hasPermission("pg.admin")) {
+                                    all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + all.getName());
+                                } else {
+                                    all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + all.getName());
                                 }
                             }
                         }
@@ -3915,10 +3925,9 @@ public class PotionGames extends JavaPlugin {
         clearEffects(p);
         p.setFireTicks(0);
         lobbyAmount.replace(s, lobbyAmount.get(s) + 1);
-        if (lobbyJoinable.get(s)) {
+        if (lobbyJoinable.get(s) && lobbyAmount.get(s) <= lobbymaxPlayers.get(s)) {
             playerLobby.put(p, s);
             try {
-                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                 Location loc = (Location) arenadata.get("pg.lobbies." + s + ".coords");
                 assert loc != null;
                 p.teleport(loc);
@@ -3976,10 +3985,9 @@ public class PotionGames extends JavaPlugin {
             p.getInventory().setItem(6, stats);
             p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + ChatColor.AQUA + s);
         }
-        if (!lobbyJoinable.get(s)) {
+        if (!lobbyJoinable.get(s) && lobbyAmount.get(s) <= lobbymaxPlayers.get(s) && joinStarted) {
             specLobby.put(p, s);
             try {
-                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                 String vote = lobbyVote.get(s);
                 Location loc = arenadata.getLocation("pg.lobbies." + s + "." + vote + ".spawns." + 1);
                 assert loc != null;
@@ -4068,7 +4076,6 @@ public class PotionGames extends JavaPlugin {
             if (lobbyVoted.containsValue(p.getName())) {
                 String arenaname = null;
                 for (int i = 1; i < 27; i++) {
-                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                     if (lobbyvoteplayernames.get(s).containsKey(arenadata.getString("pg.arenas." + i + ".name")) && lobbyvoteplayernames.get(s).containsValue(p)) {
                         if (lobbyvoteplayernames.get(s).get(arenadata.getString("pg.arenas." + i + ".name")) == p) {
                             arenaname = arenadata.getString("pg.arenas." + i + ".name");
@@ -4083,7 +4090,6 @@ public class PotionGames extends JavaPlugin {
                 randomvotes = lobbyvotes.get(s).get(chat.get(42));
                 temp.put(chat.get(42), randomvotes);
                 for (int max = 1; max < 27; max++) {
-                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
                     int oldplayers = lobbyvotes.get(s).get(arenadata.getString("pg.arenas." + max + ".name"));
                     temp.put(arenadata.getString("pg.arenas." + max + ".name"), oldplayers);
                 }

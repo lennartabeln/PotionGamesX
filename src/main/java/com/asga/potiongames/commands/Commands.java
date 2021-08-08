@@ -9,8 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -273,17 +271,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             if (!pg.playerLobby.containsKey(p)) {
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Lobby List");
                                 for (int slot = 1; slot <= 27; slot++) {
-                                    FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                                    if (arenadata.contains("pg.lobbies." + slot)) {
-                                        ArrayList<String> arenalore = new ArrayList<>();
-                                        ItemStack arenamap = new ItemStack(Material.MAP);
-                                        ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(Integer.toString(slot));
-                                        arenalore.add(pg.infoLobby.get(Integer.toString(slot)));
-                                        arenamapmeta.setLore(arenalore);
-                                        arenamap.setItemMeta(arenamapmeta);
-                                        inv.setItem(slot - 1, arenamap);
+                                    if (pg.arenadata.contains("pg.lobbies." + slot)) {
+                                        ArrayList<String> listlore = new ArrayList<>();
+                                        ItemStack listmap = new ItemStack(Material.MAP);
+                                        ItemMeta listmappmeta = listmap.getItemMeta();
+                                        assert listmappmeta != null;
+                                        listmappmeta.setDisplayName(Integer.toString(slot));
+                                        listlore.add(pg.infoLobby.get(Integer.toString(slot)));
+                                        listmappmeta.setLore(listlore);
+                                        listmap.setItemMeta(listmappmeta);
+                                        inv.setItem(slot - 1, listmap);
                                     }
                                 }
                                 p.openInventory(inv);
@@ -521,18 +518,17 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                 if (args[0].equalsIgnoreCase("setlobby")) {
                     if (p.hasPermission("pg.setup")) {
                         if (pg.isLobbySystem()) {
-                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                            arenadata.set("pg.lobbies." + args[1] + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
-                            arenadata.set("pg.lobbies." + args[1] + ".coords", Objects.requireNonNull(p.getLocation()));
-                            arenadata.set("pg.lobbies." + args[1] + ".activateTeams", true);
-                            arenadata.set("pg.lobbies." + args[1] + ".activateKits", true);
-                            arenadata.set("pg.lobbies." + args[1] + ".activateShop", true);
-                            arenadata.set("pg.lobbies." + args[1] + ".teamSize", 2);
-                            arenadata.set("pg.lobbies." + args[1] + ".maxPlayers", 24);
-                            arenadata.set("pg.lobbies." + args[1] + ".minPlayers", 12);
-                            arenadata.set("pg.lobbies." + args[1] + ".roundTime", 30);
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".coords", Objects.requireNonNull(p.getLocation()));
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".activateTeams", true);
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".activateKits", true);
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".activateShop", true);
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".teamSize", 2);
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".maxPlayers", 24);
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".minPlayers", 12);
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".roundTime", 30);
                             try {
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.save(pg.arenadatafile);
                             } catch (IOException e) {
                                 Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + e.getMessage());
                             }
@@ -542,10 +538,9 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                 } else if (args[0].equalsIgnoreCase("dellobby")) {
                     if (p.hasPermission("pg.setup")) {
                         if (pg.isLobbySystem()) {
-                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                            arenadata.set("pg.lobbies." + args[1], null);
+                            pg.arenadata.set("pg.lobbies." + args[1], null);
                             try {
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.save(pg.arenadatafile);
                             } catch (IOException e) {
                                 Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + e.getMessage());
                             }
@@ -556,8 +551,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                     if (pg.isLobbySystem()) {
                         String s = args[1];
                         if (p.hasPermission("pg.join")) {
-                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                            if (arenadata.contains("pg.lobbies." + s)) {
+                            if (pg.arenadata.contains("pg.lobbies." + s)) {
                                 if (!pg.playerLobby.containsKey(p)) {
                                     pg.onJoinLobby(p, s);
                                 }
@@ -583,8 +577,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                     int i = 1;
                                     boolean votetedarena = false;
                                     while (!votetedarena) {
-                                        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                                        if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
                                             arenaNumber = Integer.toString(i);
                                             pg.lobbyVotedarena.replace(s, arena);
                                             votetedarena = true;
@@ -611,8 +604,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                     int i = 1;
                                     boolean votetedarena = false;
                                     while (!votetedarena) {
-                                        FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                                        if (arena.matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
                                             arenaNumber = Integer.toString(i);
                                             pg.setVotedArena(arena);
                                             votetedarena = true;
@@ -637,12 +629,11 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             try {
                                 int i = 1;
                                 boolean arenaID = false;
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaID) {
-                                    if (arenadata.getString("pg.arenas." + i + ".name") == null) {
+                                    if (pg.arenadata.getString("pg.arenas." + i + ".name") == null) {
                                         i++;
                                     } else {
-                                        if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
                                             arenaNumber = i;
                                             arenaID = true;
                                         } else {
@@ -651,8 +642,8 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                     }
                                 }
                                 String arenaName = args[1];
-                                arenadata.set("pg.arenas." + arenaNumber, null);
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.set("pg.arenas." + arenaNumber, null);
+                                pg.arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28));
                             } catch (Exception e) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
@@ -664,15 +655,14 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                         if (!pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             try {
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                                while (arenadata.contains("pg.arenas." + arenaNumber)) {
+                                while (pg.arenadata.contains("pg.arenas." + arenaNumber)) {
                                     arenaNumber++;
                                 }
                                 String arenaName = args[1];
-                                arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
-                                arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
-                                arenadata.set("pg.arenas." + arenaNumber + ".name", arenaName);
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.set("pg.arenas." + arenaNumber, p.getWorld());
+                                pg.arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
+                                pg.arenadata.set("pg.arenas." + arenaNumber + ".name", arenaName);
+                                pg.arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(29));
                             } catch (Exception e) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27));
@@ -687,20 +677,19 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             try {
                                 int i = 1;
                                 boolean arenaName = false;
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaName) {
-                                    if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                    if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
                                         arenaNumber = i;
                                         arenaName = true;
                                     } else {
                                         i++;
                                     }
                                 }
-                                while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
+                                while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
                                     spawnNumber++;
                                 }
-                                arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
+                                pg.arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29));
                             } catch (Exception e) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.RED + " " + pg.chat.get(31));
@@ -715,9 +704,8 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             try {
                                 int i = 1;
                                 boolean arenaName = false;
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaName) {
-                                    if (args[1].matches(Objects.requireNonNull(arenadata.getString("pg.arenas." + i + ".name")))) {
+                                    if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
                                         arenaNumber = i;
                                         arenaName = true;
                                     } else {
@@ -725,12 +713,12 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                     }
                                 }
                                 int max = 1;
-                                while (arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + max)) {
+                                while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + max)) {
                                     spawnNumber = max;
                                     max++;
                                 }
-                                arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
+                                pg.arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Arena: " + args[1] + ")");
                             } catch (Exception e) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Arena: " + args[1] + ")");
@@ -740,10 +728,9 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                 } else if (args[0].equalsIgnoreCase("joinsign")) {
                     if (p.hasPermission("pg.setup")) {
                         if (pg.isLobbySystem()) {
-                            FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                            arenadata.set("pg.lobbies." + args[1] + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                            pg.arenadata.set("pg.lobbies." + args[1] + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
                             try {
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.save(pg.arenadatafile);
                             } catch (IOException e) {
                                 Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + e.getMessage());
                             }
@@ -761,12 +748,11 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             try {
                                 int i = 1;
                                 boolean arenaID = false;
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaID) {
-                                    if (arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name") == null) {
+                                    if (pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name") == null) {
                                         i++;
                                     } else {
-                                        if (args[2].matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                        if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
                                             arenaNumber = i;
                                             arenaID = true;
                                         } else {
@@ -775,8 +761,8 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                     }
                                 }
                                 String arenaName = args[2];
-                                arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber, null);
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber, null);
+                                pg.arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
                             } catch (Exception e) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
@@ -788,15 +774,14 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                         if (pg.isLobbySystem()) {
                             int arenaNumber = 1;
                             try {
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
-                                while (arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber)) {
+                                while (pg.arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber)) {
                                     arenaNumber++;
                                 }
                                 String arenaName = args[2];
-                                arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber, p.getWorld());
-                                arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".world", p.getWorld().getName());
-                                arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".name", arenaName);
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber, p.getWorld());
+                                pg.arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".world", p.getWorld().getName());
+                                pg.arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".name", arenaName);
+                                pg.arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
                             } catch (Exception e) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")");
@@ -811,20 +796,19 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             try {
                                 int i = 1;
                                 boolean arenaName = false;
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaName) {
-                                    if (args[2].matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                    if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
                                         arenaNumber = i;
                                         arenaName = true;
                                     } else {
                                         i++;
                                     }
                                 }
-                                while (arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber)) {
+                                while (pg.arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber)) {
                                     spawnNumber++;
                                 }
-                                arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
+                                pg.arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")" + " (" + "Arena: " + args[2] + ")");
                             } catch (Exception e) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")" + " (" + "Arena: " + args[2] + ")");
@@ -839,9 +823,8 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             try {
                                 int i = 1;
                                 boolean arenaName = false;
-                                FileConfiguration arenadata = YamlConfiguration.loadConfiguration(pg.arenadatafile);
                                 while (!arenaName) {
-                                    if (args[2].matches(Objects.requireNonNull(arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                    if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
                                         arenaNumber = i;
                                         arenaName = true;
                                     } else {
@@ -849,12 +832,12 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                     }
                                 }
                                 int max = 1;
-                                while (arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + max)) {
+                                while (pg.arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + max)) {
                                     spawnNumber = max;
                                     max++;
                                 }
-                                arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber, null);
-                                arenadata.save(pg.arenadatafile);
+                                pg.arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber, null);
+                                pg.arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")" + " (" + "Arena: " + args[2] + ")");
                             } catch (Exception e) {
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + args[2] + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")" + " (" + "Arena: " + args[2] + ")");

@@ -174,7 +174,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `allowOutsideChat: false` - Allows chatting with all players on the server `false` or `true`
 * `changeGamerules: true` - Decide if the plugin changes gamerules `true` or `false`
 * `activateScoreboard: true` - Activate scoreboard `true` or `false`
-* `friendlyFire: false` - Allow friendly fire on teammates `true` or `false`
+* `friendlyFire: false` - Allows friendly fire on teammates `true` or `false`
+* `joinStarted: true` - Allows joining a match that has already started `true` or `false`
 
 ### Messages
 
@@ -185,6 +186,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 
 ## Release History
 
+* 4.9.5
+  * ADD: Team-Mode
 * 4.9
   * ADD: Scoreboard
 * 4.8
@@ -245,7 +248,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * Version 5.0 - (Release Q4 2021):
   * Airdrop near to player
   * Deathmatch arena when only two players left
-  * Team-Mode
+  * ~~Team-Mode~~ - Version 4.9.5
   * ~~Scoreboard which can be enabled and disabled~~ - Version 4.9
   * ~~Auto choose arena when only one is available~~ - Version 4.8
 
