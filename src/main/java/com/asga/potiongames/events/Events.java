@@ -796,56 +796,6 @@ public class Events implements Listener {
     public void onInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (pg.isGameServer()) {
-            if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                if (e.getHand() == EquipmentSlot.HAND) {
-                    if (Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.ACACIA_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.BIRCH_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.ACACIA_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.BIRCH_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
-                        Sign sign = (Sign) e.getClickedBlock().getState();
-                        String line1 = sign.getLine(0);
-                        String line2 = sign.getLine(1);
-                        String line3 = sign.getLine(2);
-                        if (pg.isLobbySystem()) {
-                            if (e.getClickedBlock().getLocation().equals(pg.arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
-                                if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
-                                    pg.onJoinLobby(p, line1);
-                                }
-                            }
-                        } else {
-                            if (e.getClickedBlock().getLocation().equals(pg.getConfig().getLocation("pg.Lobby.sign"))) {
-                                if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
-                                    pg.onJoin(p);
-                                }
-                            }
-                        }
-                        if (line2.matches("PotionGames") && line3.matches("Stats")) {
-                            int wins = pg.getWins(p.getUniqueId().toString());
-                            int losts = pg.getLosts(p.getUniqueId().toString());
-                            int rounds = pg.getRounds(p.getUniqueId().toString());
-                            int kills = pg.getKills(p.getUniqueId().toString());
-                            int deaths = pg.getDeaths(p.getUniqueId().toString());
-                            double kd = pg.getKD(p.getUniqueId().toString());
-                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                            p.sendMessage(pg.prefix + pg.chat.get(65) + ": " + ChatColor.AQUA + rounds);
-                            p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
-                            p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
-                            p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
-                            p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
-                            p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
-                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                        }
-                    }
-                }
-            }
             if (pg.pgPlayers.contains(p) || pg.playerLobby.containsKey(p)) {
                 if (e.getAction() == Action.PHYSICAL && Objects.requireNonNull(e.getClickedBlock()).getType() == Material.FARMLAND) {
                     e.setCancelled(true);
@@ -1810,7 +1760,6 @@ public class Events implements Listener {
                     }
                 }
             }
-        } else {
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (e.getHand() == EquipmentSlot.HAND) {
                     if (Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_SIGN
@@ -1826,8 +1775,22 @@ public class Events implements Listener {
                             || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN
                             || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
                         Sign sign = (Sign) e.getClickedBlock().getState();
+                        String line1 = sign.getLine(0);
                         String line2 = sign.getLine(1);
                         String line3 = sign.getLine(2);
+                        if (pg.isLobbySystem()) {
+                            if (e.getClickedBlock().getLocation().equals(pg.arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
+                                if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
+                                    pg.onJoinLobby(p, line1);
+                                }
+                            }
+                        } else {
+                            if (e.getClickedBlock().getLocation().equals(pg.getConfig().getLocation("pg.Lobby.sign"))) {
+                                if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
+                                    pg.onJoin(p);
+                                }
+                            }
+                        }
                         if (line2.matches("PotionGames") && line3.matches("Stats")) {
                             int wins = pg.getWins(p.getUniqueId().toString());
                             int losts = pg.getLosts(p.getUniqueId().toString());
@@ -1845,6 +1808,7 @@ public class Events implements Listener {
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
                         }
                     }
+                    e.setCancelled(true);
                 }
             }
         }
