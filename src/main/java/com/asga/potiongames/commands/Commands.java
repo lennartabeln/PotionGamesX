@@ -80,7 +80,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                     p.sendMessage(pg.prefix + "/pg leave - Leave the game");
                 }
                 if (p.hasPermission("pg.stats")) {
-                    p.sendMessage(pg.prefix + "/pg stats - Show your stats");
+                    p.sendMessage(pg.prefix + "/pg stats [player] - Show player stats");
                 }
                 if (p.hasPermission("pg.update")) {
                     p.sendMessage(pg.prefix + "/pg version - Show your and latest version of plugin");
@@ -141,7 +141,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg leave - Leave the game");
                     }
                     if (p.hasPermission("pg.stats")) {
-                        p.sendMessage(pg.prefix + "/pg stats - Show your stats");
+                        p.sendMessage(pg.prefix + "/pg stats [player] - Show player stats");
                     }
                     if (p.hasPermission("pg.update")) {
                         p.sendMessage(pg.prefix + "/pg version - Show your and latest version of plugin");
