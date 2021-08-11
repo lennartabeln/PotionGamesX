@@ -727,21 +727,24 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("stats")) {
                     if (p.hasPermission("pg.stats")) {
-                        Player pstats = Bukkit.getServer().getPlayer(args[1]);
-                        assert pstats != null;
-                        int wins = pg.getWins(pstats.getUniqueId().toString());
-                        int losts = pg.getLosts(pstats.getUniqueId().toString());
-                        int rounds = pg.getRounds(pstats.getUniqueId().toString());
-                        int kills = pg.getKills(pstats.getUniqueId().toString());
-                        int deaths = pg.getDeaths(pstats.getUniqueId().toString());
-                        double kd = pg.getKD(pstats.getUniqueId().toString());
+                        Player pstats = Bukkit.getPlayer(args[1]);
                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                        p.sendMessage(pg.prefix + pg.chat.get(65) + ": " + ChatColor.AQUA + rounds);
-                        p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
-                        p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
-                        p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
-                        p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
-                        p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
+                        if (pstats != null) {
+                            int wins = pg.getWins(pstats.getUniqueId().toString());
+                            int losts = pg.getLosts(pstats.getUniqueId().toString());
+                            int rounds = pg.getRounds(pstats.getUniqueId().toString());
+                            int kills = pg.getKills(pstats.getUniqueId().toString());
+                            int deaths = pg.getDeaths(pstats.getUniqueId().toString());
+                            double kd = pg.getKD(pstats.getUniqueId().toString());
+                            p.sendMessage(pg.prefix + pg.chat.get(65) + ": " + ChatColor.AQUA + rounds);
+                            p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
+                            p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
+                            p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
+                            p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
+                            p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
+                        } else {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(13));
+                        }
                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
                     }
                 } else if (args[0].equalsIgnoreCase("joinsign")) {

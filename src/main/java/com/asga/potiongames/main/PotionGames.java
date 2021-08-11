@@ -260,7 +260,7 @@ public class PotionGames extends JavaPlugin {
         chat.add("Plugin stopped successfully!");
         chat.add("Random");
         chat.add("Team-Selector");
-        chat.add("Player");
+        chat.add("Players");
         chat.add("You are now in team");
         chat.add("You now have the kit");
         chat.add("This team is already full!");
