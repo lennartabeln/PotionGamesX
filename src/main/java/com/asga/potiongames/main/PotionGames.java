@@ -21,6 +21,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -40,7 +41,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class PotionGames extends JavaPlugin {
+public class PotionGames extends JavaPlugin implements Listener {
     public final ArrayList<String> worlds = new ArrayList<>();
     public final ArrayList<Player> pgPlayers = new ArrayList<>();
     public final ArrayList<Player> specPlayers = new ArrayList<>();

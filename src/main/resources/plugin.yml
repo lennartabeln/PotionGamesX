@@ -3,7 +3,7 @@ author: andersspielen
 main: com.asga.potiongames.main.PotionGames
 version: 4.9.6
 api-version: 1.16
-softdepend: [ Multiverse-Core ]
+softdepend: [ Multiverse-Core, PlaceholderAPI ]
 commands:
   pg:
     description: Get list of commands + permissions
