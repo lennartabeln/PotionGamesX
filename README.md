@@ -19,6 +19,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * Use the stats wall to show the best three players
 * Use startOnJoin option to use this plugin with BungeeCord
 * Use GUI or sign to join a lobby
+* Support for PlaceholderAPI
 
 ## Installation
 

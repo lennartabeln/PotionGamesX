@@ -1,5 +1,6 @@
 package com.asga.potiongames.main;
 
+import com.asga.potiongames.bstats.Metrics;
 import com.asga.potiongames.commands.Commands;
 import com.asga.potiongames.events.Events;
 import com.asga.potiongames.gamestates.GameStates;
@@ -894,6 +895,8 @@ public class PotionGames extends JavaPlugin {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GRAY + chat.get(77) + " " + this.getDescription().getVersion() + " -> " + version);
             }
         });
+        @SuppressWarnings("unused")
+        Metrics metrics = new Metrics(this, 12027);
     }
 
     public void onReload() {

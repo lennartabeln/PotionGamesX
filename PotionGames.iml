@@ -55,6 +55,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="Maven: org.bstats:bstats-bukkit:2.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.bstats:bstats-base:2.2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.10.10" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:21.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-lang:commons-lang:2.6" level="project" />
