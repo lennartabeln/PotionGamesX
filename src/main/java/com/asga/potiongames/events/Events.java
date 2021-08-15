@@ -1781,12 +1781,14 @@ public class Events implements Listener {
                         if (pg.isLobbySystem()) {
                             if (e.getClickedBlock().getLocation().equals(pg.arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
                                 if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
+                                    e.setCancelled(true);
                                     pg.onJoinLobby(p, line1);
                                 }
                             }
                         } else {
                             if (e.getClickedBlock().getLocation().equals(pg.getConfig().getLocation("pg.Lobby.sign"))) {
                                 if (!pg.pgPlayers.contains(p) && !pg.specPlayers.contains(p)) {
+                                    e.setCancelled(true);
                                     pg.onJoin(p);
                                 }
                             }
@@ -1808,7 +1810,6 @@ public class Events implements Listener {
                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
                         }
                     }
-                    e.setCancelled(true);
                 }
             }
         }
