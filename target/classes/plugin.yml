@@ -1,7 +1,7 @@
 name: PotionGames
 author: andersspielen
 main: com.asga.potiongames.main.PotionGames
-version: 4.9.6
+version: 5.0
 api-version: 1.16
 softdepend: [ Multiverse-Core, PlaceholderAPI ]
 commands:

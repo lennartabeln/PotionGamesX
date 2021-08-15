@@ -725,6 +725,62 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             }
                         }
                     }
+                } else if (args[0].equalsIgnoreCase("adddeathmatch")) {
+                    if (p.hasPermission("pg.setup")) {
+                        if (!pg.isLobbySystem()) {
+                            int spawnNumber = 1;
+                            int arenaNumber = 1;
+                            try {
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
+                                while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".deathmatch." + spawnNumber)) {
+                                    spawnNumber++;
+                                }
+                                pg.arenadata.set("pg.arenas." + arenaNumber + ".deathmatch." + spawnNumber, p.getLocation());
+                                pg.arenadata.save(pg.arenadatafile);
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29));
+                            } catch (Exception e) {
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.RED + " " + pg.chat.get(31));
+                            }
+                        }
+                    }
+                } else if (args[0].equalsIgnoreCase("deldeathmatch")) {
+                    if (p.hasPermission("pg.setup")) {
+                        if (!pg.isLobbySystem()) {
+                            int arenaNumber = 1;
+                            int spawnNumber = 1;
+                            try {
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
+                                int max = 1;
+                                while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".deathmatch." + max)) {
+                                    spawnNumber = max;
+                                    max++;
+                                }
+                                pg.arenadata.set("pg.arenas." + arenaNumber + ".deathmatch." + spawnNumber, null);
+                                pg.arenadata.save(pg.arenadatafile);
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Arena: " + args[1] + ")");
+                            } catch (Exception e) {
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Arena: " + args[1] + ")");
+                            }
+                        }
+                    }
                 } else if (args[0].equalsIgnoreCase("stats")) {
                     if (p.hasPermission("pg.stats")) {
                         Player pstats = Bukkit.getPlayer(args[1]);
@@ -859,6 +915,62 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                     max++;
                                 }
                                 pg.arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber, null);
+                                pg.arenadata.save(pg.arenadatafile);
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")" + " (" + "Arena: " + args[2] + ")");
+                            } catch (Exception e) {
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + args[2] + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")" + " (" + "Arena: " + args[2] + ")");
+                            }
+                        }
+                    }
+                } else if (args[0].equalsIgnoreCase("adddeathmatch")) {
+                    if (p.hasPermission("pg.setup")) {
+                        if (pg.isLobbySystem()) {
+                            int spawnNumber = 1;
+                            int arenaNumber = 1;
+                            try {
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
+                                while (pg.arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".deathmatch." + spawnNumber)) {
+                                    spawnNumber++;
+                                }
+                                pg.arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".deathmatch." + spawnNumber, p.getLocation());
+                                pg.arenadata.save(pg.arenadatafile);
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")" + " (" + "Arena: " + args[2] + ")");
+                            } catch (Exception e) {
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + args[1] + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")" + " (" + "Arena: " + args[2] + ")");
+                            }
+                        }
+                    }
+                } else if (args[0].equalsIgnoreCase("deldeathmatch")) {
+                    if (p.hasPermission("pg.setup")) {
+                        if (pg.isLobbySystem()) {
+                            int arenaNumber = 1;
+                            int spawnNumber = 1;
+                            try {
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
+                                int max = 1;
+                                while (pg.arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".deathmatch." + max)) {
+                                    spawnNumber = max;
+                                    max++;
+                                }
+                                pg.arenadata.set("pg.lobbies." + args[1] + "." + arenaNumber + ".deathmatch." + spawnNumber, null);
                                 pg.arenadata.save(pg.arenadatafile);
                                 p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + args[1] + ")" + " (" + "Arena: " + args[2] + ")");
                             } catch (Exception e) {

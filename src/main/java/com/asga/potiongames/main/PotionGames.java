@@ -101,6 +101,7 @@ public class PotionGames extends JavaPlugin implements Listener {
     public final HashMap<String, Integer> resetLobby = new HashMap<>();
     public final HashMap<String, Integer> lobbyAmount = new HashMap<>();
     public final HashMap<String, GameStates> lobbyStates = new HashMap<>();
+    public final HashMap<String, Boolean> lobbyDeathmatch = new HashMap<>();
     public final HashMap<String, Boolean> lobbyMove = new HashMap<>();
     public final HashMap<String, Boolean> lobbyJoinable = new HashMap<>();
     public final HashMap<String, Boolean> lobbyForcearena = new HashMap<>();
@@ -175,6 +176,7 @@ public class PotionGames extends JavaPlugin implements Listener {
     private String user = "root";
     private String password;
     private GameStates gamestate;
+    private boolean deathmatch = false;
     private boolean joinable = true;
     private boolean pause = false;
     private boolean build = false;
@@ -205,6 +207,7 @@ public class PotionGames extends JavaPlugin implements Listener {
     private boolean activateScoreboard = true;
     private boolean friendlyFire = false;
     private boolean joinStarted = false;
+    private boolean activateDeathmatch = true;
     private Connection con;
     private Statement st;
 
@@ -603,6 +606,13 @@ public class PotionGames extends JavaPlugin implements Listener {
         } else {
             joinStarted = getConfig().getBoolean("pg.joinStarted");
         }
+        if (getConfig().get("pg.activateDeathmatch") == null) {
+            getConfig().addDefault("pg.activateDeathmatch", activateDeathmatch);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateDeathmatch = getConfig().getBoolean("pg.activateDeathmatch");
+        }
         if (getConfig().get("pg.language") == null) {
             getConfig().addDefault("pg.language", language);
             getConfig().options().copyDefaults(true);
@@ -740,6 +750,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                         lobbyActivateShop.put(s, true);
                         lobbyJoinable.put(s, true);
                         lobbyForcearena.put(s, false);
+                        lobbyDeathmatch.put(s, false);
                         lobbyMove.put(s, true);
                         lobbyVoteallowed.put(s, false);
                         lobbyTeamallowed.put(s, false);
@@ -1045,6 +1056,13 @@ public class PotionGames extends JavaPlugin implements Listener {
         } else {
             joinStarted = getConfig().getBoolean("pg.joinStarted");
         }
+        if (getConfig().get("pg.activateDeathmatch") == null) {
+            getConfig().addDefault("pg.activateDeathmatch", activateDeathmatch);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateDeathmatch = getConfig().getBoolean("pg.activateDeathmatch");
+        }
         if (getConfig().get("pg.language") == null) {
             getConfig().addDefault("pg.language", language);
             getConfig().options().copyDefaults(true);
@@ -1184,6 +1202,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                         lobbyActivateShop.put(s, true);
                         lobbyJoinable.put(s, true);
                         lobbyForcearena.put(s, false);
+                        lobbyDeathmatch.put(s, false);
                         lobbyMove.put(s, true);
                         lobbyVoteallowed.put(s, false);
                         lobbyTeamallowed.put(s, false);
@@ -2114,7 +2133,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 }
                                 sign.update();
                             }
-                            if (countdown != 0 && countdown != -1) {
+                            if (countdown != 0 && countdown != -1 && countdown != -4) {
                                 for (int setting = 1; setting < 27; setting++) {
                                     if (arenadata.contains("pg.arenas." + setting)) {
                                         String name = arenadata.getString("pg.arenas." + setting + ".world");
@@ -2206,11 +2225,16 @@ public class PotionGames extends JavaPlugin implements Listener {
                                         }
                                     }
                                     if (activateTeams) {
-                                        if (pgPlayers.size() == 1 || teams.size() == 1)
+                                        if (pgPlayers.size() == 1 || teams.size() == 1) {
                                             setCountdown(-2);
+                                        } else if (pgPlayers.size() == 2 && teams.size() == 2 && activateDeathmatch) {
+                                            setCountdown(-4);
+                                        }
                                     } else {
                                         if (pgPlayers.size() == 1) {
                                             setCountdown(-2);
+                                        } else if (pgPlayers.size() == 2 && activateDeathmatch) {
+                                            setCountdown(-4);
                                         }
                                     }
                                     roundTimeSeconds--;
@@ -2361,6 +2385,78 @@ public class PotionGames extends JavaPlugin implements Listener {
                                             all.sendMessage(prefix + ChatColor.GREEN + chat.get(6));
                                         }
                                         gamestate = GameStates.RESET;
+                                    }
+                                } else if (countdown == -4) {
+                                    if (!deathmatch) {
+                                        if (reset == 10) {
+                                            for (Player all : pgPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + reset);
+                                            }
+                                            for (Player all : specPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + reset);
+                                            }
+                                            reset--;
+                                        } else if (reset <= 9 && reset > 5) {
+                                            reset--;
+                                        } else if (reset <= 5 && reset > 0) {
+                                            for (Player all : pgPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + reset);
+                                            }
+                                            for (Player all : specPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + reset);
+                                            }
+                                            reset--;
+                                        } else if (reset == 0) {
+                                            for (Player all : pgPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena now!");
+                                            }
+                                            for (Player all : specPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena now!");
+                                            }
+                                            teleportDeathmatch();
+                                            reset = 10;
+                                            deathmatch = true;
+                                        }
+                                    } else {
+                                        if (reset == 10) {
+                                            for (Player all : pgPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + reset);
+                                            }
+                                            for (Player all : specPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + reset);
+                                            }
+                                            reset--;
+                                        } else if (reset <= 9 && reset > 5) {
+                                            reset--;
+                                        } else if (reset <= 5 && reset > 0) {
+                                            for (Player all : pgPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + reset);
+                                                all.playSound(all.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+                                            }
+                                            for (Player all : specPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + reset);
+                                                all.playSound(all.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+                                            }
+                                            reset--;
+                                        } else if (reset == 0) {
+                                            move = true;
+                                            for (Player all : pgPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch started!");
+                                                all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
+                                                all.setGameMode(GameMode.SURVIVAL);
+                                            }
+                                            for (Player all : specPlayers) {
+                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch started!");
+                                                all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
+                                            }
+                                            reset--;
+                                        } else if (reset == -1) {
+                                            if (pgPlayers.size() == 1) {
+                                                reset = 10;
+                                                setCountdown(-2);
+                                                deathmatch = false;
+                                            }
+                                        }
                                     }
                                 }
                             } else {
@@ -2700,6 +2796,51 @@ public class PotionGames extends JavaPlugin implements Listener {
         }
     }
 
+    public void teleportDeathmatch() {
+        for (int i = 1; i <= specPlayers.size(); i++) {
+            Player p = pgPlayers.get(i - 1);
+            try {
+                String vote = getVote();
+                Location loc = arenadata.getLocation("pg.arenas." + vote + ".deathmatch." + 1);
+                assert loc != null;
+                p.teleport(loc);
+            } catch (Exception e) {
+                for (Player all : pgPlayers) {
+                    if (all.hasPermission("pg.admin")) {
+                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
+                    }
+                }
+                for (Player all : specPlayers) {
+                    if (all.hasPermission("pg.admin")) {
+                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
+                    }
+                }
+            }
+        }
+        for (int i = 1; i <= pgPlayers.size(); i++) {
+            Player p = pgPlayers.get(i - 1);
+            try {
+                p.setGameMode(GameMode.ADVENTURE);
+                move = false;
+                String vote = getVote();
+                Location loc = arenadata.getLocation("pg.arenas." + vote + ".deathmatch." + i);
+                assert loc != null;
+                p.teleport(loc);
+            } catch (Exception e) {
+                for (Player all : pgPlayers) {
+                    if (all.hasPermission("pg.admin")) {
+                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
+                    }
+                }
+                for (Player all : specPlayers) {
+                    if (all.hasPermission("pg.admin")) {
+                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
+                    }
+                }
+            }
+        }
+    }
+
     public void onJoin(Player p) {
         if (activateScoreboard) {
             Scoreboard temp = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
@@ -2858,7 +2999,7 @@ public class PotionGames extends JavaPlugin implements Listener {
             if (teamed.contains(p.getName())) {
                 String teamname = null;
                 for (int i = 1; i <= teamAmount; i++) {
-                    if (teamplayernames.containsKey(p) && teamplayernames.containsValue(Integer.toString(i))) {
+                    if (Objects.equals(teamplayernames.get(p), Integer.toString(i))) {
                         teamname = Integer.toString(i);
                     }
                 }
@@ -3259,11 +3400,16 @@ public class PotionGames extends JavaPlugin implements Listener {
                                         }
                                     }
                                     if (lobbyActivateTeams.get(s)) {
-                                        if (lobbyAmount.get(s) == 1 || lobbyteams.get(s).size() == 1)
+                                        if (lobbyAmount.get(s) == 1 || lobbyteams.get(s).size() == 1) {
                                             countdownLobby.replace(s, -2);
+                                        } else if (lobbyAmount.get(s) == 2 && lobbyteams.get(s).size() == 2 && activateDeathmatch) {
+                                            countdownLobby.replace(s, -4);
+                                        }
                                     } else {
                                         if (lobbyAmount.get(s) == 1) {
                                             countdownLobby.replace(s, -2);
+                                        } else if (lobbyAmount.get(s) == 2 && activateDeathmatch) {
+                                            countdownLobby.replace(s, -4);
                                         }
                                     }
                                     lobbyroundTimeSeconds.replace(s, lobbyroundTimeSeconds.get(s) - 1);
@@ -3498,6 +3644,102 @@ public class PotionGames extends JavaPlugin implements Listener {
                                             }
                                         }
                                         lobbyStates.replace(s, GameStates.RESET);
+                                    }
+                                } else if (countdownLobby.get(s) == -4) {
+                                    if (!lobbyDeathmatch.get(s)) {
+                                        if (resetLobby.get(s) == 10) {
+                                            for (Player all : playerLobby.keySet()) {
+                                                if (playerLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + resetLobby.get(s));
+                                                }
+                                            }
+                                            for (Player all : specLobby.keySet()) {
+                                                if (specLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + resetLobby.get(s));
+                                                }
+                                            }
+                                            resetLobby.put(s, resetLobby.get(s) - 1);
+                                        } else if (resetLobby.get(s) <= 9 && resetLobby.get(s) > 5) {
+                                            resetLobby.put(s, resetLobby.get(s) - 1);
+                                        } else if (resetLobby.get(s) <= 5 && resetLobby.get(s) > 0) {
+                                            for (Player all : playerLobby.keySet()) {
+                                                if (playerLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + resetLobby.get(s));
+                                                }
+                                            }
+                                            for (Player all : specLobby.keySet()) {
+                                                if (specLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + resetLobby.get(s));
+                                                }
+                                            }
+                                            resetLobby.put(s, resetLobby.get(s) - 1);
+                                        } else if (resetLobby.get(s) == 0) {
+                                            for (Player all : playerLobby.keySet()) {
+                                                if (playerLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena now!");
+                                                }
+                                            }
+                                            for (Player all : specLobby.keySet()) {
+                                                if (specLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena now!");
+                                                }
+                                            }
+                                            teleportDeathmatchLobby(s);
+                                            resetLobby.put(s, 10);
+                                            lobbyDeathmatch.replace(s, true);
+                                        }
+                                    } else {
+                                        if (resetLobby.get(s) == 10) {
+                                            for (Player all : playerLobby.keySet()) {
+                                                if (playerLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + resetLobby.get(s));
+                                                }
+                                            }
+                                            for (Player all : specLobby.keySet()) {
+                                                if (specLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + resetLobby.get(s));
+                                                }
+                                            }
+                                            resetLobby.put(s, resetLobby.get(s) - 1);
+                                        } else if (resetLobby.get(s) <= 9 && resetLobby.get(s) > 5) {
+                                            resetLobby.put(s, resetLobby.get(s) - 1);
+                                        } else if (resetLobby.get(s) <= 5 && resetLobby.get(s) > 0) {
+                                            for (Player all : playerLobby.keySet()) {
+                                                if (playerLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + resetLobby.get(s));
+                                                    all.playSound(all.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+                                                }
+                                            }
+                                            for (Player all : specLobby.keySet()) {
+                                                if (specLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + resetLobby.get(s));
+                                                    all.playSound(all.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+                                                }
+                                            }
+                                            resetLobby.put(s, resetLobby.get(s) - 1);
+                                        } else if (resetLobby.get(s) == 0) {
+                                            lobbyMove.replace(s, true);
+                                            for (Player all : playerLobby.keySet()) {
+                                                if (playerLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch started!");
+                                                    all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
+                                                    all.setGameMode(GameMode.SURVIVAL);
+                                                }
+                                            }
+                                            for (Player all : specLobby.keySet()) {
+                                                if (specLobby.get(all).equals(s)) {
+                                                    all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch started!");
+                                                    all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
+                                                }
+                                            }
+                                            resetLobby.put(s, resetLobby.get(s) - 1);
+                                        } else if (resetLobby.get(s) == -1) {
+                                            if (lobbyAmount.get(s) == 1) {
+                                                resetLobby.put(s, 10);
+                                                countdownLobby.replace(s, -2);
+                                                lobbyDeathmatch.replace(s, false);
+                                            }
+                                        }
                                     }
                                 }
                             } else {
@@ -3875,6 +4117,65 @@ public class PotionGames extends JavaPlugin implements Listener {
                 } catch (Exception e) {
                     for (Player op : playerLobby.keySet()) {
                         if (playerLobby.get(all).equals(s)) {
+                            if (all.hasPermission("pg.admin")) {
+                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
+                            }
+                        }
+                    }
+                }
+            }
+            i++;
+        }
+    }
+
+    public void teleportDeathmatchLobby(String s) {
+        int i = 1;
+        for (Player all : specLobby.keySet()) {
+            if (specLobby.get(all).equals(s)) {
+                try {
+                    String vote = lobbyVote.get(s);
+                    Location loc = arenadata.getLocation("pg.lobbies." + s + "." + vote + ".deathmatch." + 1);
+                    assert loc != null;
+                    all.teleport(loc);
+                } catch (Exception e) {
+                    for (Player op : playerLobby.keySet()) {
+                        if (playerLobby.get(all).equals(s)) {
+                            if (all.hasPermission("pg.admin")) {
+                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
+                            }
+                        }
+                    }
+                    for (Player op : specLobby.keySet()) {
+                        if (specLobby.get(all).equals(s)) {
+                            if (all.hasPermission("pg.admin")) {
+                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
+                            }
+                        }
+                    }
+                }
+            }
+            i++;
+        }
+        i = 1;
+        for (Player all : playerLobby.keySet()) {
+            if (playerLobby.get(all).equals(s)) {
+                try {
+                    all.setGameMode(GameMode.ADVENTURE);
+                    lobbyMove.replace(s, false);
+                    String vote = lobbyVote.get(s);
+                    Location loc = arenadata.getLocation("pg.lobbies." + s + "." + vote + ".deathmatch." + i);
+                    assert loc != null;
+                    all.teleport(loc);
+                } catch (Exception e) {
+                    for (Player op : playerLobby.keySet()) {
+                        if (playerLobby.get(all).equals(s)) {
+                            if (all.hasPermission("pg.admin")) {
+                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
+                            }
+                        }
+                    }
+                    for (Player op : specLobby.keySet()) {
+                        if (specLobby.get(all).equals(s)) {
                             if (all.hasPermission("pg.admin")) {
                                 op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
                             }

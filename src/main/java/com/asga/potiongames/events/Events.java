@@ -586,7 +586,7 @@ public class Events implements Listener {
                                     Player killer = p.getKiller();
                                     assert killer != null;
                                     killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
-                                    if (pg.kitplayernames.containsKey("Rich Kid") && pg.kitplayernames.containsValue(p)) {
+                                    if (Objects.equals(pg.kitplayernames.get("Rich Kid"), p)) {
                                         for (int i = 0; i < 10; i++) {
                                             killer.getInventory().addItem(pg.getCoin());
                                         }
@@ -658,7 +658,7 @@ public class Events implements Listener {
                                 if (pg.isActivateTeams()) {
                                     String teamname = null;
                                     for (int i = 1; i <= pg.getTeamAmount(); i++) {
-                                        if (pg.teamplayernames.containsKey(p) && pg.teamplayernames.containsValue(Integer.toString(i))) {
+                                        if (Objects.equals(pg.teamplayernames.get(p), Integer.toString(i))) {
                                             teamname = Integer.toString(i);
                                         }
                                     }
@@ -675,7 +675,7 @@ public class Events implements Listener {
                                     Player killer = p.getKiller();
                                     assert killer != null;
                                     killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
-                                    if (pg.kitplayernames.containsKey("Rich Kid") && pg.kitplayernames.containsValue(p)) {
+                                    if (Objects.equals(pg.kitplayernames.get("Rich Kid"), p)) {
                                         for (int i = 0; i < 10; i++) {
                                             killer.getInventory().addItem(pg.getCoin());
                                         }
@@ -741,18 +741,18 @@ public class Events implements Listener {
                         p.setHealth(p.getHealth() - 4 <= 0 ? 0D : p.getHealth() - 4);
                     }
                 }
-                if (pg.isFriendlyFire()) {
+                if (!pg.isFriendlyFire()) {
                     if (e.getEntity() instanceof Player p && e.getDamager() instanceof Player d) {
                         if (!pg.isLobbySystem()) {
                             String teamname1 = "a";
                             for (int i = 1; i <= pg.getTeamAmount(); i++) {
-                                if (pg.teamplayernames.containsKey(p) && pg.teamplayernames.containsValue(Integer.toString(i))) {
+                                if (Objects.equals(pg.teamplayernames.get(p), Integer.toString(i))) {
                                     teamname1 = Integer.toString(i);
                                 }
                             }
                             String teamname2 = "b";
                             for (int i = 1; i <= pg.getTeamAmount(); i++) {
-                                if (pg.teamplayernames.containsKey(d) && pg.teamplayernames.containsValue(Integer.toString(i))) {
+                                if (Objects.equals(pg.teamplayernames.get(d), Integer.toString(i))) {
                                     teamname2 = Integer.toString(i);
                                 }
                             }
