@@ -260,7 +260,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 ## TODO
 
 * Version 6.0 - (Release Q4 2021):
-  * Airdrop near to player
+  * Airdrops
 
 ## Issues / Ideas
 
