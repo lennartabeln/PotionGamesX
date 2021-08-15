@@ -63,7 +63,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 2. Create arena `/pg addarena [arenaname]`
 3. Add arena spawns `/pg addspawn [arenaname]`
 4. Add chests to your arena
-5. Add deathmatch spawns `/pg adddeathmatch [lobbynumber] [arenaname]` (activateDeathmatch = true)
+5. Add deathmatch spawns `/pg adddeathmatch [arenaname]` (activateDeathmatch = true)
 
 #### Chest-Types
 
