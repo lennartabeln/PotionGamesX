@@ -302,6 +302,10 @@ public class PotionGames extends JavaPlugin implements Listener {
         chat.add("Plugin successfully reloaded!");
         chat.add("Extremely explosive TNT");
         chat.add("Leave");
+        chat.add("Teleporting to deathmatch arena in");
+        chat.add("Teleporting to deathmatch arena now!");
+        chat.add("Deathmatch is starting in");
+        chat.add("Deathmatch started!");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -2390,28 +2394,28 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     if (!deathmatch) {
                                         if (reset == 10) {
                                             for (Player all : pgPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + reset);
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(81) + " " + ChatColor.AQUA + reset);
                                             }
                                             for (Player all : specPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + reset);
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(81) + " " + ChatColor.AQUA + reset);
                                             }
                                             reset--;
                                         } else if (reset <= 9 && reset > 5) {
                                             reset--;
                                         } else if (reset <= 5 && reset > 0) {
                                             for (Player all : pgPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + reset);
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(81) + " " + ChatColor.AQUA + reset);
                                             }
                                             for (Player all : specPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena in" + " " + ChatColor.AQUA + reset);
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(81) + " " + ChatColor.AQUA + reset);
                                             }
                                             reset--;
                                         } else if (reset == 0) {
                                             for (Player all : pgPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena now!");
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(82));
                                             }
                                             for (Player all : specPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Teleporting to deathmatch arena now!");
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(82));
                                             }
                                             teleportDeathmatch();
                                             reset = 10;
@@ -2420,33 +2424,33 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     } else {
                                         if (reset == 10) {
                                             for (Player all : pgPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + reset);
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(83) + " " + ChatColor.AQUA + reset);
                                             }
                                             for (Player all : specPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + reset);
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(83) + " " + ChatColor.AQUA + reset);
                                             }
                                             reset--;
                                         } else if (reset <= 9 && reset > 5) {
                                             reset--;
                                         } else if (reset <= 5 && reset > 0) {
                                             for (Player all : pgPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + reset);
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(83) + " " + ChatColor.AQUA + reset);
                                                 all.playSound(all.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
                                             }
                                             for (Player all : specPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch is starting in" + " " + ChatColor.AQUA + reset);
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(83) + " " + ChatColor.AQUA + reset);
                                                 all.playSound(all.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
                                             }
                                             reset--;
                                         } else if (reset == 0) {
                                             move = true;
                                             for (Player all : pgPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch started!");
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(84));
                                                 all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
                                                 all.setGameMode(GameMode.SURVIVAL);
                                             }
                                             for (Player all : specPlayers) {
-                                                all.sendMessage(prefix + ChatColor.GREEN + "Deathmatch started!");
+                                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(84));
                                                 all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
                                             }
                                             reset--;
