@@ -35,8 +35,10 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg dellobby [lobbynumber] - Remove lobby");
                         p.sendMessage(pg.prefix + "/pg addarena [lobbynumber] [arenaname] - Add an arena");
                         p.sendMessage(pg.prefix + "/pg addspawn [lobbynumber] [arenaname] - Add a spawn");
+                        p.sendMessage(pg.prefix + "/pg adddeathmatch [lobbynumber] [arenaname] - Add a deathmatch spawn");
                         p.sendMessage(pg.prefix + "/pg delarena [lobbynumber] [arenaname] - Remove an arena");
                         p.sendMessage(pg.prefix + "/pg delspawn [lobbynumber] [arenaname] - Remove last spawn");
+                        p.sendMessage(pg.prefix + "/pg adddeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn");
                         p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg joinsign [lobbynumber] - Add Join-Sign");
@@ -46,8 +48,10 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                         p.sendMessage(pg.prefix + "/pg setlobby - Set lobby");
                         p.sendMessage(pg.prefix + "/pg addarena [arenaname] - Add an arena");
                         p.sendMessage(pg.prefix + "/pg addspawn [arenaname] - Add a spawn");
+                        p.sendMessage(pg.prefix + "/pg adddeathmatch [arenaname] - Add a deathmatch spawn");
                         p.sendMessage(pg.prefix + "/pg delarena [arenaname] - Remove an arena");
                         p.sendMessage(pg.prefix + "/pg delspawn [arenaname] - Remove last spawn");
+                        p.sendMessage(pg.prefix + "/pg adddeathmatch [arenaname] - Remove last deathmatch spawn");
                         p.sendMessage(pg.prefix + "/pg headp1(2;3) - Add Player Head to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg signp1(2;3) - Add Player Sign to Stats-Wall");
                         p.sendMessage(pg.prefix + "/pg joinsign - Set Join-Sign");
