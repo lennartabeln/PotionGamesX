@@ -744,19 +744,7 @@ public class Events implements Listener {
                 if (!pg.isFriendlyFire()) {
                     if (e.getEntity() instanceof Player p && e.getDamager() instanceof Player d) {
                         if (!pg.isLobbySystem()) {
-                            String teamname1 = "a";
-                            for (int i = 1; i <= pg.getTeamAmount(); i++) {
-                                if (Objects.equals(pg.teamplayernames.get(p), Integer.toString(i))) {
-                                    teamname1 = Integer.toString(i);
-                                }
-                            }
-                            String teamname2 = "b";
-                            for (int i = 1; i <= pg.getTeamAmount(); i++) {
-                                if (Objects.equals(pg.teamplayernames.get(d), Integer.toString(i))) {
-                                    teamname2 = Integer.toString(i);
-                                }
-                            }
-                            if (Objects.equals(teamname1, teamname2)) {
+                            if (Objects.equals(pg.teamplayernames.get(p), pg.teamplayernames.get(d))) {
                                 e.setCancelled(true);
                             }
                         } else {
@@ -766,23 +754,7 @@ public class Events implements Listener {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            String teamname1 = "a";
-                            for (int i = 1; i <= pg.lobbyteamAmount.get(s); i++) {
-                                if (pg.lobbyteamplayernames.get(s).containsKey(p) && pg.lobbyteamplayernames.get(s).containsValue(Integer.toString(i))) {
-                                    if (Objects.equals(pg.lobbyteamplayernames.get(s).get(p), Integer.toString(i))) {
-                                        teamname1 = Integer.toString(i);
-                                    }
-                                }
-                            }
-                            String teamname2 = "b";
-                            for (int i = 1; i <= pg.lobbyteamAmount.get(s); i++) {
-                                if (pg.lobbyteamplayernames.get(s).containsKey(d) && pg.lobbyteamplayernames.get(s).containsValue(Integer.toString(i))) {
-                                    if (Objects.equals(pg.lobbyteamplayernames.get(s).get(d), Integer.toString(i))) {
-                                        teamname2 = Integer.toString(i);
-                                    }
-                                }
-                            }
-                            if (Objects.equals(teamname1, teamname2)) {
+                            if (Objects.equals(pg.lobbyteamplayernames.get(s).get(p), pg.lobbyteamplayernames.get(s).get(d))) {
                                 e.setCancelled(true);
                             }
                         }
@@ -1187,7 +1159,7 @@ public class Events implements Listener {
                                     Player result = null;
                                     double lastDistance = Double.MAX_VALUE;
                                     for (Player cp : p.getWorld().getPlayers()) {
-                                        if (pg.playerLobby.containsKey(cp)) {
+                                        if (pg.playerLobby.containsKey(cp) && !Objects.equals(pg.lobbyteamplayernames.get(s).get(p), pg.lobbyteamplayernames.get(s).get(cp))) {
                                             if (p == cp) {
                                                 continue;
                                             }
@@ -1211,7 +1183,7 @@ public class Events implements Listener {
                                     Player result = null;
                                     double lastDistance = Double.MAX_VALUE;
                                     for (Player cp : p.getWorld().getPlayers()) {
-                                        if (pg.getPgPlayers().contains(cp)) {
+                                        if (pg.getPgPlayers().contains(cp) && !Objects.equals(pg.teamplayernames.get(p), pg.teamplayernames.get(cp))) {
                                             if (p == cp) {
                                                 continue;
                                             }
@@ -1936,11 +1908,6 @@ public class Events implements Listener {
                                                         if (pg.isActivateScoreboard()) {
                                                             Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                                         }
-                                                        if (!p.hasPermission("pg.admin")) {
-                                                            p.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(p.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + p.getName());
-                                                        } else {
-                                                            p.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(p.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getName());
-                                                        }
                                                     }
                                                 }
                                             } else {
@@ -1963,11 +1930,6 @@ public class Events implements Listener {
                                                     pg.lobbyteamplayernames.get(s).put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
                                                         Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
-                                                    }
-                                                    if (!p.hasPermission("pg.admin")) {
-                                                        p.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(p.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + p.getName());
-                                                    } else {
-                                                        p.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(p.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getName());
                                                     }
                                                 } else {
                                                     p.closeInventory();
@@ -2023,11 +1985,6 @@ public class Events implements Listener {
                                                         if (pg.isActivateScoreboard()) {
                                                             Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                                         }
-                                                        if (!p.hasPermission("pg.admin")) {
-                                                            p.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(p.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + p.getName());
-                                                        } else {
-                                                            p.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(p.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getName());
-                                                        }
                                                     }
                                                 }
                                             } else {
@@ -2050,11 +2007,6 @@ public class Events implements Listener {
                                                     pg.lobbyteamplayernames.get(s).put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
                                                         Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
-                                                    }
-                                                    if (!p.hasPermission("pg.admin")) {
-                                                        p.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(p.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + p.getName());
-                                                    } else {
-                                                        p.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(p.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getName());
                                                     }
                                                 } else {
                                                     p.closeInventory();
