@@ -567,11 +567,11 @@ public class Events implements Listener {
                                     }
                                     pg.lobbyteamplayernames.get(s).remove(p, teamname);
                                     assert teamname != null;
-                                    int teamamount = pg.lobbyteams.get(s).get(Integer.valueOf(teamname));
+                                    int teamamount = pg.lobbyteams.get(s).get(Integer.parseInt(teamname));
                                     teamamount--;
-                                    pg.lobbyteams.get(s).replace(Integer.valueOf(teamname), teamamount);
-                                    if (pg.lobbyteams.get(s).get(Integer.valueOf(teamname)) == 0) {
-                                        pg.lobbyteams.get(s).remove(Integer.valueOf(teamname));
+                                    pg.lobbyteams.get(s).replace(Integer.parseInt(teamname), teamamount);
+                                    if (pg.lobbyteams.get(s).get(Integer.parseInt(teamname)) == 0) {
+                                        pg.lobbyteams.get(s).remove(Integer.parseInt(teamname));
                                     }
                                     pg.teamed.remove(p.getName());
                                 }
@@ -1944,20 +1944,20 @@ public class Events implements Listener {
                                                     }
                                                 }
                                             } else {
-                                                if (pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) < maxteamplayers) {
+                                                if (pg.lobbyteams.get(s).get(Integer.parseInt(displayname)) < maxteamplayers) {
                                                     p.closeInventory();
-                                                    int players = pg.lobbyteams.get(s).get(Integer.valueOf(displayname));
+                                                    int players = pg.lobbyteams.get(s).get(Integer.parseInt(displayname));
                                                     players++;
                                                     HashMap<Integer, Integer> temp = new HashMap<>();
                                                     for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
                                                         int oldplayers = pg.lobbyteams.get(s).get(max);
                                                         temp.put(max, oldplayers);
                                                     }
-                                                    temp.put(Integer.valueOf(displayname), players);
+                                                    temp.put(Integer.parseInt(displayname), players);
                                                     pg.lobbyteams.replace(s, temp);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.parseInt(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                     pg.lobbyteamplayernames.get(s).put(p, displayname);
@@ -1986,14 +1986,14 @@ public class Events implements Listener {
                                             }
                                             pg.lobbyteamplayernames.get(s).remove(p, teamname);
                                             assert teamname != null;
-                                            int teamamount = pg.lobbyteams.get(s).get(Integer.valueOf(teamname));
+                                            int teamamount = pg.lobbyteams.get(s).get(Integer.parseInt(teamname));
                                             teamamount--;
                                             HashMap<Integer, Integer> tempold = new HashMap<>();
                                             for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
                                                 int oldplayers = pg.lobbyteams.get(s).get(max);
                                                 tempold.put(max, oldplayers);
                                             }
-                                            tempold.put(Integer.valueOf(teamname), teamamount);
+                                            tempold.put(Integer.parseInt(teamname), teamamount);
                                             pg.lobbyteams.replace(s, tempold);
                                             pg.lobbyTeamed.remove(p, s);
                                             if (displayname.equals(pg.chat.get(42))) {
@@ -2031,20 +2031,20 @@ public class Events implements Listener {
                                                     }
                                                 }
                                             } else {
-                                                if (pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) < maxteamplayers) {
+                                                if (pg.lobbyteams.get(s).get(Integer.parseInt(displayname)) < maxteamplayers) {
                                                     p.closeInventory();
-                                                    int players = pg.lobbyteams.get(s).get(Integer.valueOf(displayname));
+                                                    int players = pg.lobbyteams.get(s).get(Integer.parseInt(displayname));
                                                     players++;
                                                     HashMap<Integer, Integer> temp = new HashMap<>();
                                                     for (int max = 1; max <= pg.lobbyteamAmount.get(s); max++) {
                                                         int oldplayers = pg.lobbyteams.get(s).get(max);
                                                         temp.put(max, oldplayers);
                                                     }
-                                                    temp.put(Integer.valueOf(displayname), players);
+                                                    temp.put(Integer.parseInt(displayname), players);
                                                     pg.lobbyteams.replace(s, temp);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.valueOf(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.parseInt(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
                                                     p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
                                                     pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                     pg.lobbyteamplayernames.get(s).put(p, displayname);

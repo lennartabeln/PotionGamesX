@@ -4183,8 +4183,8 @@ public class PotionGames extends JavaPlugin implements Listener {
                 String teamname;
                 for (int i = 1; i <= lobbyteamAmount.get(s); i++) {
                     teamname = Integer.toString(i);
-                    if (lobbyteams.get(s).get(Integer.valueOf(teamname)) == 0) {
-                        lobbyteams.get(s).remove(Integer.valueOf(teamname));
+                    if (lobbyteams.get(s).get(Integer.parseInt(teamname)) == 0) {
+                        lobbyteams.get(s).remove(Integer.parseInt(teamname));
                     }
                 }
             }
@@ -4413,18 +4413,18 @@ public class PotionGames extends JavaPlugin implements Listener {
                     }
                     lobbyteamplayernames.get(s).remove(p, teamname);
                     assert teamname != null;
-                    int teamamount = lobbyteams.get(s).get(Integer.valueOf(teamname));
+                    int teamamount = lobbyteams.get(s).get(Integer.parseInt(teamname));
                     teamamount--;
                     HashMap<Integer, Integer> temp = new HashMap<>();
                     for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
                         int oldplayers = lobbyteams.get(s).get(max);
                         temp.put(max, oldplayers);
                     }
-                    temp.put(Integer.valueOf(teamname), teamamount);
+                    temp.put(Integer.parseInt(teamname), teamamount);
                     lobbyteams.replace(s, temp);
                     if (lobbyStates.get(s) == GameStates.INGAME) {
-                        if (lobbyteams.get(s).get(Integer.valueOf(teamname)) == 0) {
-                            lobbyteams.get(s).remove(Integer.valueOf(teamname));
+                        if (lobbyteams.get(s).get(Integer.parseInt(teamname)) == 0) {
+                            lobbyteams.get(s).remove(Integer.parseInt(teamname));
                         }
                     }
                     lobbyTeamed.remove(p, s);
