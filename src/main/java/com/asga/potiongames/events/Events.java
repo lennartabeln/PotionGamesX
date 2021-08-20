@@ -1805,7 +1805,7 @@ public class Events implements Listener {
                                 int randomvotes;
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                                     String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
-                                    if (!pg.lobbyVoted.containsValue(p.getName())) {
+                                    if (!pg.lobbyVoted.containsKey(p)) {
                                         p.closeInventory();
                                         int votes = pg.lobbyvotes.get(s).get(displayname);
                                         votes++;
@@ -1824,7 +1824,7 @@ public class Events implements Listener {
                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
-                                        pg.lobbyVoted.put(s, p.getName());
+                                        pg.lobbyVoted.put(p, s);
                                         pg.lobbyvoteplayernames.get(s).put(p, displayname);
                                     } else {
                                         p.closeInventory();
@@ -1850,7 +1850,7 @@ public class Events implements Listener {
                                         }
                                         tempold.put(arenaname, votes);
                                         pg.lobbyvotes.replace(s, tempold);
-                                        pg.lobbyVoted.remove(s, p.getName());
+                                        pg.lobbyVoted.remove(p, s);
                                         votes = pg.lobbyvotes.get(s).get(displayname);
                                         votes++;
                                         HashMap<String, Integer> temp = new HashMap<>();
@@ -1868,7 +1868,7 @@ public class Events implements Listener {
                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
-                                        pg.lobbyVoted.put(s, p.getName());
+                                        pg.lobbyVoted.put(p, s);
                                         pg.lobbyvoteplayernames.get(s).put(p, displayname);
                                     }
                                 }
@@ -2024,7 +2024,7 @@ public class Events implements Listener {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                                     String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
-                                    if (!pg.lobbyKited.containsValue(p.getName())) {
+                                    if (!pg.lobbyKited.containsKey(p)) {
                                         if (displayname.equals(pg.chat.get(42))) {
                                             Random rnd = new Random();
                                             int rndKit = rnd.nextInt(pg.getActiveKits());
@@ -2032,7 +2032,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            pg.lobbyKited.put(s, e.getWhoClicked().getName());
+                                            pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
@@ -2045,7 +2045,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            pg.lobbyKited.put(s, e.getWhoClicked().getName());
+                                            pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
@@ -2071,7 +2071,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            pg.lobbyKited.put(s, e.getWhoClicked().getName());
+                                            pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
@@ -2084,7 +2084,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            pg.lobbyKited.put(s, e.getWhoClicked().getName());
+                                            pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);

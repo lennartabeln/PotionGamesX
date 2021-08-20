@@ -118,9 +118,9 @@ public class PotionGames extends JavaPlugin implements Listener {
     public final HashMap<String, Boolean> lobbySingleArena = new HashMap<>();
     public final HashMap<String, String> lobbyVote = new HashMap<>();
     public final HashMap<String, String> lobbyVotedarena = new HashMap<>();
-    public final HashMap<String, String> lobbyVoted = new HashMap<>();
+    public final HashMap<Player, String> lobbyVoted = new HashMap<>();
     public final HashMap<Player, String> lobbyTeamed = new HashMap<>();
-    public final HashMap<String, String> lobbyKited = new HashMap<>();
+    public final HashMap<Player, String> lobbyKited = new HashMap<>();
     public final HashMap<String, HashMap<Integer, Integer>> lobbyteams = new HashMap<>();
     public final HashMap<Player, String> lobbyteamplayernamesdata = new HashMap<>();
     public final HashMap<String, HashMap<Player, String>> lobbyteamplayernames = new HashMap<>();
@@ -767,7 +767,6 @@ public class PotionGames extends JavaPlugin implements Listener {
                         lobbyKitallowed.put(s, false);
                         lobbyAmount.put(s, 0);
                         lobbyTickstarted.put(s, true);
-                        lobbyVoted.put(s, null);
                         lobbyBuild.put(s, false);
                         lobbyPause.put(s, false);
                         lobbyVote.put(s, null);
@@ -1255,7 +1254,6 @@ public class PotionGames extends JavaPlugin implements Listener {
                         lobbyKitallowed.put(s, false);
                         lobbyAmount.put(s, 0);
                         lobbyTickstarted.put(s, true);
-                        lobbyVoted.put(s, null);
                         lobbyBuild.put(s, false);
                         lobbyPause.put(s, false);
                         lobbyVote.put(s, null);
@@ -2674,6 +2672,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                             richkidPlayers.clear();
                             checkArenas = false;
                             singleArena = false;
+                            deathmatch = false;
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
                             if (changeGamerules) {
                                 setGameRules(getConfig().getString("pg.Lobby.world"));
@@ -2905,7 +2904,6 @@ public class PotionGames extends JavaPlugin implements Listener {
             for (Player all : pgPlayers) {
                 all.sendMessage(prefix + ChatColor.RED + chat.get(88));
                 all.sendMessage(prefix + ChatColor.RED + chat.get(86));
-                onLeave(all);
             }
         }
     }
@@ -2933,12 +2931,10 @@ public class PotionGames extends JavaPlugin implements Listener {
             for (Player all : pgPlayers) {
                 all.sendMessage(prefix + ChatColor.RED + chat.get(89));
                 all.sendMessage(prefix + ChatColor.RED + chat.get(86));
-                onLeave(all);
             }
             for (Player all : specPlayers) {
                 all.sendMessage(prefix + ChatColor.RED + chat.get(89));
                 all.sendMessage(prefix + ChatColor.RED + chat.get(86));
-                onLeave(all);
             }
         }
     }
@@ -3087,6 +3083,9 @@ public class PotionGames extends JavaPlugin implements Listener {
         pgPlayers.remove(p);
         specPlayers.remove(p);
         playerAmount--;
+        if (activateKits) {
+            kited.remove(p.getName());
+        }
         if (activateTeams) {
             if (teamed.contains(p.getName())) {
                 String teamname = null;
@@ -3096,8 +3095,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                     }
                 }
                 teamplayernames.remove(p, teamname);
-                int teamamount = teamplayers.get(teamname) - 1;
-                teamplayers.put(teamname, teamamount);
+                teamplayers.put(teamname, teamplayers.get(teamname) - 1);
                 if (gamestate == GameStates.INGAME) {
                     if (teamplayers.get(teamname) == 0) {
                         teams.remove(teamname);
@@ -3982,7 +3980,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                             }
                             for (Player all : playerLobby.keySet()) {
                                 if (playerLobby.get(all).equals(s)) {
-                                    lobbyVoted.remove(s, all.getName());
+                                    lobbyVoted.remove(all);
                                 }
                             }
                             lobbyVoteallowed.replace(s, false);
@@ -3996,17 +3994,19 @@ public class PotionGames extends JavaPlugin implements Listener {
                             lobbyTeamallowed.replace(s, false);
                             for (Player all : playerLobby.keySet()) {
                                 if (playerLobby.get(all).equals(s)) {
-                                    lobbyKited.remove(s, all.getName());
+                                    lobbyVoted.remove(all);
                                 }
                             }
                             lobbyKitallowed.replace(s, false);
                             for (Player all : playerLobby.keySet()) {
                                 if (playerLobby.get(all).equals(s)) {
                                     richkidPlayers.remove(all);
+                                    lobbyKited.remove(all);
                                 }
                             }
                             lobbyCheckArenas.replace(s, false);
                             lobbySingleArena.replace(s, false);
+                            lobbyDeathmatch.replace(s, false);
                             Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setPVP(false);
                             if (changeGamerules) {
                                 setGameRules(arenadata.getString("pg.lobbies." + s + ".world"));
@@ -4023,7 +4023,6 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     }
                                 }
                                 lobbyvotes.replace(s, temp);
-                                lobbyVoted.remove(s);
                             }
                             if (!lobbyTeamallowed.get(s)) {
                                 lobbyTeamallowed.replace(s, true);
@@ -4039,7 +4038,6 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 for (String all : kits) {
                                     kitplayers.put(all, 0);
                                 }
-                                lobbyKited.remove(s);
                             }
                             for (Entry<Location, Block> entry : lobbyLiquidPlaced.get(s).entrySet()) {
                                 Location loc = entry.getKey();
@@ -4110,7 +4108,7 @@ public class PotionGames extends JavaPlugin implements Listener {
             Random generator = new Random();
             int rndIndex = generator.nextInt(arenaNumber.size());
             int rndArena = arenaNumber.get(rndIndex);
-            if (!lobbyForcearena.get(s) && lobbyVoted.get(s) != null) {
+            if (!lobbyForcearena.get(s)) {
                 boolean randomArena = false;
                 int i = 1;
                 boolean votedArena = false;
@@ -4146,14 +4144,14 @@ public class PotionGames extends JavaPlugin implements Listener {
                         }
                     }
                 }
-            } else if (lobbyForcearena.get(s) && lobbyVoted.get(s) != null || lobbyForcearena.get(s) && lobbyVoted.get(s) == null) {
+            } else if (lobbyForcearena.get(s) || lobbyForcearena.get(s)) {
                 winner = lobbyVote.get(s);
                 for (Player all : playerLobby.keySet()) {
                     if (playerLobby.get(all).equals(s)) {
                         all.sendMessage(prefix + ChatColor.AQUA + lobbyVotedarena.get(s) + ChatColor.GREEN + " " + chat.get(7));
                     }
                 }
-            } else if (lobbyVoted.get(s) == null && !lobbyForcearena.get(s)) {
+            } else if (!lobbyForcearena.get(s)) {
                 String arenaName = null;
                 while (arenaName == null) {
                     winner = Integer.toString(rndArena);
@@ -4217,13 +4215,13 @@ public class PotionGames extends JavaPlugin implements Listener {
                         }
                     }
                     if (lobbyActivateKits.get(s)) {
-                        if (!lobbyKited.containsValue(all.getName())) {
+                        if (!lobbyKited.containsKey(all)) {
                             Random rnd = new Random();
                             int rndKit = rnd.nextInt(activeKits);
                             all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
                             all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
                             all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                            lobbyKited.put(s, all.getName());
+                            lobbyKited.put(all, s);
                             kitplayernames.put(all, kits.get(rndKit));
                             if (activateScoreboard) {
                                 Objects.requireNonNull(all.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + kits.get(rndKit));
@@ -4260,7 +4258,6 @@ public class PotionGames extends JavaPlugin implements Listener {
                 if (playerLobby.get(all).equals(s)) {
                     all.sendMessage(prefix + ChatColor.RED + chat.get(88));
                     all.sendMessage(prefix + ChatColor.RED + chat.get(86));
-                    onLeaveLobby(all, s);
                 }
             }
         }
@@ -4296,14 +4293,12 @@ public class PotionGames extends JavaPlugin implements Listener {
                 if (playerLobby.get(all).equals(s)) {
                     all.sendMessage(prefix + ChatColor.RED + chat.get(89));
                     all.sendMessage(prefix + ChatColor.RED + chat.get(86));
-                    onLeaveLobby(all, s);
                 }
             }
             for (Player all : specLobby.keySet()) {
                 if (specLobby.get(all).equals(s)) {
                     all.sendMessage(prefix + ChatColor.RED + chat.get(89));
                     all.sendMessage(prefix + ChatColor.RED + chat.get(86));
-                    onLeaveLobby(all, s);
                 }
             }
         }
@@ -4457,6 +4452,9 @@ public class PotionGames extends JavaPlugin implements Listener {
             lobbyTeamed.remove(p, s);
         }
         if (lobbyAmount.get(s) != 0) {
+            if (lobbyActivateKits.get(s)) {
+                lobbyKited.remove(p);
+            }
             if (lobbyActivateTeams.get(s)) {
                 if (lobbyTeamed.containsKey(p)) {
                     String teamname = null;
@@ -4469,15 +4467,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                     }
                     lobbyteamplayernames.get(s).remove(p, teamname);
                     assert teamname != null;
-                    int teamamount = lobbyteams.get(s).get(Integer.parseInt(teamname));
-                    teamamount--;
-                    HashMap<Integer, Integer> temp = new HashMap<>();
-                    for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
-                        int oldplayers = lobbyteams.get(s).get(max);
-                        temp.put(max, oldplayers);
-                    }
-                    temp.put(Integer.parseInt(teamname), teamamount);
-                    lobbyteams.replace(s, temp);
+                    lobbyteams.get(s).replace(Integer.parseInt(teamname), lobbyteams.get(s).get(Integer.parseInt(teamname)) - 1);
                     if (lobbyStates.get(s) == GameStates.INGAME) {
                         if (lobbyteams.get(s).get(Integer.parseInt(teamname)) == 0) {
                             lobbyteams.get(s).remove(Integer.parseInt(teamname));
@@ -4486,29 +4476,18 @@ public class PotionGames extends JavaPlugin implements Listener {
                     lobbyTeamed.remove(p, s);
                 }
             }
-            if (lobbyVoted.containsValue(p.getName())) {
+            if (lobbyVoted.containsKey(p)) {
                 String arenaname = null;
                 for (int i = 1; i < 27; i++) {
-                    if (lobbyvoteplayernames.get(s).containsKey(p) && lobbyvoteplayernames.get(s).containsValue(arenadata.getString("pg.arenas." + i + ".name"))) {
-                        if (Objects.equals(lobbyvoteplayernames.get(s).get(p), arenadata.getString("pg.arenas." + i + ".name"))) {
-                            arenaname = arenadata.getString("pg.arenas." + i + ".name");
+                    if (lobbyvoteplayernames.get(s).containsKey(p) && lobbyvoteplayernames.get(s).containsValue(arenadata.getString("pg.lobbies." + s + "." + i + ".name"))) {
+                        if (Objects.equals(lobbyvoteplayernames.get(s).get(p), arenadata.getString("pg.lobbies." + s + "." + i + ".name"))) {
+                            arenaname = arenadata.getString("pg.lobbies." + s + "." + i + ".name");
                         }
                     }
                 }
                 lobbyvoteplayernames.get(s).remove(p, arenaname);
-                int voteamount = lobbyvotes.get(s).get(arenaname);
-                voteamount--;
-                HashMap<String, Integer> temp = new HashMap<>();
-                int randomvotes;
-                randomvotes = lobbyvotes.get(s).get(chat.get(42));
-                temp.put(chat.get(42), randomvotes);
-                for (int max = 1; max < 27; max++) {
-                    int oldplayers = lobbyvotes.get(s).get(arenadata.getString("pg.arenas." + max + ".name"));
-                    temp.put(arenadata.getString("pg.arenas." + max + ".name"), oldplayers);
-                }
-                temp.put(arenaname, voteamount);
-                lobbyvotes.replace(s, temp);
-                lobbyVoted.remove(s, p.getName());
+                lobbyvotes.get(s).replace(arenaname, lobbyvotes.get(s).get(arenaname) - 1);
+                lobbyVoted.remove(p, s);
             }
         } else {
             lobbyStates.replace(s, GameStates.RESET);
