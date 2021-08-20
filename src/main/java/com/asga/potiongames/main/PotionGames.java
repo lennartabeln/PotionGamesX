@@ -74,11 +74,11 @@ public class PotionGames extends JavaPlugin implements Listener {
     public final ArrayList<PotionEffect> potions = new ArrayList<>();
     public final HashMap<Integer, String> rank = new HashMap<>();
     public final HashMap<String, Integer> votes = new HashMap<>();
-    public final HashMap<String, Player> voteplayernames = new HashMap<>();
+    public final HashMap<Player, String> voteplayernames = new HashMap<>();
     public final HashMap<String, Integer> teamplayers = new HashMap<>();
     public final HashMap<Player, String> teamplayernames = new HashMap<>();
     public final HashMap<String, Integer> kitplayers = new HashMap<>();
-    public final HashMap<String, Player> kitplayernames = new HashMap<>();
+    public final HashMap<Player, String> kitplayernames = new HashMap<>();
     public final HashMap<Location, Inventory> chests = new HashMap<>();
     public final HashMap<Location, String> lobbychests = new HashMap<>();
     public final HashMap<Location, Inventory> lobbychestsdata = new HashMap<>();
@@ -125,8 +125,8 @@ public class PotionGames extends JavaPlugin implements Listener {
     public final HashMap<Player, String> lobbyteamplayernamesdata = new HashMap<>();
     public final HashMap<String, HashMap<Player, String>> lobbyteamplayernames = new HashMap<>();
     public final HashMap<String, HashMap<String, Integer>> lobbyvotes = new HashMap<>();
-    public final HashMap<String, Player> lobbyvoteplayernamesdata = new HashMap<>();
-    public final HashMap<String, HashMap<String, Player>> lobbyvoteplayernames = new HashMap<>();
+    public final HashMap<Player, String> lobbyvoteplayernamesdata = new HashMap<>();
+    public final HashMap<String, HashMap<Player, String>> lobbyvoteplayernames = new HashMap<>();
     public final HashMap<String, Integer> lobbyteamSize = new HashMap<>();
     public final HashMap<String, Integer> lobbymaxPlayers = new HashMap<>();
     public final HashMap<String, Integer> lobbyminPlayers = new HashMap<>();
@@ -306,6 +306,12 @@ public class PotionGames extends JavaPlugin implements Listener {
         chat.add("Teleporting to deathmatch arena now!");
         chat.add("Deathmatch is starting in");
         chat.add("Deathmatch started!");
+        chat.add("Could not update Rank-Wall!");
+        chat.add("Please inform an admin!");
+        chat.add("Could not join lobby!");
+        chat.add("Could not teleport to arena!");
+        chat.add("Could not teleport to deathmatch arena!");
+        chat.add("Could not load an arena!");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -863,7 +869,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                             for (int max = 1; max < 27; max++) {
                                 if (arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
                                     temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
-                                    lobbyvoteplayernamesdata.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), null);
+                                    lobbyvoteplayernamesdata.put(null, arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
                                 }
                             }
                             lobbyvotes.put(s, temp);
@@ -913,6 +919,42 @@ public class PotionGames extends JavaPlugin implements Listener {
         });
         @SuppressWarnings("unused")
         Metrics metrics = new Metrics(this, 12027);
+        if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
+            ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
+            int ii = 0;
+            try {
+                while (rs.next()) {
+                    ii++;
+                    rank.put(ii, rs.getString("UUID"));
+                }
+                rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                for (int iii = 0; iii < rank.size(); iii++) {
+                    int id = iii + 1;
+                    Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    skull.setOwningPlayer(sname);
+                    skull.update();
+                }
+                for (int iii = 0; iii < rank.size(); iii++) {
+                    int id = iii + 1;
+                    BlockState b = ranksign.get(iii).getBlock().getState();
+                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    Sign sign = (Sign) b;
+                    sign.setLine(0, chat.get(33) + " #" + id);
+                    sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                    sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                    sign.setLine(3, "K/D: " + getKD(rank.get(id)));
+                    sign.update();
+                }
+            } catch (Exception e) {
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(85));
+            }
+        }
     }
 
     public void onReload() {
@@ -1315,7 +1357,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                             for (int max = 1; max < 27; max++) {
                                 if (arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
                                     temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
-                                    lobbyvoteplayernamesdata.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), null);
+                                    lobbyvoteplayernamesdata.put(null, arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
                                 }
                             }
                             lobbyvotes.put(s, temp);
@@ -1347,6 +1389,42 @@ public class PotionGames extends JavaPlugin implements Listener {
                         tickLobby(s);
                     }
                 }
+            }
+        }
+        if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
+            ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
+            int ii = 0;
+            try {
+                while (rs.next()) {
+                    ii++;
+                    rank.put(ii, rs.getString("UUID"));
+                }
+                rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                for (int iii = 0; iii < rank.size(); iii++) {
+                    int id = iii + 1;
+                    Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    skull.setOwningPlayer(sname);
+                    skull.update();
+                }
+                for (int iii = 0; iii < rank.size(); iii++) {
+                    int id = iii + 1;
+                    BlockState b = ranksign.get(iii).getBlock().getState();
+                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    Sign sign = (Sign) b;
+                    sign.setLine(0, chat.get(33) + " #" + id);
+                    sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                    sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                    sign.setLine(3, "K/D: " + getKD(rank.get(id)));
+                    sign.update();
+                }
+            } catch (Exception e) {
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(85));
             }
         }
     }
@@ -1435,35 +1513,35 @@ public class PotionGames extends JavaPlugin implements Listener {
                         ii++;
                         rank.put(ii, rs.getString("UUID"));
                     }
-                } catch (SQLException e) {
-                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
-                }
-                rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                for (int iii = 0; iii < rank.size(); iii++) {
-                    int id = iii + 1;
-                    Skull s = (Skull) rankhead.get(iii).getBlock().getState();
-                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                    s.setOwningPlayer(name);
-                    s.update();
-                }
-                for (int iii = 0; iii < rank.size(); iii++) {
-                    int id = iii + 1;
-                    BlockState b = ranksign.get(iii).getBlock().getState();
-                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                    Sign sign = (Sign) b;
-                    sign.setLine(0, chat.get(33) + " #" + id);
-                    sign.setLine(1, Objects.requireNonNull(name.getName()));
-                    sign.setLine(2, "Wins: " + getWins(rank.get(id)));
-                    sign.setLine(3, "K/D: " + getKD(rank.get(id)));
-                    sign.update();
+                    rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                    rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                    rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                    ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                    ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                    ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                    for (int iii = 0; iii < rank.size(); iii++) {
+                        int id = iii + 1;
+                        Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                        skull.setOwningPlayer(sname);
+                        skull.update();
+                    }
+                    for (int iii = 0; iii < rank.size(); iii++) {
+                        int id = iii + 1;
+                        BlockState b = ranksign.get(iii).getBlock().getState();
+                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                        Sign sign = (Sign) b;
+                        sign.setLine(0, chat.get(33) + " #" + id);
+                        sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                        sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                        sign.setLine(3, "K/D: " + getKD(rank.get(id)));
+                        sign.update();
+                    }
+                } catch (Exception e) {
+                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(85));
                 }
             }
-        }, 0, 20);
+        }, 0, 1200);
     }
 
     public void chestData() {
@@ -2000,42 +2078,6 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 kits.add(name);
                                 kit++;
                             }
-                            if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-                                int ii = 0;
-                                try {
-                                    while (rs.next()) {
-                                        ii++;
-                                        rank.put(ii, rs.getString("UUID"));
-                                    }
-                                } catch (SQLException e) {
-                                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
-                                }
-                                rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                                rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                                rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                                ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                                ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                                ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                                for (int iii = 0; iii < rank.size(); iii++) {
-                                    int id = iii + 1;
-                                    Skull s = (Skull) rankhead.get(iii).getBlock().getState();
-                                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                    s.setOwningPlayer(name);
-                                    s.update();
-                                }
-                                for (int iii = 0; iii < rank.size(); iii++) {
-                                    int id = iii + 1;
-                                    BlockState b = ranksign.get(iii).getBlock().getState();
-                                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                    Sign sign = (Sign) b;
-                                    sign.setLine(0, chat.get(33) + " #" + id);
-                                    sign.setLine(1, Objects.requireNonNull(name.getName()));
-                                    sign.setLine(2, "Wins: " + getWins(rank.get(id)));
-                                    sign.setLine(3, "K/D: " + getKD(rank.get(id)));
-                                    sign.update();
-                                }
-                            }
                             joinable = true;
                             if (getPlayerAmount() < minPlayers) {
                                 for (Player all : pgPlayers) {
@@ -2468,6 +2510,42 @@ public class PotionGames extends JavaPlugin implements Listener {
                             }
                         }
                         case RESET -> {
+                            if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
+                                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
+                                int ii = 0;
+                                try {
+                                    while (rs.next()) {
+                                        ii++;
+                                        rank.put(ii, rs.getString("UUID"));
+                                    }
+                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                                    for (int iii = 0; iii < rank.size(); iii++) {
+                                        int id = iii + 1;
+                                        Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                        skull.setOwningPlayer(sname);
+                                        skull.update();
+                                    }
+                                    for (int iii = 0; iii < rank.size(); iii++) {
+                                        int id = iii + 1;
+                                        BlockState b = ranksign.get(iii).getBlock().getState();
+                                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                        Sign sign = (Sign) b;
+                                        sign.setLine(0, chat.get(33) + " #" + id);
+                                        sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                                        sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                                        sign.setLine(3, "K/D: " + getKD(rank.get(id)));
+                                        sign.update();
+                                    }
+                                } catch (Exception e) {
+                                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(85));
+                                }
+                            }
                             if (activateScoreboard) {
                                 for (Player all : pgPlayers) {
                                     info.get(all).resetScores("           ");
@@ -2650,247 +2728,245 @@ public class PotionGames extends JavaPlugin implements Listener {
     }
 
     public void voteResults() {
-        int max = 0;
-        for (int i : votes.values()) {
-            if (i > max) {
-                max = i;
+        try {
+            int max = 0;
+            for (int i : votes.values()) {
+                if (i > max) {
+                    max = i;
+                }
             }
-        }
-        String winner = null;
-        for (String all : votes.keySet()) {
-            if (votes.get(all) == max) {
-                winner = all;
+            String winner = null;
+            for (String all : votes.keySet()) {
+                if (votes.get(all) == max) {
+                    winner = all;
+                }
             }
-        }
-        ArrayList<Integer> arenaNumber = new ArrayList<>();
-        for (int ii = 0; ii < 26; ii++) {
-            if (arenadata.contains("pg.arenas." + ii)) {
-                arenaNumber.add(ii);
+            ArrayList<Integer> arenaNumber = new ArrayList<>();
+            for (int ii = 0; ii < 26; ii++) {
+                if (arenadata.contains("pg.arenas." + ii)) {
+                    arenaNumber.add(ii);
+                }
             }
-        }
-        Random generator = new Random();
-        int rndIndex = generator.nextInt(arenaNumber.size());
-        int rndArena = arenaNumber.get(rndIndex);
-        if (!forcearena && !voted.isEmpty()) {
-            boolean randomArena = false;
-            int i = 1;
-            boolean votedArena = false;
-            while (!votedArena) {
-                assert winner != null;
-                if (winner.equals(chat.get(42))) {
-                    String arenaName = null;
-                    while (arenaName == null) {
-                        winner = Integer.toString(rndArena);
-                        arenaName = arenadata.getString("pg.arenas." + winner + ".name");
-                        if (arenaName != null) {
+            Random generator = new Random();
+            int rndIndex = generator.nextInt(arenaNumber.size());
+            int rndArena = arenaNumber.get(rndIndex);
+            if (!forcearena && !voted.isEmpty()) {
+                boolean randomArena = false;
+                int i = 1;
+                boolean votedArena = false;
+                while (!votedArena) {
+                    assert winner != null;
+                    if (winner.equals(chat.get(42))) {
+                        String arenaName = null;
+                        while (arenaName == null) {
+                            winner = Integer.toString(rndArena);
+                            arenaName = arenadata.getString("pg.arenas." + winner + ".name");
+                            if (arenaName != null) {
+                                for (Player all : pgPlayers) {
+                                    all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
+                                }
+                            }
+                            randomArena = true;
+                            votedArena = true;
+                        }
+                    }
+                    if (!randomArena) {
+                        if (winner.equals(arenadata.getString("pg.arenas." + i + ".name"))) {
+                            winner = Integer.toString(i);
                             for (Player all : pgPlayers) {
                                 all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
                             }
+                            votedArena = true;
+                        } else {
+                            i++;
                         }
-                        randomArena = true;
-                        votedArena = true;
                     }
                 }
-                if (!randomArena) {
-                    if (winner.equals(arenadata.getString("pg.arenas." + i + ".name"))) {
-                        winner = Integer.toString(i);
+            } else if (forcearena) {
+                winner = getVote();
+                for (Player all : pgPlayers) {
+                    all.sendMessage(prefix + ChatColor.AQUA + votedArena + ChatColor.GREEN + " " + chat.get(7));
+                }
+            } else {
+                String arenaName = null;
+                while (arenaName == null) {
+                    winner = Integer.toString(rndArena);
+                    arenaName = arenadata.getString("pg.arenas." + winner + ".name");
+                    if (arenaName != null) {
                         for (Player all : pgPlayers) {
                             all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
                         }
-                        votedArena = true;
-                    } else {
-                        i++;
                     }
                 }
             }
-        } else if (forcearena) {
-            winner = getVote();
+            setVote(winner);
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(90));
             for (Player all : pgPlayers) {
-                all.sendMessage(prefix + ChatColor.AQUA + votedArena + ChatColor.GREEN + " " + chat.get(7));
-            }
-        } else {
-            String arenaName = null;
-            while (arenaName == null) {
-                winner = Integer.toString(rndArena);
-                arenaName = arenadata.getString("pg.arenas." + winner + ".name");
-                if (arenaName != null) {
-                    for (Player all : pgPlayers) {
-                        all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.arenas." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
-                    }
-                }
+                all.sendMessage(prefix + ChatColor.RED + chat.get(90));
+                all.sendMessage(prefix + ChatColor.RED + chat.get(86));
+                onLeave(all);
             }
         }
-        setVote(winner);
     }
 
     public void teleportAndStart() {
-        for (Player all : pgPlayers) {
-            int maxteamplayers = teamSize;
-            boolean teamfound = false;
-            if (activateTeams) {
-                if (!teamed.contains(all.getName())) {
-                    while (!teamfound) {
-                        Random rnd = new Random();
-                        int rndTeam = rnd.nextInt(teams.size());
-                        rndTeam++;
-                        if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers && teamplayers.get(Integer.toString(rndTeam)) >= 0) {
-                            teamfound = true;
-                            int players = teamplayers.get(Integer.toString(rndTeam));
-                            players++;
-                            teamplayers.put(Integer.toString(rndTeam), players);
-                            all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
-                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                            all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
-                            teamed.add(all.getName());
-                            teamplayernames.put(all, Integer.toString(rndTeam));
-                            if (activateScoreboard) {
-                                Objects.requireNonNull(all.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
-                            }
-                            if (!all.hasPermission("pg.admin")) {
-                                all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + all.getName());
-                            } else {
-                                all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + all.getName());
+        try {
+            for (Player all : pgPlayers) {
+                int maxteamplayers = teamSize;
+                boolean teamfound = false;
+                if (activateTeams) {
+                    if (!teamed.contains(all.getName())) {
+                        while (!teamfound) {
+                            Random rnd = new Random();
+                            int rndTeam = rnd.nextInt(teams.size());
+                            rndTeam++;
+                            if (teamplayers.get(Integer.toString(rndTeam)) < maxteamplayers && teamplayers.get(Integer.toString(rndTeam)) >= 0) {
+                                teamfound = true;
+                                int players = teamplayers.get(Integer.toString(rndTeam));
+                                players++;
+                                teamplayers.put(Integer.toString(rndTeam), players);
+                                all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
+                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
+                                teamed.add(all.getName());
+                                teamplayernames.put(all, Integer.toString(rndTeam));
+                                if (activateScoreboard) {
+                                    Objects.requireNonNull(all.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
+                                }
+                                if (!all.hasPermission("pg.admin")) {
+                                    all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + all.getName());
+                                } else {
+                                    all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + all.getName());
+                                }
                             }
                         }
                     }
                 }
-            }
-            if (activateKits) {
-                if (!kited.contains(all.getName())) {
-                    Random rnd = new Random();
-                    int rndKit = rnd.nextInt(activeKits);
-                    all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
-                    all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                    kited.add(all.getName());
-                    kitplayernames.put(kits.get(rndKit), all);
-                    if (activateScoreboard) {
-                        Objects.requireNonNull(all.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + kits.get(rndKit));
-                    }
-                    if (kits.get(rndKit).equals("Rich Kid")) {
-                        richkidPlayers.add(all);
+                if (activateKits) {
+                    if (!kited.contains(all.getName())) {
+                        Random rnd = new Random();
+                        int rndKit = rnd.nextInt(activeKits);
+                        all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
+                        all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                        kited.add(all.getName());
+                        kitplayernames.put(all, kits.get(rndKit));
+                        if (activateScoreboard) {
+                            Objects.requireNonNull(all.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + kits.get(rndKit));
+                        }
+                        if (kits.get(rndKit).equals("Rich Kid")) {
+                            richkidPlayers.add(all);
+                        }
                     }
                 }
             }
-        }
-        if (activateTeams) {
-            String teamname;
-            for (int i = 1; i <= teamAmount; i++) {
-                teamname = Integer.toString(i);
-                if (teamplayers.get(teamname) == 0) {
-                    teams.remove(teamname);
+            if (activateTeams) {
+                String teamname;
+                for (int i = 1; i <= teamAmount; i++) {
+                    teamname = Integer.toString(i);
+                    if (teamplayers.get(teamname) == 0) {
+                        teams.remove(teamname);
+                    }
                 }
             }
-        }
-        for (int i = 1; i <= pgPlayers.size(); i++) {
-            Player p = pgPlayers.get(i - 1);
-            try {
+            for (int i = 1; i <= pgPlayers.size(); i++) {
+                Player p = pgPlayers.get(i - 1);
                 String vote = getVote();
                 Location loc = arenadata.getLocation("pg.arenas." + vote + ".spawns." + i);
                 assert loc != null;
                 p.teleport(loc);
-            } catch (Exception e) {
-                for (Player all : pgPlayers) {
-                    if (all.hasPermission("pg.admin")) {
-                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
-                    }
-                }
+            }
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(88));
+            for (Player all : pgPlayers) {
+                all.sendMessage(prefix + ChatColor.RED + chat.get(88));
+                all.sendMessage(prefix + ChatColor.RED + chat.get(86));
+                onLeave(all);
             }
         }
     }
 
     public void teleportDeathmatch() {
-        for (int i = 1; i <= specPlayers.size(); i++) {
-            Player p = pgPlayers.get(i - 1);
-            try {
+        try {
+            for (int i = 1; i <= specPlayers.size(); i++) {
+                Player p = pgPlayers.get(i - 1);
                 String vote = getVote();
                 Location loc = arenadata.getLocation("pg.arenas." + vote + ".deathmatch." + 1);
                 assert loc != null;
                 p.teleport(loc);
-            } catch (Exception e) {
-                for (Player all : pgPlayers) {
-                    if (all.hasPermission("pg.admin")) {
-                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
-                    }
-                }
-                for (Player all : specPlayers) {
-                    if (all.hasPermission("pg.admin")) {
-                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
-                    }
-                }
             }
-        }
-        for (int i = 1; i <= pgPlayers.size(); i++) {
-            Player p = pgPlayers.get(i - 1);
-            try {
+            for (int i = 1; i <= pgPlayers.size(); i++) {
+                Player p = pgPlayers.get(i - 1);
                 p.setGameMode(GameMode.ADVENTURE);
                 move = false;
                 String vote = getVote();
                 Location loc = arenadata.getLocation("pg.arenas." + vote + ".deathmatch." + i);
                 assert loc != null;
                 p.teleport(loc);
-            } catch (Exception e) {
-                for (Player all : pgPlayers) {
-                    if (all.hasPermission("pg.admin")) {
-                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
-                    }
-                }
-                for (Player all : specPlayers) {
-                    if (all.hasPermission("pg.admin")) {
-                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
-                    }
-                }
+            }
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(89));
+            for (Player all : pgPlayers) {
+                all.sendMessage(prefix + ChatColor.RED + chat.get(89));
+                all.sendMessage(prefix + ChatColor.RED + chat.get(86));
+                onLeave(all);
+            }
+            for (Player all : specPlayers) {
+                all.sendMessage(prefix + ChatColor.RED + chat.get(89));
+                all.sendMessage(prefix + ChatColor.RED + chat.get(86));
+                onLeave(all);
             }
         }
     }
 
     public void onJoin(Player p) {
-        if (activateScoreboard) {
-            Scoreboard temp = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
-            temp.registerNewObjective("main-content", "dummy", " " + prefix);
-            Objects.requireNonNull(temp.getObjective("main-content")).setDisplaySlot(DisplaySlot.SIDEBAR);
-            temp.registerNewTeam("team");
-            temp.registerNewTeam("kit");
-            temp.registerNewTeam("players");
-            temp.registerNewTeam("timeScoreboard");
-            temp.registerNewTeam("map");
-            temp.registerNewTeam("kills");
-            Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("team"))).setPrefix(ChatColor.DARK_AQUA + "none");
-            Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("kit"))).setPrefix(ChatColor.DARK_AQUA + "none");
-            Objects.requireNonNull(temp.getTeam("map")).addEntry(" ");
-            Objects.requireNonNull(temp.getTeam("players")).addEntry("       ");
-            Objects.requireNonNull(temp.getTeam("timeScoreboard")).addEntry("          ");
-            Objects.requireNonNull(temp.getTeam("team")).addEntry("   ");
-            Objects.requireNonNull(temp.getTeam("kit")).addEntry("     ");
-            Objects.requireNonNull(temp.getTeam("kills")).addEntry("        ");
-            info.put(p, temp);
-            p.setScoreboard(temp);
-        }
-        joinChannel(p.getPlayer(), "Local");
-        PlayerInventory inventory = p.getInventory();
-        inv.put(p.getName(), p.getInventory().getContents());
-        armor.put(p.getName(), p.getInventory().getArmorContents());
-        lvl.put(p.getName(), p.getLevel());
-        exp.put(p.getName(), p.getExp());
-        loc.put(p.getName(), p.getLocation());
-        gm.put(p.getName(), p.getGameMode());
-        inventory.clear();
-        inventory.setHelmet(null);
-        inventory.setChestplate(null);
-        inventory.setLeggings(null);
-        inventory.setBoots(null);
-        p.setHealth(20);
-        p.setFoodLevel(20);
-        p.setLevel(0);
-        p.setExp(0);
-        p.setGameMode(GameMode.ADVENTURE);
-        clearEffects(p);
-        p.setFireTicks(0);
-        playerAmount++;
-        if (joinable && playerAmount <= maxPlayers) {
-            pgPlayers.add(p);
-            try {
+        try {
+            if (activateScoreboard) {
+                Scoreboard temp = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
+                temp.registerNewObjective("main-content", "dummy", " " + prefix);
+                Objects.requireNonNull(temp.getObjective("main-content")).setDisplaySlot(DisplaySlot.SIDEBAR);
+                temp.registerNewTeam("team");
+                temp.registerNewTeam("kit");
+                temp.registerNewTeam("players");
+                temp.registerNewTeam("timeScoreboard");
+                temp.registerNewTeam("map");
+                temp.registerNewTeam("kills");
+                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("team"))).setPrefix(ChatColor.DARK_AQUA + "none");
+                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("kit"))).setPrefix(ChatColor.DARK_AQUA + "none");
+                Objects.requireNonNull(temp.getTeam("map")).addEntry(" ");
+                Objects.requireNonNull(temp.getTeam("players")).addEntry("       ");
+                Objects.requireNonNull(temp.getTeam("timeScoreboard")).addEntry("          ");
+                Objects.requireNonNull(temp.getTeam("team")).addEntry("   ");
+                Objects.requireNonNull(temp.getTeam("kit")).addEntry("     ");
+                Objects.requireNonNull(temp.getTeam("kills")).addEntry("        ");
+                info.put(p, temp);
+                p.setScoreboard(temp);
+            }
+            joinChannel(p.getPlayer(), "Local");
+            PlayerInventory inventory = p.getInventory();
+            inv.put(p.getName(), p.getInventory().getContents());
+            armor.put(p.getName(), p.getInventory().getArmorContents());
+            lvl.put(p.getName(), p.getLevel());
+            exp.put(p.getName(), p.getExp());
+            loc.put(p.getName(), p.getLocation());
+            gm.put(p.getName(), p.getGameMode());
+            inventory.clear();
+            inventory.setHelmet(null);
+            inventory.setChestplate(null);
+            inventory.setLeggings(null);
+            inventory.setBoots(null);
+            p.setHealth(20);
+            p.setFoodLevel(20);
+            p.setLevel(0);
+            p.setExp(0);
+            p.setGameMode(GameMode.ADVENTURE);
+            clearEffects(p);
+            p.setFireTicks(0);
+            playerAmount++;
+            if (joinable && playerAmount <= maxPlayers) {
+                pgPlayers.add(p);
                 Location loc = (Location) getConfig().get("pg.Lobby.coords");
                 assert loc != null;
                 p.teleport(loc);
@@ -2899,78 +2975,68 @@ public class PotionGames extends JavaPlugin implements Listener {
                     tick();
                     tickStarted = true;
                 }
-            } catch (Exception ex) {
-                for (Player all : pgPlayers) {
-                    if (all.hasPermission("pg.admin")) {
-                        all.sendMessage(prefix + p.getName() + ChatColor.RED + " " + chat.get(18));
-                    }
+                if (activateTeams) {
+                    ItemStack teamselector = new ItemStack(Material.CLOCK);
+                    ItemMeta teamselectormeta = teamselector.getItemMeta();
+                    assert teamselectormeta != null;
+                    teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
+                    teamselector.setItemMeta(teamselectormeta);
+                    p.getInventory().setItem(4, teamselector);
                 }
+                if (activateKits) {
+                    ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
+                    ItemMeta kitselectormeta = kitselector.getItemMeta();
+                    assert kitselectormeta != null;
+                    kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
+                    kitselector.setItemMeta(kitselectormeta);
+                    p.getInventory().setItem(2, kitselector);
+                }
+                if (!singleArena) {
+                    ItemStack votepaper = new ItemStack(Material.PAPER);
+                    ItemMeta votepapaermeta = votepaper.getItemMeta();
+                    assert votepapaermeta != null;
+                    votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
+                    votepaper.setItemMeta(votepapaermeta);
+                    p.getInventory().setItem(0, votepaper);
+                }
+                if (!startOnJoin) {
+                    ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
+                    ItemMeta leavemeta = leave.getItemMeta();
+                    assert leavemeta != null;
+                    leavemeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(80));
+                    leave.setItemMeta(leavemeta);
+                    p.getInventory().setItem(8, leave);
+                }
+                ItemStack stats = new ItemStack(Material.EMERALD);
+                ItemMeta statsmeta = stats.getItemMeta();
+                assert statsmeta != null;
+                statsmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(56));
+                stats.setItemMeta(statsmeta);
+                p.getInventory().setItem(6, stats);
+                p.sendMessage(prefix + ChatColor.GREEN + chat.get(30));
             }
-            if (activateTeams) {
-                ItemStack teamselector = new ItemStack(Material.CLOCK);
-                ItemMeta teamselectormeta = teamselector.getItemMeta();
-                assert teamselectormeta != null;
-                teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
-                teamselector.setItemMeta(teamselectormeta);
-                p.getInventory().setItem(4, teamselector);
-            }
-            if (activateKits) {
-                ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
-                ItemMeta kitselectormeta = kitselector.getItemMeta();
-                assert kitselectormeta != null;
-                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
-                kitselector.setItemMeta(kitselectormeta);
-                p.getInventory().setItem(2, kitselector);
-            }
-            if (!singleArena) {
-                ItemStack votepaper = new ItemStack(Material.PAPER);
-                ItemMeta votepapaermeta = votepaper.getItemMeta();
-                assert votepapaermeta != null;
-                votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
-                votepaper.setItemMeta(votepapaermeta);
-                p.getInventory().setItem(0, votepaper);
-            }
-            if (!startOnJoin) {
-                ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
-                ItemMeta leavemeta = leave.getItemMeta();
-                assert leavemeta != null;
-                leavemeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(80));
-                leave.setItemMeta(leavemeta);
-                p.getInventory().setItem(8, leave);
-            }
-            ItemStack stats = new ItemStack(Material.EMERALD);
-            ItemMeta statsmeta = stats.getItemMeta();
-            assert statsmeta != null;
-            statsmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(56));
-            stats.setItemMeta(statsmeta);
-            p.getInventory().setItem(6, stats);
-            p.sendMessage(prefix + ChatColor.GREEN + chat.get(30));
-        }
-        if (!joinable && playerAmount <= maxPlayers && joinStarted) {
-            specPlayers.add(p);
-            try {
+            if (!joinable && playerAmount <= maxPlayers && joinStarted) {
+                specPlayers.add(p);
                 String vote = getVote();
                 Location loc = arenadata.getLocation("pg.arenas." + vote + ".spawns." + 1);
                 assert loc != null;
                 p.teleport(loc);
-            } catch (Exception e) {
-                for (Player all : pgPlayers) {
-                    if (all.hasPermission("pg.admin")) {
-                        all.sendMessage(prefix + p.getName() + ChatColor.RED + chat.get(8));
-                    }
-                }
+                p.setGameMode(GameMode.SPECTATOR);
+                p.setAllowFlight(true);
+                p.setFlying(true);
+                p.setLevel(0);
+                p.setExp(0);
+                p.setFireTicks(0);
+                p.setHealth(20);
+                p.setFoodLevel(20);
+                p.setCanPickupItems(false);
+                p.setCollidable(false);
+                p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + chat.get(17));
             }
-            p.setGameMode(GameMode.SPECTATOR);
-            p.setAllowFlight(true);
-            p.setFlying(true);
-            p.setLevel(0);
-            p.setExp(0);
-            p.setFireTicks(0);
-            p.setHealth(20);
-            p.setFoodLevel(20);
-            p.setCanPickupItems(false);
-            p.setCollidable(false);
-            p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + chat.get(17));
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(87));
+            p.sendMessage(prefix + ChatColor.RED + chat.get(87));
+            p.sendMessage(prefix + ChatColor.RED + chat.get(86));
         }
     }
 
@@ -3022,14 +3088,14 @@ public class PotionGames extends JavaPlugin implements Listener {
             String arenaname = null;
             for (int i = 0; i <= arenas.size(); i++) {
                 if (arenadata.contains("pg.arenas." + i)) {
-                    if (voteplayernames.containsKey(arenadata.getString("pg.arenas." + i + ".name")) && voteplayernames.containsValue(p)) {
+                    if (voteplayernames.containsKey(p) && voteplayernames.containsValue(arenadata.getString("pg.arenas." + i + ".name"))) {
                         arenaname = arenadata.getString("pg.arenas." + i + ".name");
                     }
                 } else {
                     arenaname = chat.get(42);
                 }
             }
-            voteplayernames.remove(arenaname, p);
+            voteplayernames.remove(p, arenaname);
             votes.replace(arenaname, votes.get(arenaname) - 1);
             voted.remove(p.getName());
         }
@@ -3144,42 +3210,6 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     setGameRules(arenadata.getString("pg.lobbies." + s + ".world"));
                                     Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setDifficulty(Difficulty.PEACEFUL);
                                     Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(arenadata.getString("pg.lobbies." + s + ".world")))).setGameRule(GameRule.FALL_DAMAGE, false);
-                                }
-                            }
-                            if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-                                int ii = 0;
-                                try {
-                                    while (rs.next()) {
-                                        ii++;
-                                        rank.put(ii, rs.getString("UUID"));
-                                    }
-                                } catch (SQLException e) {
-                                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(37) + ": " + e.getMessage());
-                                }
-                                rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                                rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                                rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                                ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                                ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                                ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                                for (int iii = 0; iii < rank.size(); iii++) {
-                                    int id = iii + 1;
-                                    Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                    skull.setOwningPlayer(sname);
-                                    skull.update();
-                                }
-                                for (int iii = 0; iii < rank.size(); iii++) {
-                                    int id = iii + 1;
-                                    BlockState b = ranksign.get(iii).getBlock().getState();
-                                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                    Sign sign = (Sign) b;
-                                    sign.setLine(0, chat.get(33) + " #" + id);
-                                    sign.setLine(1, Objects.requireNonNull(sname.getName()));
-                                    sign.setLine(2, "Wins: " + getWins(rank.get(id)));
-                                    sign.setLine(3, "K/D: " + getKD(rank.get(id)));
-                                    sign.update();
                                 }
                             }
                             lobbyJoinable.replace(s, true);
@@ -3751,6 +3781,42 @@ public class PotionGames extends JavaPlugin implements Listener {
                             }
                         }
                         case RESET -> {
+                            if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
+                                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
+                                int ii = 0;
+                                try {
+                                    while (rs.next()) {
+                                        ii++;
+                                        rank.put(ii, rs.getString("UUID"));
+                                    }
+                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                                    for (int iii = 0; iii < rank.size(); iii++) {
+                                        int id = iii + 1;
+                                        Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                        skull.setOwningPlayer(sname);
+                                        skull.update();
+                                    }
+                                    for (int iii = 0; iii < rank.size(); iii++) {
+                                        int id = iii + 1;
+                                        BlockState b = ranksign.get(iii).getBlock().getState();
+                                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                        Sign sign = (Sign) b;
+                                        sign.setLine(0, chat.get(33) + " #" + id);
+                                        sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                                        sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                                        sign.setLine(3, "K/D: " + getKD(rank.get(id)));
+                                        sign.update();
+                                    }
+                                } catch (Exception e) {
+                                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(85));
+                                }
+                            }
                             if (activateScoreboard) {
                                 for (Player all : playerLobby.keySet()) {
                                     if (playerLobby.get(all).equals(s)) {
@@ -3961,282 +4027,278 @@ public class PotionGames extends JavaPlugin implements Listener {
     }
 
     public void voteResultsLobby(String s) {
-        int max = 0;
-        for (int i : lobbyvotes.get(s).values()) {
-            if (i > max) {
-                max = i;
+        try {
+            int max = 0;
+            for (int i : lobbyvotes.get(s).values()) {
+                if (i > max) {
+                    max = i;
+                }
             }
-        }
-        String winner = null;
-        for (String all : lobbyvotes.get(s).keySet()) {
-            if (lobbyvotes.get(s).get(all) == max) {
-                winner = all;
+            String winner = null;
+            for (String all : lobbyvotes.get(s).keySet()) {
+                if (lobbyvotes.get(s).get(all) == max) {
+                    winner = all;
+                }
             }
-        }
-        ArrayList<Integer> arenaNumber = new ArrayList<>();
-        for (int ii = 0; ii < 26; ii++) {
-            if (arenadata.contains("pg.lobbies." + s + "." + ii)) {
-                arenaNumber.add(ii);
+            ArrayList<Integer> arenaNumber = new ArrayList<>();
+            for (int ii = 0; ii < 26; ii++) {
+                if (arenadata.contains("pg.lobbies." + s + "." + ii)) {
+                    arenaNumber.add(ii);
+                }
             }
-        }
-        Random generator = new Random();
-        int rndIndex = generator.nextInt(arenaNumber.size());
-        int rndArena = arenaNumber.get(rndIndex);
-        if (!lobbyForcearena.get(s) && lobbyVoted.get(s) != null) {
-            boolean randomArena = false;
-            int i = 1;
-            boolean votedArena = false;
-            while (!votedArena) {
-                assert winner != null;
-                if (winner.equals(chat.get(42))) {
-                    String arenaName = null;
-                    while (arenaName == null) {
-                        winner = Integer.toString(rndArena);
-                        arenaName = arenadata.getString("pg.lobbies." + s + "." + winner + ".name");
-                        if (arenaName != null) {
+            Random generator = new Random();
+            int rndIndex = generator.nextInt(arenaNumber.size());
+            int rndArena = arenaNumber.get(rndIndex);
+            if (!lobbyForcearena.get(s) && lobbyVoted.get(s) != null) {
+                boolean randomArena = false;
+                int i = 1;
+                boolean votedArena = false;
+                while (!votedArena) {
+                    assert winner != null;
+                    if (winner.equals(chat.get(42))) {
+                        String arenaName = null;
+                        while (arenaName == null) {
+                            winner = Integer.toString(rndArena);
+                            arenaName = arenadata.getString("pg.lobbies." + s + "." + winner + ".name");
+                            if (arenaName != null) {
+                                for (Player all : playerLobby.keySet()) {
+                                    if (playerLobby.get(all).equals(s)) {
+                                        all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.lobbies." + s + "." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
+                                    }
+                                }
+                            }
+                            randomArena = true;
+                            votedArena = true;
+                        }
+                    }
+                    if (!randomArena) {
+                        if (winner.equals(arenadata.getString("pg.lobbies." + s + "." + i + ".name"))) {
+                            winner = Integer.toString(i);
                             for (Player all : playerLobby.keySet()) {
                                 if (playerLobby.get(all).equals(s)) {
                                     all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.lobbies." + s + "." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
                                 }
                             }
+                            votedArena = true;
+                        } else {
+                            i++;
                         }
-                        randomArena = true;
-                        votedArena = true;
                     }
                 }
-                if (!randomArena) {
-                    if (winner.equals(arenadata.getString("pg.lobbies." + s + "." + i + ".name"))) {
-                        winner = Integer.toString(i);
+            } else if (lobbyForcearena.get(s) && lobbyVoted.get(s) != null || lobbyForcearena.get(s) && lobbyVoted.get(s) == null) {
+                winner = lobbyVote.get(s);
+                for (Player all : playerLobby.keySet()) {
+                    if (playerLobby.get(all).equals(s)) {
+                        all.sendMessage(prefix + ChatColor.AQUA + lobbyVotedarena.get(s) + ChatColor.GREEN + " " + chat.get(7));
+                    }
+                }
+            } else if (lobbyVoted.get(s) == null && !lobbyForcearena.get(s)) {
+                String arenaName = null;
+                while (arenaName == null) {
+                    winner = Integer.toString(rndArena);
+                    arenaName = arenadata.getString("pg.lobbies." + s + "." + winner + ".name");
+                    if (arenaName != null) {
                         for (Player all : playerLobby.keySet()) {
                             if (playerLobby.get(all).equals(s)) {
                                 all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.lobbies." + s + "." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
                             }
                         }
-                        votedArena = true;
-                    } else {
-                        i++;
                     }
                 }
             }
-        } else if (lobbyForcearena.get(s) && lobbyVoted.get(s) != null || lobbyForcearena.get(s) && lobbyVoted.get(s) == null) {
-            winner = lobbyVote.get(s);
+            lobbyVote.replace(s, winner);
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(90) + " Lobby: " + s);
             for (Player all : playerLobby.keySet()) {
                 if (playerLobby.get(all).equals(s)) {
-                    all.sendMessage(prefix + ChatColor.AQUA + lobbyVotedarena.get(s) + ChatColor.GREEN + " " + chat.get(7));
-                }
-            }
-        } else if (lobbyVoted.get(s) == null && !lobbyForcearena.get(s)) {
-            String arenaName = null;
-            while (arenaName == null) {
-                winner = Integer.toString(rndArena);
-                arenaName = arenadata.getString("pg.lobbies." + s + "." + winner + ".name");
-                if (arenaName != null) {
-                    for (Player all : playerLobby.keySet()) {
-                        if (playerLobby.get(all).equals(s)) {
-                            all.sendMessage(prefix + ChatColor.AQUA + arenadata.get("pg.lobbies." + s + "." + winner + ".name") + ChatColor.GREEN + " " + chat.get(7));
-                        }
-                    }
+                    all.sendMessage(prefix + ChatColor.RED + chat.get(90));
+                    all.sendMessage(prefix + ChatColor.RED + chat.get(86));
+                    onLeaveLobby(all, s);
                 }
             }
         }
-        lobbyVote.replace(s, winner);
     }
 
     public void teleportAndStartLobby(String s) {
-        for (Player all : playerLobby.keySet()) {
-            if (playerLobby.get(all).equals(s)) {
-                int maxteamplayers = teamSize;
-                boolean teamfound = false;
-                if (lobbyActivateTeams.get(s)) {
-                    if (!lobbyTeamed.containsKey(all)) {
-                        while (!teamfound) {
-                            Random rnd = new Random();
-                            int rndTeam = rnd.nextInt(lobbyteams.get(s).size());
-                            rndTeam++;
-                            if (lobbyteams.get(s).get(rndTeam) < maxteamplayers && lobbyteams.get(s).get(rndTeam) >= 0 && lobbyteams.get(s).get(rndTeam) != null) {
-                                teamfound = true;
-                                int players = lobbyteams.get(s).get(rndTeam);
-                                players++;
-                                HashMap<Integer, Integer> temp = new HashMap<>();
-                                for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
-                                    int oldplayers = lobbyteams.get(s).get(max);
-                                    temp.put(max, oldplayers);
-                                }
-                                temp.put(rndTeam, players);
-                                lobbyteams.replace(s, temp);
-                                all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
-                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
-                                lobbyTeamed.put(all, s);
-                                lobbyteamplayernames.get(s).put(all, Integer.toString(rndTeam));
-                                if (activateScoreboard) {
-                                    Objects.requireNonNull(all.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
-                                }
-                                if (!all.hasPermission("pg.admin")) {
-                                    all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + all.getName());
-                                } else {
-                                    all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + all.getName());
+        try {
+            for (Player all : playerLobby.keySet()) {
+                if (playerLobby.get(all).equals(s)) {
+                    int maxteamplayers = teamSize;
+                    boolean teamfound = false;
+                    if (lobbyActivateTeams.get(s)) {
+                        if (!lobbyTeamed.containsKey(all)) {
+                            while (!teamfound) {
+                                Random rnd = new Random();
+                                int rndTeam = rnd.nextInt(lobbyteams.get(s).size());
+                                rndTeam++;
+                                if (lobbyteams.get(s).get(rndTeam) < maxteamplayers && lobbyteams.get(s).get(rndTeam) >= 0 && lobbyteams.get(s).get(rndTeam) != null) {
+                                    teamfound = true;
+                                    int players = lobbyteams.get(s).get(rndTeam);
+                                    players++;
+                                    HashMap<Integer, Integer> temp = new HashMap<>();
+                                    for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
+                                        int oldplayers = lobbyteams.get(s).get(max);
+                                        temp.put(max, oldplayers);
+                                    }
+                                    temp.put(rndTeam, players);
+                                    lobbyteams.replace(s, temp);
+                                    all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
+                                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                    all.sendMessage(prefix + ChatColor.GREEN + chat.get(44) + ": " + ChatColor.AQUA + lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                    all.sendMessage(prefix + "--------------" + chat.get(43) + "--------------");
+                                    lobbyTeamed.put(all, s);
+                                    lobbyteamplayernames.get(s).put(all, Integer.toString(rndTeam));
+                                    if (activateScoreboard) {
+                                        Objects.requireNonNull(all.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
+                                    }
+                                    if (!all.hasPermission("pg.admin")) {
+                                        all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.GRAY + all.getName());
+                                    } else {
+                                        all.setDisplayName(ChatColor.GRAY + "[Team: " + Objects.requireNonNull(Objects.requireNonNull(all.getScoreboard().getTeam("team"))).getPrefix() + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + all.getName());
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                if (lobbyActivateKits.get(s)) {
-                    if (!lobbyKited.containsValue(all.getName())) {
-                        Random rnd = new Random();
-                        int rndKit = rnd.nextInt(activeKits);
-                        all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                        all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
-                        all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
-                        lobbyKited.put(s, all.getName());
-                        kitplayernames.put(kits.get(rndKit), all);
-                        if (activateScoreboard) {
-                            Objects.requireNonNull(all.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + kits.get(rndKit));
-                        }
-                        if (kits.get(rndKit).equals("Rich Kid")) {
-                            richkidPlayers.add(all);
+                    if (lobbyActivateKits.get(s)) {
+                        if (!lobbyKited.containsValue(all.getName())) {
+                            Random rnd = new Random();
+                            int rndKit = rnd.nextInt(activeKits);
+                            all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                            all.sendMessage(prefix + ChatColor.GREEN + chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + kits.get(rndKit));
+                            all.sendMessage(prefix + "--------------" + chat.get(62) + "--------------");
+                            lobbyKited.put(s, all.getName());
+                            kitplayernames.put(all, kits.get(rndKit));
+                            if (activateScoreboard) {
+                                Objects.requireNonNull(all.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + kits.get(rndKit));
+                            }
+                            if (kits.get(rndKit).equals("Rich Kid")) {
+                                richkidPlayers.add(all);
+                            }
                         }
                     }
                 }
             }
-        }
-        if (lobbyActivateTeams.get(s)) {
-            String teamname;
-            for (int i = 1; i <= lobbyteamAmount.get(s); i++) {
-                teamname = Integer.toString(i);
-                if (lobbyteams.get(s).get(Integer.valueOf(teamname)) == 0) {
-                    lobbyteams.get(s).remove(Integer.valueOf(teamname));
+            if (lobbyActivateTeams.get(s)) {
+                String teamname;
+                for (int i = 1; i <= lobbyteamAmount.get(s); i++) {
+                    teamname = Integer.toString(i);
+                    if (lobbyteams.get(s).get(Integer.valueOf(teamname)) == 0) {
+                        lobbyteams.get(s).remove(Integer.valueOf(teamname));
+                    }
                 }
             }
-        }
-        int i = 1;
-        for (Player all : playerLobby.keySet()) {
-            if (playerLobby.get(all).equals(s)) {
-                try {
+            int i = 1;
+            for (Player all : playerLobby.keySet()) {
+                if (playerLobby.get(all).equals(s)) {
                     String vote = lobbyVote.get(s);
                     Location loc = arenadata.getLocation("pg.lobbies." + s + "." + vote + ".spawns." + i);
                     assert loc != null;
                     all.teleport(loc);
-                } catch (Exception e) {
-                    for (Player op : playerLobby.keySet()) {
-                        if (playerLobby.get(all).equals(s)) {
-                            if (all.hasPermission("pg.admin")) {
-                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
-                            }
-                        }
-                    }
+                }
+                i++;
+            }
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(88) + " Lobby: " + s);
+            for (Player all : playerLobby.keySet()) {
+                if (playerLobby.get(all).equals(s)) {
+                    all.sendMessage(prefix + ChatColor.RED + chat.get(88));
+                    all.sendMessage(prefix + ChatColor.RED + chat.get(86));
+                    onLeaveLobby(all, s);
                 }
             }
-            i++;
         }
     }
 
     public void teleportDeathmatchLobby(String s) {
-        int i = 1;
-        for (Player all : specLobby.keySet()) {
-            if (specLobby.get(all).equals(s)) {
-                try {
+        try {
+            int i = 1;
+            for (Player all : specLobby.keySet()) {
+                if (specLobby.get(all).equals(s)) {
                     String vote = lobbyVote.get(s);
                     Location loc = arenadata.getLocation("pg.lobbies." + s + "." + vote + ".deathmatch." + 1);
                     assert loc != null;
                     all.teleport(loc);
-                } catch (Exception e) {
-                    for (Player op : playerLobby.keySet()) {
-                        if (playerLobby.get(all).equals(s)) {
-                            if (all.hasPermission("pg.admin")) {
-                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
-                            }
-                        }
-                    }
-                    for (Player op : specLobby.keySet()) {
-                        if (specLobby.get(all).equals(s)) {
-                            if (all.hasPermission("pg.admin")) {
-                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
-                            }
-                        }
-                    }
                 }
+                i++;
             }
-            i++;
-        }
-        i = 1;
-        for (Player all : playerLobby.keySet()) {
-            if (playerLobby.get(all).equals(s)) {
-                try {
+            i = 1;
+            for (Player all : playerLobby.keySet()) {
+                if (playerLobby.get(all).equals(s)) {
                     all.setGameMode(GameMode.ADVENTURE);
                     lobbyMove.replace(s, false);
                     String vote = lobbyVote.get(s);
                     Location loc = arenadata.getLocation("pg.lobbies." + s + "." + vote + ".deathmatch." + i);
                     assert loc != null;
                     all.teleport(loc);
-                } catch (Exception e) {
-                    for (Player op : playerLobby.keySet()) {
-                        if (playerLobby.get(all).equals(s)) {
-                            if (all.hasPermission("pg.admin")) {
-                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
-                            }
-                        }
-                    }
-                    for (Player op : specLobby.keySet()) {
-                        if (specLobby.get(all).equals(s)) {
-                            if (all.hasPermission("pg.admin")) {
-                                op.sendMessage(prefix + all.getName() + " " + ChatColor.RED + chat.get(73));
-                            }
-                        }
-                    }
+                }
+                i++;
+            }
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(89) + " Lobby: " + s);
+            for (Player all : playerLobby.keySet()) {
+                if (playerLobby.get(all).equals(s)) {
+                    all.sendMessage(prefix + ChatColor.RED + chat.get(89));
+                    all.sendMessage(prefix + ChatColor.RED + chat.get(86));
+                    onLeaveLobby(all, s);
                 }
             }
-            i++;
+            for (Player all : specLobby.keySet()) {
+                if (specLobby.get(all).equals(s)) {
+                    all.sendMessage(prefix + ChatColor.RED + chat.get(89));
+                    all.sendMessage(prefix + ChatColor.RED + chat.get(86));
+                    onLeaveLobby(all, s);
+                }
+            }
         }
     }
 
     public void onJoinLobby(Player p, String s) {
-        if (activateScoreboard) {
-            Scoreboard temp = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
-            temp.registerNewObjective("main-content", "dummy", " " + prefix);
-            Objects.requireNonNull(temp.getObjective("main-content")).setDisplaySlot(DisplaySlot.SIDEBAR);
-            temp.registerNewTeam("team");
-            temp.registerNewTeam("kit");
-            temp.registerNewTeam("players");
-            temp.registerNewTeam("timeScoreboard");
-            temp.registerNewTeam("map");
-            temp.registerNewTeam("kills");
-            Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("team"))).setPrefix(ChatColor.DARK_AQUA + "none");
-            Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("kit"))).setPrefix(ChatColor.DARK_AQUA + "none");
-            Objects.requireNonNull(temp.getTeam("map")).addEntry(" ");
-            Objects.requireNonNull(temp.getTeam("players")).addEntry("       ");
-            Objects.requireNonNull(temp.getTeam("timeScoreboard")).addEntry("          ");
-            Objects.requireNonNull(temp.getTeam("team")).addEntry("   ");
-            Objects.requireNonNull(temp.getTeam("kit")).addEntry("     ");
-            Objects.requireNonNull(temp.getTeam("kills")).addEntry("        ");
-            info.put(p, temp);
-            p.setScoreboard(temp);
-        }
-        joinChannel(p.getPlayer(), "Local");
-        PlayerInventory inventory = p.getInventory();
-        inv.put(p.getName(), p.getInventory().getContents());
-        armor.put(p.getName(), p.getInventory().getArmorContents());
-        lvl.put(p.getName(), p.getLevel());
-        exp.put(p.getName(), p.getExp());
-        loc.put(p.getName(), p.getLocation());
-        gm.put(p.getName(), p.getGameMode());
-        inventory.clear();
-        inventory.setHelmet(null);
-        inventory.setChestplate(null);
-        inventory.setLeggings(null);
-        inventory.setBoots(null);
-        p.setHealth(20);
-        p.setFoodLevel(20);
-        p.setLevel(0);
-        p.setExp(0);
-        p.setGameMode(GameMode.ADVENTURE);
-        clearEffects(p);
-        p.setFireTicks(0);
-        lobbyAmount.replace(s, lobbyAmount.get(s) + 1);
-        if (lobbyJoinable.get(s) && lobbyAmount.get(s) <= lobbymaxPlayers.get(s)) {
-            playerLobby.put(p, s);
-            try {
+        try {
+            if (activateScoreboard) {
+                Scoreboard temp = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
+                temp.registerNewObjective("main-content", "dummy", " " + prefix);
+                Objects.requireNonNull(temp.getObjective("main-content")).setDisplaySlot(DisplaySlot.SIDEBAR);
+                temp.registerNewTeam("team");
+                temp.registerNewTeam("kit");
+                temp.registerNewTeam("players");
+                temp.registerNewTeam("timeScoreboard");
+                temp.registerNewTeam("map");
+                temp.registerNewTeam("kills");
+                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("team"))).setPrefix(ChatColor.DARK_AQUA + "none");
+                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("kit"))).setPrefix(ChatColor.DARK_AQUA + "none");
+                Objects.requireNonNull(temp.getTeam("map")).addEntry(" ");
+                Objects.requireNonNull(temp.getTeam("players")).addEntry("       ");
+                Objects.requireNonNull(temp.getTeam("timeScoreboard")).addEntry("          ");
+                Objects.requireNonNull(temp.getTeam("team")).addEntry("   ");
+                Objects.requireNonNull(temp.getTeam("kit")).addEntry("     ");
+                Objects.requireNonNull(temp.getTeam("kills")).addEntry("        ");
+                info.put(p, temp);
+                p.setScoreboard(temp);
+            }
+            joinChannel(p.getPlayer(), "Local");
+            PlayerInventory inventory = p.getInventory();
+            inv.put(p.getName(), p.getInventory().getContents());
+            armor.put(p.getName(), p.getInventory().getArmorContents());
+            lvl.put(p.getName(), p.getLevel());
+            exp.put(p.getName(), p.getExp());
+            loc.put(p.getName(), p.getLocation());
+            gm.put(p.getName(), p.getGameMode());
+            inventory.clear();
+            inventory.setHelmet(null);
+            inventory.setChestplate(null);
+            inventory.setLeggings(null);
+            inventory.setBoots(null);
+            p.setHealth(20);
+            p.setFoodLevel(20);
+            p.setLevel(0);
+            p.setExp(0);
+            p.setGameMode(GameMode.ADVENTURE);
+            clearEffects(p);
+            p.setFireTicks(0);
+            lobbyAmount.replace(s, lobbyAmount.get(s) + 1);
+            if (lobbyJoinable.get(s) && lobbyAmount.get(s) <= lobbymaxPlayers.get(s)) {
+                playerLobby.put(p, s);
                 Location loc = (Location) arenadata.get("pg.lobbies." + s + ".coords");
                 assert loc != null;
                 p.teleport(loc);
@@ -4245,82 +4307,68 @@ public class PotionGames extends JavaPlugin implements Listener {
                     tickLobby(s);
                     lobbyTickstarted.replace(s, true);
                 }
-            } catch (Exception ex) {
-                for (Player all : playerLobby.keySet()) {
-                    if (playerLobby.get(all).equals(s)) {
-                        if (all.hasPermission("pg.admin")) {
-                            all.sendMessage(prefix + p.getName() + ChatColor.RED + " " + chat.get(18));
-                        }
-                    }
+                if (lobbyActivateTeams.get(s)) {
+                    ItemStack teamselector = new ItemStack(Material.CLOCK);
+                    ItemMeta teamselectormeta = teamselector.getItemMeta();
+                    assert teamselectormeta != null;
+                    teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
+                    teamselector.setItemMeta(teamselectormeta);
+                    p.getInventory().setItem(4, teamselector);
                 }
+                if (lobbyActivateKits.get(s)) {
+                    ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
+                    ItemMeta kitselectormeta = kitselector.getItemMeta();
+                    assert kitselectormeta != null;
+                    kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
+                    kitselector.setItemMeta(kitselectormeta);
+                    p.getInventory().setItem(2, kitselector);
+                }
+                if (!lobbySingleArena.get(s)) {
+                    ItemStack votepaper = new ItemStack(Material.PAPER);
+                    ItemMeta votepapaermeta = votepaper.getItemMeta();
+                    assert votepapaermeta != null;
+                    votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
+                    votepaper.setItemMeta(votepapaermeta);
+                    p.getInventory().setItem(0, votepaper);
+                }
+                if (!startOnJoin) {
+                    ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
+                    ItemMeta leavemeta = leave.getItemMeta();
+                    assert leavemeta != null;
+                    leavemeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(80));
+                    leave.setItemMeta(leavemeta);
+                    p.getInventory().setItem(8, leave);
+                }
+                ItemStack stats = new ItemStack(Material.EMERALD);
+                ItemMeta statsmeta = stats.getItemMeta();
+                assert statsmeta != null;
+                statsmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(56));
+                stats.setItemMeta(statsmeta);
+                p.getInventory().setItem(6, stats);
+                p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + ChatColor.AQUA + s);
             }
-            if (lobbyActivateTeams.get(s)) {
-                ItemStack teamselector = new ItemStack(Material.CLOCK);
-                ItemMeta teamselectormeta = teamselector.getItemMeta();
-                assert teamselectormeta != null;
-                teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(43));
-                teamselector.setItemMeta(teamselectormeta);
-                p.getInventory().setItem(4, teamselector);
-            }
-            if (lobbyActivateKits.get(s)) {
-                ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
-                ItemMeta kitselectormeta = kitselector.getItemMeta();
-                assert kitselectormeta != null;
-                kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(62));
-                kitselector.setItemMeta(kitselectormeta);
-                p.getInventory().setItem(2, kitselector);
-            }
-            if (!lobbySingleArena.get(s)) {
-                ItemStack votepaper = new ItemStack(Material.PAPER);
-                ItemMeta votepapaermeta = votepaper.getItemMeta();
-                assert votepapaermeta != null;
-                votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(14));
-                votepaper.setItemMeta(votepapaermeta);
-                p.getInventory().setItem(0, votepaper);
-            }
-            if (!startOnJoin) {
-                ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
-                ItemMeta leavemeta = leave.getItemMeta();
-                assert leavemeta != null;
-                leavemeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(80));
-                leave.setItemMeta(leavemeta);
-                p.getInventory().setItem(8, leave);
-            }
-            ItemStack stats = new ItemStack(Material.EMERALD);
-            ItemMeta statsmeta = stats.getItemMeta();
-            assert statsmeta != null;
-            statsmeta.setDisplayName(ChatColor.DARK_AQUA + chat.get(56));
-            stats.setItemMeta(statsmeta);
-            p.getInventory().setItem(6, stats);
-            p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + ChatColor.AQUA + s);
-        }
-        if (!lobbyJoinable.get(s) && lobbyAmount.get(s) <= lobbymaxPlayers.get(s) && joinStarted) {
-            specLobby.put(p, s);
-            try {
+            if (!lobbyJoinable.get(s) && lobbyAmount.get(s) <= lobbymaxPlayers.get(s) && joinStarted) {
+                specLobby.put(p, s);
                 String vote = lobbyVote.get(s);
                 Location loc = arenadata.getLocation("pg.lobbies." + s + "." + vote + ".spawns." + 1);
                 assert loc != null;
                 p.teleport(loc);
-            } catch (Exception e) {
-                for (Player all : playerLobby.keySet()) {
-                    if (playerLobby.get(all).equals(s)) {
-                        if (all.hasPermission("pg.admin")) {
-                            all.sendMessage(prefix + p.getName() + " " + ChatColor.RED + chat.get(73));
-                        }
-                    }
-                }
+                p.setGameMode(GameMode.SPECTATOR);
+                p.setAllowFlight(true);
+                p.setFlying(true);
+                p.setLevel(0);
+                p.setExp(0);
+                p.setFireTicks(0);
+                p.setHealth(20);
+                p.setFoodLevel(20);
+                p.setCanPickupItems(false);
+                p.setCollidable(false);
+                p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + ChatColor.AQUA + s + " " + ChatColor.GREEN + chat.get(17));
             }
-            p.setGameMode(GameMode.SPECTATOR);
-            p.setAllowFlight(true);
-            p.setFlying(true);
-            p.setLevel(0);
-            p.setExp(0);
-            p.setFireTicks(0);
-            p.setHealth(20);
-            p.setFoodLevel(20);
-            p.setCanPickupItems(false);
-            p.setCollidable(false);
-            p.sendMessage(prefix + ChatColor.GREEN + chat.get(30) + " " + ChatColor.AQUA + s + " " + ChatColor.GREEN + chat.get(17));
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chat.get(87) + " Lobby: " + s);
+            p.sendMessage(prefix + ChatColor.RED + chat.get(87));
+            p.sendMessage(prefix + ChatColor.RED + chat.get(86));
         }
     }
 
@@ -4385,13 +4433,13 @@ public class PotionGames extends JavaPlugin implements Listener {
             if (lobbyVoted.containsValue(p.getName())) {
                 String arenaname = null;
                 for (int i = 1; i < 27; i++) {
-                    if (lobbyvoteplayernames.get(s).containsKey(arenadata.getString("pg.arenas." + i + ".name")) && lobbyvoteplayernames.get(s).containsValue(p)) {
-                        if (lobbyvoteplayernames.get(s).get(arenadata.getString("pg.arenas." + i + ".name")) == p) {
+                    if (lobbyvoteplayernames.get(s).containsKey(p) && lobbyvoteplayernames.get(s).containsValue(arenadata.getString("pg.arenas." + i + ".name"))) {
+                        if (Objects.equals(lobbyvoteplayernames.get(s).get(p), arenadata.getString("pg.arenas." + i + ".name"))) {
                             arenaname = arenadata.getString("pg.arenas." + i + ".name");
                         }
                     }
                 }
-                lobbyvoteplayernames.get(s).remove(arenaname, p);
+                lobbyvoteplayernames.get(s).remove(p, arenaname);
                 int voteamount = lobbyvotes.get(s).get(arenaname);
                 voteamount--;
                 HashMap<String, Integer> temp = new HashMap<>();

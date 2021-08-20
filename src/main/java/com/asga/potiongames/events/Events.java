@@ -586,7 +586,7 @@ public class Events implements Listener {
                                     Player killer = p.getKiller();
                                     assert killer != null;
                                     killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
-                                    if (Objects.equals(pg.kitplayernames.get("Rich Kid"), p)) {
+                                    if (Objects.equals(pg.kitplayernames.get(p), "Rich Kid")) {
                                         for (int i = 0; i < 10; i++) {
                                             killer.getInventory().addItem(pg.getCoin());
                                         }
@@ -675,7 +675,7 @@ public class Events implements Listener {
                                     Player killer = p.getKiller();
                                     assert killer != null;
                                     killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
-                                    if (Objects.equals(pg.kitplayernames.get("Rich Kid"), p)) {
+                                    if (Objects.equals(pg.kitplayernames.get(p), "Rich Kid")) {
                                         for (int i = 0; i < 10; i++) {
                                             killer.getInventory().addItem(pg.getCoin());
                                         }
@@ -1036,7 +1036,7 @@ public class Events implements Listener {
                                         int shopitem = 1;
                                         for (int i = 0; i < pg.getActivePotions(); i++) {
                                             int coinamount;
-                                            if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
+                                            if (pg.kitplayernames.containsKey(p) && pg.kitplayernames.containsValue(pg.shopkit.get(shopitem - 1))) {
                                                 coinamount = pg.shopsale.get(shopitem - 1);
                                             } else {
                                                 coinamount = pg.shopcost.get(shopitem - 1);
@@ -1073,7 +1073,7 @@ public class Events implements Listener {
                                         int shopitem = 1;
                                         for (int i = 0; i < pg.getActivePotions(); i++) {
                                             int coinamount;
-                                            if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
+                                            if (pg.kitplayernames.containsKey(p) && pg.kitplayernames.containsValue(pg.shopkit.get(shopitem - 1))) {
                                                 coinamount = pg.shopsale.get(shopitem - 1);
                                             } else {
                                                 coinamount = pg.shopcost.get(shopitem - 1);
@@ -1853,18 +1853,18 @@ public class Events implements Listener {
                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
                                         pg.lobbyVoted.put(s, p.getName());
-                                        pg.lobbyvoteplayernames.get(s).put(displayname, p);
+                                        pg.lobbyvoteplayernames.get(s).put(p, displayname);
                                     } else {
                                         p.closeInventory();
                                         String arenaname = null;
                                         for (int i = 0; i <= pg.lobbyvotes.get(s).size(); i++) {
-                                            for (String all : pg.lobbyvoteplayernames.get(s).keySet()) {
-                                                if (pg.lobbyvoteplayernames.get(s).get(all) == p) {
+                                            for (String all : pg.lobbyvoteplayernames.get(s).values()) {
+                                                if (Objects.equals(pg.lobbyvoteplayernames.get(s).get(p), all)) {
                                                     arenaname = all;
                                                 }
                                             }
                                         }
-                                        pg.lobbyvoteplayernames.get(s).remove(arenaname, p);
+                                        pg.lobbyvoteplayernames.get(s).remove(p, arenaname);
                                         int votes = pg.lobbyvotes.get(s).get(arenaname);
                                         votes--;
                                         HashMap<String, Integer> tempold = new HashMap<>();
@@ -1897,7 +1897,7 @@ public class Events implements Listener {
                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
                                         pg.lobbyVoted.put(s, p.getName());
-                                        pg.lobbyvoteplayernames.get(s).put(displayname, p);
+                                        pg.lobbyvoteplayernames.get(s).put(p, displayname);
                                     }
                                 }
                             }
@@ -2081,7 +2081,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.lobbyKited.put(s, e.getWhoClicked().getName());
-                                            pg.kitplayernames.put(pg.kits.get(rndKit), p);
+                                            pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
                                             }
@@ -2094,7 +2094,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.lobbyKited.put(s, e.getWhoClicked().getName());
-                                            pg.kitplayernames.put(displayname, p);
+                                            pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                             }
@@ -2106,11 +2106,11 @@ public class Events implements Listener {
                                         p.closeInventory();
                                         String kitname = null;
                                         for (int i = 0; i <= pg.getActiveKits(); i++) {
-                                            if (pg.kitplayernames.containsKey(Integer.toString(i)) && pg.kitplayernames.containsValue(p)) {
+                                            if (pg.kitplayernames.containsKey(p) && pg.kitplayernames.containsValue(Integer.toString(i))) {
                                                 kitname = Integer.toString(i);
                                             }
                                         }
-                                        pg.kitplayernames.remove(kitname, p);
+                                        pg.kitplayernames.remove(p, kitname);
                                         pg.richkidPlayers.remove(p);
                                         if (displayname.equals(pg.chat.get(42))) {
                                             Random rnd = new Random();
@@ -2120,7 +2120,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.lobbyKited.put(s, e.getWhoClicked().getName());
-                                            pg.kitplayernames.put(pg.kits.get(rndKit), p);
+                                            pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
                                             }
@@ -2133,7 +2133,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.lobbyKited.put(s, e.getWhoClicked().getName());
-                                            pg.kitplayernames.put(displayname, p);
+                                            pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                             }
@@ -2151,7 +2151,7 @@ public class Events implements Listener {
                             int shopitem = 1;
                             for (int i = 0; i < pg.shop.size(); i++) {
                                 int coinamount;
-                                if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
+                                if (pg.kitplayernames.containsKey(p) && pg.kitplayernames.containsValue(pg.shopkit.get(shopitem - 1))) {
                                     coinamount = pg.shopsale.get(shopitem - 1);
                                 } else {
                                     coinamount = pg.shopcost.get(shopitem - 1);
@@ -2202,21 +2202,21 @@ public class Events implements Listener {
                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.votes.get(displayname));
                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
                                         pg.voted.add(e.getWhoClicked().getName());
-                                        pg.voteplayernames.put(displayname, p);
+                                        pg.voteplayernames.put(p, displayname);
                                     } else {
                                         p.closeInventory();
                                         String arenaname = null;
                                         for (int i = 0; i <= pg.arenas.size(); i++) {
                                             if (pg.arenadata.contains("pg.arenas." + i)) {
                                                 String name = pg.arenadata.getString("pg.arenas." + i + ".name");
-                                                if (pg.voteplayernames.containsKey(name) && pg.voteplayernames.containsValue(p)) {
+                                                if (pg.voteplayernames.containsKey(p) && pg.voteplayernames.containsValue(name)) {
                                                     arenaname = name;
                                                 }
                                             } else {
                                                 arenaname = pg.chat.get(42);
                                             }
                                         }
-                                        pg.voteplayernames.remove(arenaname, p);
+                                        pg.voteplayernames.remove(p, arenaname);
                                         int votes = pg.votes.get(arenaname) - 1;
                                         pg.votes.put(arenaname, votes);
                                         pg.voted.remove(p.getName());
@@ -2228,7 +2228,7 @@ public class Events implements Listener {
                                         p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.votes.get(displayname));
                                         p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
                                         pg.voted.add(e.getWhoClicked().getName());
-                                        pg.voteplayernames.put(displayname, p);
+                                        pg.voteplayernames.put(p, displayname);
                                     }
                                 }
                             }
@@ -2360,7 +2360,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.kited.add(e.getWhoClicked().getName());
-                                            pg.kitplayernames.put(pg.kits.get(rndKit), p);
+                                            pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
                                             }
@@ -2373,7 +2373,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.kited.add(e.getWhoClicked().getName());
-                                            pg.kitplayernames.put(displayname, p);
+                                            pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                             }
@@ -2385,11 +2385,11 @@ public class Events implements Listener {
                                         p.closeInventory();
                                         String kitname = null;
                                         for (int i = 0; i <= pg.getActiveKits(); i++) {
-                                            if (pg.kitplayernames.containsKey(Integer.toString(i)) && pg.kitplayernames.containsValue(p)) {
+                                            if (pg.kitplayernames.containsKey(p) && pg.kitplayernames.containsValue(Integer.toString(i))) {
                                                 kitname = Integer.toString(i);
                                             }
                                         }
-                                        pg.kitplayernames.remove(kitname, p);
+                                        pg.kitplayernames.remove(p, kitname);
                                         pg.richkidPlayers.remove(p);
                                         if (displayname.equals(pg.chat.get(42))) {
                                             Random rnd = new Random();
@@ -2399,7 +2399,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.kited.add(e.getWhoClicked().getName());
-                                            pg.kitplayernames.put(pg.kits.get(rndKit), p);
+                                            pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
                                             }
@@ -2412,7 +2412,7 @@ public class Events implements Listener {
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
                                             p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
                                             pg.kited.add(e.getWhoClicked().getName());
-                                            pg.kitplayernames.put(displayname, p);
+                                            pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
                                                 Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
                                             }
@@ -2430,7 +2430,7 @@ public class Events implements Listener {
                             int shopitem = 1;
                             for (int i = 0; i < pg.shop.size(); i++) {
                                 int coinamount;
-                                if (pg.kitplayernames.containsKey(pg.shopkit.get(shopitem - 1)) && pg.kitplayernames.containsValue(p)) {
+                                if (pg.kitplayernames.containsKey(p) && pg.kitplayernames.containsValue(pg.shopkit.get(shopitem - 1))) {
                                     coinamount = pg.shopsale.get(shopitem - 1);
                                 } else {
                                     coinamount = pg.shopcost.get(shopitem - 1);
