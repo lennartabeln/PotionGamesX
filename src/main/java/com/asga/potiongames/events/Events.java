@@ -5,6 +5,7 @@ import com.asga.potiongames.main.PotionGames;
 import com.asga.potiongames.updatechecker.UpdateChecker;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -69,9 +70,9 @@ public class Events implements Listener {
                             try {
                                 pg.arenadata.save(pg.arenadatafile);
                             } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(63) + ": " + ex.getMessage());
                             }
-                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(24) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                         }
                     }
                     pg.setAddlobby(false);
@@ -91,9 +92,9 @@ public class Events implements Listener {
                                 pg.arenadata.set("pg.arenas." + arenaNumber + ".world", p.getWorld().getName());
                                 pg.arenadata.set("pg.arenas." + arenaNumber + ".name", arena);
                                 pg.arenadata.save(pg.arenadatafile);
-                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29));
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chatmessages.get(29));
                             } catch (Exception ex) {
-                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chatmessages.get(27));
                             }
                         }
                     }
@@ -108,9 +109,9 @@ public class Events implements Listener {
                                 pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".world", p.getWorld().getName());
                                 pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".name", arena);
                                 pg.arenadata.save(pg.arenadatafile);
-                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.GREEN + " " + pg.chatmessages.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                             } catch (Exception ex) {
-                                p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chatmessages.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                             }
                         }
                     }
@@ -126,9 +127,9 @@ public class Events implements Listener {
                             try {
                                 pg.arenadata.save(pg.arenadatafile);
                             } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
+                                Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(63) + ": " + ex.getMessage());
                             }
-                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(66) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(66) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                         }
                     }
                     pg.setDellobby(false);
@@ -158,9 +159,9 @@ public class Events implements Listener {
                                 String arenaName = arena;
                                 pg.arenadata.set("pg.arenas." + arenaNumber, null);
                                 pg.arenadata.save(pg.arenadatafile);
-                                p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28));
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chatmessages.get(28));
                             } catch (Exception ex) {
-                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27));
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chatmessages.get(27));
                             }
                         }
                     }
@@ -185,9 +186,9 @@ public class Events implements Listener {
                                 String arenaName = arena;
                                 pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber, null);
                                 pg.arenadata.save(pg.arenadatafile);
-                                p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arenaName + ChatColor.GREEN + " " + pg.chatmessages.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                             } catch (Exception ex) {
-                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chatmessages.get(27) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                             }
                         }
                     }
@@ -253,12 +254,12 @@ public class Events implements Listener {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.playerLobby.keySet()) {
                                     if (pg.playerLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                     }
                                 }
                                 for (Player pgchat : pg.specLobby.keySet()) {
                                     if (pg.specLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                     }
                                 }
                             }
@@ -300,10 +301,10 @@ public class Events implements Listener {
                             } else if (pg.specPlayers.contains(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.pgPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
                                 for (Player pgchat : pg.specPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chat.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
                                 }
                             }
                         }
@@ -541,6 +542,14 @@ public class Events implements Listener {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
                                 pg.addLosts(p.getUniqueId().toString(), 1);
                                 pg.addKills(p.getKiller().getUniqueId().toString(), 1);
+                                if (pg.isEnableRewards()) {
+                                    EconomyResponse r = PotionGames.getEconomy().depositPlayer(p.getKiller(), pg.getKillReward());
+                                    if (r.transactionSuccess()) {
+                                        p.getKiller().sendMessage(String.format(pg.prefix + ChatColor.AQUA + pg.chatmessages.get(91) + ChatColor.GREEN + ": " + pg.chatmessages.get(94) + ChatColor.LIGHT_PURPLE + " %s", PotionGames.getEconomy().format(r.amount)));
+                                    } else {
+                                        p.getKiller().sendMessage(String.format(pg.prefix + ChatColor.RED + pg.chatmessages.get(92) + ": %s", r.errorMessage));
+                                    }
+                                }
                                 if (pg.isActivateScoreboard()) {
                                     String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).getPrefix();
                                     tempString = ChatColor.stripColor(tempString);
@@ -597,24 +606,24 @@ public class Events implements Listener {
                                     }
                                     for (Player all : pg.playerLobby.keySet()) {
                                         if (pg.playerLobby.get(all).equals(s)) {
-                                            all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                                            all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                         }
                                     }
                                     for (Player all : pg.specLobby.keySet()) {
                                         if (pg.specLobby.get(all).equals(s)) {
-                                            all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                                            all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                         }
                                     }
                                     e.setDeathMessage(null);
                                 } catch (Exception ex) {
                                     for (Player all : pg.playerLobby.keySet()) {
                                         if (pg.playerLobby.get(all).equals(s)) {
-                                            all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                                            all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                         }
                                     }
                                     for (Player all : pg.specLobby.keySet()) {
                                         if (pg.specLobby.get(all).equals(s)) {
-                                            all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                                            all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                         }
                                     }
                                     e.setDeathMessage(null);
@@ -640,6 +649,14 @@ public class Events implements Listener {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
                                 pg.addLosts(p.getUniqueId().toString(), 1);
                                 pg.addKills(p.getKiller().getUniqueId().toString(), 1);
+                                if (pg.isEnableRewards()) {
+                                    EconomyResponse r = PotionGames.getEconomy().depositPlayer(p.getKiller(), pg.getKillReward());
+                                    if (r.transactionSuccess()) {
+                                        p.getKiller().sendMessage(String.format(pg.prefix + ChatColor.AQUA + pg.chatmessages.get(91) + ChatColor.GREEN + ": " + pg.chatmessages.get(94) + ChatColor.LIGHT_PURPLE + " %s", PotionGames.getEconomy().format(r.amount)));
+                                    } else {
+                                        p.getKiller().sendMessage(String.format(pg.prefix + ChatColor.RED + pg.chatmessages.get(92) + ": %s", r.errorMessage));
+                                    }
+                                }
                                 if (pg.isActivateScoreboard()) {
                                     String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).getPrefix();
                                     tempString = ChatColor.stripColor(tempString);
@@ -685,18 +702,18 @@ public class Events implements Listener {
                                         }
                                     }
                                     for (Player all : pg.pgPlayers) {
-                                        all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                                        all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                     }
                                     for (Player all : pg.specPlayers) {
-                                        all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                                        all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                     }
                                     e.setDeathMessage(null);
                                 } catch (Exception ex) {
                                     for (Player all : pg.pgPlayers) {
-                                        all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                                        all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                     }
                                     for (Player all : pg.specPlayers) {
-                                        all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chat.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
+                                        all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                     }
                                     e.setDeathMessage(null);
                                 }
@@ -1002,7 +1019,7 @@ public class Events implements Listener {
                                             }
                                         }
                                         Inventory inv;
-                                        inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
+                                        inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49));
                                         pg.lobbychests.put(e.getClickedBlock().getLocation(), s);
                                         pg.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
                                         int shopitem = 1;
@@ -1018,8 +1035,8 @@ public class Events implements Listener {
                                             assert randombarriermeta != null;
                                             randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
                                             ArrayList<String> lore = new ArrayList<>();
-                                            lore.add(pg.chat.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration() / 20);
-                                            lore.add(pg.chat.get(51) + ": " + coinamount + " " + pg.chat.get(52));
+                                            lore.add(pg.chatmessages.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration() / 20);
+                                            lore.add(pg.chatmessages.get(51) + ": " + coinamount + " " + pg.chatmessages.get(52));
                                             randombarriermeta.setLore(lore);
                                             randombarrier.setItemMeta(randombarriermeta);
                                             inv.setItem(shopitem - 1, randombarrier);
@@ -1040,7 +1057,7 @@ public class Events implements Listener {
                                             }
                                         }
                                         Inventory inv;
-                                        inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49));
+                                        inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49));
                                         pg.chests.put(e.getClickedBlock().getLocation(), inv);
                                         int shopitem = 1;
                                         for (int i = 0; i < pg.getActivePotions(); i++) {
@@ -1055,8 +1072,8 @@ public class Events implements Listener {
                                             assert randombarriermeta != null;
                                             randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
                                             ArrayList<String> lore = new ArrayList<>();
-                                            lore.add(pg.chat.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration() / 20);
-                                            lore.add(pg.chat.get(51) + ": " + coinamount + " " + pg.chat.get(52));
+                                            lore.add(pg.chatmessages.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration() / 20);
+                                            lore.add(pg.chatmessages.get(51) + ": " + coinamount + " " + pg.chatmessages.get(52));
                                             randombarriermeta.setLore(lore);
                                             randombarrier.setItemMeta(randombarriermeta);
                                             inv.setItem(shopitem - 1, randombarrier);
@@ -1173,9 +1190,9 @@ public class Events implements Listener {
                                         }
                                     }
                                     if (result != null) {
-                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.GREEN + pg.chat.get(12) + ": " + ChatColor.AQUA + (int) lastDistance));
+                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(12) + ": " + ChatColor.AQUA + (int) lastDistance));
                                     } else {
-                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.RED + pg.chat.get(13)));
+                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.RED + pg.chatmessages.get(13)));
                                     }
                                 }
                             } else {
@@ -1197,9 +1214,9 @@ public class Events implements Listener {
                                         }
                                     }
                                     if (result != null) {
-                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.GREEN + pg.chat.get(12) + ": " + ChatColor.AQUA + (int) lastDistance));
+                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(12) + ": " + ChatColor.AQUA + (int) lastDistance));
                                     } else {
-                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.RED + pg.chat.get(13)));
+                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.RED + pg.chatmessages.get(13)));
                                     }
                                 }
                             }
@@ -1214,21 +1231,21 @@ public class Events implements Listener {
                                 }
                             }
                             if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(14));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chat.get(42));
+                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 ArrayList<String> randomlore = new ArrayList<>();
-                                randomlore.add(0, ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(pg.chat.get(42)));
+                                randomlore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(pg.chatmessages.get(42)));
                                 randombarriermeta.setLore(randomlore);
                                 randombarrier.setItemMeta(randombarriermeta);
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (String all : pg.lobbyvotes.get(s).keySet()) {
-                                    if (!all.equals(pg.chat.get(42))) {
+                                    if (!all.equals(pg.chatmessages.get(42))) {
                                         ArrayList<String> arenalore = new ArrayList<>();
-                                        arenalore.add(0, ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(all));
+                                        arenalore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(all));
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
@@ -1243,21 +1260,21 @@ public class Events implements Listener {
                             }
                         } else {
                             if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(14));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chat.get(42));
+                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 ArrayList<String> randomlore = new ArrayList<>();
-                                randomlore.add(0, ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.votes.get(pg.chat.get(42)));
+                                randomlore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.votes.get(pg.chatmessages.get(42)));
                                 randombarriermeta.setLore(randomlore);
                                 randombarrier.setItemMeta(randombarriermeta);
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (String all : pg.arenas) {
-                                    if (!all.equals(pg.chat.get(42))) {
+                                    if (!all.equals(pg.chatmessages.get(42))) {
                                         ArrayList<String> arenalore = new ArrayList<>();
-                                        arenalore.add(0, ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.votes.get(all).toString());
+                                        arenalore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.votes.get(all).toString());
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
@@ -1281,17 +1298,17 @@ public class Events implements Listener {
                                 }
                             }
                             if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chat.get(42));
+                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 randombarrier.setItemMeta(randombarriermeta);
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (Integer all : pg.lobbyteams.get(s).keySet()) {
                                     ArrayList<String> arenalore = new ArrayList<>();
-                                    arenalore.add(0, ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(all));
+                                    arenalore.add(0, ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(all));
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
@@ -1310,17 +1327,17 @@ public class Events implements Listener {
                             }
                         } else {
                             if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chat.get(42));
+                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 randombarrier.setItemMeta(randombarriermeta);
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (String all : pg.teams) {
                                     ArrayList<String> arenalore = new ArrayList<>();
-                                    arenalore.add(0, ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(all).toString());
+                                    arenalore.add(0, ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(all).toString());
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
@@ -1344,11 +1361,11 @@ public class Events implements Listener {
                             int ii = 1;
                             String s = Integer.toString(ii);
                             if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(62));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chat.get(42));
+                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 randombarrier.setItemMeta(randombarriermeta);
                                 inv.setItem(0, randombarrier);
                                 for (int i = 1; i <= pg.getActiveKits(); i++) {
@@ -1363,11 +1380,11 @@ public class Events implements Listener {
                             }
                         } else {
                             if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(62));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chat.get(42));
+                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 randombarrier.setItemMeta(randombarriermeta);
                                 inv.setItem(0, randombarrier);
                                 for (int i = 1; i <= pg.getActiveKits(); i++) {
@@ -1408,14 +1425,14 @@ public class Events implements Listener {
                         int kills = pg.getKills(p.getUniqueId().toString());
                         int deaths = pg.getDeaths(p.getUniqueId().toString());
                         double kd = pg.getKD(p.getUniqueId().toString());
-                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                        p.sendMessage(pg.prefix + pg.chat.get(65) + ": " + ChatColor.AQUA + rounds);
-                        p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
-                        p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
-                        p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
-                        p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
-                        p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
-                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(56) + "--------------");
+                        p.sendMessage(pg.prefix + pg.chatmessages.get(65) + ": " + ChatColor.AQUA + rounds);
+                        p.sendMessage(pg.prefix + pg.chatmessages.get(57) + ": " + ChatColor.AQUA + wins);
+                        p.sendMessage(pg.prefix + pg.chatmessages.get(58) + ": " + ChatColor.AQUA + losts);
+                        p.sendMessage(pg.prefix + pg.chatmessages.get(59) + ": " + ChatColor.AQUA + kills);
+                        p.sendMessage(pg.prefix + pg.chatmessages.get(60) + ": " + ChatColor.AQUA + deaths);
+                        p.sendMessage(pg.prefix + pg.chatmessages.get(61) + ": " + ChatColor.AQUA + kd);
+                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(56) + "--------------");
                     }
                 }
             }
@@ -1428,7 +1445,7 @@ public class Events implements Listener {
                                     pg.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
                                     pg.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
                                     pg.saveConfig();
-                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(24));
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(24));
                                 }
                             }
                             if (p.hasPermission("pg.setup")) {
@@ -1436,13 +1453,13 @@ public class Events implements Listener {
                                     p.getInventory().clear();
                                     pg.setAddlobby(true);
                                     e.setCancelled(true);
-                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(69));
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(69));
                                 }
                             }
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena")) {
                             p.getInventory().clear();
                             pg.setAddarena(true);
-                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(70));
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(70));
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
                             if (p.hasPermission("pg.setup")) {
                                 if (!pg.isLobbySystem()) {
@@ -1464,9 +1481,9 @@ public class Events implements Listener {
                                         }
                                         pg.arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
                                         pg.arenadata.save(pg.arenadatafile);
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29));
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chatmessages.get(29));
                                     } catch (Exception ex) {
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.RED + " " + pg.chat.get(31));
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.RED + " " + pg.chatmessages.get(31));
                                     }
                                 }
                             }
@@ -1490,9 +1507,9 @@ public class Events implements Listener {
                                         }
                                         pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, p.getLocation());
                                         pg.arenadata.save(pg.arenadatafile);
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chatmessages.get(29) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
                                     } catch (Exception ex) {
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + ChatColor.RED + " " + pg.chatmessages.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")" + " (" + "Arena: " + arena + ")");
                                     }
                                 }
                             }
@@ -1554,7 +1571,7 @@ public class Events implements Listener {
                                 if (!pg.isLobbySystem()) {
                                     pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
                                     pg.saveConfig();
-                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35));
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(35));
                                 }
                             }
                             if (p.hasPermission("pg.setup")) {
@@ -1563,9 +1580,9 @@ public class Events implements Listener {
                                     try {
                                         pg.arenadata.save(pg.arenadatafile);
                                     } catch (IOException ex) {
-                                        Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(63) + ": " + ex.getMessage());
+                                        Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(63) + ": " + ex.getMessage());
                                     }
-                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(35) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(35) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                                 }
                             }
                         }
@@ -1597,12 +1614,12 @@ public class Events implements Listener {
                             if (pg.isLobbySystem()) {
                                 p.getInventory().clear();
                                 pg.setDellobby(true);
-                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(71));
+                                p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(71));
                             }
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena")) {
                             p.getInventory().clear();
                             pg.setDelarena(true);
-                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(72));
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(72));
                         } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
                             if (p.hasPermission("pg.setup")) {
                                 if (!pg.isLobbySystem()) {
@@ -1626,9 +1643,9 @@ public class Events implements Listener {
                                         }
                                         pg.arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
                                         pg.arenadata.save(pg.arenadatafile);
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28));
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chatmessages.get(28));
                                     } catch (Exception ex) {
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(31));
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chatmessages.get(31));
                                     }
                                 }
                             }
@@ -1654,9 +1671,9 @@ public class Events implements Listener {
                                         }
                                         pg.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
                                         pg.arenadata.save(pg.arenadatafile);
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chat.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + spawnNumber + ChatColor.GREEN + " " + pg.chatmessages.get(28) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                                     } catch (Exception ex) {
-                                        p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chat.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                        p.sendMessage(pg.prefix + ChatColor.AQUA + arena + ChatColor.RED + " " + pg.chatmessages.get(31) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
                                     }
                                 }
                             }
@@ -1772,14 +1789,14 @@ public class Events implements Listener {
                             int kills = pg.getKills(p.getUniqueId().toString());
                             int deaths = pg.getDeaths(p.getUniqueId().toString());
                             double kd = pg.getKD(p.getUniqueId().toString());
-                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
-                            p.sendMessage(pg.prefix + pg.chat.get(65) + ": " + ChatColor.AQUA + rounds);
-                            p.sendMessage(pg.prefix + pg.chat.get(57) + ": " + ChatColor.AQUA + wins);
-                            p.sendMessage(pg.prefix + pg.chat.get(58) + ": " + ChatColor.AQUA + losts);
-                            p.sendMessage(pg.prefix + pg.chat.get(59) + ": " + ChatColor.AQUA + kills);
-                            p.sendMessage(pg.prefix + pg.chat.get(60) + ": " + ChatColor.AQUA + deaths);
-                            p.sendMessage(pg.prefix + pg.chat.get(61) + ": " + ChatColor.AQUA + kd);
-                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(56) + "--------------");
+                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(56) + "--------------");
+                            p.sendMessage(pg.prefix + pg.chatmessages.get(65) + ": " + ChatColor.AQUA + rounds);
+                            p.sendMessage(pg.prefix + pg.chatmessages.get(57) + ": " + ChatColor.AQUA + wins);
+                            p.sendMessage(pg.prefix + pg.chatmessages.get(58) + ": " + ChatColor.AQUA + losts);
+                            p.sendMessage(pg.prefix + pg.chatmessages.get(59) + ": " + ChatColor.AQUA + kills);
+                            p.sendMessage(pg.prefix + pg.chatmessages.get(60) + ": " + ChatColor.AQUA + deaths);
+                            p.sendMessage(pg.prefix + pg.chatmessages.get(61) + ": " + ChatColor.AQUA + kd);
+                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(56) + "--------------");
                         }
                     }
                 }
@@ -1800,7 +1817,7 @@ public class Events implements Listener {
                         }
                     }
                     if (pg.lobbyStates.get(s) == GameStates.WAITING && !pg.lobbyBuild.get(s) && pg.playerLobby.containsKey(p) || pg.lobbyStates.get(s) == GameStates.PREPARING && !pg.lobbyBuild.get(s) && pg.playerLobby.containsKey(p)) {
-                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(14))) {
+                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14))) {
                             if (e.getCurrentItem() != null) {
                                 int randomvotes;
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
@@ -1810,8 +1827,8 @@ public class Events implements Listener {
                                         int votes = pg.lobbyvotes.get(s).get(displayname);
                                         votes++;
                                         HashMap<String, Integer> temp = new HashMap<>();
-                                        randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
-                                        temp.put(pg.chat.get(42), randomvotes);
+                                        randomvotes = pg.lobbyvotes.get(s).get(pg.chatmessages.get(42));
+                                        temp.put(pg.chatmessages.get(42), randomvotes);
                                         for (int max = 1; max < 27; max++) {
                                             if (pg.arenadata.contains("pg.lobbies." + s + "." + max)) {
                                                 int oldvotes = pg.lobbyvotes.get(s).get(pg.arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
@@ -1820,10 +1837,10 @@ public class Events implements Listener {
                                         }
                                         temp.put(displayname, votes);
                                         pg.lobbyvotes.replace(s, temp);
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
                                         pg.lobbyVoted.put(p, s);
                                         pg.lobbyvoteplayernames.get(s).put(p, displayname);
                                     } else {
@@ -1840,8 +1857,8 @@ public class Events implements Listener {
                                         int votes = pg.lobbyvotes.get(s).get(arenaname);
                                         votes--;
                                         HashMap<String, Integer> tempold = new HashMap<>();
-                                        randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
-                                        tempold.put(pg.chat.get(42), randomvotes);
+                                        randomvotes = pg.lobbyvotes.get(s).get(pg.chatmessages.get(42));
+                                        tempold.put(pg.chatmessages.get(42), randomvotes);
                                         for (int max = 1; max < 27; max++) {
                                             if (pg.arenadata.contains("pg.lobbies." + s + "." + max)) {
                                                 int oldvotes = pg.lobbyvotes.get(s).get(pg.arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
@@ -1854,8 +1871,8 @@ public class Events implements Listener {
                                         votes = pg.lobbyvotes.get(s).get(displayname);
                                         votes++;
                                         HashMap<String, Integer> temp = new HashMap<>();
-                                        randomvotes = pg.lobbyvotes.get(s).get(pg.chat.get(42));
-                                        temp.put(pg.chat.get(42), randomvotes);
+                                        randomvotes = pg.lobbyvotes.get(s).get(pg.chatmessages.get(42));
+                                        temp.put(pg.chatmessages.get(42), randomvotes);
                                         for (int max = 1; max < 27; max++) {
                                             if (pg.arenadata.contains("pg.lobbies." + s + "." + max)) {
                                                 int oldvotes = pg.lobbyvotes.get(s).get(pg.arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
@@ -1864,10 +1881,10 @@ public class Events implements Listener {
                                         }
                                         temp.put(displayname, votes);
                                         pg.lobbyvotes.replace(s, temp);
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
                                         pg.lobbyVoted.put(p, s);
                                         pg.lobbyvoteplayernames.get(s).put(p, displayname);
                                     }
@@ -1875,13 +1892,13 @@ public class Events implements Listener {
                             }
                         }
                         if (pg.lobbyActivateTeams.get(s)) {
-                            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43))) {
+                            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43))) {
                                 if (e.getCurrentItem() != null) {
                                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                                         String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
                                         int maxteamplayers = pg.lobbyteamSize.get(s);
                                         if (!pg.lobbyTeamed.containsKey(p)) {
-                                            if (displayname.equals(pg.chat.get(42))) {
+                                            if (displayname.equals(pg.chatmessages.get(42))) {
                                                 boolean teamfound = false;
                                                 while (!teamfound) {
                                                     Random rnd = new Random();
@@ -1899,10 +1916,10 @@ public class Events implements Listener {
                                                         }
                                                         temp.put(rndTeam, players);
                                                         pg.lobbyteams.replace(s, temp);
-                                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                         pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                         pg.lobbyteamplayernames.get(s).put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
@@ -1922,10 +1939,10 @@ public class Events implements Listener {
                                                     }
                                                     temp.put(Integer.parseInt(displayname), players);
                                                     pg.lobbyteams.replace(s, temp);
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.parseInt(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.parseInt(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                     pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                     pg.lobbyteamplayernames.get(s).put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
@@ -1933,9 +1950,9 @@ public class Events implements Listener {
                                                     }
                                                 } else {
                                                     p.closeInventory();
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(47));
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(47));
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                 }
                                             }
                                         } else {
@@ -1958,7 +1975,7 @@ public class Events implements Listener {
                                             tempold.put(Integer.parseInt(teamname), teamamount);
                                             pg.lobbyteams.replace(s, tempold);
                                             pg.lobbyTeamed.remove(p, s);
-                                            if (displayname.equals(pg.chat.get(42))) {
+                                            if (displayname.equals(pg.chatmessages.get(42))) {
                                                 boolean teamfound = false;
                                                 while (!teamfound) {
                                                     Random rnd = new Random();
@@ -1976,10 +1993,10 @@ public class Events implements Listener {
                                                         }
                                                         temp.put(rndTeam, players);
                                                         pg.lobbyteams.replace(s, temp);
-                                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(rndTeam) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                         pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                         pg.lobbyteamplayernames.get(s).put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
@@ -1999,10 +2016,10 @@ public class Events implements Listener {
                                                     }
                                                     temp.put(Integer.parseInt(displayname), players);
                                                     pg.lobbyteams.replace(s, temp);
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.parseInt(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(Integer.parseInt(displayname)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                     pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                     pg.lobbyteamplayernames.get(s).put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
@@ -2010,9 +2027,9 @@ public class Events implements Listener {
                                                     }
                                                 } else {
                                                     p.closeInventory();
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(47));
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(47));
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                 }
                                             }
                                         }
@@ -2020,18 +2037,18 @@ public class Events implements Listener {
                                 }
                             }
                         }
-                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(62))) {
+                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                                     String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
                                     if (!pg.lobbyKited.containsKey(p)) {
-                                        if (displayname.equals(pg.chat.get(42))) {
+                                        if (displayname.equals(pg.chatmessages.get(42))) {
                                             Random rnd = new Random();
                                             int rndKit = rnd.nextInt(pg.getActiveKits());
                                             p.closeInventory();
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
                                             pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
@@ -2042,9 +2059,9 @@ public class Events implements Listener {
                                             }
                                         } else {
                                             p.closeInventory();
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
                                             pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
@@ -2064,13 +2081,13 @@ public class Events implements Listener {
                                         }
                                         pg.kitplayernames.remove(p, kitname);
                                         pg.richkidPlayers.remove(p);
-                                        if (displayname.equals(pg.chat.get(42))) {
+                                        if (displayname.equals(pg.chatmessages.get(42))) {
                                             Random rnd = new Random();
                                             int rndKit = rnd.nextInt(pg.getActiveKits());
                                             p.closeInventory();
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
                                             pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
@@ -2081,9 +2098,9 @@ public class Events implements Listener {
                                             }
                                         } else {
                                             p.closeInventory();
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
                                             pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
@@ -2098,7 +2115,7 @@ public class Events implements Listener {
                             }
                         }
                     }
-                    if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
+                    if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49))) {
                         if (e.getCurrentItem() != null) {
                             int shopitem = 1;
                             for (int i = 0; i < pg.shop.size(); i++) {
@@ -2127,10 +2144,10 @@ public class Events implements Listener {
                                                 p.getInventory().removeItem(pg.getBottle());
                                             }
                                         } else {
-                                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(53));
                                         }
                                     } else {
-                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(54));
                                     }
                                 }
                                 shopitem++;
@@ -2140,7 +2157,7 @@ public class Events implements Listener {
                     }
                 } else {
                     if (pg.getGamestate() == GameStates.WAITING && !pg.isBuild() && pg.pgPlayers.contains(p) || pg.getGamestate() == GameStates.PREPARING && !pg.isBuild() && pg.pgPlayers.contains(p)) {
-                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(14))) {
+                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                                     String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
@@ -2149,10 +2166,10 @@ public class Events implements Listener {
                                         int votes = pg.votes.get(displayname);
                                         votes++;
                                         pg.votes.put(displayname, votes);
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.votes.get(displayname));
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.votes.get(displayname));
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
                                         pg.voted.add(e.getWhoClicked().getName());
                                         pg.voteplayernames.put(p, displayname);
                                     } else {
@@ -2165,7 +2182,7 @@ public class Events implements Listener {
                                                     arenaname = name;
                                                 }
                                             } else {
-                                                arenaname = pg.chat.get(42);
+                                                arenaname = pg.chatmessages.get(42);
                                             }
                                         }
                                         pg.voteplayernames.remove(p, arenaname);
@@ -2175,10 +2192,10 @@ public class Events implements Listener {
                                         votes = pg.votes.get(displayname);
                                         votes++;
                                         pg.votes.put(displayname, votes);
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(15) + ": " + ChatColor.AQUA + pg.votes.get(displayname));
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(14) + "--------------");
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.votes.get(displayname));
+                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
                                         pg.voted.add(e.getWhoClicked().getName());
                                         pg.voteplayernames.put(p, displayname);
                                     }
@@ -2186,13 +2203,13 @@ public class Events implements Listener {
                             }
                         }
                         if (pg.isActivateTeams()) {
-                            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(43))) {
+                            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43))) {
                                 if (e.getCurrentItem() != null) {
                                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                                         String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
                                         int maxteamplayers = pg.getTeamSize();
                                         if (!pg.teamed.contains(p.getName())) {
-                                            if (displayname.equals(pg.chat.get(42))) {
+                                            if (displayname.equals(pg.chatmessages.get(42))) {
                                                 boolean teamfound = false;
                                                 while (!teamfound) {
                                                     Random rnd = new Random();
@@ -2204,10 +2221,10 @@ public class Events implements Listener {
                                                         int players = pg.teamplayers.get(Integer.toString(rndTeam));
                                                         players++;
                                                         pg.teamplayers.put(Integer.toString(rndTeam), players);
-                                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                         pg.teamed.add(e.getWhoClicked().getName());
                                                         pg.teamplayernames.put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
@@ -2221,10 +2238,10 @@ public class Events implements Listener {
                                                     int players = pg.teamplayers.get(displayname);
                                                     players++;
                                                     pg.teamplayers.put(displayname, players);
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                     pg.teamed.add(e.getWhoClicked().getName());
                                                     pg.teamplayernames.put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
@@ -2232,9 +2249,9 @@ public class Events implements Listener {
                                                     }
                                                 } else {
                                                     p.closeInventory();
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(47));
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(47));
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                 }
                                             }
                                         } else {
@@ -2249,7 +2266,7 @@ public class Events implements Listener {
                                             int teamamount = pg.teamplayers.get(teamname) - 1;
                                             pg.teamplayers.put(teamname, teamamount);
                                             pg.teamed.remove(p.getName());
-                                            if (displayname.equals(pg.chat.get(42))) {
+                                            if (displayname.equals(pg.chatmessages.get(42))) {
                                                 boolean teamfound = false;
                                                 while (!teamfound) {
                                                     Random rnd = new Random();
@@ -2261,10 +2278,10 @@ public class Events implements Listener {
                                                         int players = pg.teamplayers.get(Integer.toString(rndTeam));
                                                         players++;
                                                         pg.teamplayers.put(Integer.toString(rndTeam), players);
-                                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
-                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                                        p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(45) + ": " + ChatColor.LIGHT_PURPLE + rndTeam);
+                                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(Integer.toString(rndTeam)) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                         pg.teamed.add(e.getWhoClicked().getName());
                                                         pg.teamplayernames.put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
@@ -2278,10 +2295,10 @@ public class Events implements Listener {
                                                     int players = pg.teamplayers.get(displayname);
                                                     players++;
                                                     pg.teamplayers.put(displayname, players);
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(45) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(displayname) + ChatColor.GRAY + "/" + ChatColor.AQUA + maxteamplayers);
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                     pg.teamed.add(e.getWhoClicked().getName());
                                                     pg.teamplayernames.put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
@@ -2289,9 +2306,9 @@ public class Events implements Listener {
                                                     }
                                                 } else {
                                                     p.closeInventory();
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
-                                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(47));
-                                                    p.sendMessage(pg.prefix + "--------------" + pg.chat.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
+                                                    p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(47));
+                                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(43) + "--------------");
                                                 }
                                             }
                                         }
@@ -2299,18 +2316,18 @@ public class Events implements Listener {
                                 }
                             }
                         }
-                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(62))) {
+                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                                     String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
                                     if (!pg.kited.contains(p.getName())) {
-                                        if (displayname.equals(pg.chat.get(42))) {
+                                        if (displayname.equals(pg.chatmessages.get(42))) {
                                             Random rnd = new Random();
                                             int rndKit = rnd.nextInt(pg.getActiveKits());
                                             p.closeInventory();
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
                                             pg.kited.add(e.getWhoClicked().getName());
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
@@ -2321,9 +2338,9 @@ public class Events implements Listener {
                                             }
                                         } else {
                                             p.closeInventory();
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
                                             pg.kited.add(e.getWhoClicked().getName());
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
@@ -2343,13 +2360,13 @@ public class Events implements Listener {
                                         }
                                         pg.kitplayernames.remove(p, kitname);
                                         pg.richkidPlayers.remove(p);
-                                        if (displayname.equals(pg.chat.get(42))) {
+                                        if (displayname.equals(pg.chatmessages.get(42))) {
                                             Random rnd = new Random();
                                             int rndKit = rnd.nextInt(pg.getActiveKits());
                                             p.closeInventory();
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(46) + ": " + ChatColor.LIGHT_PURPLE + pg.kits.get(rndKit));
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
                                             pg.kited.add(e.getWhoClicked().getName());
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
@@ -2360,9 +2377,9 @@ public class Events implements Listener {
                                             }
                                         } else {
                                             p.closeInventory();
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
-                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chat.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                            p.sendMessage(pg.prefix + "--------------" + pg.chat.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(46) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(62) + "--------------");
                                             pg.kited.add(e.getWhoClicked().getName());
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
@@ -2377,7 +2394,7 @@ public class Events implements Listener {
                             }
                         }
                     }
-                    if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chat.get(49))) {
+                    if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49))) {
                         if (e.getCurrentItem() != null) {
                             int shopitem = 1;
                             for (int i = 0; i < pg.shop.size(); i++) {
@@ -2406,10 +2423,10 @@ public class Events implements Listener {
                                                 p.getInventory().removeItem(pg.getBottle());
                                             }
                                         } else {
-                                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(53));
+                                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(53));
                                         }
                                     } else {
-                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chat.get(54));
+                                        p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(54));
                                     }
                                 }
                                 shopitem++;
@@ -2477,7 +2494,7 @@ public class Events implements Listener {
         if (p.hasPermission("pg.update")) {
             new UpdateChecker(pg, 87633).getVersion(version -> {
                 if (!pg.getDescription().getVersion().equalsIgnoreCase(version)) {
-                    p.sendMessage(pg.prefix + ChatColor.GRAY + pg.chat.get(77) + " " + pg.getDescription().getVersion() + " -> " + version);
+                    p.sendMessage(pg.prefix + ChatColor.GRAY + pg.chatmessages.get(77) + " " + pg.getDescription().getVersion() + " -> " + version);
                 }
             });
         }

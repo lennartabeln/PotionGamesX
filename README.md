@@ -198,6 +198,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 
 ## Release History
 
+* 5.1
+  * ADD: Rewards for kills and winning (Vault)
 * 5.0
   * ADD: Deathmatch
 * 4.9.5
