@@ -20,7 +20,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * Use startOnJoin option to use this plugin with BungeeCord
 * Use GUI or sign to join a lobby
 * Deathmatch
-* Support for PlaceholderAPI
+* Support for PlaceholderAPI - Comming soon!
+* Support for Vault
 
 ## Installation
 
