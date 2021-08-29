@@ -188,6 +188,9 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `friendlyFire: false` - Allows friendly fire on teammates `true` or `false`
 * `joinStarted: true` - Allows joining a match that has already started `true` or `false`
 * `activateDeathmatch: true` - Activate deathmatch when only two players are left `true` or `false`
+* `enableRewards: true` - Enable rewards `true` or `false`
+* `winningReward: 100` - Set reward amount for winnig
+* `killReward: 10` - Set reward amount for kills
 
 ### Messages
 
