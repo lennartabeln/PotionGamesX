@@ -954,8 +954,6 @@ public class PotionGames extends JavaPlugin implements Listener {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GRAY + chatmessages.get(77) + " " + this.getDescription().getVersion() + " -> " + version);
             }
         });
-        @SuppressWarnings("unused")
-        Metrics metrics = new Metrics(this, 12027);
         if (enableRewards) {
             if (!setupEconomy()) {
                 log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
@@ -999,6 +997,8 @@ public class PotionGames extends JavaPlugin implements Listener {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
             }
         }
+        @SuppressWarnings("unused")
+        Metrics metrics = new Metrics(this, 12027);
     }
 
     public void onReload() {
