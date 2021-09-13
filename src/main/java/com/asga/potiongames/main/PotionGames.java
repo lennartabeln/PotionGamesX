@@ -46,8 +46,6 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 public class PotionGames extends JavaPlugin implements Listener {
-    private static final Logger log = Logger.getLogger("Minecraft");
-    private static Economy econ = null;
     public final ArrayList<String> worlds = new ArrayList<>();
     public final ArrayList<Player> pgPlayers = new ArrayList<>();
     public final ArrayList<Player> specPlayers = new ArrayList<>();
@@ -219,10 +217,8 @@ public class PotionGames extends JavaPlugin implements Listener {
     private boolean enableRewards = false;
     private Connection con;
     private Statement st;
-
-    public static Economy getEconomy() {
-        return econ;
-    }
+    private static final Logger log = Logger.getLogger("Minecraft");
+    private static Economy econ = null;
 
     @Override
     public void onEnable() {
@@ -5100,6 +5096,10 @@ public class PotionGames extends JavaPlugin implements Listener {
 
     public void setDelarena(boolean delarena) {
         this.delarena = delarena;
+    }
+
+    public static Economy getEconomy() {
+        return econ;
     }
 
 }
