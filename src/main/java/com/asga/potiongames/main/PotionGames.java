@@ -220,10 +220,6 @@ public class PotionGames extends JavaPlugin implements Listener {
     private Connection con;
     private Statement st;
 
-    public static Economy getEconomy() {
-        return econ;
-    }
-
     @Override
     public void onEnable() {
         messages = YamlConfiguration.loadConfiguration(messagesfile);
@@ -4920,6 +4916,10 @@ public class PotionGames extends JavaPlugin implements Listener {
     public ArrayList<Player> getChannel(Player player) {
         String channelName = playerChannel.get(player);
         return channels.get(channelName);
+    }
+
+    public static Economy getEconomy() {
+        return econ;
     }
 
     public ItemStack getCoin() {
