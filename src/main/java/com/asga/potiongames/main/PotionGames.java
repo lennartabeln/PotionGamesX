@@ -3155,7 +3155,7 @@ public class PotionGames extends JavaPlugin implements Listener {
         }
         joinChannel(p.getPlayer(), "Global");
         if (gamestate == GameStates.INGAME && pgPlayers.size() > 1 && reload) {
-            addLosts(p.getUniqueId().toString(), 1);
+            addLosses(p.getUniqueId().toString(), 1);
         }
         p.getInventory().setContents(inv.get(p.getName()));
         p.getInventory().setArmorContents(armor.get(p.getName()));
@@ -4528,7 +4528,7 @@ public class PotionGames extends JavaPlugin implements Listener {
         }
         joinChannel(p.getPlayer(), "Global");
         if (lobbyStates.get(s) == GameStates.INGAME && lobbyAmount.get(s) > 1 && playerLobby.containsKey(p) && reload) {
-            addLosts(p.getUniqueId().toString(), 1);
+            addLosses(p.getUniqueId().toString(), 1);
         }
         p.getInventory().setContents(inv.get(p.getName()));
         p.getInventory().setArmorContents(armor.get(p.getName()));
@@ -4673,7 +4673,7 @@ public class PotionGames extends JavaPlugin implements Listener {
 
     public void ConnectMySQL() {
         if (con != null) {
-            update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSTS int, KILLS int, DEATHS int, KD double);");
+            update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSSES int, KILLS int, DEATHS int, KD double);");
         }
     }
 
@@ -4692,7 +4692,7 @@ public class PotionGames extends JavaPlugin implements Listener {
 
     public void createPlayer(String uuid) {
         if (!playerExists(uuid)) {
-            update("INSERT INTO Stats(UUID, ROUNDS, WINS, LOSTS, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0', '0');");
+            update("INSERT INTO Stats(UUID, ROUNDS, WINS, LOSSES, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0', '0');");
         }
     }
 
@@ -4772,21 +4772,21 @@ public class PotionGames extends JavaPlugin implements Listener {
         return i;
     }
 
-    public int getLosts(String uuid) {
+    public int getLosses(String uuid) {
         int i = 0;
         if (playerExists(uuid)) {
             try {
                 ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
                 if ((rs.next())) {
-                    rs.getInt("LOSTS");
+                    rs.getInt("LOSSES");
                 }
-                i = rs.getInt("LOSTS");
+                i = rs.getInt("LOSSES");
             } catch (SQLException e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
             }
         } else {
             createPlayer(uuid);
-            getLosts(uuid);
+            getLosses(uuid);
         }
         return i;
     }
@@ -4856,20 +4856,20 @@ public class PotionGames extends JavaPlugin implements Listener {
         }
     }
 
-    public void setLosts(String uuid, int losts) {
+    public void setLosses(String uuid, int losses) {
         if (playerExists(uuid)) {
-            update("UPDATE Stats SET LOSTS= '" + losts + "' WHERE UUID= '" + uuid + "';");
+            update("UPDATE Stats SET LOSSES= '" + losses + "' WHERE UUID= '" + uuid + "';");
         } else {
             createPlayer(uuid);
-            setLosts(uuid, losts);
+            setLosses(uuid, losses);
         }
     }
 
     public void setRounds(String uuid, int rounds) {
         if (playerExists(uuid)) {
             int wins = getWins(uuid);
-            int losts = getLosts(uuid);
-            rounds = wins + losts;
+            int losses = getLosses(uuid);
+            rounds = wins + losses;
             update("UPDATE Stats SET ROUNDS= '" + rounds + "' WHERE UUID= '" + uuid + "';");
         } else {
             createPlayer(uuid);
@@ -4907,13 +4907,13 @@ public class PotionGames extends JavaPlugin implements Listener {
         }
     }
 
-    public void addLosts(String uuid, int losts) {
+    public void addLosses(String uuid, int losses) {
         if (playerExists(uuid)) {
-            setLosts(uuid, (getLosts(uuid) + losts));
+            setLosses(uuid, (getLosses(uuid) + losses));
             setRounds(uuid, 0);
         } else {
             createPlayer(uuid);
-            addLosts(uuid, losts);
+            addLosses(uuid, losses);
         }
     }
 
@@ -4948,10 +4948,6 @@ public class PotionGames extends JavaPlugin implements Listener {
 
     public int getPlayerAmount() {
         return playerAmount;
-    }
-
-    public ArrayList<Player> getPgPlayers() {
-        return pgPlayers;
     }
 
     public int getTeamAmount() {
@@ -4996,22 +4992,6 @@ public class PotionGames extends JavaPlugin implements Listener {
 
     public void setVotedArena(String votedArena) {
         this.votedArena = votedArena;
-    }
-
-    public HashMap<Location, Material> getPlacedBlocks() {
-        return placedBlocks;
-    }
-
-    public HashMap<Location, Material> getBreakedBlocks() {
-        return breakedBlocks;
-    }
-
-    public HashMap<Location, BlockData> getWaterBlocks() {
-        return waterBlocks;
-    }
-
-    public HashMap<Location, Block> getLiquidPlaced() {
-        return liquidPlaced;
     }
 
     public boolean isEnableRewards() {

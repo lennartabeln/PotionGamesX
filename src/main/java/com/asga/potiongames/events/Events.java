@@ -373,7 +373,7 @@ public class Events implements Listener {
                             if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
                                 Block block = e.getBlockClicked().getRelative(e.getBlockFace());
                                 Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
-                                pg.getLiquidPlaced().put(loc, block);
+                                pg.liquidPlaced.put(loc, block);
                             }
                         }
                     }
@@ -433,7 +433,7 @@ public class Events implements Listener {
                                     || e.getBlock().getType() == Material.CRIMSON_FUNGUS
                                     || e.getBlock().getType() == Material.BROWN_MUSHROOM
                                     || e.getBlock().getType() == Material.RED_MUSHROOM) {
-                                pg.getBreakedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
+                                pg.breakedBlocks.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 e.setCancelled(false);
                             } else {
                                 e.setCancelled(true);
@@ -504,7 +504,7 @@ public class Events implements Listener {
                                     || e.getBlock().getType() == Material.CRIMSON_FUNGUS
                                     || e.getBlock().getType() == Material.BROWN_MUSHROOM
                                     || e.getBlock().getType() == Material.RED_MUSHROOM) {
-                                pg.getPlacedBlocks().put(e.getBlock().getLocation(), e.getBlock().getType());
+                                pg.placedBlocks.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 e.setCancelled(false);
                             } else if (e.getBlock().getType() == Material.TNT) {
                                 e.setCancelled(true);
@@ -540,7 +540,7 @@ public class Events implements Listener {
                         if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                             if (p.getKiller() != null) {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
-                                pg.addLosts(p.getUniqueId().toString(), 1);
+                                pg.addLosses(p.getUniqueId().toString(), 1);
                                 pg.addKills(p.getKiller().getUniqueId().toString(), 1);
                                 if (pg.isEnableRewards()) {
                                     EconomyResponse r = PotionGames.getEconomy().depositPlayer(p.getKiller(), pg.getKillReward());
@@ -559,7 +559,7 @@ public class Events implements Listener {
                                 }
                             } else {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
-                                pg.addLosts(p.getUniqueId().toString(), 1);
+                                pg.addLosses(p.getUniqueId().toString(), 1);
                             }
                             if (pg.playerLobby.containsKey(p)) {
                                 e.setKeepLevel(true);
@@ -647,7 +647,7 @@ public class Events implements Listener {
                         if (pg.getGamestate() == GameStates.INGAME) {
                             if (p.getKiller() != null) {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
-                                pg.addLosts(p.getUniqueId().toString(), 1);
+                                pg.addLosses(p.getUniqueId().toString(), 1);
                                 pg.addKills(p.getKiller().getUniqueId().toString(), 1);
                                 if (pg.isEnableRewards()) {
                                     EconomyResponse r = PotionGames.getEconomy().depositPlayer(p.getKiller(), pg.getKillReward());
@@ -666,7 +666,7 @@ public class Events implements Listener {
                                 }
                             } else {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
-                                pg.addLosts(p.getUniqueId().toString(), 1);
+                                pg.addLosses(p.getUniqueId().toString(), 1);
                             }
                             if (pg.pgPlayers.contains(p)) {
                                 e.setKeepLevel(true);
@@ -1097,7 +1097,7 @@ public class Events implements Listener {
                             }
                         } else {
                             if (e.getClickedBlock().getBlockData() instanceof Waterlogged) {
-                                pg.getWaterBlocks().put(e.getClickedBlock().getLocation(), e.getClickedBlock().getBlockData());
+                                pg.waterBlocks.put(e.getClickedBlock().getLocation(), e.getClickedBlock().getBlockData());
                             }
                         }
                     }
@@ -1200,7 +1200,7 @@ public class Events implements Listener {
                                     Player result = null;
                                     double lastDistance = Double.MAX_VALUE;
                                     for (Player cp : p.getWorld().getPlayers()) {
-                                        if (pg.getPgPlayers().contains(cp) && !Objects.equals(pg.teamplayernames.get(p), pg.teamplayernames.get(cp))) {
+                                        if (pg.pgPlayers.contains(cp) && !Objects.equals(pg.teamplayernames.get(p), pg.teamplayernames.get(cp))) {
                                             if (p == cp) {
                                                 continue;
                                             }
@@ -1420,7 +1420,7 @@ public class Events implements Listener {
                 if (p.getInventory().getItemInMainHand().getType() == Material.EMERALD) {
                     if (p.hasPermission("pg.stats")) {
                         int wins = pg.getWins(p.getUniqueId().toString());
-                        int losts = pg.getLosts(p.getUniqueId().toString());
+                        int losses = pg.getLosses(p.getUniqueId().toString());
                         int rounds = pg.getRounds(p.getUniqueId().toString());
                         int kills = pg.getKills(p.getUniqueId().toString());
                         int deaths = pg.getDeaths(p.getUniqueId().toString());
@@ -1428,7 +1428,7 @@ public class Events implements Listener {
                         p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(56) + "--------------");
                         p.sendMessage(pg.prefix + pg.chatmessages.get(65) + ": " + ChatColor.AQUA + rounds);
                         p.sendMessage(pg.prefix + pg.chatmessages.get(57) + ": " + ChatColor.AQUA + wins);
-                        p.sendMessage(pg.prefix + pg.chatmessages.get(58) + ": " + ChatColor.AQUA + losts);
+                        p.sendMessage(pg.prefix + pg.chatmessages.get(58) + ": " + ChatColor.AQUA + losses);
                         p.sendMessage(pg.prefix + pg.chatmessages.get(59) + ": " + ChatColor.AQUA + kills);
                         p.sendMessage(pg.prefix + pg.chatmessages.get(60) + ": " + ChatColor.AQUA + deaths);
                         p.sendMessage(pg.prefix + pg.chatmessages.get(61) + ": " + ChatColor.AQUA + kd);
@@ -1784,7 +1784,7 @@ public class Events implements Listener {
                         }
                         if (line2.matches("PotionGames") && line3.matches("Stats")) {
                             int wins = pg.getWins(p.getUniqueId().toString());
-                            int losts = pg.getLosts(p.getUniqueId().toString());
+                            int losses = pg.getLosses(p.getUniqueId().toString());
                             int rounds = pg.getRounds(p.getUniqueId().toString());
                             int kills = pg.getKills(p.getUniqueId().toString());
                             int deaths = pg.getDeaths(p.getUniqueId().toString());
@@ -1792,7 +1792,7 @@ public class Events implements Listener {
                             p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(56) + "--------------");
                             p.sendMessage(pg.prefix + pg.chatmessages.get(65) + ": " + ChatColor.AQUA + rounds);
                             p.sendMessage(pg.prefix + pg.chatmessages.get(57) + ": " + ChatColor.AQUA + wins);
-                            p.sendMessage(pg.prefix + pg.chatmessages.get(58) + ": " + ChatColor.AQUA + losts);
+                            p.sendMessage(pg.prefix + pg.chatmessages.get(58) + ": " + ChatColor.AQUA + losses);
                             p.sendMessage(pg.prefix + pg.chatmessages.get(59) + ": " + ChatColor.AQUA + kills);
                             p.sendMessage(pg.prefix + pg.chatmessages.get(60) + ": " + ChatColor.AQUA + deaths);
                             p.sendMessage(pg.prefix + pg.chatmessages.get(61) + ": " + ChatColor.AQUA + kd);
@@ -1837,12 +1837,6 @@ public class Events implements Listener {
                                         }
                                         temp.put(displayname, votes);
                                         pg.lobbyvotes.replace(s, temp);
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
-                                        pg.lobbyVoted.put(p, s);
-                                        pg.lobbyvoteplayernames.get(s).put(p, displayname);
                                     } else {
                                         p.closeInventory();
                                         String arenaname = null;
@@ -1881,13 +1875,13 @@ public class Events implements Listener {
                                         }
                                         temp.put(displayname, votes);
                                         pg.lobbyvotes.replace(s, temp);
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
-                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
-                                        p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
-                                        pg.lobbyVoted.put(p, s);
-                                        pg.lobbyvoteplayernames.get(s).put(p, displayname);
                                     }
+                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(16) + ": " + ChatColor.LIGHT_PURPLE + displayname);
+                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(displayname));
+                                    p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(14) + "--------------");
+                                    pg.lobbyVoted.put(p, s);
+                                    pg.lobbyvoteplayernames.get(s).put(p, displayname);
                                 }
                             }
                         }
