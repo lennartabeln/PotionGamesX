@@ -189,7 +189,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `winningReward: 100` - Set reward amount for winnig
 * `killReward: 10` - Set reward amount for kills (Vault needed)
   * [Download the latest release here!](https://www.spigotmc.org/resources/vault.34315/)
-* `broadcastStarting` - Broadcast when a lobby reached minimal amount of players `true` or `false`
+* `broadcastStarting: false` - Broadcast when a lobby reached minimal amount of players `false` or `true`
 
 ### Messages
 
