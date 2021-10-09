@@ -595,6 +595,8 @@ public class Events implements Listener {
                                     Player killer = p.getKiller();
                                     assert killer != null;
                                     killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
+                                    killer.playSound(killer.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 1, 1);
+                                    p.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1, 1);
                                     if (Objects.equals(pg.kitplayernames.get(p), "Rich Kid")) {
                                         for (int i = 0; i < 10; i++) {
                                             killer.getInventory().addItem(pg.getCoin());
@@ -1796,6 +1798,27 @@ public class Events implements Listener {
                             p.sendMessage(pg.prefix + pg.chatmessages.get(59) + ": " + ChatColor.AQUA + kills);
                             p.sendMessage(pg.prefix + pg.chatmessages.get(60) + ": " + ChatColor.AQUA + deaths);
                             p.sendMessage(pg.prefix + pg.chatmessages.get(61) + ": " + ChatColor.AQUA + kd);
+                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(56) + "--------------");
+                        }
+                        if (line1.matches("Place #1") || line1.matches("Place #2") || line1.matches("Place #3")) {
+                            Player pstats = Bukkit.getPlayer(line2);
+                            p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(56) + "--------------");
+                            if (pstats != null) {
+                                int wins = pg.getWins(pstats.getUniqueId().toString());
+                                int losses = pg.getLosses(pstats.getUniqueId().toString());
+                                int rounds = pg.getRounds(pstats.getUniqueId().toString());
+                                int kills = pg.getKills(pstats.getUniqueId().toString());
+                                int deaths = pg.getDeaths(pstats.getUniqueId().toString());
+                                double kd = pg.getKD(pstats.getUniqueId().toString());
+                                p.sendMessage(pg.prefix + pg.chatmessages.get(65) + ": " + ChatColor.AQUA + rounds);
+                                p.sendMessage(pg.prefix + pg.chatmessages.get(57) + ": " + ChatColor.AQUA + wins);
+                                p.sendMessage(pg.prefix + pg.chatmessages.get(58) + ": " + ChatColor.AQUA + losses);
+                                p.sendMessage(pg.prefix + pg.chatmessages.get(59) + ": " + ChatColor.AQUA + kills);
+                                p.sendMessage(pg.prefix + pg.chatmessages.get(60) + ": " + ChatColor.AQUA + deaths);
+                                p.sendMessage(pg.prefix + pg.chatmessages.get(61) + ": " + ChatColor.AQUA + kd);
+                            } else {
+                                p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(13));
+                            }
                             p.sendMessage(pg.prefix + "--------------" + pg.chatmessages.get(56) + "--------------");
                         }
                     }

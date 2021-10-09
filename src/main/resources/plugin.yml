@@ -1,9 +1,9 @@
 name: PotionGames
 author: andersspielen
 main: com.asga.potiongames.main.PotionGames
-version: 5.1.1
+version: 5.2.0
 api-version: 1.16
-softdepend: [ Multiverse-Core, PlaceholderAPI, Vault ]
+softdepend: [ Multiverse-Core, Vault ]
 commands:
   pg:
     description: Get list of commands + permissions

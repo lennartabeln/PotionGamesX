@@ -217,6 +217,7 @@ public class PotionGames extends JavaPlugin implements Listener {
     private boolean joinStarted = false;
     private boolean activateDeathmatch = true;
     private boolean enableRewards = false;
+    private boolean broadcastStarting = false;
     private Connection con;
     private Statement st;
 
@@ -325,6 +326,7 @@ public class PotionGames extends JavaPlugin implements Listener {
         chatmessages.add("An error occurred");
         chatmessages.add("For winning the round you get");
         chatmessages.add("For killing a player you get");
+        chatmessages.add("Lobby%s is starting! Join with /pg join%s");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -643,6 +645,13 @@ public class PotionGames extends JavaPlugin implements Listener {
         } else {
             enableRewards = getConfig().getBoolean("pg.enableRewards");
         }
+        if (getConfig().get("pg.broadcastStarting") == null) {
+            getConfig().addDefault("pg.broadcastStarting", broadcastStarting);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            broadcastStarting = getConfig().getBoolean("pg.broadcastStarting");
+        }
         if (getConfig().get("pg.winningReward") == null) {
             getConfig().addDefault("pg.winningReward", winningReward);
             getConfig().options().copyDefaults(true);
@@ -676,8 +685,8 @@ public class PotionGames extends JavaPlugin implements Listener {
                 messages.addDefault("pg.messages." + language + "." + message, chatmessages.get(message - 1));
                 messages.options().copyDefaults(true);
             } else {
-                String name = messages.getString("pg.messages." + language + "." + message);
-                chatmessages.set(message - 1, name);
+                String text = messages.getString("pg.messages." + language + "." + message);
+                chatmessages.set(message - 1, text);
             }
             message++;
         }
@@ -974,17 +983,17 @@ public class PotionGames extends JavaPlugin implements Listener {
                 for (int iii = 0; iii < rank.size(); iii++) {
                     int id = iii + 1;
                     Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                    skull.setOwningPlayer(sname);
+                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    skull.setOwningPlayer(name);
                     skull.update();
                 }
                 for (int iii = 0; iii < rank.size(); iii++) {
                     int id = iii + 1;
                     BlockState b = ranksign.get(iii).getBlock().getState();
-                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                     Sign sign = (Sign) b;
                     sign.setLine(0, chatmessages.get(33) + " #" + id);
-                    sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                    sign.setLine(1, Objects.requireNonNull(name.getName()));
                     sign.setLine(2, "Wins: " + getWins(rank.get(id)));
                     sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                     sign.update();
@@ -1156,6 +1165,13 @@ public class PotionGames extends JavaPlugin implements Listener {
         } else {
             enableRewards = getConfig().getBoolean("pg.enableRewards");
         }
+        if (getConfig().get("pg.broadcastStarting") == null) {
+            getConfig().addDefault("pg.broadcastStarting", broadcastStarting);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            broadcastStarting = getConfig().getBoolean("pg.broadcastStarting");
+        }
         if (getConfig().get("pg.winningReward") == null) {
             getConfig().addDefault("pg.winningReward", winningReward);
             getConfig().options().copyDefaults(true);
@@ -1189,8 +1205,8 @@ public class PotionGames extends JavaPlugin implements Listener {
                 messages.addDefault("pg.messages." + language + "." + message, chatmessages.get(message - 1));
                 messages.options().copyDefaults(true);
             } else {
-                String name = messages.getString("pg.messages." + language + "." + message);
-                chatmessages.set(message - 1, name);
+                String text = messages.getString("pg.messages." + language + "." + message);
+                chatmessages.set(message - 1, text);
             }
             message++;
         }
@@ -1414,10 +1430,10 @@ public class PotionGames extends JavaPlugin implements Listener {
                             lobbyVoteallowed.replace(s, true);
                             HashMap<String, Integer> temp = new HashMap<>();
                             temp.put(chatmessages.get(42), 0);
-                            for (int max = 1; max < 27; max++) {
-                                if (arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
-                                    temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
-                                    lobbyvoteplayernamesdata.put(null, arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
+                            for (int world = 1; world < 27; world++) {
+                                if (arenadata.contains("pg.lobbies." + s + "." + world + ".name")) {
+                                    temp.put(arenadata.getString("pg.lobbies." + s + "." + world + ".name"), 0);
+                                    lobbyvoteplayernamesdata.put(null, arenadata.getString("pg.lobbies." + s + "." + world + ".name"));
                                 }
                             }
                             lobbyvotes.put(s, temp);
@@ -1468,17 +1484,17 @@ public class PotionGames extends JavaPlugin implements Listener {
                 for (int iii = 0; iii < rank.size(); iii++) {
                     int id = iii + 1;
                     Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                    skull.setOwningPlayer(sname);
+                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    skull.setOwningPlayer(name);
                     skull.update();
                 }
                 for (int iii = 0; iii < rank.size(); iii++) {
                     int id = iii + 1;
                     BlockState b = ranksign.get(iii).getBlock().getState();
-                    OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                     Sign sign = (Sign) b;
                     sign.setLine(0, chatmessages.get(33) + " #" + id);
-                    sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                    sign.setLine(1, Objects.requireNonNull(name.getName()));
                     sign.setLine(2, "Wins: " + getWins(rank.get(id)));
                     sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                     sign.update();
@@ -1595,17 +1611,17 @@ public class PotionGames extends JavaPlugin implements Listener {
                     for (int iii = 0; iii < rank.size(); iii++) {
                         int id = iii + 1;
                         Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                        skull.setOwningPlayer(sname);
+                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                        skull.setOwningPlayer(name);
                         skull.update();
                     }
                     for (int iii = 0; iii < rank.size(); iii++) {
                         int id = iii + 1;
                         BlockState b = ranksign.get(iii).getBlock().getState();
-                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                         Sign sign = (Sign) b;
                         sign.setLine(0, chatmessages.get(33) + " #" + id);
-                        sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                        sign.setLine(1, Objects.requireNonNull(name.getName()));
                         sign.setLine(2, "Wins: " + getWins(rank.get(id)));
                         sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                         sign.update();
@@ -2155,12 +2171,22 @@ public class PotionGames extends JavaPlugin implements Listener {
                             if (getPlayerAmount() < minPlayers) {
                                 for (Player all : pgPlayers) {
                                     all.setLevel(0);
-                                    all.spigot().sendMessage(ChatMessageType.ACTION_BAR,
-                                            TextComponent.fromLegacyText(prefix + chatmessages.get(0) + " " + "[" + ChatColor.AQUA + getPlayerAmount() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
+                                    all.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(prefix + chatmessages.get(0) + " " + "[" + ChatColor.AQUA + getPlayerAmount() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
                                 }
                                 setCountdown(getConfig().getInt("pg.countdown"));
                             } else {
                                 gamestate = GameStates.PREPARING;
+                                for (Player all : pgPlayers) {
+                                    all.playSound(all.getLocation(), Sound.ENTITY_ARROW_HIT, 1, 1);
+                                }
+                                for (Player all : Bukkit.getOnlinePlayers()) {
+                                    if (playerChannel.get(all) == null) {
+                                        joinChannel(all.getPlayer(), "Global");
+                                    }
+                                    if (broadcastStarting && playerChannel.get(all).contains("Global")) {
+                                        all.sendMessage(String.format(prefix + chatmessages.get(95), "", ""));
+                                    }
+                                }
                             }
                         }
                         case PREPARING -> {
@@ -2205,6 +2231,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 if (countdown == 10) {
                                     for (Player all : pgPlayers) {
                                         all.setLevel(countdown);
+                                        all.playSound(all.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1, 1);
                                     }
                                     voteResults();
                                 }
@@ -2253,9 +2280,9 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 sign.update();
                             }
                             if (countdown != 0 && countdown != -1 && countdown != -4) {
-                                for (int setting = 1; setting < 27; setting++) {
-                                    if (arenadata.contains("pg.arenas." + setting)) {
-                                        String name = arenadata.getString("pg.arenas." + setting + ".world");
+                                for (int world = 1; world < 27; world++) {
+                                    if (arenadata.contains("pg.arenas." + world)) {
+                                        String name = arenadata.getString("pg.arenas." + world + ".world");
                                         assert name != null;
                                         worlds.add(name);
                                         Objects.requireNonNull(getServer().getWorld(name)).setPVP(false);
@@ -2281,6 +2308,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                                         if (compassOnSpawn) {
                                             all.getInventory().setItem(8, playercompass);
                                         }
+                                        all.playSound(all.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1, 1);
                                     }
                                     for (Player rich : richkidPlayers) {
                                         for (int i = 0; i < 5; i++) {
@@ -2297,9 +2325,9 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     }
                                     countdown--;
                                 } else if (countdown == 0) {
-                                    for (int setting = 1; setting < 27; setting++) {
-                                        if (arenadata.contains("pg.arenas." + setting)) {
-                                            String name = arenadata.getString("pg.arenas." + setting + ".world");
+                                    for (int world = 1; world < 27; world++) {
+                                        if (arenadata.contains("pg.arenas." + world)) {
+                                            String name = arenadata.getString("pg.arenas." + world + ".world");
                                             assert name != null;
                                             worlds.add(name);
                                             Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
@@ -2548,9 +2576,9 @@ public class PotionGames extends JavaPlugin implements Listener {
                                         }
                                     } else {
                                         if (reset == 10) {
-                                            for (int setting = 1; setting < 27; setting++) {
-                                                if (arenadata.contains("pg.arenas." + setting)) {
-                                                    String name = arenadata.getString("pg.arenas." + setting + ".world");
+                                            for (int world = 1; world < 27; world++) {
+                                                if (arenadata.contains("pg.arenas." + world)) {
+                                                    String name = arenadata.getString("pg.arenas." + world + ".world");
                                                     assert name != null;
                                                     worlds.add(name);
                                                     Objects.requireNonNull(getServer().getWorld(name)).setPVP(false);
@@ -2581,9 +2609,9 @@ public class PotionGames extends JavaPlugin implements Listener {
                                             }
                                             reset--;
                                         } else if (reset == 0) {
-                                            for (int setting = 1; setting < 27; setting++) {
-                                                if (arenadata.contains("pg.arenas." + setting)) {
-                                                    String name = arenadata.getString("pg.arenas." + setting + ".world");
+                                            for (int world = 1; world < 27; world++) {
+                                                if (arenadata.contains("pg.arenas." + world)) {
+                                                    String name = arenadata.getString("pg.arenas." + world + ".world");
                                                     assert name != null;
                                                     worlds.add(name);
                                                     Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
@@ -2636,17 +2664,17 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     for (int iii = 0; iii < rank.size(); iii++) {
                                         int id = iii + 1;
                                         Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                        skull.setOwningPlayer(sname);
+                                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                        skull.setOwningPlayer(name);
                                         skull.update();
                                     }
                                     for (int iii = 0; iii < rank.size(); iii++) {
                                         int id = iii + 1;
                                         BlockState b = ranksign.get(iii).getBlock().getState();
-                                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                                         Sign sign = (Sign) b;
                                         sign.setLine(0, chatmessages.get(33) + " #" + id);
-                                        sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                                        sign.setLine(1, Objects.requireNonNull(name.getName()));
                                         sign.setLine(2, "Wins: " + getWins(rank.get(id)));
                                         sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                                         sign.update();
@@ -2810,13 +2838,13 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 BlockData data = entry.getValue();
                                 loc.getBlock().setBlockData(data);
                             }
-                            for (int worldName = 1; worldName < 27; worldName++) {
-                                if (arenadata.contains("pg.arenas." + worldName)) {
-                                    String name = arenadata.getString("pg.arenas." + worldName + ".world");
+                            for (int world = 1; world < 27; world++) {
+                                if (arenadata.contains("pg.arenas." + world)) {
+                                    String name = arenadata.getString("pg.arenas." + world + ".world");
                                     assert name != null;
-                                    World world = getServer().getWorld(name);
-                                    assert world != null;
-                                    List<Entity> entList = world.getEntities();
+                                    World worldName = getServer().getWorld(name);
+                                    assert worldName != null;
+                                    List<Entity> entList = worldName.getEntities();
                                     for (Entity current : entList) {
                                         if (current instanceof Player) {
                                             break;
@@ -3136,6 +3164,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                 p.setCollidable(false);
                 p.sendMessage(prefix + ChatColor.GREEN + chatmessages.get(30) + " " + chatmessages.get(17));
             }
+            p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1, 1);
         } catch (Exception e) {
             Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(87));
             p.sendMessage(prefix + ChatColor.RED + chatmessages.get(87));
@@ -3190,24 +3219,25 @@ public class PotionGames extends JavaPlugin implements Listener {
             }
         }
         if (voted.contains(p.getName())) {
-            String arenaname = null;
+            String arenaName = null;
             for (int i = 0; i <= arenas.size(); i++) {
                 if (arenadata.contains("pg.arenas." + i)) {
                     if (voteplayernames.containsKey(p) && voteplayernames.containsValue(arenadata.getString("pg.arenas." + i + ".name"))) {
-                        arenaname = arenadata.getString("pg.arenas." + i + ".name");
+                        arenaName = arenadata.getString("pg.arenas." + i + ".name");
                     }
                 } else {
-                    arenaname = chatmessages.get(42);
+                    arenaName = chatmessages.get(42);
                 }
             }
-            voteplayernames.remove(p, arenaname);
-            votes.replace(arenaname, votes.get(arenaname) - 1);
+            voteplayernames.remove(p, arenaName);
+            votes.replace(arenaName, votes.get(arenaName) - 1);
             voted.remove(p.getName());
         }
         if (playerAmount == 0) {
             gamestate = GameStates.RESET;
         }
         p.sendMessage(prefix + ChatColor.GREEN + chatmessages.get(32));
+        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1, 1);
     }
 
     public void tickLobby(String s) {
@@ -3328,6 +3358,19 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 countdownLobby.replace(s, getConfig().getInt("pg.countdown"));
                             } else {
                                 lobbyStates.replace(s, GameStates.PREPARING);
+                                for (Player all : playerLobby.keySet()) {
+                                    if (playerLobby.get(all).equals(s)) {
+                                        all.playSound(all.getLocation(), Sound.ENTITY_ARROW_HIT, 1, 1);
+                                    }
+                                }
+                                for (Player all : Bukkit.getOnlinePlayers()) {
+                                    if (playerChannel.get(all) == null) {
+                                        joinChannel(all.getPlayer(), "Global");
+                                    }
+                                    if (broadcastStarting && playerChannel.get(all).contains("Global")) {
+                                        all.sendMessage(String.format(prefix + chatmessages.get(95), " " + s, " " + s));
+                                    }
+                                }
                             }
                         }
                         case PREPARING -> {
@@ -3382,6 +3425,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
                                             all.setLevel(countdownLobby.get(s));
+                                            all.playSound(all.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1, 1);
                                         }
                                     }
                                     voteResultsLobby(s);
@@ -3438,16 +3482,16 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 infoLobby.replace(s, sign.getLine(1) + ChatColor.WHITE + ", " + sign.getLine(2) + ChatColor.WHITE + ", " + sign.getLine(3));
                             }
                             if (countdownLobby.get(s) != 0 && countdownLobby.get(s) != -1 && countdownLobby.get(s) != -4) {
-                                for (int setting = 1; setting < 27; setting++) {
-                                    if (arenadata.contains("pg.lobbies." + s + "." + setting)) {
-                                        String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
-                                        assert wname != null;
-                                        worlds.add(wname);
-                                        Objects.requireNonNull(getServer().getWorld(wname)).setPVP(false);
+                                for (int world = 1; world < 27; world++) {
+                                    if (arenadata.contains("pg.lobbies." + s + "." + world)) {
+                                        String name = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
+                                        assert name != null;
+                                        worlds.add(name);
+                                        Objects.requireNonNull(getServer().getWorld(name)).setPVP(false);
                                         if (changeGamerules) {
-                                            setGameRules(wname);
-                                            Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.PEACEFUL);
-                                            Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, false);
+                                            setGameRules(name);
+                                            Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
+                                            Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
                                         }
                                     }
                                 }
@@ -3467,6 +3511,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                                             if (compassOnSpawn) {
                                                 all.getInventory().setItem(8, playercompass);
                                             }
+                                            all.playSound(all.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1, 1);
                                         }
                                     }
                                     for (Player rich : richkidPlayers) {
@@ -3488,16 +3533,16 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     }
                                     countdownLobby.replace(s, countdownLobby.get(s) - 1);
                                 } else if (countdownLobby.get(s) == 0) {
-                                    for (int setting = 1; setting < 27; setting++) {
-                                        if (arenadata.contains("pg.lobbies." + s + "." + setting)) {
-                                            String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
-                                            assert wname != null;
-                                            worlds.add(wname);
-                                            Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
+                                    for (int world = 1; world < 27; world++) {
+                                        if (arenadata.contains("pg.lobbies." + s + "." + world)) {
+                                            String name = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
+                                            assert name != null;
+                                            worlds.add(name);
+                                            Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
                                             if (changeGamerules) {
-                                                setGameRules(wname);
-                                                Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
-                                                Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                                setGameRules(name);
+                                                Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
+                                                Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                                             }
                                         }
                                     }
@@ -3505,7 +3550,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
                                             all.sendMessage(prefix + ChatColor.GREEN + chatmessages.get(3));
-                                            all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
+                                            all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1, 1);
                                             all.setGameMode(GameMode.SURVIVAL);
                                             countdownLobby.replace(s, -1);
                                         }
@@ -3843,16 +3888,16 @@ public class PotionGames extends JavaPlugin implements Listener {
                                         }
                                     } else {
                                         if (resetLobby.get(s) == 10) {
-                                            for (int setting = 1; setting < 27; setting++) {
-                                                if (arenadata.contains("pg.lobbies." + s + "." + setting)) {
-                                                    String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
-                                                    assert wname != null;
-                                                    worlds.add(wname);
-                                                    Objects.requireNonNull(getServer().getWorld(wname)).setPVP(false);
+                                            for (int world = 1; world < 27; world++) {
+                                                if (arenadata.contains("pg.lobbies." + s + "." + world)) {
+                                                    String name = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
+                                                    assert name != null;
+                                                    worlds.add(name);
+                                                    Objects.requireNonNull(getServer().getWorld(name)).setPVP(false);
                                                     if (changeGamerules) {
-                                                        setGameRules(wname);
-                                                        Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.PEACEFUL);
-                                                        Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, false);
+                                                        setGameRules(name);
+                                                        Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
+                                                        Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
                                                     }
                                                 }
                                             }
@@ -3884,16 +3929,16 @@ public class PotionGames extends JavaPlugin implements Listener {
                                             }
                                             resetLobby.put(s, resetLobby.get(s) - 1);
                                         } else if (resetLobby.get(s) == 0) {
-                                            for (int setting = 1; setting < 27; setting++) {
-                                                if (arenadata.contains("pg.lobbies." + s + "." + setting)) {
-                                                    String wname = arenadata.getString("pg.lobbies." + s + "." + setting + ".world");
-                                                    assert wname != null;
-                                                    worlds.add(wname);
-                                                    Objects.requireNonNull(getServer().getWorld(wname)).setPVP(true);
+                                            for (int world = 1; world < 27; world++) {
+                                                if (arenadata.contains("pg.lobbies." + s + "." + world)) {
+                                                    String name = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
+                                                    assert name != null;
+                                                    worlds.add(name);
+                                                    Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
                                                     if (changeGamerules) {
-                                                        setGameRules(wname);
-                                                        Objects.requireNonNull(getServer().getWorld(wname)).setDifficulty(Difficulty.EASY);
-                                                        Objects.requireNonNull(getServer().getWorld(wname)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                                        setGameRules(name);
+                                                        Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
+                                                        Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                                                     }
                                                 }
                                             }
@@ -3901,14 +3946,14 @@ public class PotionGames extends JavaPlugin implements Listener {
                                             for (Player all : playerLobby.keySet()) {
                                                 if (playerLobby.get(all).equals(s)) {
                                                     all.sendMessage(prefix + ChatColor.GREEN + chatmessages.get(84));
-                                                    all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
+                                                    all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1, 1);
                                                     all.setGameMode(GameMode.SURVIVAL);
                                                 }
                                             }
                                             for (Player all : specLobby.keySet()) {
                                                 if (specLobby.get(all).equals(s)) {
                                                     all.sendMessage(prefix + ChatColor.GREEN + chatmessages.get(84));
-                                                    all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1, 1);
+                                                    all.playSound(all.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 1, 1);
                                                 }
                                             }
                                             resetLobby.put(s, resetLobby.get(s) - 1);
@@ -3956,10 +4001,10 @@ public class PotionGames extends JavaPlugin implements Listener {
                                     for (int iii = 0; iii < rank.size(); iii++) {
                                         int id = iii + 1;
                                         BlockState b = ranksign.get(iii).getBlock().getState();
-                                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                                         Sign sign = (Sign) b;
                                         sign.setLine(0, chatmessages.get(33) + " #" + id);
-                                        sign.setLine(1, Objects.requireNonNull(sname.getName()));
+                                        sign.setLine(1, Objects.requireNonNull(name.getName()));
                                         sign.setLine(2, "Wins: " + getWins(rank.get(id)));
                                         sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                                         sign.update();
@@ -4110,9 +4155,9 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 lobbyVoteallowed.replace(s, true);
                                 HashMap<String, Integer> temp = new HashMap<>();
                                 temp.put(chatmessages.get(42), 0);
-                                for (int max = 1; max < 27; max++) {
-                                    if (arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
-                                        temp.put(arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
+                                for (int world = 1; world < 27; world++) {
+                                    if (arenadata.contains("pg.lobbies." + s + "." + world + ".name")) {
+                                        temp.put(arenadata.getString("pg.lobbies." + s + "." + world + ".name"), 0);
                                     }
                                 }
                                 lobbyvotes.replace(s, temp);
@@ -4150,13 +4195,13 @@ public class PotionGames extends JavaPlugin implements Listener {
                                 BlockData data = entry.getValue();
                                 loc.getBlock().setBlockData(data);
                             }
-                            for (int worldName = 1; worldName < 27; worldName++) {
-                                if (arenadata.contains("pg.lobbies." + s + "." + worldName)) {
-                                    String ename = arenadata.getString("pg.lobbies." + s + "." + worldName + ".world");
+                            for (int world = 1; world < 27; world++) {
+                                if (arenadata.contains("pg.lobbies." + s + "." + world)) {
+                                    String ename = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
                                     assert ename != null;
-                                    World world = getServer().getWorld(ename);
-                                    assert world != null;
-                                    List<Entity> entList = world.getEntities();
+                                    World worldName = getServer().getWorld(ename);
+                                    assert worldName != null;
+                                    List<Entity> entList = worldName.getEntities();
                                     for (Entity current : entList) {
                                         if (current instanceof Player) {
                                             break;
@@ -4509,6 +4554,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                 p.setCollidable(false);
                 p.sendMessage(prefix + ChatColor.GREEN + chatmessages.get(30) + " " + ChatColor.AQUA + s + " " + ChatColor.GREEN + chatmessages.get(17));
             }
+            p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1, 1);
         } catch (Exception e) {
             Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(87) + " Lobby: " + s);
             p.sendMessage(prefix + ChatColor.RED + chatmessages.get(87));
@@ -4570,22 +4616,23 @@ public class PotionGames extends JavaPlugin implements Listener {
                 }
             }
             if (lobbyVoted.containsKey(p)) {
-                String arenaname = null;
+                String arenaName = null;
                 for (int i = 1; i < 27; i++) {
                     if (lobbyvoteplayernames.get(s).containsKey(p) && lobbyvoteplayernames.get(s).containsValue(arenadata.getString("pg.lobbies." + s + "." + i + ".name"))) {
                         if (Objects.equals(lobbyvoteplayernames.get(s).get(p), arenadata.getString("pg.lobbies." + s + "." + i + ".name"))) {
-                            arenaname = arenadata.getString("pg.lobbies." + s + "." + i + ".name");
+                            arenaName = arenadata.getString("pg.lobbies." + s + "." + i + ".name");
                         }
                     }
                 }
-                lobbyvoteplayernames.get(s).remove(p, arenaname);
-                lobbyvotes.get(s).replace(arenaname, lobbyvotes.get(s).get(arenaname) - 1);
+                lobbyvoteplayernames.get(s).remove(p, arenaName);
+                lobbyvotes.get(s).replace(arenaName, lobbyvotes.get(s).get(arenaName) - 1);
                 lobbyVoted.remove(p, s);
             }
         } else {
             lobbyStates.replace(s, GameStates.RESET);
         }
         p.sendMessage(prefix + ChatColor.GREEN + chatmessages.get(32) + " " + ChatColor.AQUA + s);
+        p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1, 1);
     }
 
     public void connect() {
