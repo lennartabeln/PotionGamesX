@@ -143,14 +143,14 @@ public class Events implements Listener {
                             int arenaNumber = 1;
                             try {
                                 int i = 1;
-                                boolean arenaID = false;
-                                while (!arenaID) {
+                                boolean arenaId = false;
+                                while (!arenaId) {
                                     if (pg.arenadata.getString("pg.arenas." + i + ".name") == null) {
                                         i++;
                                     } else {
                                         if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
                                             arenaNumber = i;
-                                            arenaID = true;
+                                            arenaId = true;
                                         } else {
                                             i++;
                                         }
@@ -170,14 +170,14 @@ public class Events implements Listener {
                             int arenaNumber = 1;
                             try {
                                 int i = 1;
-                                boolean arenaID = false;
-                                while (!arenaID) {
+                                boolean arenaId = false;
+                                while (!arenaId) {
                                     if (pg.arenadata.getString("pg.lobbies." + lobby + "." + i + ".name") == null) {
                                         i++;
                                     } else {
                                         if (arena.matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
                                             arenaNumber = i;
-                                            arenaID = true;
+                                            arenaId = true;
                                         } else {
                                             i++;
                                         }
@@ -1233,7 +1233,6 @@ public class Events implements Listener {
                                 }
                             }
                             if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
@@ -1242,6 +1241,7 @@ public class Events implements Listener {
                                 randomlore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(pg.chatmessages.get(42)));
                                 randombarriermeta.setLore(randomlore);
                                 randombarrier.setItemMeta(randombarriermeta);
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (String all : pg.lobbyvotes.get(s).keySet()) {
@@ -1262,7 +1262,6 @@ public class Events implements Listener {
                             }
                         } else {
                             if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
@@ -1271,6 +1270,7 @@ public class Events implements Listener {
                                 randomlore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.votes.get(pg.chatmessages.get(42)));
                                 randombarriermeta.setLore(randomlore);
                                 randombarrier.setItemMeta(randombarriermeta);
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (String all : pg.arenas) {
@@ -1300,12 +1300,12 @@ public class Events implements Listener {
                                 }
                             }
                             if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
                                 randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 randombarrier.setItemMeta(randombarriermeta);
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (Integer all : pg.lobbyteams.get(s).keySet()) {
@@ -1329,12 +1329,12 @@ public class Events implements Listener {
                             }
                         } else {
                             if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
                                 randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 randombarrier.setItemMeta(randombarriermeta);
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (String all : pg.teams) {
@@ -1363,12 +1363,12 @@ public class Events implements Listener {
                             int ii = 1;
                             String s = Integer.toString(ii);
                             if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
                                 randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 randombarrier.setItemMeta(randombarriermeta);
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62));
                                 inv.setItem(0, randombarrier);
                                 for (int i = 1; i <= pg.getActiveKits(); i++) {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
@@ -1382,12 +1382,12 @@ public class Events implements Listener {
                             }
                         } else {
                             if (pg.getGamestate() == GameStates.WAITING || pg.getGamestate() == GameStates.PREPARING) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62));
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
                                 randombarriermeta.setDisplayName(pg.chatmessages.get(42));
                                 randombarrier.setItemMeta(randombarriermeta);
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62));
                                 inv.setItem(0, randombarrier);
                                 for (int i = 1; i <= pg.getActiveKits(); i++) {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
@@ -2608,5 +2608,4 @@ public class Events implements Listener {
             }
         }
     }
-
 }

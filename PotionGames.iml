@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="CheckStyle-IDEA-Module">
+    <option name="configuration">
+      <map />
+    </option>
+  </component>
   <component name="EclipseModuleManager">
     <libelement value="jar://$USER_HOME$/Desktop/Ablage/BuildTools/API/spigot-api-1.15.2-R0.1-SNAPSHOT-shaded.jar!/" />
     <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-bridge.jar!/" />

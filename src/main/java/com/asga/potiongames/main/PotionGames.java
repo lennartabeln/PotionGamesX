@@ -198,8 +198,8 @@ public class PotionGames extends JavaPlugin implements Listener {
     private boolean activateKits = false;
     private boolean activateShop = false;
     private boolean tickStarted = false;
-    private boolean activateMySQL = false;
-    private boolean mySQL = false;
+    private boolean activateMysql = false;
+    private boolean mysql = false;
     private boolean lobbySystem = false;
     private boolean gameServer = true;
     private boolean addlobby = false;
@@ -220,6 +220,10 @@ public class PotionGames extends JavaPlugin implements Listener {
     private boolean broadcastStarting = false;
     private Connection con;
     private Statement st;
+
+    public static Economy getEconomy() {
+        return econ;
+    }
 
     @Override
     public void onEnable() {
@@ -490,11 +494,11 @@ public class PotionGames extends JavaPlugin implements Listener {
         shopcost.add(4);
         shopsale.add(2);
         if (getConfig().get("pg.activateMySQL") == null) {
-            getConfig().addDefault("pg.activateMySQL", activateMySQL);
+            getConfig().addDefault("pg.activateMySQL", activateMysql);
             getConfig().options().copyDefaults(true);
             saveConfig();
         } else {
-            activateMySQL = getConfig().getBoolean("pg.activateMySQL");
+            activateMysql = getConfig().getBoolean("pg.activateMySQL");
         }
         if (getConfig().get("pg.countdown") == null) {
             getConfig().addDefault("pg.countdown", countdown);
@@ -947,7 +951,7 @@ public class PotionGames extends JavaPlugin implements Listener {
         } else {
             hubStats();
         }
-        if (activateMySQL && !mySQL) {
+        if (activateMysql && !mysql) {
             Bukkit.getPluginManager().disablePlugin(this);
         } else {
             getServer().getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chatmessages.get(40));
@@ -1002,19 +1006,23 @@ public class PotionGames extends JavaPlugin implements Listener {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
             }
         }
-        @SuppressWarnings("unused")
-        Metrics metrics = new Metrics(this, 12027);
+        try {
+            @SuppressWarnings("unused")
+            Metrics metrics = new Metrics(this, 12027);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onReload() {
         Bukkit.getScheduler().cancelTasks(this);
         reloadConfig();
         if (getConfig().get("pg.activateMySQL") == null) {
-            getConfig().addDefault("pg.activateMySQL", activateMySQL);
+            getConfig().addDefault("pg.activateMySQL", activateMysql);
             getConfig().options().copyDefaults(true);
             saveConfig();
         } else {
-            activateMySQL = getConfig().getBoolean("pg.activateMySQL");
+            activateMysql = getConfig().getBoolean("pg.activateMySQL");
         }
         if (getConfig().get("pg.countdown") == null) {
             getConfig().addDefault("pg.countdown", countdown);
@@ -1862,13 +1870,13 @@ public class PotionGames extends JavaPlugin implements Listener {
                 chestitem++;
             }
         }
-        ItemStack example = new ItemStack(Material.BOW, 3);
         ItemMeta examplemeta = itemStack.getItemMeta();
         assert examplemeta != null;
         examplemeta.setDisplayName(ChatColor.RED + "EXAMPLE");
         if (examplemeta instanceof Damageable) {
             ((Damageable) examplemeta).setDamage(60);
         }
+        ItemStack example = new ItemStack(Material.BOW, 3);
         example.setItemMeta(examplemeta);
         example.addEnchantment(Enchantment.ARROW_FIRE, 1);
         if (chestdata.get("pg.customchests." + 1) == null) {
@@ -3076,13 +3084,13 @@ public class PotionGames extends JavaPlugin implements Listener {
                 p.setScoreboard(temp);
             }
             joinChannel(p.getPlayer(), "Local");
-            PlayerInventory inventory = p.getInventory();
             inv.put(p.getName(), p.getInventory().getContents());
             armor.put(p.getName(), p.getInventory().getArmorContents());
             lvl.put(p.getName(), p.getLevel());
             exp.put(p.getName(), p.getExp());
             loc.put(p.getName(), p.getLocation());
             gm.put(p.getName(), p.getGameMode());
+            PlayerInventory inventory = p.getInventory();
             inventory.clear();
             inventory.setHelmet(null);
             inventory.setChestplate(null);
@@ -4466,13 +4474,13 @@ public class PotionGames extends JavaPlugin implements Listener {
                 p.setScoreboard(temp);
             }
             joinChannel(p.getPlayer(), "Local");
-            PlayerInventory inventory = p.getInventory();
             inv.put(p.getName(), p.getInventory().getContents());
             armor.put(p.getName(), p.getInventory().getArmorContents());
             lvl.put(p.getName(), p.getLevel());
             exp.put(p.getName(), p.getExp());
             loc.put(p.getName(), p.getLocation());
             gm.put(p.getName(), p.getGameMode());
+            PlayerInventory inventory = p.getInventory();
             inventory.clear();
             inventory.setHelmet(null);
             inventory.setChestplate(null);
@@ -4636,14 +4644,14 @@ public class PotionGames extends JavaPlugin implements Listener {
     }
 
     public void connect() {
-        if (activateMySQL) {
+        if (activateMysql) {
             try {
                 con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chatmessages.get(36));
-                mySQL = true;
+                mysql = true;
             } catch (SQLException e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
-                mySQL = false;
+                mysql = false;
             }
         } else {
             con = null;
@@ -4671,7 +4679,7 @@ public class PotionGames extends JavaPlugin implements Listener {
     }
 
     public void update(String qry) {
-        if (activateMySQL) {
+        if (activateMysql) {
             if (con != null) {
                 try {
                     st = con.createStatement();
@@ -4692,7 +4700,7 @@ public class PotionGames extends JavaPlugin implements Listener {
     }
 
     public ResultSet query(String qry) {
-        if (activateMySQL) {
+        if (activateMysql) {
             if (con != null) {
                 ResultSet rs = null;
                 try {
@@ -4965,10 +4973,6 @@ public class PotionGames extends JavaPlugin implements Listener {
         return channels.get(channelName);
     }
 
-    public static Economy getEconomy() {
-        return econ;
-    }
-
     public ItemStack getCoin() {
         return coin;
     }
@@ -5128,5 +5132,4 @@ public class PotionGames extends JavaPlugin implements Listener {
     public void setDelarena(boolean delarena) {
         this.delarena = delarena;
     }
-
 }

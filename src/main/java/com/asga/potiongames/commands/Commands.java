@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public record Commands(PotionGames pg) implements CommandExecutor {
-
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         Player p = (Player) sender;
@@ -198,13 +197,13 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                 } else if (args[0].equalsIgnoreCase("setup")) {
                     if (p.hasPermission("pg.setup")) {
                         pg.setupPlayer.add(p);
-                        PlayerInventory inventory = p.getInventory();
                         pg.inv.put(p.getName(), p.getInventory().getContents());
                         pg.armor.put(p.getName(), p.getInventory().getArmorContents());
                         pg.lvl.put(p.getName(), p.getLevel());
                         pg.exp.put(p.getName(), p.getExp());
                         pg.loc.put(p.getName(), p.getLocation());
                         pg.gm.put(p.getName(), p.getGameMode());
+                        PlayerInventory inventory = p.getInventory();
                         inventory.clear();
                         inventory.setHelmet(null);
                         inventory.setChestplate(null);
@@ -632,14 +631,14 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int arenaNumber = 1;
                             try {
                                 int i = 1;
-                                boolean arenaID = false;
-                                while (!arenaID) {
+                                boolean arenaId = false;
+                                while (!arenaId) {
                                     if (pg.arenadata.getString("pg.arenas." + i + ".name") == null) {
                                         i++;
                                     } else {
                                         if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
                                             arenaNumber = i;
-                                            arenaID = true;
+                                            arenaId = true;
                                         } else {
                                             i++;
                                         }
@@ -829,14 +828,14 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int arenaNumber = 1;
                             try {
                                 int i = 1;
-                                boolean arenaID = false;
-                                while (!arenaID) {
+                                boolean arenaId = false;
+                                while (!arenaId) {
                                     if (pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name") == null) {
                                         i++;
                                     } else {
                                         if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
                                             arenaNumber = i;
-                                            arenaID = true;
+                                            arenaId = true;
                                         } else {
                                             i++;
                                         }
@@ -1062,5 +1061,4 @@ public record Commands(PotionGames pg) implements CommandExecutor {
         }
         return false;
     }
-
 }
