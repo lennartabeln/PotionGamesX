@@ -9,6 +9,7 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -817,7 +818,7 @@ public class Events implements Listener {
                                             int slot = rnd.nextInt(27);
                                             int roll = rnd.nextInt(100);
                                             if (roll < 20) {
-                                                if (pg.isActivateShop()) {
+                                                if (pg.lobbyActivateShop.get(s)) {
                                                     ArrayList<ItemStack> potions1 = new ArrayList<>();
                                                     potions1.add(new ItemStack(Material.GLASS_BOTTLE, 1));
                                                     ArrayList<ItemStack> potions2 = new ArrayList<>();
@@ -967,8 +968,12 @@ public class Events implements Listener {
                             if (e.getClickedBlock().getType().toString().equals(Objects.requireNonNull(pg.chestdata.get("pg.customchests." + chestnumber + ".chesttype")).toString())) {
                                 if (pg.chestdata.getBoolean("pg.customchests." + chestnumber + ".activate")) {
                                     if (pg.isLobbySystem()) {
-                                        int i = 1;
-                                        String s = Integer.toString(i);
+                                        String s = null;
+                                        for (int ii = 1; ii <= 27; ii++) {
+                                            if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                                s = Integer.toString(ii);
+                                            }
+                                        }
                                         if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                             if (!pg.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                                 Inventory inv;
@@ -1004,11 +1009,15 @@ public class Events implements Listener {
                             }
                             chestnumber++;
                         }
-                        if (pg.isActivateShop()) {
-                            if ((e.getClickedBlock()).getType().toString().equals(Objects.requireNonNull(pg.chestdata.get("pg.chestblocks.shop")).toString())) {
-                                if (pg.isLobbySystem()) {
-                                    int ii = 1;
-                                    String s = Integer.toString(ii);
+                        if ((e.getClickedBlock()).getType().toString().equals(Objects.requireNonNull(pg.chestdata.get("pg.chestblocks.shop")).toString())) {
+                            if (pg.isLobbySystem()) {
+                                String s = null;
+                                for (int ii = 1; ii <= 27; ii++) {
+                                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                        s = Integer.toString(ii);
+                                    }
+                                }
+                                if (pg.lobbyActivateShop.get(s)) {
                                     if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                         for (ItemStack item : p.getInventory().getContents()) {
                                             if (item != null) {
@@ -1046,7 +1055,9 @@ public class Events implements Listener {
                                         }
                                     }
                                     p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
-                                } else {
+                                }
+                            } else {
+                                if (pg.isActivateShop()) {
                                     if (pg.getGamestate() == GameStates.INGAME) {
                                         for (ItemStack item : p.getInventory().getContents()) {
                                             if (item != null) {
@@ -1155,10 +1166,68 @@ public class Events implements Listener {
                                 }
                             }
                         }
+                        if (p.getInventory().getItemInMainHand().getType() == Material.REDSTONE_TORCH) {
+                            if (pg.isLobbySystem()) {
+                                String s = null;
+                                for (int ii = 1; ii <= 27; ii++) {
+                                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                        s = Integer.toString(ii);
+                                    }
+                                }
+                                if (pg.lobbyActivateAirdrops.get(s)) {
+                                    if (pg.lobbyStates.get(s) == GameStates.INGAME) {
+                                        boolean blocked = false;
+                                        Location loc = p.getEyeLocation().add(0, 1, 0);
+                                        while (loc.getY() < 256) {
+                                            if (loc.getBlock().getType() != Material.AIR) {
+                                                p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(96));
+                                                blocked = true;
+                                                break;
+                                            }
+                                            loc.add(0, 1, 0);
+                                        }
+                                        if (!blocked) {
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(97));
+                                            BlockData b = Material.DRIED_KELP_BLOCK.createBlockData();
+                                            p.getWorld().spawnFallingBlock(new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() + 100, p.getLocation().getZ()), b);
+                                            pg.lobbyPlacedBlocksData.put(p.getLocation(), b.getMaterial());
+                                            pg.lobbyPlacedBlocks.put(s, pg.lobbyPlacedBlocksData);
+                                            p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
+                                        }
+                                    }
+                                }
+                            } else {
+                                if (pg.isActivateAirdrops()) {
+                                    if (pg.getGamestate() == GameStates.INGAME) {
+                                        boolean blocked = false;
+                                        Location loc = p.getEyeLocation().add(0, 1, 0);
+                                        while (loc.getY() < 256) {
+                                            if (loc.getBlock().getType() != Material.AIR) {
+                                                p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(96));
+                                                blocked = true;
+                                                break;
+                                            }
+                                            loc.add(0, 1, 0);
+                                        }
+                                        if (!blocked) {
+                                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(97));
+                                            BlockData b = Material.DRIED_KELP_BLOCK.createBlockData();
+                                            p.getWorld().spawnFallingBlock(new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() + 100, p.getLocation().getZ()), b);
+                                            pg.placedBlocks.put(p.getLocation(), b.getMaterial());
+                                            p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         if (p.getInventory().getItemInMainHand().getType() == Material.MILK_BUCKET) {
                             if (pg.isLobbySystem()) {
-                                int i = 1;
-                                String s = Integer.toString(i);
+                                String s = null;
+                                for (int ii = 1; ii <= 27; ii++) {
+                                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                        s = Integer.toString(ii);
+                                    }
+                                }
                                 if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                     pg.clearEffects(p);
                                     p.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
@@ -1172,8 +1241,12 @@ public class Events implements Listener {
                         }
                         if (p.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
                             if (pg.isLobbySystem()) {
-                                int i = 1;
-                                String s = Integer.toString(i);
+                                String s = null;
+                                for (int ii = 1; ii <= 27; ii++) {
+                                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                        s = Integer.toString(ii);
+                                    }
+                                }
                                 if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                     Player result = null;
                                     double lastDistance = Double.MAX_VALUE;
@@ -1360,8 +1433,12 @@ public class Events implements Listener {
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.ENDER_CHEST) {
                         if (pg.isLobbySystem()) {
-                            int ii = 1;
-                            String s = Integer.toString(ii);
+                            String s = null;
+                            for (int ii = 1; ii <= 27; ii++) {
+                                if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    s = Integer.toString(ii);
+                                }
+                            }
                             if (pg.lobbyStates.get(s) == GameStates.WAITING || pg.lobbyStates.get(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();

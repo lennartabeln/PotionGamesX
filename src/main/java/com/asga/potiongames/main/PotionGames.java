@@ -120,6 +120,7 @@ public class PotionGames extends JavaPlugin implements Listener {
     public final HashMap<String, Boolean> lobbyActivateTeams = new HashMap<>();
     public final HashMap<String, Boolean> lobbyActivateKits = new HashMap<>();
     public final HashMap<String, Boolean> lobbyActivateShop = new HashMap<>();
+    public final HashMap<String, Boolean> lobbyActivateAirdrops = new HashMap<>();
     public final HashMap<String, Boolean> lobbyCheckArenas = new HashMap<>();
     public final HashMap<String, Boolean> lobbySingleArena = new HashMap<>();
     public final HashMap<String, String> lobbyVote = new HashMap<>();
@@ -194,9 +195,10 @@ public class PotionGames extends JavaPlugin implements Listener {
     private boolean kitallowed = false;
     private boolean forcearena = false;
     private boolean startOnJoin = false;
-    private boolean activateTeams = false;
-    private boolean activateKits = false;
-    private boolean activateShop = false;
+    private boolean activateTeams = true;
+    private boolean activateKits = true;
+    private boolean activateShop = true;
+    private boolean activateAirdrops = true;
     private boolean tickStarted = false;
     private boolean activateMysql = false;
     private boolean mysql = false;
@@ -331,6 +333,8 @@ public class PotionGames extends JavaPlugin implements Listener {
         chatmessages.add("For winning the round you get");
         chatmessages.add("For killing a player you get");
         chatmessages.add("Lobby%s is starting! Join with /pg join%s");
+        chatmessages.add("You have a block above you!");
+        chatmessages.add("Airdrop is falling at your location!");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
@@ -555,6 +559,13 @@ public class PotionGames extends JavaPlugin implements Listener {
             saveConfig();
         } else {
             activateShop = getConfig().getBoolean("pg.activateShop");
+        }
+        if (getConfig().get("pg.activateAirdrops") == null) {
+            getConfig().addDefault("pg.activateAirdrops", activateAirdrops);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateAirdrops = getConfig().getBoolean("pg.activateAirdrops");
         }
         if (getConfig().get("pg.lobbySystem") == null) {
             getConfig().addDefault("pg.lobbySystem", lobbySystem);
@@ -805,6 +816,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                         lobbyActivateTeams.put(s, true);
                         lobbyActivateKits.put(s, true);
                         lobbyActivateShop.put(s, true);
+                        lobbyActivateAirdrops.put(s, true);
                         lobbyJoinable.put(s, true);
                         lobbyForcearena.put(s, false);
                         lobbyDeathmatch.put(s, false);
@@ -859,6 +871,17 @@ public class PotionGames extends JavaPlugin implements Listener {
                             }
                         } else {
                             lobbyActivateShop.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateShop"));
+                        }
+                        if (arenadata.get("pg.lobbies." + s + ".activateAirdrops") == null) {
+                            arenadata.addDefault("pg.lobbies." + s + ".activateAirdrops", activateAirdrops);
+                            arenadata.options().copyDefaults(true);
+                            try {
+                                arenadata.save(arenadatafile);
+                            } catch (IOException e) {
+                                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
+                            }
+                        } else {
+                            lobbyActivateAirdrops.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateAirdrops"));
                         }
                         if (arenadata.get("pg.lobbies." + s + ".teamSize") == null) {
                             arenadata.addDefault("pg.lobbies." + s + ".teamSize", teamSize);
@@ -1079,6 +1102,13 @@ public class PotionGames extends JavaPlugin implements Listener {
             saveConfig();
         } else {
             activateShop = getConfig().getBoolean("pg.activateShop");
+        }
+        if (getConfig().get("pg.activateAirdrops") == null) {
+            getConfig().addDefault("pg.activateAirdrops", activateAirdrops);
+            getConfig().options().copyDefaults(true);
+            saveConfig();
+        } else {
+            activateAirdrops = getConfig().getBoolean("pg.activateAirdrops");
         }
         if (getConfig().get("pg.lobbySystem") == null) {
             getConfig().addDefault("pg.lobbySystem", lobbySystem);
@@ -1331,6 +1361,7 @@ public class PotionGames extends JavaPlugin implements Listener {
                         lobbyActivateTeams.put(s, true);
                         lobbyActivateKits.put(s, true);
                         lobbyActivateShop.put(s, true);
+                        lobbyActivateAirdrops.put(s, true);
                         lobbyJoinable.put(s, true);
                         lobbyForcearena.put(s, false);
                         lobbyDeathmatch.put(s, false);
@@ -1385,6 +1416,17 @@ public class PotionGames extends JavaPlugin implements Listener {
                             }
                         } else {
                             lobbyActivateShop.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateShop"));
+                        }
+                        if (arenadata.get("pg.lobbies." + s + ".activateAirdrops") == null) {
+                            arenadata.addDefault("pg.lobbies." + s + ".activateAirdrops", activateAirdrops);
+                            arenadata.options().copyDefaults(true);
+                            try {
+                                arenadata.save(arenadatafile);
+                            } catch (IOException e) {
+                                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
+                            }
+                        } else {
+                            lobbyActivateAirdrops.replace(s, arenadata.getBoolean("pg.lobbies." + s + ".activateAirdrops"));
                         }
                         if (arenadata.get("pg.lobbies." + s + ".teamSize") == null) {
                             arenadata.addDefault("pg.lobbies." + s + ".teamSize", teamSize);
@@ -1707,6 +1749,7 @@ public class PotionGames extends JavaPlugin implements Listener {
         itemMeta3.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(2));
         itemStack3.setItemMeta(itemMeta3);
         weapons2.add(itemStack3);
+        weapons2.add(new ItemStack(Material.REDSTONE_TORCH, 1));
         potions.add(new PotionEffect(PotionEffectType.SPEED, 40 * 20, 2));
         potions.add(new PotionEffect(PotionEffectType.SLOW, 40 * 20, 0));
         potions.add(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 40 * 20, 0));
@@ -1919,6 +1962,24 @@ public class PotionGames extends JavaPlugin implements Listener {
             chestdata.addDefault("pg.customchests." + 3 + "." + 1 + ".item", ingot);
             chestdata.addDefault("pg.customchests." + 3 + "." + 2 + ".slot", 7);
             chestdata.addDefault("pg.customchests." + 3 + "." + 2 + ".item", ingot);
+            chestdata.options().copyDefaults(true);
+        }
+        if (chestdata.get("pg.customchests." + 4) == null) {
+            chestdata.addDefault("pg.customchests." + 4 + ".activate", true);
+            chestdata.addDefault("pg.customchests." + 4 + ".chesttype", Material.DRIED_KELP_BLOCK.toString());
+            chestdata.addDefault("pg.customchests." + 4 + ".chestsize", 9);
+            chestdata.addDefault("pg.customchests." + 4 + "." + 1 + ".slot", 2);
+            chestdata.addDefault("pg.customchests." + 4 + "." + 1 + ".item", new ItemStack(Material.SHIELD));
+            chestdata.addDefault("pg.customchests." + 4 + "." + 2 + ".slot", 3);
+            chestdata.addDefault("pg.customchests." + 4 + "." + 2 + ".item", new ItemStack(Material.DIAMOND_SWORD));
+            chestdata.addDefault("pg.customchests." + 4 + "." + 3 + ".slot", 5);
+            chestdata.addDefault("pg.customchests." + 4 + "." + 3 + ".item", new ItemStack(Material.DIAMOND_HELMET));
+            chestdata.addDefault("pg.customchests." + 4 + "." + 4 + ".slot", 6);
+            chestdata.addDefault("pg.customchests." + 4 + "." + 4 + ".item", new ItemStack(Material.DIAMOND_CHESTPLATE));
+            chestdata.addDefault("pg.customchests." + 4 + "." + 5 + ".slot", 7);
+            chestdata.addDefault("pg.customchests." + 4 + "." + 5 + ".item", new ItemStack(Material.DIAMOND_LEGGINGS));
+            chestdata.addDefault("pg.customchests." + 4 + "." + 6 + ".slot", 8);
+            chestdata.addDefault("pg.customchests." + 4 + "." + 6 + ".item", new ItemStack(Material.DIAMOND_BOOTS));
             chestdata.options().copyDefaults(true);
         }
         if (chestdata.get("pg.chestblocks.normal") == null) {
@@ -5059,6 +5120,10 @@ public class PotionGames extends JavaPlugin implements Listener {
 
     public boolean isActivateShop() {
         return activateShop;
+    }
+
+    public boolean isActivateAirdrops() {
+        return activateAirdrops;
     }
 
     public boolean isLobbySystem() {
