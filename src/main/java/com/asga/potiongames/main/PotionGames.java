@@ -335,6 +335,7 @@ public class PotionGames extends JavaPlugin implements Listener {
         chatmessages.add("Lobby%s is starting! Join with /pg join%s");
         chatmessages.add("You have a block above you!");
         chatmessages.add("Airdrop is falling at your location!");
+        chatmessages.add("Airdrop is falling at");
         shop.add("JUMP");
         shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));

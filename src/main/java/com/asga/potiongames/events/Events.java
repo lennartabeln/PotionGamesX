@@ -1187,6 +1187,11 @@ public class Events implements Listener {
                                             loc.add(0, 1, 0);
                                         }
                                         if (!blocked) {
+                                            for (Player all : pg.playerLobby.keySet()) {
+                                                if (pg.playerLobby.get(all).equals(s)) {
+                                                    all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(98) + ": " + ChatColor.AQUA + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ());
+                                                }
+                                            }
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(97));
                                             BlockData b = Material.DRIED_KELP_BLOCK.createBlockData();
                                             p.getWorld().spawnFallingBlock(new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() + 100, p.getLocation().getZ()), b);
@@ -1210,6 +1215,9 @@ public class Events implements Listener {
                                             loc.add(0, 1, 0);
                                         }
                                         if (!blocked) {
+                                            for (Player all : pg.pgPlayers) {
+                                                all.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(98) + ": " + ChatColor.AQUA + p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ());
+                                            }
                                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(97));
                                             BlockData b = Material.DRIED_KELP_BLOCK.createBlockData();
                                             p.getWorld().spawnFallingBlock(new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() + 100, p.getLocation().getZ()), b);
