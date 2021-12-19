@@ -1178,7 +1178,7 @@ public class Events implements Listener {
                                     if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                         boolean blocked = false;
                                         Location loc = p.getEyeLocation().add(0, 1, 0);
-                                        while (loc.getY() < 256) {
+                                        while (loc.getY() <= 320) {
                                             if (loc.getBlock().getType() != Material.AIR) {
                                                 p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(96));
                                                 blocked = true;
