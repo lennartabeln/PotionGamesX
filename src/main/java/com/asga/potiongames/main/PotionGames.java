@@ -4786,7 +4786,11 @@ public class PotionGames extends JavaPlugin implements Listener {
 
     public void ConnectMySQL() {
         if (con != null) {
-            update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSSES int, KILLS int, DEATHS int, KD double);");
+            try {
+                update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSSES int, KILLS int, DEATHS int, KD double);");
+            } catch (Exception e) {
+                update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSTS int, KILLS int, DEATHS int, KD double);");
+            }
         }
     }
 
@@ -4805,7 +4809,11 @@ public class PotionGames extends JavaPlugin implements Listener {
 
     public void createPlayer(String uuid) {
         if (!playerExists(uuid)) {
-            update("INSERT INTO Stats(UUID, ROUNDS, WINS, LOSSES, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0', '0');");
+            try {
+                update("INSERT INTO Stats(UUID, ROUNDS, WINS, LOSSES, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0', '0');");
+            } catch (Exception e) {
+                update("INSERT INTO Stats(UUID, ROUNDS, WINS, LOSTS, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0', '0');");
+            }
         }
     }
 
@@ -4891,10 +4899,18 @@ public class PotionGames extends JavaPlugin implements Listener {
             try {
                 ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
                 if ((rs.next())) {
-                    rs.getInt("LOSSES");
+                    try {
+                        rs.getInt("LOSSES");
+                    } catch (Exception e) {
+                        rs.getInt("LOSTS");
+                    }
                 }
-                i = rs.getInt("LOSSES");
-            } catch (SQLException e) {
+                try {
+                    i = rs.getInt("LOSSES");
+                } catch (Exception e) {
+                    i = rs.getInt("LOSTS");
+                }
+            } catch (Exception e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
             }
         } else {
@@ -4971,7 +4987,11 @@ public class PotionGames extends JavaPlugin implements Listener {
 
     public void setLosses(String uuid, int losses) {
         if (playerExists(uuid)) {
-            update("UPDATE Stats SET LOSSES= '" + losses + "' WHERE UUID= '" + uuid + "';");
+            try {
+                update("UPDATE Stats SET LOSSES= '" + losses + "' WHERE UUID= '" + uuid + "';");
+            } catch (Exception e) {
+                update("UPDATE Stats SET LOSTS= '" + losses + "' WHERE UUID= '" + uuid + "';");
+            }
         } else {
             createPlayer(uuid);
             setLosses(uuid, losses);
