@@ -23,7 +23,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -45,7 +44,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-public class PotionGames extends JavaPlugin implements Listener {
+public class PotionGames extends JavaPlugin {
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
     public final ArrayList<String> worlds = new ArrayList<>();
