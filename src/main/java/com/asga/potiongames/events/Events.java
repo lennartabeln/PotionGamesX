@@ -3,8 +3,8 @@ package com.asga.potiongames.events;
 import com.asga.potiongames.gamestates.GameStates;
 import com.asga.potiongames.main.PotionGames;
 import com.asga.potiongames.updatechecker.UpdateChecker;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -45,12 +45,12 @@ public record Events(PotionGames pg) implements Listener {
     private static String arena;
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent e) {
+    public void onChat(AsyncChatEvent e) {
         Player p = e.getPlayer();
         if (pg.isGameServer()) {
             if (pg.setupPlayer.contains(p)) {
                 if (pg.isAddlobby()) {
-                    lobby = e.getMessage();
+                    lobby = e.message().toString();
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (pg.isLobbySystem()) {
@@ -75,7 +75,7 @@ public record Events(PotionGames pg) implements Listener {
                     pg.setup(p);
                 }
                 if (pg.isAddarena()) {
-                    arena = e.getMessage();
+                    arena = e.message().toString();
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (!pg.isLobbySystem()) {
@@ -115,7 +115,7 @@ public record Events(PotionGames pg) implements Listener {
                     pg.setup(p);
                 }
                 if (pg.isDellobby()) {
-                    lobby = e.getMessage();
+                    lobby = e.message().toString();
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (pg.isLobbySystem()) {
@@ -132,7 +132,7 @@ public record Events(PotionGames pg) implements Listener {
                     pg.setup(p);
                 }
                 if (pg.isDelarena()) {
-                    arena = e.getMessage();
+                    arena = e.message().toString();
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (!pg.isLobbySystem()) {
@@ -197,7 +197,7 @@ public record Events(PotionGames pg) implements Listener {
             }
             if (pg.playerChannel.get(p).equals("Local") && pg.playerChannel.get(p) != null && !pg.setupPlayer.contains(p)) {
                 if (!pg.isAllowOutsideChat()) {
-                    e.getRecipients().clear();
+                    e.viewers().clear();
                     if (pg.isLobbySystem()) {
                         String s = null;
                         for (int ii = 1; ii <= 27; ii++) {
@@ -207,27 +207,27 @@ public record Events(PotionGames pg) implements Listener {
                         }
                         pg.playerLobby.keySet().forEach(ent -> {
                             if (ent != null) {
-                                e.getRecipients().add(ent);
+                                e.viewers().add(ent);
                             }
                         });
                         pg.specLobby.keySet().forEach(ent -> {
                             if (ent != null) {
-                                e.getRecipients().add(ent);
+                                e.viewers().add(ent);
                             }
                         });
-                        e.getRecipients().add(p);
-                        String message = ChatColor.WHITE + e.getMessage();
+                        e.viewers().add(p);
+                        String message = ChatColor.WHITE + e.message().toString();
                         if (!p.hasPermission("pg.admin")) {
                             if (pg.playerLobby.containsKey(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.playerLobby.keySet()) {
                                     if (pg.playerLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + p.displayName() + ": " + message);
                                     }
                                 }
                                 for (Player pgchat : pg.specLobby.keySet()) {
                                     if (pg.specLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + p.displayName() + ": " + message);
                                     }
                                 }
                             } else if (pg.specLobby.containsKey(p)) {
@@ -238,24 +238,24 @@ public record Events(PotionGames pg) implements Listener {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.playerLobby.keySet()) {
                                     if (pg.playerLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
                                     }
                                 }
                                 for (Player pgchat : pg.specLobby.keySet()) {
                                     if (pg.specLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
                                     }
                                 }
                             } else if (pg.specPlayers.contains(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.playerLobby.keySet()) {
                                     if (pg.playerLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
                                     }
                                 }
                                 for (Player pgchat : pg.specLobby.keySet()) {
                                     if (pg.specLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
                                     }
                                 }
                             }
@@ -263,24 +263,24 @@ public record Events(PotionGames pg) implements Listener {
                     } else {
                         pg.pgPlayers.forEach(ent -> {
                             if (ent != null) {
-                                e.getRecipients().add(ent);
+                                e.viewers().add(ent);
                             }
                         });
                         pg.specPlayers.forEach(ent -> {
                             if (ent != null) {
-                                e.getRecipients().add(ent);
+                                e.viewers().add(ent);
                             }
                         });
-                        e.getRecipients().add(p);
-                        String message = ChatColor.WHITE + e.getMessage();
+                        e.viewers().add(p);
+                        String message = ChatColor.WHITE + e.message().toString();
                         if (!p.hasPermission("pg.admin")) {
                             if (pg.pgPlayers.contains(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.pgPlayers) {
-                                    pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + p.displayName() + ": " + message);
                                 }
                                 for (Player pgchat : pg.specPlayers) {
-                                    pgchat.sendMessage(pg.prefix + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + p.displayName() + ": " + message);
                                 }
                             } else if (pg.specPlayers.contains(p)) {
                                 e.setCancelled(true);
@@ -289,24 +289,24 @@ public record Events(PotionGames pg) implements Listener {
                             if (pg.pgPlayers.contains(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.pgPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
                                 }
                                 for (Player pgchat : pg.specPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
                                 }
                             } else if (pg.specPlayers.contains(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.pgPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
                                 }
                                 for (Player pgchat : pg.specPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.getDisplayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
                                 }
                             }
                         }
                     }
                 }
-                pg.getChannel(p).forEach(player -> e.getRecipients().add(player));
+                pg.getChannel(p).forEach(player -> e.viewers().add(player));
             }
         }
     }
@@ -547,11 +547,11 @@ public record Events(PotionGames pg) implements Listener {
                                     }
                                 }
                                 if (pg.isActivateScoreboard()) {
-                                    String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).getPrefix();
+                                    String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).prefix().toString();
                                     tempString = ChatColor.stripColor(tempString);
                                     int tempInt = Integer.parseInt(tempString);
                                     tempInt++;
-                                    Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills")).setPrefix("" + ChatColor.DARK_AQUA + tempInt);
+                                    Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills")).prefix(Component.text("" + ChatColor.DARK_AQUA + tempInt));
                                 }
                             } else {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
@@ -612,7 +612,7 @@ public record Events(PotionGames pg) implements Listener {
                                             all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                         }
                                     }
-                                    e.setDeathMessage(null);
+                                    e.deathMessage(null);
                                 } catch (Exception ex) {
                                     for (Player all : pg.playerLobby.keySet()) {
                                         if (pg.playerLobby.get(all).equals(s)) {
@@ -624,7 +624,7 @@ public record Events(PotionGames pg) implements Listener {
                                             all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                         }
                                     }
-                                    e.setDeathMessage(null);
+                                    e.deathMessage(null);
                                 }
                                 p.setGameMode(GameMode.SPECTATOR);
                                 p.getWorld().strikeLightning(p.getLocation());
@@ -656,11 +656,11 @@ public record Events(PotionGames pg) implements Listener {
                                     }
                                 }
                                 if (pg.isActivateScoreboard()) {
-                                    String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).getPrefix();
+                                    String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).prefix().toString();
                                     tempString = ChatColor.stripColor(tempString);
                                     int tempInt = Integer.parseInt(tempString);
                                     tempInt++;
-                                    Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills")).setPrefix("" + ChatColor.DARK_AQUA + tempInt);
+                                    Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills")).prefix(Component.text("" + ChatColor.DARK_AQUA + tempInt));
                                 }
                             } else {
                                 pg.addDeaths(p.getUniqueId().toString(), 1);
@@ -705,7 +705,7 @@ public record Events(PotionGames pg) implements Listener {
                                     for (Player all : pg.specPlayers) {
                                         all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(9) + " " + ChatColor.DARK_GREEN + killer.getName() + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                     }
-                                    e.setDeathMessage(null);
+                                    e.deathMessage(null);
                                 } catch (Exception ex) {
                                     for (Player all : pg.pgPlayers) {
                                         all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
@@ -713,7 +713,7 @@ public record Events(PotionGames pg) implements Listener {
                                     for (Player all : pg.specPlayers) {
                                         all.sendMessage(pg.prefix + ChatColor.DARK_RED + p.getName() + ChatColor.GRAY + " " + pg.chatmessages.get(10) + " " + ChatColor.GRAY + "[" + ChatColor.AQUA + player + ChatColor.GRAY + "/" + ChatColor.AQUA + amountPlayers + ChatColor.GRAY + "]");
                                     }
-                                    e.setDeathMessage(null);
+                                    e.deathMessage(null);
                                 }
                                 p.setGameMode(GameMode.SPECTATOR);
                                 p.getWorld().strikeLightning(p.getLocation());
@@ -800,7 +800,7 @@ public record Events(PotionGames pg) implements Listener {
                                 if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                     if (!pg.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                         Inventory inv;
-                                        inv = Bukkit.createInventory(p, 27, pg.prefix);
+                                        inv = Bukkit.createInventory(p, 27, Component.text(pg.prefix));
                                         pg.chestData();
                                         Random rnd = new Random();
                                         int max = 6;
@@ -880,7 +880,7 @@ public record Events(PotionGames pg) implements Listener {
                                 if (pg.getGamestate() == GameStates.INGAME) {
                                     if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
                                         Inventory inv;
-                                        inv = Bukkit.createInventory(p, 27, pg.prefix);
+                                        inv = Bukkit.createInventory(p, 27, Component.text(pg.prefix));
                                         pg.chestData();
                                         Random rnd = new Random();
                                         int max = 6;
@@ -972,7 +972,7 @@ public record Events(PotionGames pg) implements Listener {
                                         if (pg.lobbyStates.get(s) == GameStates.INGAME) {
                                             if (!pg.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                                 Inventory inv;
-                                                inv = Bukkit.createInventory(p, pg.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), pg.prefix);
+                                                inv = Bukkit.createInventory(p, pg.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), Component.text(pg.prefix));
                                                 pg.lobbychests.put(e.getClickedBlock().getLocation(), s);
                                                 pg.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
                                                 p.openInventory(pg.lobbychestsdata.get(e.getClickedBlock().getLocation()));
@@ -988,7 +988,7 @@ public record Events(PotionGames pg) implements Listener {
                                         if (pg.getGamestate() == GameStates.INGAME) {
                                             if (!pg.chests.containsKey(e.getClickedBlock().getLocation())) {
                                                 Inventory inv;
-                                                inv = Bukkit.createInventory(p, pg.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), pg.prefix);
+                                                inv = Bukkit.createInventory(p, pg.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), Component.text(pg.prefix));
                                                 pg.chests.put(e.getClickedBlock().getLocation(), inv);
                                                 p.openInventory(pg.chests.get(e.getClickedBlock().getLocation()));
                                                 while (pg.chestdata.contains("pg.customchests." + chestnumber + "." + chestitem)) {
@@ -1025,7 +1025,7 @@ public record Events(PotionGames pg) implements Listener {
                                             }
                                         }
                                         Inventory inv;
-                                        inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49));
+                                        inv = Bukkit.createInventory(p, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49)));
                                         pg.lobbychests.put(e.getClickedBlock().getLocation(), s);
                                         pg.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
                                         int shopitem = 1;
@@ -1039,11 +1039,11 @@ public record Events(PotionGames pg) implements Listener {
                                             ItemStack randombarrier = new ItemStack(pg.shoppotiontype.get(shopitem - 1));
                                             ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                             assert randombarriermeta != null;
-                                            randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
-                                            ArrayList<String> lore = new ArrayList<>();
-                                            lore.add(pg.chatmessages.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration() / 20);
-                                            lore.add(pg.chatmessages.get(51) + ": " + coinamount + " " + pg.chatmessages.get(52));
-                                            randombarriermeta.setLore(lore);
+                                            randombarriermeta.displayName(Component.text(pg.shop.get(shopitem - 1)));
+                                            ArrayList<Component> lore = new ArrayList<>();
+                                            lore.add(Component.text(pg.chatmessages.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration() / 20));
+                                            lore.add(Component.text(pg.chatmessages.get(51) + ": " + coinamount + " " + pg.chatmessages.get(52)));
+                                            randombarriermeta.lore(lore);
                                             randombarrier.setItemMeta(randombarriermeta);
                                             inv.setItem(shopitem - 1, randombarrier);
                                             shopitem++;
@@ -1065,7 +1065,7 @@ public record Events(PotionGames pg) implements Listener {
                                             }
                                         }
                                         Inventory inv;
-                                        inv = Bukkit.createInventory(p, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49));
+                                        inv = Bukkit.createInventory(p, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49)));
                                         pg.chests.put(e.getClickedBlock().getLocation(), inv);
                                         int shopitem = 1;
                                         for (int i = 0; i < pg.getActivePotions(); i++) {
@@ -1078,11 +1078,11 @@ public record Events(PotionGames pg) implements Listener {
                                             ItemStack randombarrier = new ItemStack(pg.shoppotiontype.get(shopitem - 1));
                                             ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                             assert randombarriermeta != null;
-                                            randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
-                                            ArrayList<String> lore = new ArrayList<>();
-                                            lore.add(pg.chatmessages.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration() / 20);
-                                            lore.add(pg.chatmessages.get(51) + ": " + coinamount + " " + pg.chatmessages.get(52));
-                                            randombarriermeta.setLore(lore);
+                                            randombarriermeta.displayName(Component.text(pg.shop.get(shopitem - 1)));
+                                            ArrayList<Component> lore = new ArrayList<>();
+                                            lore.add(Component.text(pg.chatmessages.get(50) + ": " + pg.shoppotion.get(shopitem - 1).getDuration() / 20));
+                                            lore.add(Component.text(pg.chatmessages.get(51) + ": " + coinamount + " " + pg.chatmessages.get(52)));
+                                            randombarriermeta.lore(lore);
                                             randombarrier.setItemMeta(randombarriermeta);
                                             inv.setItem(shopitem - 1, randombarrier);
                                             shopitem++;
@@ -1268,9 +1268,9 @@ public record Events(PotionGames pg) implements Listener {
                                         }
                                     }
                                     if (result != null) {
-                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(12) + ": " + ChatColor.AQUA + (int) lastDistance));
+                                        p.sendActionBar(Component.text(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(12) + ": " + ChatColor.AQUA + (int) lastDistance));
                                     } else {
-                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.RED + pg.chatmessages.get(13)));
+                                        p.sendActionBar(Component.text(pg.prefix + ChatColor.RED + pg.chatmessages.get(13)));
                                     }
                                 }
                             } else {
@@ -1292,9 +1292,9 @@ public record Events(PotionGames pg) implements Listener {
                                         }
                                     }
                                     if (result != null) {
-                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(12) + ": " + ChatColor.AQUA + (int) lastDistance));
+                                        p.sendActionBar(Component.text(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(12) + ": " + ChatColor.AQUA + (int) lastDistance));
                                     } else {
-                                        p.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(pg.prefix + ChatColor.RED + pg.chatmessages.get(13)));
+                                        p.sendActionBar(Component.text(pg.prefix + ChatColor.RED + pg.chatmessages.get(13)));
                                     }
                                 }
                             }
@@ -1312,23 +1312,23 @@ public record Events(PotionGames pg) implements Listener {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
-                                ArrayList<String> randomlore = new ArrayList<>();
-                                randomlore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(pg.chatmessages.get(42)));
-                                randombarriermeta.setLore(randomlore);
+                                randombarriermeta.displayName(Component.text(pg.chatmessages.get(42)));
+                                ArrayList<Component> randomlore = new ArrayList<>();
+                                randomlore.add(0, Component.text(ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(pg.chatmessages.get(42))));
+                                randombarriermeta.lore(randomlore);
                                 randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14)));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (String all : pg.lobbyvotes.get(s).keySet()) {
                                     if (!all.equals(pg.chatmessages.get(42))) {
-                                        ArrayList<String> arenalore = new ArrayList<>();
-                                        arenalore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(all));
+                                        ArrayList<Component> arenalore = new ArrayList<>();
+                                        arenalore.add(0, Component.text(ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.lobbyvotes.get(s).get(all)));
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(all);
-                                        arenamapmeta.setLore(arenalore);
+                                        arenamapmeta.displayName(Component.text(all));
+                                        arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot, arenamap);
                                         slot++;
@@ -1341,23 +1341,23 @@ public record Events(PotionGames pg) implements Listener {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
-                                ArrayList<String> randomlore = new ArrayList<>();
-                                randomlore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.votes.get(pg.chatmessages.get(42)));
-                                randombarriermeta.setLore(randomlore);
+                                randombarriermeta.displayName(Component.text(pg.chatmessages.get(42)));
+                                ArrayList<Component> randomlore = new ArrayList<>();
+                                randomlore.add(0, Component.text(ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.votes.get(pg.chatmessages.get(42))));
+                                randombarriermeta.lore(randomlore);
                                 randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14)));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (String all : pg.arenas) {
                                     if (!all.equals(pg.chatmessages.get(42))) {
-                                        ArrayList<String> arenalore = new ArrayList<>();
-                                        arenalore.add(0, ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.votes.get(all).toString());
+                                        ArrayList<Component> arenalore = new ArrayList<>();
+                                        arenalore.add(0, Component.text(ChatColor.GREEN + pg.chatmessages.get(15) + ": " + ChatColor.AQUA + pg.votes.get(all).toString()));
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(all);
-                                        arenamapmeta.setLore(arenalore);
+                                        arenamapmeta.displayName(Component.text(all));
+                                        arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot, arenamap);
                                         slot++;
@@ -1379,24 +1379,24 @@ public record Events(PotionGames pg) implements Listener {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
+                                randombarriermeta.displayName(Component.text(pg.chatmessages.get(42)));
                                 randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43)));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (Integer all : pg.lobbyteams.get(s).keySet()) {
-                                    ArrayList<String> arenalore = new ArrayList<>();
-                                    arenalore.add(0, ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(all));
+                                    ArrayList<Component> arenalore = new ArrayList<>();
+                                    arenalore.add(0, Component.text(ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.lobbyteams.get(s).get(all)));
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
-                                    arenamapmeta.setDisplayName(Integer.toString(all));
+                                    arenamapmeta.displayName(Component.text(Integer.toString(all)));
                                     for (Player temp : pg.lobbyteamplayernames.get(s).keySet()) {
                                         if (pg.lobbyteamplayernames.get(s).get(temp).equals(Integer.toString(all)) && temp != null) {
-                                            arenalore.add(ChatColor.GRAY + temp.getName());
+                                            arenalore.add(Component.text(ChatColor.GRAY + temp.getName()));
                                         }
                                     }
-                                    arenamapmeta.setLore(arenalore);
+                                    arenamapmeta.lore(arenalore);
                                     arenamap.setItemMeta(arenamapmeta);
                                     inv.setItem(slot, arenamap);
                                     slot++;
@@ -1408,24 +1408,24 @@ public record Events(PotionGames pg) implements Listener {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
+                                randombarriermeta.displayName(Component.text(pg.chatmessages.get(42)));
                                 randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43)));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (String all : pg.teams) {
-                                    ArrayList<String> arenalore = new ArrayList<>();
-                                    arenalore.add(0, ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(all).toString());
+                                    ArrayList<Component> arenalore = new ArrayList<>();
+                                    arenalore.add(0, Component.text(ChatColor.GREEN + pg.chatmessages.get(44) + ": " + ChatColor.AQUA + pg.teamplayers.get(all).toString()));
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
-                                    arenamapmeta.setDisplayName(all);
+                                    arenamapmeta.displayName(Component.text(all));
                                     for (Player temp : pg.teamplayernames.keySet()) {
                                         if (pg.teamplayernames.get(temp).equals(all) && temp != null) {
-                                            arenalore.add(ChatColor.GRAY + temp.getName());
+                                            arenalore.add(Component.text(ChatColor.GRAY + temp.getName()));
                                         }
                                     }
-                                    arenamapmeta.setLore(arenalore);
+                                    arenamapmeta.lore(arenalore);
                                     arenamap.setItemMeta(arenamapmeta);
                                     inv.setItem(slot, arenamap);
                                     slot++;
@@ -1446,15 +1446,15 @@ public record Events(PotionGames pg) implements Listener {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
+                                randombarriermeta.displayName(Component.text(pg.chatmessages.get(42)));
                                 randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62)));
                                 inv.setItem(0, randombarrier);
                                 for (int i = 1; i <= pg.getActiveKits(); i++) {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
-                                    arenamapmeta.setDisplayName(pg.kitdata.getString("pg.kits." + i + ".name"));
+                                    arenamapmeta.displayName(Component.text(Objects.requireNonNull(pg.kitdata.getString("pg.kits." + i + ".name"))));
                                     arenamap.setItemMeta(arenamapmeta);
                                     inv.setItem(i, arenamap);
                                 }
@@ -1465,15 +1465,15 @@ public record Events(PotionGames pg) implements Listener {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.setDisplayName(pg.chatmessages.get(42));
+                                randombarriermeta.displayName(Component.text(pg.chatmessages.get(42)));
                                 randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62)));
                                 inv.setItem(0, randombarrier);
                                 for (int i = 1; i <= pg.getActiveKits(); i++) {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
-                                    arenamapmeta.setDisplayName(pg.kitdata.getString("pg.kits." + i + ".name"));
+                                    arenamapmeta.displayName(Component.text(Objects.requireNonNull(pg.kitdata.getString("pg.kits." + i + ".name"))));
                                     arenamap.setItemMeta(arenamapmeta);
                                     inv.setItem(i, arenamap);
                                 }
@@ -1521,7 +1521,7 @@ public record Events(PotionGames pg) implements Listener {
             if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
                 if (e.getHand() == EquipmentSlot.HAND) {
                     if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby")) {
+                        if (Objects.equals(Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName(), Component.text(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby"))) {
                             if (p.hasPermission("pg.setup")) {
                                 if (!pg.isLobbySystem()) {
                                     pg.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
@@ -1538,11 +1538,11 @@ public record Events(PotionGames pg) implements Listener {
                                     p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(69));
                                 }
                             }
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena")) {
+                        } else if (Objects.equals(p.getInventory().getItemInMainHand().getItemMeta().displayName(), Component.text(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena"))) {
                             p.getInventory().clear();
                             pg.setAddarena(true);
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(70));
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
+                        } else if (Objects.equals(p.getInventory().getItemInMainHand().getItemMeta().displayName(), Component.text(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn"))) {
                             if (p.hasPermission("pg.setup")) {
                                 if (!pg.isLobbySystem()) {
                                     int spawnNumber = 1;
@@ -1598,34 +1598,34 @@ public record Events(PotionGames pg) implements Listener {
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Lobby")) {
+                        if (Objects.equals(Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName(), Component.text(ChatColor.DARK_AQUA + "Choose Lobby"))) {
                             if (pg.isLobbySystem()) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby"));
                                 for (int slot = 1; slot <= 27; slot++) {
                                     if (pg.arenadata.contains("pg.lobbies." + slot)) {
-                                        ArrayList<String> arenalore = new ArrayList<>();
+                                        ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(Integer.toString(slot));
-                                        arenamapmeta.setLore(arenalore);
+                                        arenamapmeta.displayName(Component.text(Integer.toString(slot)));
+                                        arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
                                     }
                                 }
                                 p.openInventory(inv);
                             }
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
-                            Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
+                        } else if (Objects.equals(p.getInventory().getItemInMainHand().getItemMeta().displayName(), Component.text(ChatColor.DARK_AQUA + "Choose Arena"))) {
+                            Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + "Choose Arena"));
                             if (pg.isLobbySystem()) {
                                 for (int slot = 1; slot < 27; slot++) {
                                     if (pg.arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
-                                        ArrayList<String> arenalore = new ArrayList<>();
+                                        ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(pg.arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"));
-                                        arenamapmeta.setLore(arenalore);
+                                        arenamapmeta.displayName(Component.text(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"))));
+                                        arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
                                     }
@@ -1633,12 +1633,12 @@ public record Events(PotionGames pg) implements Listener {
                             } else {
                                 for (int slot = 1; slot < 27; slot++) {
                                     if (pg.arenadata.contains("pg.arenas." + slot)) {
-                                        ArrayList<String> arenalore = new ArrayList<>();
+                                        ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(pg.arenadata.getString("pg.arenas." + slot + ".name"));
-                                        arenamapmeta.setLore(arenalore);
+                                        arenamapmeta.displayName(Component.text(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + slot + ".name"))));
+                                        arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
                                     }
@@ -1648,7 +1648,7 @@ public record Events(PotionGames pg) implements Listener {
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.OAK_SIGN) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Set Join-Sign")) {
+                        if (Objects.equals(Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName(), Component.text(ChatColor.DARK_AQUA + "Set Join-Sign"))) {
                             if (p.hasPermission("pg.setup")) {
                                 if (!pg.isLobbySystem()) {
                                     pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
@@ -1670,7 +1670,7 @@ public record Events(PotionGames pg) implements Listener {
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.BARRIER) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Leave Setup-Mode")) {
+                        if (Objects.equals(Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName(), Component.text(ChatColor.DARK_AQUA + "Leave Setup-Mode"))) {
                             p.getInventory().getItemInMainHand().setAmount(0);
                             p.getInventory().setContents(pg.inv.get(p.getName()));
                             p.getInventory().setArmorContents(pg.armor.get(p.getName()));
@@ -1692,17 +1692,17 @@ public record Events(PotionGames pg) implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
                 if (e.getHand() == EquipmentSlot.HAND) {
                     if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby")) {
+                        if (Objects.equals(Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName(), Component.text(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby"))) {
                             if (pg.isLobbySystem()) {
                                 p.getInventory().clear();
                                 pg.setDellobby(true);
                                 p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(71));
                             }
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena")) {
+                        } else if (Objects.equals(p.getInventory().getItemInMainHand().getItemMeta().displayName(), Component.text(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena"))) {
                             p.getInventory().clear();
                             pg.setDelarena(true);
                             p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(72));
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn")) {
+                        } else if (Objects.equals(p.getInventory().getItemInMainHand().getItemMeta().displayName(), Component.text(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn"))) {
                             if (p.hasPermission("pg.setup")) {
                                 if (!pg.isLobbySystem()) {
                                     int arenaNumber = 1;
@@ -1762,34 +1762,34 @@ public record Events(PotionGames pg) implements Listener {
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Lobby")) {
+                        if (Objects.equals(Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName(), Component.text(ChatColor.DARK_AQUA + "Choose Lobby"))) {
                             if (pg.isLobbySystem()) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby");
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby"));
                                 for (int slot = 1; slot <= 27; slot++) {
                                     if (pg.arenadata.contains("pg.lobbies." + slot)) {
-                                        ArrayList<String> arenalore = new ArrayList<>();
+                                        ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(Integer.toString(slot));
-                                        arenamapmeta.setLore(arenalore);
+                                        arenamapmeta.displayName(Component.text(Integer.toString(slot)));
+                                        arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
                                     }
                                 }
                                 p.openInventory(inv);
                             }
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equals(ChatColor.DARK_AQUA + "Choose Arena")) {
-                            Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Choose Arena");
+                        } else if (Objects.equals(p.getInventory().getItemInMainHand().getItemMeta().displayName(), Component.text(ChatColor.DARK_AQUA + "Choose Arena"))) {
+                            Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + "Choose Arena"));
                             if (pg.isLobbySystem()) {
                                 for (int slot = 1; slot < 27; slot++) {
                                     if (pg.arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
-                                        ArrayList<String> arenalore = new ArrayList<>();
+                                        ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(pg.arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"));
-                                        arenamapmeta.setLore(arenalore);
+                                        arenamapmeta.displayName(Component.text(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name"))));
+                                        arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
                                     }
@@ -1797,12 +1797,12 @@ public record Events(PotionGames pg) implements Listener {
                             } else {
                                 for (int slot = 1; slot < 27; slot++) {
                                     if (pg.arenadata.contains("pg.arenas." + slot)) {
-                                        ArrayList<String> arenalore = new ArrayList<>();
+                                        ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.setDisplayName(pg.arenadata.getString("pg.arenas." + slot + ".name"));
-                                        arenamapmeta.setLore(arenalore);
+                                        arenamapmeta.displayName(Component.text(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + slot + ".name"))));
+                                        arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
                                     }
@@ -1812,7 +1812,7 @@ public record Events(PotionGames pg) implements Listener {
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.BARRIER) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Leave Setup-Mode")) {
+                        if (Objects.equals(Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName(), Component.text(ChatColor.DARK_AQUA + "Leave Setup-Mode"))) {
                             p.getInventory().getItemInMainHand().setAmount(0);
                             p.getInventory().setContents(pg.inv.get(p.getName()));
                             p.getInventory().setArmorContents(pg.armor.get(p.getName()));
@@ -1846,9 +1846,9 @@ public record Events(PotionGames pg) implements Listener {
                             || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN
                             || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
                         Sign sign = (Sign) e.getClickedBlock().getState();
-                        String line1 = sign.getLine(0);
-                        String line2 = sign.getLine(1);
-                        String line3 = sign.getLine(2);
+                        String line1 = sign.line(0).toString();
+                        String line2 = sign.line(1).toString();
+                        String line3 = sign.line(2).toString();
                         if (pg.isLobbySystem()) {
                             if (e.getClickedBlock().getLocation().equals(pg.arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
                                 if (!pg.playerLobby.containsKey(p) && !pg.specLobby.containsKey(p)) {
@@ -1920,11 +1920,11 @@ public record Events(PotionGames pg) implements Listener {
                         }
                     }
                     if (pg.lobbyStates.get(s) == GameStates.WAITING && !pg.lobbyBuild.get(s) && pg.playerLobby.containsKey(p) || pg.lobbyStates.get(s) == GameStates.PREPARING && !pg.lobbyBuild.get(s) && pg.playerLobby.containsKey(p)) {
-                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14))) {
+                        if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14)))) {
                             if (e.getCurrentItem() != null) {
                                 int randomvotes;
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                    String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
+                                    String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
                                     if (!pg.lobbyVoted.containsKey(p)) {
                                         p.closeInventory();
                                         int votes = pg.lobbyvotes.get(s).get(displayname);
@@ -1989,10 +1989,10 @@ public record Events(PotionGames pg) implements Listener {
                             }
                         }
                         if (pg.lobbyActivateTeams.get(s)) {
-                            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43))) {
+                            if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43)))) {
                                 if (e.getCurrentItem() != null) {
                                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                        String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
+                                        String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
                                         int maxteamplayers = pg.lobbyteamSize.get(s);
                                         if (!pg.lobbyTeamed.containsKey(p)) {
                                             if (displayname.equals(pg.chatmessages.get(42))) {
@@ -2020,7 +2020,7 @@ public record Events(PotionGames pg) implements Listener {
                                                         pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                         pg.lobbyteamplayernames.get(s).put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
-                                                            Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
+                                                            Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + Integer.toString(rndTeam)));
                                                         }
                                                     }
                                                 }
@@ -2043,7 +2043,7 @@ public record Events(PotionGames pg) implements Listener {
                                                     pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                     pg.lobbyteamplayernames.get(s).put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
-                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
+                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + displayname));
                                                     }
                                                 } else {
                                                     p.closeInventory();
@@ -2097,7 +2097,7 @@ public record Events(PotionGames pg) implements Listener {
                                                         pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                         pg.lobbyteamplayernames.get(s).put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
-                                                            Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
+                                                            Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + Integer.toString(rndTeam)));
                                                         }
                                                     }
                                                 }
@@ -2120,7 +2120,7 @@ public record Events(PotionGames pg) implements Listener {
                                                     pg.lobbyTeamed.put((Player) e.getWhoClicked(), s);
                                                     pg.lobbyteamplayernames.get(s).put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
-                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
+                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + displayname));
                                                     }
                                                 } else {
                                                     p.closeInventory();
@@ -2134,10 +2134,10 @@ public record Events(PotionGames pg) implements Listener {
                                 }
                             }
                         }
-                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62))) {
+                        if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62)))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                    String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
+                                    String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
                                     if (!pg.lobbyKited.containsKey(p)) {
                                         if (displayname.equals(pg.chatmessages.get(42))) {
                                             Random rnd = new Random();
@@ -2149,7 +2149,7 @@ public record Events(PotionGames pg) implements Listener {
                                             pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
-                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
+                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + pg.kits.get(rndKit)));
                                             }
                                             if (pg.kits.get(rndKit).equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
@@ -2162,7 +2162,7 @@ public record Events(PotionGames pg) implements Listener {
                                             pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
-                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
+                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + displayname));
                                             }
                                             if (displayname.equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
@@ -2188,7 +2188,7 @@ public record Events(PotionGames pg) implements Listener {
                                             pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
-                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
+                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + pg.kits.get(rndKit)));
                                             }
                                             if (pg.kits.get(rndKit).equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
@@ -2201,7 +2201,7 @@ public record Events(PotionGames pg) implements Listener {
                                             pg.lobbyKited.put(p, s);
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
-                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
+                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + displayname));
                                             }
                                             if (displayname.equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
@@ -2212,7 +2212,7 @@ public record Events(PotionGames pg) implements Listener {
                             }
                         }
                     }
-                    if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49))) {
+                    if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49)))) {
                         if (e.getCurrentItem() != null) {
                             int shopitem = 1;
                             for (int i = 0; i < pg.shop.size(); i++) {
@@ -2222,7 +2222,7 @@ public record Events(PotionGames pg) implements Listener {
                                 } else {
                                     coinamount = pg.shopcost.get(shopitem - 1);
                                 }
-                                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(pg.shop.get(shopitem - 1))) {
+                                if (Objects.equals(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName(), Component.text(pg.shop.get(shopitem - 1)))) {
                                     if (bottle >= 1) {
                                         if (amount >= coinamount) {
                                             amount = amount - coinamount;
@@ -2231,7 +2231,7 @@ public record Events(PotionGames pg) implements Listener {
                                             PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
                                             assert randombarriermeta != null;
                                             randombarriermeta.addCustomEffect(new PotionEffect(pg.shoppotion.get(shopitem - 1).getType(), pg.shoppotion.get(shopitem - 1).getDuration(), pg.shoppotion.get(shopitem - 1).getAmplifier()), true);
-                                            randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
+                                            randombarriermeta.displayName(Component.text(pg.shop.get(shopitem - 1)));
                                             randombarrier.setItemMeta(randombarriermeta);
                                             p.getInventory().addItem(randombarrier);
                                             for (int k = 0; k < coinamount; k++) {
@@ -2254,10 +2254,10 @@ public record Events(PotionGames pg) implements Listener {
                     }
                 } else {
                     if (pg.getGamestate() == GameStates.WAITING && !pg.isBuild() && pg.pgPlayers.contains(p) || pg.getGamestate() == GameStates.PREPARING && !pg.isBuild() && pg.pgPlayers.contains(p)) {
-                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14))) {
+                        if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14)))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                    String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
+                                    String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
                                     if (!pg.voted.contains(p.getName())) {
                                         p.closeInventory();
                                         int votes = pg.votes.get(displayname);
@@ -2300,10 +2300,10 @@ public record Events(PotionGames pg) implements Listener {
                             }
                         }
                         if (pg.isActivateTeams()) {
-                            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43))) {
+                            if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43)))) {
                                 if (e.getCurrentItem() != null) {
                                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                        String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
+                                        String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
                                         int maxteamplayers = pg.getTeamSize();
                                         if (!pg.teamed.contains(p.getName())) {
                                             if (displayname.equals(pg.chatmessages.get(42))) {
@@ -2325,7 +2325,7 @@ public record Events(PotionGames pg) implements Listener {
                                                         pg.teamed.add(e.getWhoClicked().getName());
                                                         pg.teamplayernames.put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
-                                                            Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
+                                                            Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + Integer.toString(rndTeam)));
                                                         }
                                                     }
                                                 }
@@ -2342,7 +2342,7 @@ public record Events(PotionGames pg) implements Listener {
                                                     pg.teamed.add(e.getWhoClicked().getName());
                                                     pg.teamplayernames.put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
-                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
+                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + displayname));
                                                     }
                                                 } else {
                                                     p.closeInventory();
@@ -2382,7 +2382,7 @@ public record Events(PotionGames pg) implements Listener {
                                                         pg.teamed.add(e.getWhoClicked().getName());
                                                         pg.teamplayernames.put(p, Integer.toString(rndTeam));
                                                         if (pg.isActivateScoreboard()) {
-                                                            Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
+                                                            Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + Integer.toString(rndTeam)));
                                                         }
                                                     }
                                                 }
@@ -2399,7 +2399,7 @@ public record Events(PotionGames pg) implements Listener {
                                                     pg.teamed.add(e.getWhoClicked().getName());
                                                     pg.teamplayernames.put(p, displayname);
                                                     if (pg.isActivateScoreboard()) {
-                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + displayname);
+                                                        Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + displayname));
                                                     }
                                                 } else {
                                                     p.closeInventory();
@@ -2413,10 +2413,10 @@ public record Events(PotionGames pg) implements Listener {
                                 }
                             }
                         }
-                        if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62))) {
+                        if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62)))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                    String displayname = e.getCurrentItem().getItemMeta().getDisplayName();
+                                    String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
                                     if (!pg.kited.contains(p.getName())) {
                                         if (displayname.equals(pg.chatmessages.get(42))) {
                                             Random rnd = new Random();
@@ -2428,7 +2428,7 @@ public record Events(PotionGames pg) implements Listener {
                                             pg.kited.add(e.getWhoClicked().getName());
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
-                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
+                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + pg.kits.get(rndKit)));
                                             }
                                             if (pg.kits.get(rndKit).equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
@@ -2441,7 +2441,7 @@ public record Events(PotionGames pg) implements Listener {
                                             pg.kited.add(e.getWhoClicked().getName());
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
-                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
+                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + displayname));
                                             }
                                             if (displayname.equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
@@ -2467,7 +2467,7 @@ public record Events(PotionGames pg) implements Listener {
                                             pg.kited.add(e.getWhoClicked().getName());
                                             pg.kitplayernames.put(p, pg.kits.get(rndKit));
                                             if (pg.isActivateScoreboard()) {
-                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + pg.kits.get(rndKit));
+                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + pg.kits.get(rndKit)));
                                             }
                                             if (pg.kits.get(rndKit).equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
@@ -2480,7 +2480,7 @@ public record Events(PotionGames pg) implements Listener {
                                             pg.kited.add(e.getWhoClicked().getName());
                                             pg.kitplayernames.put(p, displayname);
                                             if (pg.isActivateScoreboard()) {
-                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + displayname);
+                                                Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + displayname));
                                             }
                                             if (displayname.equals("Rich Kid")) {
                                                 pg.richkidPlayers.add(p);
@@ -2491,7 +2491,7 @@ public record Events(PotionGames pg) implements Listener {
                             }
                         }
                     }
-                    if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49))) {
+                    if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(49)))) {
                         if (e.getCurrentItem() != null) {
                             int shopitem = 1;
                             for (int i = 0; i < pg.shop.size(); i++) {
@@ -2501,7 +2501,7 @@ public record Events(PotionGames pg) implements Listener {
                                 } else {
                                     coinamount = pg.shopcost.get(shopitem - 1);
                                 }
-                                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName().equals(pg.shop.get(shopitem - 1))) {
+                                if (Objects.equals(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName(), Component.text(pg.shop.get(shopitem - 1)))) {
                                     if (bottle >= 1) {
                                         if (amount >= coinamount) {
                                             amount = amount - coinamount;
@@ -2510,7 +2510,7 @@ public record Events(PotionGames pg) implements Listener {
                                             PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
                                             assert randombarriermeta != null;
                                             randombarriermeta.addCustomEffect(new PotionEffect(pg.shoppotion.get(shopitem - 1).getType(), pg.shoppotion.get(shopitem - 1).getDuration(), pg.shoppotion.get(shopitem - 1).getAmplifier()), true);
-                                            randombarriermeta.setDisplayName(pg.shop.get(shopitem - 1));
+                                            randombarriermeta.displayName(Component.text(pg.shop.get(shopitem - 1)));
                                             randombarrier.setItemMeta(randombarriermeta);
                                             p.getInventory().addItem(randombarrier);
                                             for (int k = 0; k < coinamount; k++) {
@@ -2533,25 +2533,25 @@ public record Events(PotionGames pg) implements Listener {
                     }
                 }
             }
-            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Lobby List")) {
+            if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + "Lobby List"))) {
                 if (e.getCurrentItem() != null) {
                     p.closeInventory();
-                    pg.onJoinLobby(p, Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName());
+                    pg.onJoinLobby(p, Objects.requireNonNull(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName()).toString());
                 }
                 e.setCancelled(true);
             }
-            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby")) {
+            if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby"))) {
                 if (e.getCurrentItem() != null) {
                     p.closeInventory();
-                    lobby = Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName();
+                    lobby = Objects.requireNonNull(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName()).toString();
                     p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + " " + ChatColor.GREEN + "successfully chosen!");
                 }
                 e.setCancelled(true);
             }
-            if (e.getView().getTitle().equalsIgnoreCase(pg.prefix + ChatColor.DARK_AQUA + "Choose Arena")) {
+            if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + "Choose Arena"))) {
                 if (e.getCurrentItem() != null) {
                     p.closeInventory();
-                    arena = Objects.requireNonNull(e.getCurrentItem().getItemMeta()).getDisplayName();
+                    arena = Objects.requireNonNull(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName()).toString();
                     p.sendMessage(pg.prefix + ChatColor.AQUA + arena + " " + ChatColor.GREEN + "successfully chosen!");
                 }
                 e.setCancelled(true);
@@ -2586,7 +2586,7 @@ public record Events(PotionGames pg) implements Listener {
         pg.joinChannel(p.getPlayer(), "Global");
         if (pg.isGameServer() && pg.isStartOnJoin() && !pg.isLobbySystem()) {
             pg.onJoin(p);
-            e.setJoinMessage(null);
+            e.joinMessage(null);
         }
         if (p.hasPermission("pg.update")) {
             new UpdateChecker(pg, 87633).getVersion(version -> {
@@ -2644,7 +2644,7 @@ public record Events(PotionGames pg) implements Listener {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                             pg.onLeaveLobby(p, s);
-                            e.setQuitMessage(null);
+                            e.quitMessage(null);
                             break;
                         }
                     }
@@ -2654,7 +2654,7 @@ public record Events(PotionGames pg) implements Listener {
                         if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
                             pg.onLeaveLobby(p, s);
-                            e.setQuitMessage(null);
+                            e.quitMessage(null);
                             break;
                         }
                     }
@@ -2662,7 +2662,7 @@ public record Events(PotionGames pg) implements Listener {
             } else {
                 if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
                     pg.onLeave(p);
-                    e.setQuitMessage(null);
+                    e.quitMessage(null);
                 }
             }
         }
@@ -2673,18 +2673,18 @@ public record Events(PotionGames pg) implements Listener {
         if (pg.isGameServer() && pg.isStartOnJoin() && !pg.isLobbySystem()) {
             e.setMaxPlayers(pg.getMaxPlayers());
             if (pg.getGamestate() == GameStates.WAITING) {
-                e.setMotd("" + ChatColor.GREEN + pg.getGamestate());
+                e.motd(Component.text("" + ChatColor.GREEN + pg.getGamestate()));
             } else if (pg.getGamestate() == GameStates.PREPARING) {
                 if (pg.getVote() != null) {
                     String motd = "" + ChatColor.GOLD + Objects.requireNonNull(pg.arenadata.get("pg.arenas." + pg.getVote() + ".name"));
-                    e.setMotd(motd.toUpperCase());
+                    e.motd(Component.text(motd.toUpperCase()));
                 } else {
-                    e.setMotd("" + ChatColor.AQUA + "VOTING");
+                    e.motd(Component.text("" + ChatColor.AQUA + "VOTING"));
                 }
             } else if (pg.getGamestate() == GameStates.INGAME) {
-                e.setMotd("" + ChatColor.GRAY + pg.getGamestate());
+                e.motd(Component.text("" + ChatColor.GRAY + pg.getGamestate()));
             } else {
-                e.setMotd("" + ChatColor.RED + pg.getGamestate());
+                e.motd(Component.text("" + ChatColor.RED + pg.getGamestate()));
             }
         }
     }
