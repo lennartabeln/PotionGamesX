@@ -5,6 +5,7 @@ import com.asga.potiongames.main.PotionGames;
 import com.asga.potiongames.updatechecker.UpdateChecker;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -50,7 +51,7 @@ public record Events(PotionGames pg) implements Listener {
         if (pg.isGameServer()) {
             if (pg.setupPlayer.contains(p)) {
                 if (pg.isAddlobby()) {
-                    lobby = e.message().toString();
+                    lobby = PlainTextComponentSerializer.plainText().serialize(e.message());
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (pg.isLobbySystem()) {
@@ -75,7 +76,7 @@ public record Events(PotionGames pg) implements Listener {
                     pg.setup(p);
                 }
                 if (pg.isAddarena()) {
-                    arena = e.message().toString();
+                    arena = PlainTextComponentSerializer.plainText().serialize(e.message());
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (!pg.isLobbySystem()) {
@@ -115,7 +116,7 @@ public record Events(PotionGames pg) implements Listener {
                     pg.setup(p);
                 }
                 if (pg.isDellobby()) {
-                    lobby = e.message().toString();
+                    lobby = PlainTextComponentSerializer.plainText().serialize(e.message());
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (pg.isLobbySystem()) {
@@ -132,7 +133,7 @@ public record Events(PotionGames pg) implements Listener {
                     pg.setup(p);
                 }
                 if (pg.isDelarena()) {
-                    arena = e.message().toString();
+                    arena = PlainTextComponentSerializer.plainText().serialize(e.message());
                     e.setCancelled(true);
                     if (p.hasPermission("pg.setup")) {
                         if (!pg.isLobbySystem()) {
@@ -216,18 +217,18 @@ public record Events(PotionGames pg) implements Listener {
                             }
                         });
                         e.viewers().add(p);
-                        String message = ChatColor.WHITE + e.message().toString();
+                        String message = ChatColor.WHITE + PlainTextComponentSerializer.plainText().serialize(e.message());
                         if (!p.hasPermission("pg.admin")) {
                             if (pg.playerLobby.containsKey(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.playerLobby.keySet()) {
                                     if (pg.playerLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + p.displayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                     }
                                 }
                                 for (Player pgchat : pg.specLobby.keySet()) {
                                     if (pg.specLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + p.displayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                     }
                                 }
                             } else if (pg.specLobby.containsKey(p)) {
@@ -238,24 +239,24 @@ public record Events(PotionGames pg) implements Listener {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.playerLobby.keySet()) {
                                     if (pg.playerLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                     }
                                 }
                                 for (Player pgchat : pg.specLobby.keySet()) {
                                     if (pg.specLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                     }
                                 }
                             } else if (pg.specPlayers.contains(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.playerLobby.keySet()) {
                                     if (pg.playerLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                     }
                                 }
                                 for (Player pgchat : pg.specLobby.keySet()) {
                                     if (pg.specLobby.get(pgchat).equals(s)) {
-                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
+                                        pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                     }
                                 }
                             }
@@ -272,15 +273,15 @@ public record Events(PotionGames pg) implements Listener {
                             }
                         });
                         e.viewers().add(p);
-                        String message = ChatColor.WHITE + e.message().toString();
+                        String message = ChatColor.WHITE + PlainTextComponentSerializer.plainText().serialize(e.message());
                         if (!p.hasPermission("pg.admin")) {
                             if (pg.pgPlayers.contains(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.pgPlayers) {
-                                    pgchat.sendMessage(pg.prefix + p.displayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                 }
                                 for (Player pgchat : pg.specPlayers) {
-                                    pgchat.sendMessage(pg.prefix + p.displayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                 }
                             } else if (pg.specPlayers.contains(p)) {
                                 e.setCancelled(true);
@@ -289,18 +290,18 @@ public record Events(PotionGames pg) implements Listener {
                             if (pg.pgPlayers.contains(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.pgPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                 }
                                 for (Player pgchat : pg.specPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.DARK_AQUA + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                 }
                             } else if (pg.specPlayers.contains(p)) {
                                 e.setCancelled(true);
                                 for (Player pgchat : pg.pgPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                 }
                                 for (Player pgchat : pg.specPlayers) {
-                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + p.displayName() + ": " + message);
+                                    pgchat.sendMessage(pg.prefix + ChatColor.GRAY + "[" + ChatColor.DARK_RED + pg.chatmessages.get(8) + ChatColor.GRAY + "] " + ChatColor.DARK_AQUA + PlainTextComponentSerializer.plainText().serialize(p.displayName()) + ": " + message);
                                 }
                             }
                         }
@@ -547,7 +548,7 @@ public record Events(PotionGames pg) implements Listener {
                                     }
                                 }
                                 if (pg.isActivateScoreboard()) {
-                                    String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).prefix().toString();
+                                    String tempString = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills")).prefix());
                                     tempString = ChatColor.stripColor(tempString);
                                     int tempInt = Integer.parseInt(tempString);
                                     tempInt++;
@@ -656,7 +657,7 @@ public record Events(PotionGames pg) implements Listener {
                                     }
                                 }
                                 if (pg.isActivateScoreboard()) {
-                                    String tempString = Objects.requireNonNull(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"))).prefix().toString();
+                                    String tempString = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills")).prefix());
                                     tempString = ChatColor.stripColor(tempString);
                                     int tempInt = Integer.parseInt(tempString);
                                     tempInt++;
@@ -1924,7 +1925,7 @@ public record Events(PotionGames pg) implements Listener {
                             if (e.getCurrentItem() != null) {
                                 int randomvotes;
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                    String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
+                                    String displayname = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull((e.getCurrentItem().getItemMeta()).displayName()));
                                     if (!pg.lobbyVoted.containsKey(p)) {
                                         p.closeInventory();
                                         int votes = pg.lobbyvotes.get(s).get(displayname);
@@ -1992,7 +1993,7 @@ public record Events(PotionGames pg) implements Listener {
                             if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43)))) {
                                 if (e.getCurrentItem() != null) {
                                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                        String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
+                                        String displayname = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull((e.getCurrentItem().getItemMeta()).displayName()));
                                         int maxteamplayers = pg.lobbyteamSize.get(s);
                                         if (!pg.lobbyTeamed.containsKey(p)) {
                                             if (displayname.equals(pg.chatmessages.get(42))) {
@@ -2137,7 +2138,7 @@ public record Events(PotionGames pg) implements Listener {
                         if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62)))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                    String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
+                                    String displayname = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull((e.getCurrentItem().getItemMeta()).displayName()));
                                     if (!pg.lobbyKited.containsKey(p)) {
                                         if (displayname.equals(pg.chatmessages.get(42))) {
                                             Random rnd = new Random();
@@ -2257,7 +2258,7 @@ public record Events(PotionGames pg) implements Listener {
                         if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(14)))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                    String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
+                                    String displayname = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull((e.getCurrentItem().getItemMeta()).displayName()));
                                     if (!pg.voted.contains(p.getName())) {
                                         p.closeInventory();
                                         int votes = pg.votes.get(displayname);
@@ -2303,7 +2304,7 @@ public record Events(PotionGames pg) implements Listener {
                             if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(43)))) {
                                 if (e.getCurrentItem() != null) {
                                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                        String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
+                                        String displayname = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull((e.getCurrentItem().getItemMeta()).displayName()));
                                         int maxteamplayers = pg.getTeamSize();
                                         if (!pg.teamed.contains(p.getName())) {
                                             if (displayname.equals(pg.chatmessages.get(42))) {
@@ -2416,7 +2417,7 @@ public record Events(PotionGames pg) implements Listener {
                         if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + pg.chatmessages.get(62)))) {
                             if (e.getCurrentItem() != null) {
                                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                                    String displayname = Objects.requireNonNull(e.getCurrentItem().getItemMeta().displayName()).toString();
+                                    String displayname = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull((e.getCurrentItem().getItemMeta()).displayName()));
                                     if (!pg.kited.contains(p.getName())) {
                                         if (displayname.equals(pg.chatmessages.get(42))) {
                                             Random rnd = new Random();
@@ -2536,14 +2537,14 @@ public record Events(PotionGames pg) implements Listener {
             if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + "Lobby List"))) {
                 if (e.getCurrentItem() != null) {
                     p.closeInventory();
-                    pg.onJoinLobby(p, Objects.requireNonNull(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName()).toString());
+                    pg.onJoinLobby(p, PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull((e.getCurrentItem().getItemMeta()).displayName())));
                 }
                 e.setCancelled(true);
             }
             if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + "Choose Lobby"))) {
                 if (e.getCurrentItem() != null) {
                     p.closeInventory();
-                    lobby = Objects.requireNonNull(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName()).toString();
+                    lobby = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull((e.getCurrentItem().getItemMeta()).displayName()));
                     p.sendMessage(pg.prefix + ChatColor.AQUA + lobby + " " + ChatColor.GREEN + "successfully chosen!");
                 }
                 e.setCancelled(true);
@@ -2551,7 +2552,7 @@ public record Events(PotionGames pg) implements Listener {
             if (e.getView().title().equals(Component.text(pg.prefix + ChatColor.DARK_AQUA + "Choose Arena"))) {
                 if (e.getCurrentItem() != null) {
                     p.closeInventory();
-                    arena = Objects.requireNonNull(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName()).toString();
+                    arena = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull((e.getCurrentItem().getItemMeta()).displayName()));
                     p.sendMessage(pg.prefix + ChatColor.AQUA + arena + " " + ChatColor.GREEN + "successfully chosen!");
                 }
                 e.setCancelled(true);

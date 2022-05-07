@@ -6,6 +6,7 @@ import com.asga.potiongames.events.Events;
 import com.asga.potiongames.gamestates.GameStates;
 import com.asga.potiongames.updatechecker.UpdateChecker;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
@@ -2433,7 +2434,7 @@ public class PotionGames extends JavaPlugin {
                                             Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("        ").setScore(3);
                                             Objects.requireNonNull(info.get(all).getTeam("timeScoreboard")).prefix(Component.text("" + ChatColor.DARK_AQUA + roundTimeSeconds / 60 + " min"));
                                             Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text(ChatColor.DARK_AQUA + "0"));
-                                            String tempString = Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("kills"))).prefix().toString();
+                                            String tempString = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(info.get(all).getTeam("kills")).prefix());
                                             tempString = ChatColor.stripColor(tempString);
                                             int tempInt = Integer.parseInt(tempString);
                                             Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text("" + ChatColor.DARK_AQUA + tempInt));
@@ -3644,7 +3645,7 @@ public class PotionGames extends JavaPlugin {
                                                 Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("        ").setScore(3);
                                                 Objects.requireNonNull(info.get(all).getTeam("timeScoreboard")).prefix(Component.text("" + ChatColor.DARK_AQUA + lobbyroundTimeSeconds.get(s) / 60 + " min"));
                                                 Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text(ChatColor.DARK_AQUA + "0"));
-                                                String tempString = Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("kills"))).prefix().toString();
+                                                String tempString = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(info.get(all).getTeam("kills")).prefix());
                                                 tempString = ChatColor.stripColor(tempString);
                                                 int tempInt = Integer.parseInt(tempString);
                                                 Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text("" + ChatColor.DARK_AQUA + tempInt));
