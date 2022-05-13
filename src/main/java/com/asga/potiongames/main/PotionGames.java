@@ -994,39 +994,42 @@ public class PotionGames extends JavaPlugin {
             }
         }
         if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-            ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-            int ii = 0;
-            try {
-                while (rs.next()) {
-                    ii++;
-                    rank.put(ii, rs.getString("UUID"));
+            try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                int ii = 0;
+                try {
+                    while (rs.next()) {
+                        ii++;
+                        rank.put(ii, rs.getString("UUID"));
+                    }
+                    rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                    rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                    rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                    ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                    ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                    ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                    for (int iii = 0; iii < rank.size(); iii++) {
+                        int id = iii + 1;
+                        Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                        skull.setOwningPlayer(name);
+                        skull.update();
+                    }
+                    for (int iii = 0; iii < rank.size(); iii++) {
+                        int id = iii + 1;
+                        BlockState b = ranksign.get(iii).getBlock().getState();
+                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                        Sign sign = (Sign) b;
+                        sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
+                        sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
+                        sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
+                        sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                        sign.update();
+                    }
+                } catch (Exception e) {
+                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
                 }
-                rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                for (int iii = 0; iii < rank.size(); iii++) {
-                    int id = iii + 1;
-                    Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                    skull.setOwningPlayer(name);
-                    skull.update();
-                }
-                for (int iii = 0; iii < rank.size(); iii++) {
-                    int id = iii + 1;
-                    BlockState b = ranksign.get(iii).getBlock().getState();
-                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                    Sign sign = (Sign) b;
-                    sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                    sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                    sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                    sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
-                    sign.update();
-                }
-            } catch (Exception e) {
-                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
         }
         try {
@@ -1518,39 +1521,42 @@ public class PotionGames extends JavaPlugin {
             }
         }
         if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-            ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-            int ii = 0;
-            try {
-                while (rs.next()) {
-                    ii++;
-                    rank.put(ii, rs.getString("UUID"));
+            try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                int ii = 0;
+                try {
+                    while (rs.next()) {
+                        ii++;
+                        rank.put(ii, rs.getString("UUID"));
+                    }
+                    rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                    rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                    rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                    ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                    ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                    ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                    for (int iii = 0; iii < rank.size(); iii++) {
+                        int id = iii + 1;
+                        Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                        skull.setOwningPlayer(name);
+                        skull.update();
+                    }
+                    for (int iii = 0; iii < rank.size(); iii++) {
+                        int id = iii + 1;
+                        BlockState b = ranksign.get(iii).getBlock().getState();
+                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                        Sign sign = (Sign) b;
+                        sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
+                        sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
+                        sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
+                        sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                        sign.update();
+                    }
+                } catch (Exception e) {
+                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
                 }
-                rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                for (int iii = 0; iii < rank.size(); iii++) {
-                    int id = iii + 1;
-                    Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                    skull.setOwningPlayer(name);
-                    skull.update();
-                }
-                for (int iii = 0; iii < rank.size(); iii++) {
-                    int id = iii + 1;
-                    BlockState b = ranksign.get(iii).getBlock().getState();
-                    OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                    Sign sign = (Sign) b;
-                    sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                    sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                    sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                    sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
-                    sign.update();
-                }
-            } catch (Exception e) {
-                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -1645,39 +1651,42 @@ public class PotionGames extends JavaPlugin {
     public void hubStats() {
         tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-                int ii = 0;
-                try {
-                    while (rs.next()) {
-                        ii++;
-                        rank.put(ii, rs.getString("UUID"));
+                try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                    int ii = 0;
+                    try {
+                        while (rs.next()) {
+                            ii++;
+                            rank.put(ii, rs.getString("UUID"));
+                        }
+                        rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                        rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                        rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                        ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                        ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                        ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                        for (int iii = 0; iii < rank.size(); iii++) {
+                            int id = iii + 1;
+                            Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                            OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                            skull.setOwningPlayer(name);
+                            skull.update();
+                        }
+                        for (int iii = 0; iii < rank.size(); iii++) {
+                            int id = iii + 1;
+                            BlockState b = ranksign.get(iii).getBlock().getState();
+                            OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                            Sign sign = (Sign) b;
+                            sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
+                            sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
+                            sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
+                            sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                            sign.update();
+                        }
+                    } catch (Exception e) {
+                        Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
                     }
-                    rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                    rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                    rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                    ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                    ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                    ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                    for (int iii = 0; iii < rank.size(); iii++) {
-                        int id = iii + 1;
-                        Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                        skull.setOwningPlayer(name);
-                        skull.update();
-                    }
-                    for (int iii = 0; iii < rank.size(); iii++) {
-                        int id = iii + 1;
-                        BlockState b = ranksign.get(iii).getBlock().getState();
-                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                        Sign sign = (Sign) b;
-                        sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                        sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                        sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                        sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
-                        sign.update();
-                    }
-                } catch (Exception e) {
-                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }, 0, 1200);
@@ -2717,39 +2726,42 @@ public class PotionGames extends JavaPlugin {
                         }
                         case RESET -> {
                             if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-                                int ii = 0;
-                                try {
-                                    while (rs.next()) {
-                                        ii++;
-                                        rank.put(ii, rs.getString("UUID"));
+                                try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                                    int ii = 0;
+                                    try {
+                                        while (rs.next()) {
+                                            ii++;
+                                            rank.put(ii, rs.getString("UUID"));
+                                        }
+                                        rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                                        rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                                        rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                                        ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                                        ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                                        ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                                        for (int iii = 0; iii < rank.size(); iii++) {
+                                            int id = iii + 1;
+                                            Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                                            OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                            skull.setOwningPlayer(name);
+                                            skull.update();
+                                        }
+                                        for (int iii = 0; iii < rank.size(); iii++) {
+                                            int id = iii + 1;
+                                            BlockState b = ranksign.get(iii).getBlock().getState();
+                                            OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                            Sign sign = (Sign) b;
+                                            sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
+                                            sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
+                                            sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
+                                            sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                                            sign.update();
+                                        }
+                                    } catch (Exception e) {
+                                        Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
                                     }
-                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                                    for (int iii = 0; iii < rank.size(); iii++) {
-                                        int id = iii + 1;
-                                        Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                        skull.setOwningPlayer(name);
-                                        skull.update();
-                                    }
-                                    for (int iii = 0; iii < rank.size(); iii++) {
-                                        int id = iii + 1;
-                                        BlockState b = ranksign.get(iii).getBlock().getState();
-                                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                        Sign sign = (Sign) b;
-                                        sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                                        sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                                        sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                                        sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
-                                        sign.update();
-                                    }
-                                } catch (Exception e) {
-                                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
+                                } catch (SQLException e) {
+                                    throw new RuntimeException(e);
                                 }
                             }
                             if (activateScoreboard) {
@@ -4047,39 +4059,42 @@ public class PotionGames extends JavaPlugin {
                         }
                         case RESET -> {
                             if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-                                int ii = 0;
-                                try {
-                                    while (rs.next()) {
-                                        ii++;
-                                        rank.put(ii, rs.getString("UUID"));
+                                try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                                    int ii = 0;
+                                    try {
+                                        while (rs.next()) {
+                                            ii++;
+                                            rank.put(ii, rs.getString("UUID"));
+                                        }
+                                        rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
+                                        rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
+                                        rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
+                                        ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
+                                        ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
+                                        ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
+                                        for (int iii = 0; iii < rank.size(); iii++) {
+                                            int id = iii + 1;
+                                            Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
+                                            OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                            skull.setOwningPlayer(sname);
+                                            skull.update();
+                                        }
+                                        for (int iii = 0; iii < rank.size(); iii++) {
+                                            int id = iii + 1;
+                                            BlockState b = ranksign.get(iii).getBlock().getState();
+                                            OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
+                                            Sign sign = (Sign) b;
+                                            sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
+                                            sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
+                                            sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
+                                            sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                                            sign.update();
+                                        }
+                                    } catch (Exception e) {
+                                        Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
                                     }
-                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                                    rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                                    ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                                    for (int iii = 0; iii < rank.size(); iii++) {
-                                        int id = iii + 1;
-                                        Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                                        OfflinePlayer sname = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                        skull.setOwningPlayer(sname);
-                                        skull.update();
-                                    }
-                                    for (int iii = 0; iii < rank.size(); iii++) {
-                                        int id = iii + 1;
-                                        BlockState b = ranksign.get(iii).getBlock().getState();
-                                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                                        Sign sign = (Sign) b;
-                                        sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                                        sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                                        sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                                        sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
-                                        sign.update();
-                                    }
-                                } catch (Exception e) {
-                                    Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
+                                } catch (SQLException e) {
+                                    throw new RuntimeException(e);
                                 }
                             }
                             if (activateScoreboard) {
@@ -4795,9 +4810,10 @@ public class PotionGames extends JavaPlugin {
 
     public boolean playerExists(String uuid) {
         try {
-            ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
-            if (rs.next()) {
-                return rs.getString("UUID") != null;
+            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
+                if (rs.next()) {
+                    return rs.getString("UUID") != null;
+                }
             }
             return false;
         } catch (SQLException e) {
@@ -4820,11 +4836,12 @@ public class PotionGames extends JavaPlugin {
         int i = 0;
         if (playerExists(uuid)) {
             try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
-                if ((rs.next())) {
-                    rs.getInt("KILLS");
+                try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
+                    if ((rs.next())) {
+                        rs.getInt("KILLS");
+                    }
+                    i = rs.getInt("KILLS");
                 }
-                i = rs.getInt("KILLS");
             } catch (SQLException e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
             }
@@ -4839,11 +4856,12 @@ public class PotionGames extends JavaPlugin {
         int i = 0;
         if (playerExists(uuid)) {
             try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
-                if ((rs.next())) {
-                    rs.getInt("DEATHS");
+                try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
+                    if ((rs.next())) {
+                        rs.getInt("DEATHS");
+                    }
+                    i = rs.getInt("DEATHS");
                 }
-                i = rs.getInt("DEATHS");
             } catch (SQLException e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
             }
@@ -4858,11 +4876,12 @@ public class PotionGames extends JavaPlugin {
         double i = 0;
         if (playerExists(uuid)) {
             try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
-                if ((rs.next())) {
-                    rs.getDouble("KD");
+                try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
+                    if ((rs.next())) {
+                        rs.getDouble("KD");
+                    }
+                    i = rs.getDouble("KD");
                 }
-                i = rs.getDouble("KD");
             } catch (SQLException e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
             }
@@ -4877,11 +4896,12 @@ public class PotionGames extends JavaPlugin {
         int i = 0;
         if (playerExists(uuid)) {
             try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
-                if ((rs.next())) {
-                    rs.getInt("WINS");
+                try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
+                    if ((rs.next())) {
+                        rs.getInt("WINS");
+                    }
+                    i = rs.getInt("WINS");
                 }
-                i = rs.getInt("WINS");
             } catch (SQLException e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
             }
@@ -4896,18 +4916,19 @@ public class PotionGames extends JavaPlugin {
         int i = 0;
         if (playerExists(uuid)) {
             try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
-                if ((rs.next())) {
-                    try {
-                        rs.getInt("LOSSES");
-                    } catch (Exception e) {
-                        rs.getInt("LOSTS");
+                try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
+                    if ((rs.next())) {
+                        try {
+                            rs.getInt("LOSSES");
+                        } catch (Exception e) {
+                            rs.getInt("LOSTS");
+                        }
                     }
-                }
-                try {
-                    i = rs.getInt("LOSSES");
-                } catch (Exception e) {
-                    i = rs.getInt("LOSTS");
+                    try {
+                        i = rs.getInt("LOSSES");
+                    } catch (Exception e) {
+                        i = rs.getInt("LOSTS");
+                    }
                 }
             } catch (Exception e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
@@ -4923,11 +4944,12 @@ public class PotionGames extends JavaPlugin {
         int i = 0;
         if (playerExists(uuid)) {
             try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
-                if ((rs.next())) {
-                    rs.getInt("ROUNDS");
+                try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
+                    if ((rs.next())) {
+                        rs.getInt("ROUNDS");
+                    }
+                    i = rs.getInt("ROUNDS");
                 }
-                i = rs.getInt("ROUNDS");
             } catch (SQLException e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
             }

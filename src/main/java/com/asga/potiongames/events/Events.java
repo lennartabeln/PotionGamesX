@@ -317,7 +317,8 @@ public record Events(PotionGames pg) implements Listener {
         if (pg.isGameServer()) {
             if (pg.worlds.contains(e.getBlock().getWorld().getName())) {
                 switch (e.getBlock().getType()) {
-                    case ACACIA_LEAVES, BIRCH_LEAVES, DARK_OAK_LEAVES, JUNGLE_LEAVES, OAK_LEAVES, SPRUCE_LEAVES -> e.setCancelled(true);
+                    case ACACIA_LEAVES, BIRCH_LEAVES, DARK_OAK_LEAVES, JUNGLE_LEAVES, OAK_LEAVES, SPRUCE_LEAVES ->
+                            e.setCancelled(true);
                     default -> e.setCancelled(false);
                 }
             }
