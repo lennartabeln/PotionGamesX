@@ -40,13 +40,13 @@ public class Metrics {
             config.addDefault("logResponseStatusText", false);
             ArrayList<String> header = new ArrayList<>();
             header.add("""
-                    bStats (https://bStats.org) collects some basic information for plugin authors, like how
-            many people use their plugin and their total player count. It's recommended to keep bStats
-            enabled, but if you're not comfortable with this, you can turn this setting off. There is no
-            performance penalty associated with having metrics enabled, and data sent to bStats is fully
-            anonymous.""");
+                            bStats (https://bStats.org) collects some basic information for plugin authors, like how
+                    many people use their plugin and their total player count. It's recommended to keep bStats
+                    enabled, but if you're not comfortable with this, you can turn this setting off. There is no
+                    performance penalty associated with having metrics enabled, and data sent to bStats is fully
+                    anonymous.""");
             config.options().setHeader(header).copyDefaults(true);
-                config.save(configFile);
+            config.save(configFile);
         }
         boolean enabled = config.getBoolean("enabled", true);
         String serverUuid = config.getString("serverUuid");
@@ -605,9 +605,9 @@ public class Metrics {
         public record JsonObject(String value) {
 
             @Override
-                    public String toString() {
-                        return value;
-                    }
-                }
+            public String toString() {
+                return value;
+            }
+        }
     }
 }
