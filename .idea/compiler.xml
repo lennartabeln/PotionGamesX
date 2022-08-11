@@ -9,7 +9,7 @@
         <module name="PotionGames" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="17">
       <module name="PotionGames" target="17" />
     </bytecodeTargetLevel>
   </component>

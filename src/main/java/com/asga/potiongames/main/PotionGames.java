@@ -34,6 +34,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -2094,18 +2095,18 @@ public class PotionGames extends JavaPlugin {
                         case WAITING -> {
                             if (activateScoreboard) {
                                 for (Player all : pgPlayers) {
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("").setScore(11);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Map").setScore(10);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore(" ").setScore(9);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("  ").setScore(8);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Team").setScore(7);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("   ").setScore(6);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("    ").setScore(5);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Kit").setScore(4);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("     ").setScore(3);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("      ").setScore(2);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Players").setScore(1);
-                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("       ").setScore(0);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("").setScore(11);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Map").setScore(10);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore(" ").setScore(9);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("  ").setScore(8);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Team").setScore(7);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("   ").setScore(6);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("    ").setScore(5);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Kit").setScore(4);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("     ").setScore(3);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("      ").setScore(2);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Players").setScore(1);
+                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("       ").setScore(0);
                                 }
                             }
                             if (getConfig().contains("pg.Lobby") && getConfig().getLocation("pg.Lobby.sign") != null) {
@@ -2399,12 +2400,12 @@ public class PotionGames extends JavaPlugin {
                                             info.get(all).resetScores("    ");
                                             info.get(all).resetScores("Kit");
                                             info.get(all).resetScores("     ");
-                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("           ").setScore(8);
-                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Time").setScore(7);
-                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("          ").setScore(6);
-                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("         ").setScore(5);
-                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Kills").setScore(4);
-                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("        ").setScore(3);
+                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("           ").setScore(8);
+                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Time").setScore(7);
+                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("          ").setScore(6);
+                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("         ").setScore(5);
+                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Kills").setScore(4);
+                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("        ").setScore(3);
                                             Objects.requireNonNull(info.get(all).getTeam("timeScoreboard")).prefix(Component.text("" + ChatColor.DARK_AQUA + roundTimeSeconds / 60 + " min"));
                                             Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text(ChatColor.DARK_AQUA + "0"));
                                             String tempString = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(info.get(all).getTeam("kills")).prefix());
@@ -3097,8 +3098,8 @@ public class PotionGames extends JavaPlugin {
         try {
             if (activateScoreboard) {
                 Scoreboard temp = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
-                temp.registerNewObjective("main-content", "dummy", Component.text(" " + prefix));
-                Objects.requireNonNull(temp.getObjective("main-content")).setDisplaySlot(DisplaySlot.SIDEBAR);
+                temp.registerNewObjective("pg", Criteria.DUMMY, Component.text(" " + prefix));
+                Objects.requireNonNull(temp.getObjective("pg")).setDisplaySlot(DisplaySlot.SIDEBAR);
                 temp.registerNewTeam("team");
                 temp.registerNewTeam("kit");
                 temp.registerNewTeam("players");
@@ -3294,18 +3295,18 @@ public class PotionGames extends JavaPlugin {
                             if (activateScoreboard) {
                                 for (Player all : playerLobby.keySet()) {
                                     if (playerLobby.get(all).equals(s)) {
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("").setScore(11);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Map").setScore(10);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore(" ").setScore(9);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("  ").setScore(8);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Team").setScore(7);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("   ").setScore(6);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("    ").setScore(5);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Kit").setScore(4);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("     ").setScore(3);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("      ").setScore(2);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Players").setScore(1);
-                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("       ").setScore(0);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("").setScore(11);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Map").setScore(10);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore(" ").setScore(9);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("  ").setScore(8);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Team").setScore(7);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("   ").setScore(6);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("    ").setScore(5);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Kit").setScore(4);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("     ").setScore(3);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("      ").setScore(2);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Players").setScore(1);
+                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("       ").setScore(0);
                                     }
                                 }
                             }
@@ -3609,12 +3610,12 @@ public class PotionGames extends JavaPlugin {
                                                 info.get(all).resetScores("    ");
                                                 info.get(all).resetScores("Kit");
                                                 info.get(all).resetScores("     ");
-                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("           ").setScore(8);
-                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Time").setScore(7);
-                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("          ").setScore(6);
-                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("         ").setScore(5);
-                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Kills").setScore(4);
-                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("        ").setScore(3);
+                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("           ").setScore(8);
+                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Time").setScore(7);
+                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("          ").setScore(6);
+                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("         ").setScore(5);
+                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Kills").setScore(4);
+                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("        ").setScore(3);
                                                 Objects.requireNonNull(info.get(all).getTeam("timeScoreboard")).prefix(Component.text("" + ChatColor.DARK_AQUA + lobbyroundTimeSeconds.get(s) / 60 + " min"));
                                                 Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text(ChatColor.DARK_AQUA + "0"));
                                                 String tempString = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(info.get(all).getTeam("kills")).prefix());
@@ -4486,8 +4487,8 @@ public class PotionGames extends JavaPlugin {
         try {
             if (activateScoreboard) {
                 Scoreboard temp = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
-                temp.registerNewObjective("main-content", "dummy", Component.text(" " + prefix));
-                Objects.requireNonNull(temp.getObjective("main-content")).setDisplaySlot(DisplaySlot.SIDEBAR);
+                temp.registerNewObjective("pg", Criteria.DUMMY, Component.text(" " + prefix));
+                Objects.requireNonNull(temp.getObjective("pg")).setDisplaySlot(DisplaySlot.SIDEBAR);
                 temp.registerNewTeam("team");
                 temp.registerNewTeam("kit");
                 temp.registerNewTeam("players");
