@@ -35,15 +35,14 @@ import java.util.*;
 
 public record Events(PotionGames pg) implements Listener {
     private static final Set<Material> toDestroy = new HashSet<>();
-
-    static {
-        toDestroy.add(Material.AIR);
-    }
-
     private static int amount;
     private static int bottle;
     private static String lobby;
     private static String arena;
+
+    static {
+        toDestroy.add(Material.AIR);
+    }
 
     @EventHandler
     public void onChat(AsyncChatEvent e) {
@@ -394,19 +393,7 @@ public record Events(PotionGames pg) implements Listener {
                     }
                     if (!pg.lobbyBuild.get(s)) {
                         if (pg.lobbyStates.get(s) == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
-                                    || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
-                                    || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
-                                    || e.getBlock().getType() == Material.ACACIA_LEAVES
-                                    || e.getBlock().getType() == Material.BIRCH_LEAVES
-                                    || e.getBlock().getType() == Material.DARK_OAK_LEAVES
-                                    || e.getBlock().getType() == Material.JUNGLE_LEAVES
-                                    || e.getBlock().getType() == Material.OAK_LEAVES
-                                    || e.getBlock().getType() == Material.SPRUCE_LEAVES
-                                    || e.getBlock().getType() == Material.WARPED_FUNGUS
-                                    || e.getBlock().getType() == Material.CRIMSON_FUNGUS
-                                    || e.getBlock().getType() == Material.BROWN_MUSHROOM
-                                    || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
                                 pg.lobbyBreakedBlocksData.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 pg.lobbyBreakedBlocks.put(s, pg.lobbyBreakedBlocksData);
                                 e.setCancelled(false);
@@ -418,19 +405,7 @@ public record Events(PotionGames pg) implements Listener {
                 } else {
                     if (!pg.isBuild()) {
                         if (pg.getGamestate() == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
-                                    || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
-                                    || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
-                                    || e.getBlock().getType() == Material.ACACIA_LEAVES
-                                    || e.getBlock().getType() == Material.BIRCH_LEAVES
-                                    || e.getBlock().getType() == Material.DARK_OAK_LEAVES
-                                    || e.getBlock().getType() == Material.JUNGLE_LEAVES
-                                    || e.getBlock().getType() == Material.OAK_LEAVES
-                                    || e.getBlock().getType() == Material.SPRUCE_LEAVES
-                                    || e.getBlock().getType() == Material.WARPED_FUNGUS
-                                    || e.getBlock().getType() == Material.CRIMSON_FUNGUS
-                                    || e.getBlock().getType() == Material.BROWN_MUSHROOM
-                                    || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
                                 pg.breakedBlocks.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 e.setCancelled(false);
                             } else {
@@ -459,19 +434,7 @@ public record Events(PotionGames pg) implements Listener {
                     }
                     if (!pg.lobbyBuild.get(s)) {
                         if (pg.lobbyStates.get(s) == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
-                                    || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
-                                    || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
-                                    || e.getBlock().getType() == Material.ACACIA_LEAVES
-                                    || e.getBlock().getType() == Material.BIRCH_LEAVES
-                                    || e.getBlock().getType() == Material.DARK_OAK_LEAVES
-                                    || e.getBlock().getType() == Material.JUNGLE_LEAVES
-                                    || e.getBlock().getType() == Material.OAK_LEAVES
-                                    || e.getBlock().getType() == Material.SPRUCE_LEAVES
-                                    || e.getBlock().getType() == Material.WARPED_FUNGUS
-                                    || e.getBlock().getType() == Material.CRIMSON_FUNGUS
-                                    || e.getBlock().getType() == Material.BROWN_MUSHROOM
-                                    || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
                                 pg.lobbyPlacedBlocksData.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 pg.lobbyPlacedBlocks.put(s, pg.lobbyPlacedBlocksData);
                                 e.setCancelled(false);
@@ -489,19 +452,7 @@ public record Events(PotionGames pg) implements Listener {
                 } else {
                     if (!pg.isBuild()) {
                         if (pg.getGamestate() == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE
-                                    || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS
-                                    || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH
-                                    || e.getBlock().getType() == Material.ACACIA_LEAVES
-                                    || e.getBlock().getType() == Material.BIRCH_LEAVES
-                                    || e.getBlock().getType() == Material.DARK_OAK_LEAVES
-                                    || e.getBlock().getType() == Material.JUNGLE_LEAVES
-                                    || e.getBlock().getType() == Material.OAK_LEAVES
-                                    || e.getBlock().getType() == Material.SPRUCE_LEAVES
-                                    || e.getBlock().getType() == Material.WARPED_FUNGUS
-                                    || e.getBlock().getType() == Material.CRIMSON_FUNGUS
-                                    || e.getBlock().getType() == Material.BROWN_MUSHROOM
-                                    || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
                                 pg.placedBlocks.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 e.setCancelled(false);
                             } else if (e.getBlock().getType() == Material.TNT) {
@@ -1835,18 +1786,7 @@ public record Events(PotionGames pg) implements Listener {
             }
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (e.getHand() == EquipmentSlot.HAND) {
-                    if (Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.ACACIA_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.BIRCH_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.ACACIA_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.BIRCH_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN
-                            || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
+                    if (Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.ACACIA_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.BIRCH_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.ACACIA_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.BIRCH_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
                         Sign sign = (Sign) e.getClickedBlock().getState();
                         String line1 = sign.line(0).toString();
                         String line2 = sign.line(1).toString();

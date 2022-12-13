@@ -1,6 +1,6 @@
 # PotionGames
 
-> A Minecraft Minigames Plugin for Bukkit Servers!
+> A Minecraft minigames plugin for PaperMC servers!
 
 PotionGames is a minigames plugin that works like SurvivalGames but with potions and effects!
 
@@ -28,7 +28,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 ## Installation
 
 1. Download the plugin
-   * [Download the latest release here!](https://github.com/andersspielen/PotionGamesIssues/releases/latest)
+  * [Download the latest release here!](https://github.com/andersspielen/PotionGamesIssues/releases/latest)
 2. Put the .jar in your plugins folder
 3. Download Multiverse-Core
   * [Download the latest release here!](https://www.spigotmc.org/resources/multiverse-core.390/)
@@ -189,7 +189,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * `joinStarted: true` - Allows joining a match that has already started `true` or `false`
 * `activateDeathmatch: true` - Activate deathmatch when only two players are left `true` or `false`
 * `enableRewards: true` - Enable rewards `true` or `false`
-* `winningReward: 100` - Set reward amount for winnig
+* `winningReward: 100` - Set reward amount for winning
 * `killReward: 10` - Set reward amount for kills (Vault needed)
   * [Download the latest release here!](https://www.spigotmc.org/resources/vault.34315/)
 * `broadcastStarting: false` - Broadcast when a lobby reached minimal amount of players `false` or `true`
