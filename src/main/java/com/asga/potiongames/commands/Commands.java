@@ -196,67 +196,74 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("setup")) {
                     if (p.hasPermission("pg.setup")) {
-                        pg.setupPlayer.add(p);
-                        pg.inv.put(p.getName(), p.getInventory().getContents());
-                        pg.armor.put(p.getName(), p.getInventory().getArmorContents());
-                        pg.lvl.put(p.getName(), p.getLevel());
-                        pg.exp.put(p.getName(), p.getExp());
-                        pg.loc.put(p.getName(), p.getLocation());
-                        pg.gm.put(p.getName(), p.getGameMode());
-                        PlayerInventory inventory = p.getInventory();
-                        inventory.clear();
-                        inventory.setHelmet(null);
-                        inventory.setChestplate(null);
-                        inventory.setLeggings(null);
-                        inventory.setBoots(null);
-                        p.setHealth(20);
-                        p.setFoodLevel(20);
-                        p.setLevel(0);
-                        p.setExp(0);
-                        p.setGameMode(GameMode.ADVENTURE);
-                        pg.clearEffects(p);
-                        p.setFireTicks(0);
-                        pg.setup(p);
-                        p.setAllowFlight(true);
-                        p.setFlying(true);
+                        try {
+                            pg.setupPlayer.add(p);
+                            pg.inv.put(p.getName(), p.getInventory().getContents());
+                            pg.armor.put(p.getName(), p.getInventory().getArmorContents());
+                            pg.lvl.put(p.getName(), p.getLevel());
+                            pg.exp.put(p.getName(), p.getExp());
+                            pg.loc.put(p.getName(), p.getLocation());
+                            pg.gm.put(p.getName(), p.getGameMode());
+                            PlayerInventory inventory = p.getInventory();
+                            inventory.clear();
+                            inventory.setHelmet(null);
+                            inventory.setChestplate(null);
+                            inventory.setLeggings(null);
+                            inventory.setBoots(null);
+                            p.setHealth(20);
+                            p.setFoodLevel(20);
+                            p.setLevel(0);
+                            p.setExp(0);
+                            p.setGameMode(GameMode.ADVENTURE);
+                            pg.clearEffects(p);
+                            p.setFireTicks(0);
+                            pg.setup(p);
+                            p.setAllowFlight(true);
+                            p.setFlying(true);
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(92));
+                        }
                     }
                 } else if (args[0].equalsIgnoreCase("reload")) {
                     if (p.hasPermission("pg.setup")) {
-                        pg.setReload(true);
-                        pg.close();
-                        if (pg.isLobbySystem()) {
-                            if (pg.playerLobby.containsKey(p)) {
+                        try {
+                            pg.setReload(true);
+                            pg.close();
+                            if (pg.isLobbySystem()) {
                                 String s;
-                                for (int ii = 1; ii <= 27; ii++) {
-                                    if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
-                                        s = Integer.toString(ii);
-                                        pg.onLeaveLobby(p, s);
-                                        break;
+                                if (pg.playerLobby.containsKey(p)) {
+                                    for (int ii = 1; ii <= 27; ii++) {
+                                        if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                            s = Integer.toString(ii);
+                                            pg.onLeaveLobby(p, s);
+                                            break;
+                                        }
+                                    }
+                                } else if (pg.specLobby.containsKey(p)) {
+                                    for (int ii = 1; ii <= 27; ii++) {
+                                        if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
+                                            s = Integer.toString(ii);
+                                            pg.onLeaveLobby(p, s);
+                                            break;
+                                        }
                                     }
                                 }
-                            } else if (pg.specLobby.containsKey(p)) {
-                                String s;
-                                for (int ii = 1; ii <= 27; ii++) {
-                                    if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
-                                        s = Integer.toString(ii);
-                                        pg.onLeaveLobby(p, s);
-                                        break;
+                            } else {
+                                if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
+                                    pg.onLeave(p);
+                                    if (pg.isStartOnJoin()) {
+                                        p.kickPlayer(pg.prefix + ChatColor.RED + pg.chatmessages.get(25));
                                     }
                                 }
                             }
-                        } else {
-                            if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
-                                pg.onLeave(p);
-                                if (pg.isStartOnJoin()) {
-                                    p.kickPlayer(pg.prefix + ChatColor.RED + pg.chatmessages.get(25));
-                                }
-                            }
+                            pg.connect();
+                            pg.ConnectMySQL();
+                            pg.onReload();
+                            p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(78));
+                            pg.setReload(false);
+                        } catch (Exception e) {
+                            p.sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(92));
                         }
-                        pg.connect();
-                        pg.ConnectMySQL();
-                        pg.onReload();
-                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(78));
-                        pg.setReload(false);
                     }
                 } else if (args[0].equalsIgnoreCase("version")) {
                     if (p.hasPermission("pg.update")) {

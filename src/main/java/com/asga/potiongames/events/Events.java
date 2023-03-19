@@ -32,22 +32,17 @@ import org.bukkit.potion.PotionEffectType;
 import java.io.IOException;
 import java.util.*;
 
-public class Events implements Listener {
+public record Events(PotionGames pg) implements Listener {
     private static final Set<Material> toDestroy = new HashSet<>();
 
     static {
         toDestroy.add(Material.AIR);
     }
 
-    private final PotionGames pg;
-    private int amount;
-    private int bottle;
-    private String lobby;
-    private String arena;
-
-    public Events(PotionGames pg) {
-        this.pg = pg;
-    }
+    private static int amount;
+    private static int bottle;
+    private static String lobby;
+    private static String arena;
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent e) {
@@ -2643,8 +2638,8 @@ public class Events implements Listener {
         Player p = e.getPlayer();
         if (pg.isGameServer()) {
             if (pg.isLobbySystem()) {
+                String s;
                 if (pg.playerLobby.containsKey(p)) {
-                    String s;
                     for (int ii = 1; ii <= 27; ii++) {
                         if (pg.playerLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
@@ -2654,7 +2649,6 @@ public class Events implements Listener {
                         }
                     }
                 } else if (pg.specLobby.containsKey(p)) {
-                    String s;
                     for (int ii = 1; ii <= 27; ii++) {
                         if (pg.specLobby.get(p).contains(Integer.toString(ii))) {
                             s = Integer.toString(ii);
