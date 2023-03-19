@@ -5,23 +5,6 @@
       <map />
     </option>
   </component>
-  <component name="EclipseModuleManager">
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/BuildTools/API/spigot-api-1.15.2-R0.1-SNAPSHOT-shaded.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-bridge.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-cloudflare.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-cloudperms.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-database-mysql.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-npcs.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-report.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-rest.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-signs.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-smart.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-storage-ftp.jar!/" />
-    <libelement value="jar://$USER_HOME$/Desktop/Ablage/Test/modules/cloudnet-syncproxy.jar!/" />
-    <src_description expected_position="1">
-      <src_folder value="file://$MODULE_DIR$/src" expected_position="1" />
-    </src_description>
-  </component>
   <component name="FacetManager">
     <facet type="minecraft" name="Minecraft">
       <configuration>
@@ -59,50 +42,32 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/annotations-20.1.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$USER_HOME$/BuildTools/API/spigot-api-1.16.5-R0.1-SNAPSHOT-shaded.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="Maven: org.jetbrains:annotations:24.0.1" level="project" />
-    <orderEntry type="library" name="Maven: io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
-    <orderEntry type="library" name="Maven: com.google.guava:guava:21.0" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />
-    <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.16-R0.4" level="project" />
-    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.28" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
-    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
-    <orderEntry type="library" name="Maven: it.unimi.dsi:fastutil:8.2.2" level="project" />
-    <orderEntry type="library" name="Maven: net.kyori:adventure-api:4.8.1" level="project" />
-    <orderEntry type="library" name="Maven: net.kyori:adventure-key:4.8.1" level="project" />
-    <orderEntry type="library" name="Maven: net.kyori:examination-api:1.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:3.10.0" level="project" />
-    <orderEntry type="library" name="Maven: net.kyori:examination-string:1.1.0" level="project" />
-    <orderEntry type="library" name="Maven: net.kyori:adventure-text-serializer-gson:4.8.1" level="project" />
-    <orderEntry type="library" name="Maven: net.kyori:adventure-text-serializer-legacy:4.8.1" level="project" />
-    <orderEntry type="library" name="Maven: net.kyori:adventure-text-serializer-plain:4.8.1" level="project" />
-    <orderEntry type="library" name="Maven: org.ow2.asm:asm:9.0" level="project" />
-    <orderEntry type="library" name="Maven: org.ow2.asm:asm-commons:9.0" level="project" />
-    <orderEntry type="library" name="Maven: org.ow2.asm:asm-tree:9.0" level="project" />
-    <orderEntry type="library" name="Maven: org.ow2.asm:asm-analysis:9.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.14.1" level="project" />
+    <orderEntry type="library" name="Maven: io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.28" level="project" />
     <orderEntry type="library" name="Maven: com.github.MilkBowl:VaultAPI:1.7.1" level="project" />
     <orderEntry type="library" name="Maven: org.bstats:bstats-bukkit:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm:9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:24.0.1" level="project" />
+    <orderEntry type="library" name="Maven: net.kyori:adventure-text-serializer-plain:4.8.1" level="project" />
+    <orderEntry type="library" name="Maven: net.kyori:examination-string:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:21.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm-analysis:9.0" level="project" />
+    <orderEntry type="library" name="Maven: net.kyori:adventure-text-serializer-gson:4.8.1" level="project" />
+    <orderEntry type="library" name="Maven: net.kyori:adventure-api:4.8.1" level="project" />
     <orderEntry type="library" name="Maven: org.bstats:bstats-base:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: net.kyori:examination-api:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm-tree:9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.checkerframework:checker-qual:3.10.0" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm-commons:9.0" level="project" />
+    <orderEntry type="library" name="Maven: net.kyori:adventure-key:4.8.1" level="project" />
+    <orderEntry type="library" name="Maven: net.kyori:adventure-text-serializer-legacy:4.8.1" level="project" />
+    <orderEntry type="library" name="Maven: it.unimi.dsi:fastutil:8.2.2" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />
+    <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.16-R0.4" level="project" />
   </component>
 </module>
