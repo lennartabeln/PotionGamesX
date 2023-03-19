@@ -994,9 +994,8 @@ public class PotionGames extends JavaPlugin {
             }
         }
         if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-            ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-            int ii = 0;
-            try {
+            try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                int ii = 0;
                 while (rs.next()) {
                     ii++;
                     rank.put(ii, rs.getString("UUID"));
@@ -1025,13 +1024,12 @@ public class PotionGames extends JavaPlugin {
                     sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                     sign.update();
                 }
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
             }
         }
         try {
-            @SuppressWarnings("unused")
-            Metrics metrics = new Metrics(this, 12027);
+            @SuppressWarnings("unused") Metrics metrics = new Metrics(this, 12027);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1518,9 +1516,8 @@ public class PotionGames extends JavaPlugin {
             }
         }
         if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-            ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-            int ii = 0;
-            try {
+            try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                int ii = 0;
                 while (rs.next()) {
                     ii++;
                     rank.put(ii, rs.getString("UUID"));
@@ -1549,7 +1546,7 @@ public class PotionGames extends JavaPlugin {
                     sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                     sign.update();
                 }
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
             }
         }
@@ -1645,9 +1642,8 @@ public class PotionGames extends JavaPlugin {
     public void hubStats() {
         tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-                int ii = 0;
-                try {
+                try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                    int ii = 0;
                     while (rs.next()) {
                         ii++;
                         rank.put(ii, rs.getString("UUID"));
@@ -1676,7 +1672,7 @@ public class PotionGames extends JavaPlugin {
                         sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                         sign.update();
                     }
-                } catch (Exception e) {
+                } catch (SQLException e) {
                     Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
                 }
             }
@@ -2052,50 +2048,32 @@ public class PotionGames extends JavaPlugin {
             all.removePotionEffect(effect.getType());
             chestitem++;
         }
-        if (all.hasPotionEffect(PotionEffectType.SPEED))
-            all.removePotionEffect(PotionEffectType.SPEED);
-        if (all.hasPotionEffect(PotionEffectType.SLOW))
-            all.removePotionEffect(PotionEffectType.SLOW);
+        if (all.hasPotionEffect(PotionEffectType.SPEED)) all.removePotionEffect(PotionEffectType.SPEED);
+        if (all.hasPotionEffect(PotionEffectType.SLOW)) all.removePotionEffect(PotionEffectType.SLOW);
         if (all.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE))
             all.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-        if (all.hasPotionEffect(PotionEffectType.HEAL))
-            all.removePotionEffect(PotionEffectType.HEAL);
-        if (all.hasPotionEffect(PotionEffectType.HARM))
-            all.removePotionEffect(PotionEffectType.HARM);
-        if (all.hasPotionEffect(PotionEffectType.JUMP))
-            all.removePotionEffect(PotionEffectType.JUMP);
-        if (all.hasPotionEffect(PotionEffectType.CONFUSION))
-            all.removePotionEffect(PotionEffectType.CONFUSION);
-        if (all.hasPotionEffect(PotionEffectType.REGENERATION))
-            all.removePotionEffect(PotionEffectType.REGENERATION);
+        if (all.hasPotionEffect(PotionEffectType.HEAL)) all.removePotionEffect(PotionEffectType.HEAL);
+        if (all.hasPotionEffect(PotionEffectType.HARM)) all.removePotionEffect(PotionEffectType.HARM);
+        if (all.hasPotionEffect(PotionEffectType.JUMP)) all.removePotionEffect(PotionEffectType.JUMP);
+        if (all.hasPotionEffect(PotionEffectType.CONFUSION)) all.removePotionEffect(PotionEffectType.CONFUSION);
+        if (all.hasPotionEffect(PotionEffectType.REGENERATION)) all.removePotionEffect(PotionEffectType.REGENERATION);
         if (all.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE))
             all.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
         if (all.hasPotionEffect(PotionEffectType.FIRE_RESISTANCE))
             all.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
-        if (all.hasPotionEffect(PotionEffectType.INVISIBILITY))
-            all.removePotionEffect(PotionEffectType.INVISIBILITY);
-        if (all.hasPotionEffect(PotionEffectType.BLINDNESS))
-            all.removePotionEffect(PotionEffectType.BLINDNESS);
-        if (all.hasPotionEffect(PotionEffectType.HUNGER))
-            all.removePotionEffect(PotionEffectType.HUNGER);
-        if (all.hasPotionEffect(PotionEffectType.WEAKNESS))
-            all.removePotionEffect(PotionEffectType.WEAKNESS);
-        if (all.hasPotionEffect(PotionEffectType.POISON))
-            all.removePotionEffect(PotionEffectType.POISON);
-        if (all.hasPotionEffect(PotionEffectType.WITHER))
-            all.removePotionEffect(PotionEffectType.WITHER);
-        if (all.hasPotionEffect(PotionEffectType.ABSORPTION))
-            all.removePotionEffect(PotionEffectType.ABSORPTION);
-        if (all.hasPotionEffect(PotionEffectType.GLOWING))
-            all.removePotionEffect(PotionEffectType.GLOWING);
-        if (all.hasPotionEffect(PotionEffectType.HEALTH_BOOST))
-            all.removePotionEffect(PotionEffectType.HEALTH_BOOST);
+        if (all.hasPotionEffect(PotionEffectType.INVISIBILITY)) all.removePotionEffect(PotionEffectType.INVISIBILITY);
+        if (all.hasPotionEffect(PotionEffectType.BLINDNESS)) all.removePotionEffect(PotionEffectType.BLINDNESS);
+        if (all.hasPotionEffect(PotionEffectType.HUNGER)) all.removePotionEffect(PotionEffectType.HUNGER);
+        if (all.hasPotionEffect(PotionEffectType.WEAKNESS)) all.removePotionEffect(PotionEffectType.WEAKNESS);
+        if (all.hasPotionEffect(PotionEffectType.POISON)) all.removePotionEffect(PotionEffectType.POISON);
+        if (all.hasPotionEffect(PotionEffectType.WITHER)) all.removePotionEffect(PotionEffectType.WITHER);
+        if (all.hasPotionEffect(PotionEffectType.ABSORPTION)) all.removePotionEffect(PotionEffectType.ABSORPTION);
+        if (all.hasPotionEffect(PotionEffectType.GLOWING)) all.removePotionEffect(PotionEffectType.GLOWING);
+        if (all.hasPotionEffect(PotionEffectType.HEALTH_BOOST)) all.removePotionEffect(PotionEffectType.HEALTH_BOOST);
         if (all.hasPotionEffect(PotionEffectType.DOLPHINS_GRACE))
             all.removePotionEffect(PotionEffectType.DOLPHINS_GRACE);
-        if (all.hasPotionEffect(PotionEffectType.SATURATION))
-            all.removePotionEffect(PotionEffectType.SATURATION);
-        if (all.hasPotionEffect(PotionEffectType.NIGHT_VISION))
-            all.removePotionEffect(PotionEffectType.NIGHT_VISION);
+        if (all.hasPotionEffect(PotionEffectType.SATURATION)) all.removePotionEffect(PotionEffectType.SATURATION);
+        if (all.hasPotionEffect(PotionEffectType.NIGHT_VISION)) all.removePotionEffect(PotionEffectType.NIGHT_VISION);
         if (all.hasPotionEffect(PotionEffectType.WATER_BREATHING))
             all.removePotionEffect(PotionEffectType.WATER_BREATHING);
     }
@@ -2139,8 +2117,7 @@ public class PotionGames extends JavaPlugin {
                                 Location loc = getConfig().getLocation("pg.Lobby.sign");
                                 assert loc != null;
                                 BlockState b = loc.getBlock().getState();
-                                if (b instanceof Sign) {
-                                    Sign sign = (Sign) b;
+                                if (b instanceof Sign sign) {
                                     sign.setLine(0, "PotionGames");
                                     if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
                                         sign.setLine(1, ChatColor.GREEN + gamestate.toString());
@@ -2719,9 +2696,8 @@ public class PotionGames extends JavaPlugin {
                         }
                         case RESET -> {
                             if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-                                int ii = 0;
-                                try {
+                                try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                                    int ii = 0;
                                     while (rs.next()) {
                                         ii++;
                                         rank.put(ii, rs.getString("UUID"));
@@ -2750,7 +2726,7 @@ public class PotionGames extends JavaPlugin {
                                         sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                                         sign.update();
                                     }
-                                } catch (Exception e) {
+                                } catch (SQLException e) {
                                     Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
                                 }
                             }
@@ -4053,9 +4029,8 @@ public class PotionGames extends JavaPlugin {
                         }
                         case RESET -> {
                             if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                                ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3");
-                                int ii = 0;
-                                try {
+                                try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+                                    int ii = 0;
                                     while (rs.next()) {
                                         ii++;
                                         rank.put(ii, rs.getString("UUID"));
@@ -4084,7 +4059,7 @@ public class PotionGames extends JavaPlugin {
                                         sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                                         sign.update();
                                     }
-                                } catch (Exception e) {
+                                } catch (SQLException e) {
                                     Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(85));
                                 }
                             }
@@ -4802,8 +4777,7 @@ public class PotionGames extends JavaPlugin {
     }
 
     public boolean playerExists(String uuid) {
-        try {
-            ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
+        try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
             if (rs.next()) {
                 return rs.getString("UUID") != null;
             }
@@ -4827,8 +4801,7 @@ public class PotionGames extends JavaPlugin {
     public int getKills(String uuid) {
         int i = 0;
         if (playerExists(uuid)) {
-            try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
+            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
                 if ((rs.next())) {
                     rs.getInt("KILLS");
                 }
@@ -4846,8 +4819,7 @@ public class PotionGames extends JavaPlugin {
     public int getDeaths(String uuid) {
         int i = 0;
         if (playerExists(uuid)) {
-            try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
+            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
                 if ((rs.next())) {
                     rs.getInt("DEATHS");
                 }
@@ -4865,8 +4837,7 @@ public class PotionGames extends JavaPlugin {
     public double getKD(String uuid) {
         double i = 0;
         if (playerExists(uuid)) {
-            try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
+            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
                 if ((rs.next())) {
                     rs.getDouble("KD");
                 }
@@ -4884,8 +4855,7 @@ public class PotionGames extends JavaPlugin {
     public int getWins(String uuid) {
         int i = 0;
         if (playerExists(uuid)) {
-            try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
+            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
                 if ((rs.next())) {
                     rs.getInt("WINS");
                 }
@@ -4903,8 +4873,7 @@ public class PotionGames extends JavaPlugin {
     public int getLosses(String uuid) {
         int i = 0;
         if (playerExists(uuid)) {
-            try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
+            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
                 if ((rs.next())) {
                     try {
                         rs.getInt("LOSSES");
@@ -4930,8 +4899,7 @@ public class PotionGames extends JavaPlugin {
     public int getRounds(String uuid) {
         int i = 0;
         if (playerExists(uuid)) {
-            try {
-                ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'");
+            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
                 if ((rs.next())) {
                     rs.getInt("ROUNDS");
                 }
