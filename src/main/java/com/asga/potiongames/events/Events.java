@@ -1649,22 +1649,24 @@ public record Events(PotionGames pg) implements Listener {
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.OAK_SIGN) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).getDisplayName().equals(ChatColor.DARK_AQUA + "Set Join-Sign")) {
-                            if (p.hasPermission("pg.setup")) {
-                                if (!pg.isLobbySystem()) {
-                                    pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                                    pg.saveConfig();
-                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(35));
-                                }
-                            }
-                            if (p.hasPermission("pg.setup")) {
-                                if (pg.isLobbySystem()) {
-                                    pg.arenadata.set("pg.lobbies." + lobby + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                                    try {
-                                        pg.arenadata.save(pg.arenadatafile);
-                                    } catch (IOException ex) {
-                                        Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(63) + ": " + ex.getMessage());
+                            if (p.getTargetBlock(null, 5).getState() instanceof org.bukkit.block.Sign) {
+                                if (p.hasPermission("pg.setup")) {
+                                    if (!pg.isLobbySystem()) {
+                                        pg.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                                        pg.saveConfig();
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(35));
                                     }
-                                    p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(35) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                }
+                                if (p.hasPermission("pg.setup")) {
+                                    if (pg.isLobbySystem()) {
+                                        pg.arenadata.set("pg.lobbies." + lobby + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                                        try {
+                                            pg.arenadata.save(pg.arenadatafile);
+                                        } catch (IOException ex) {
+                                            Bukkit.getConsoleSender().sendMessage(pg.prefix + ChatColor.RED + pg.chatmessages.get(63) + ": " + ex.getMessage());
+                                        }
+                                        p.sendMessage(pg.prefix + ChatColor.GREEN + pg.chatmessages.get(35) + ChatColor.GRAY + " (" + "Lobby: " + lobby + ")");
+                                    }
                                 }
                             }
                         }
