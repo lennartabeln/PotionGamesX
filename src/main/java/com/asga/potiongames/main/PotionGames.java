@@ -335,14 +335,14 @@ public class PotionGames extends JavaPlugin {
         chatmessages.add("You have a block above you!");
         chatmessages.add("Airdrop is falling at your location!");
         chatmessages.add("Airdrop is falling at");
-        shop.add("JUMP");
-        shoppotion.add(new PotionEffect(PotionEffectType.JUMP, 30 * 20, 1));
+        shop.add("JUMP_BOOST");
+        shoppotion.add(new PotionEffect(PotionEffectType.JUMP_BOOST, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
         shopkit.add("Looter");
         shopcost.add(4);
         shopsale.add(2);
-        shop.add("DAMAGE_RESISTANCE");
-        shoppotion.add(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 30 * 20, 1));
+        shop.add("RESISTANCE");
+        shoppotion.add(new PotionEffect(PotionEffectType.RESISTANCE, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
         shopkit.add("Tank");
         shopcost.add(4);
@@ -365,8 +365,8 @@ public class PotionGames extends JavaPlugin {
         shopkit.add("Tank");
         shopcost.add(4);
         shopsale.add(2);
-        shop.add("HEAL");
-        shoppotion.add(new PotionEffect(PotionEffectType.HEAL, 30 * 20, 1));
+        shop.add("INSTANT_HEALTH");
+        shoppotion.add(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
         shopkit.add("Healer");
         shopcost.add(4);
@@ -395,8 +395,8 @@ public class PotionGames extends JavaPlugin {
         shopkit.add("Looter");
         shopcost.add(4);
         shopsale.add(2);
-        shop.add("INCREASE_DAMAGE");
-        shoppotion.add(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 30 * 20, 1));
+        shop.add("STRENGTH");
+        shoppotion.add(new PotionEffect(PotionEffectType.STRENGTH, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.POTION));
         shopkit.add("Fighter");
         shopcost.add(4);
@@ -443,8 +443,8 @@ public class PotionGames extends JavaPlugin {
         shopkit.add("Fighter");
         shopcost.add(4);
         shopsale.add(2);
-        shop.add("CONFUSION");
-        shoppotion.add(new PotionEffect(PotionEffectType.CONFUSION, 30 * 20, 1));
+        shop.add("NAUSEA");
+        shoppotion.add(new PotionEffect(PotionEffectType.NAUSEA, 30 * 20, 1));
         shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
         shopkit.add("Fighter");
         shopcost.add(4);
@@ -1627,14 +1627,14 @@ public class PotionGames extends JavaPlugin {
     }
 
     public void spawnFirework(Location loc, int amount) {
-        Firework fw = (Firework) Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.FIREWORK);
+        Firework fw = (Firework) Objects.requireNonNull(loc.getWorld()).spawnEntity(loc, EntityType.FIREWORK_ROCKET);
         FireworkMeta fwm = fw.getFireworkMeta();
         fwm.setPower(1);
         fwm.addEffect(FireworkEffect.builder().flicker(true).with(Type.STAR).withColor(Color.GREEN, Color.AQUA, Color.RED, Color.PURPLE, Color.YELLOW).build());
         fw.setFireworkMeta(fwm);
         fw.detonate();
         for (int i = 0; i < amount; i++) {
-            Firework fw2 = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK);
+            Firework fw2 = (Firework) loc.getWorld().spawnEntity(loc, EntityType.FIREWORK_ROCKET);
             fw2.setFireworkMeta(fwm);
         }
     }
@@ -1747,14 +1747,14 @@ public class PotionGames extends JavaPlugin {
         weapons2.add(itemStack3);
         weapons2.add(new ItemStack(Material.REDSTONE_TORCH, 1));
         potions.add(new PotionEffect(PotionEffectType.SPEED, 40 * 20, 2));
-        potions.add(new PotionEffect(PotionEffectType.SLOW, 40 * 20, 0));
-        potions.add(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 40 * 20, 0));
-        potions.add(new PotionEffect(PotionEffectType.HEAL, 1, 0));
-        potions.add(new PotionEffect(PotionEffectType.HARM, 1, 0));
-        potions.add(new PotionEffect(PotionEffectType.JUMP, 40 * 20, 3));
-        potions.add(new PotionEffect(PotionEffectType.CONFUSION, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.SLOWNESS, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.STRENGTH, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 0));
+        potions.add(new PotionEffect(PotionEffectType.INSTANT_DAMAGE, 1, 0));
+        potions.add(new PotionEffect(PotionEffectType.JUMP_BOOST, 40 * 20, 3));
+        potions.add(new PotionEffect(PotionEffectType.NAUSEA, 40 * 20, 0));
         potions.add(new PotionEffect(PotionEffectType.REGENERATION, 20 * 20, 1));
-        potions.add(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 40 * 20, 0));
+        potions.add(new PotionEffect(PotionEffectType.RESISTANCE, 40 * 20, 0));
         potions.add(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 60 * 20, 0));
         potions.add(new PotionEffect(PotionEffectType.INVISIBILITY, 40 * 20, 0));
         potions.add(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 20, 0));
@@ -1917,7 +1917,7 @@ public class PotionGames extends JavaPlugin {
         }
         ItemStack example = new ItemStack(Material.BOW, 3);
         example.setItemMeta(examplemeta);
-        example.addEnchantment(Enchantment.ARROW_FIRE, 1);
+        example.addEnchantment(Enchantment.FLAME, 1);
         if (chestdata.get("pg.customchests." + 1) == null) {
             chestdata.addDefault("pg.customchests." + 1 + ".activate", false);
             chestdata.addDefault("pg.customchests." + 1 + ".chesttype", Material.COMMAND_BLOCK.toString());
@@ -1932,7 +1932,7 @@ public class PotionGames extends JavaPlugin {
         assert firebowmeta != null;
         firebowmeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(11));
         firebow.setItemMeta(firebowmeta);
-        firebow.addEnchantment(Enchantment.ARROW_FIRE, 1);
+        firebow.addEnchantment(Enchantment.FLAME, 1);
         if (chestdata.get("pg.customchests." + 2) == null) {
             chestdata.addDefault("pg.customchests." + 2 + ".activate", true);
             chestdata.addDefault("pg.customchests." + 2 + ".chesttype", Material.TARGET.toString());
@@ -2049,16 +2049,18 @@ public class PotionGames extends JavaPlugin {
             chestitem++;
         }
         if (all.hasPotionEffect(PotionEffectType.SPEED)) all.removePotionEffect(PotionEffectType.SPEED);
-        if (all.hasPotionEffect(PotionEffectType.SLOW)) all.removePotionEffect(PotionEffectType.SLOW);
-        if (all.hasPotionEffect(PotionEffectType.INCREASE_DAMAGE))
-            all.removePotionEffect(PotionEffectType.INCREASE_DAMAGE);
-        if (all.hasPotionEffect(PotionEffectType.HEAL)) all.removePotionEffect(PotionEffectType.HEAL);
-        if (all.hasPotionEffect(PotionEffectType.HARM)) all.removePotionEffect(PotionEffectType.HARM);
-        if (all.hasPotionEffect(PotionEffectType.JUMP)) all.removePotionEffect(PotionEffectType.JUMP);
-        if (all.hasPotionEffect(PotionEffectType.CONFUSION)) all.removePotionEffect(PotionEffectType.CONFUSION);
+        if (all.hasPotionEffect(PotionEffectType.SLOWNESS)) all.removePotionEffect(PotionEffectType.SLOWNESS);
+        if (all.hasPotionEffect(PotionEffectType.STRENGTH))
+            all.removePotionEffect(PotionEffectType.STRENGTH);
+        if (all.hasPotionEffect(PotionEffectType.INSTANT_HEALTH))
+            all.removePotionEffect(PotionEffectType.INSTANT_HEALTH);
+        if (all.hasPotionEffect(PotionEffectType.INSTANT_DAMAGE))
+            all.removePotionEffect(PotionEffectType.INSTANT_DAMAGE);
+        if (all.hasPotionEffect(PotionEffectType.JUMP_BOOST)) all.removePotionEffect(PotionEffectType.JUMP_BOOST);
+        if (all.hasPotionEffect(PotionEffectType.NAUSEA)) all.removePotionEffect(PotionEffectType.NAUSEA);
         if (all.hasPotionEffect(PotionEffectType.REGENERATION)) all.removePotionEffect(PotionEffectType.REGENERATION);
-        if (all.hasPotionEffect(PotionEffectType.DAMAGE_RESISTANCE))
-            all.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
+        if (all.hasPotionEffect(PotionEffectType.RESISTANCE))
+            all.removePotionEffect(PotionEffectType.RESISTANCE);
         if (all.hasPotionEffect(PotionEffectType.FIRE_RESISTANCE))
             all.removePotionEffect(PotionEffectType.FIRE_RESISTANCE);
         if (all.hasPotionEffect(PotionEffectType.INVISIBILITY)) all.removePotionEffect(PotionEffectType.INVISIBILITY);
@@ -3353,7 +3355,7 @@ public class PotionGames extends JavaPlugin {
                                 if (activateScoreboard) {
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
-                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix("" + ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s));
+                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix(ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s));
                                         }
                                     }
                                 }
@@ -3459,7 +3461,7 @@ public class PotionGames extends JavaPlugin {
                                 if (activateScoreboard) {
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
-                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix("" + ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s));
+                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix(ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s));
                                         }
                                     }
                                 }
@@ -3525,7 +3527,7 @@ public class PotionGames extends JavaPlugin {
                                 if (activateScoreboard) {
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
-                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix("" + ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s));
+                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix(ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s));
                                         }
                                     }
                                 }

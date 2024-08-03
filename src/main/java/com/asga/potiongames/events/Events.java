@@ -392,7 +392,7 @@ public record Events(PotionGames pg) implements Listener {
                     }
                     if (!pg.lobbyBuild.get(s)) {
                         if (pg.lobbyStates.get(s) == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.SHORT_GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
                                 pg.lobbyBreakedBlocksData.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 pg.lobbyBreakedBlocks.put(s, pg.lobbyBreakedBlocksData);
                                 e.setCancelled(false);
@@ -404,7 +404,7 @@ public record Events(PotionGames pg) implements Listener {
                 } else {
                     if (!pg.isBuild()) {
                         if (pg.getGamestate() == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.SHORT_GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
                                 pg.breakedBlocks.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 e.setCancelled(false);
                             } else {
@@ -433,14 +433,14 @@ public record Events(PotionGames pg) implements Listener {
                     }
                     if (!pg.lobbyBuild.get(s)) {
                         if (pg.lobbyStates.get(s) == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.SHORT_GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
                                 pg.lobbyPlacedBlocksData.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 pg.lobbyPlacedBlocks.put(s, pg.lobbyPlacedBlocksData);
                                 e.setCancelled(false);
                             } else if (e.getBlock().getType() == Material.TNT) {
                                 e.setCancelled(true);
                                 p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
-                                Entity tnt = e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                                Entity tnt = e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.TNT);
                                 TNTPrimed tnt2 = (TNTPrimed) tnt;
                                 tnt2.setFuseTicks(40);
                             } else {
@@ -451,13 +451,13 @@ public record Events(PotionGames pg) implements Listener {
                 } else {
                     if (!pg.isBuild()) {
                         if (pg.getGamestate() == GameStates.INGAME) {
-                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
+                            if (e.getBlock().getType() == Material.COBWEB || e.getBlock().getType() == Material.FIRE || e.getBlock().getType() == Material.CAKE || e.getBlock().getType() == Material.SHORT_GRASS || e.getBlock().getType() == Material.TALL_GRASS || e.getBlock().getType() == Material.DEAD_BUSH || e.getBlock().getType() == Material.ACACIA_LEAVES || e.getBlock().getType() == Material.BIRCH_LEAVES || e.getBlock().getType() == Material.DARK_OAK_LEAVES || e.getBlock().getType() == Material.JUNGLE_LEAVES || e.getBlock().getType() == Material.OAK_LEAVES || e.getBlock().getType() == Material.SPRUCE_LEAVES || e.getBlock().getType() == Material.WARPED_FUNGUS || e.getBlock().getType() == Material.CRIMSON_FUNGUS || e.getBlock().getType() == Material.BROWN_MUSHROOM || e.getBlock().getType() == Material.RED_MUSHROOM) {
                                 pg.placedBlocks.put(e.getBlock().getLocation(), e.getBlock().getType());
                                 e.setCancelled(false);
                             } else if (e.getBlock().getType() == Material.TNT) {
                                 e.setCancelled(true);
                                 p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
-                                Entity tnt = e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.PRIMED_TNT);
+                                Entity tnt = e.getBlock().getWorld().spawnEntity(e.getBlock().getLocation(), EntityType.TNT);
                                 TNTPrimed tnt2 = (TNTPrimed) tnt;
                                 tnt2.setFuseTicks(40);
                             } else {
@@ -689,7 +689,7 @@ public record Events(PotionGames pg) implements Listener {
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e) {
         if (pg.worlds.contains(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(e.getLocation().getWorld()).getName())))) {
-            if (e.getEntity().getType() == EntityType.PRIMED_TNT) {
+            if (e.getEntity().getType() == EntityType.TNT) {
                 List<Block> destroyed = e.blockList();
                 destroyed.removeIf(block -> !toDestroy.contains(block.getType()));
             }
@@ -2621,7 +2621,7 @@ public record Events(PotionGames pg) implements Listener {
                     String motd = "" + ChatColor.GOLD + Objects.requireNonNull(pg.arenadata.get("pg.arenas." + pg.getVote() + ".name"));
                     e.setMotd(motd.toUpperCase());
                 } else {
-                    e.setMotd("" + ChatColor.AQUA + "VOTING");
+                    e.setMotd(ChatColor.AQUA + "VOTING");
                 }
             } else if (pg.getGamestate() == GameStates.INGAME) {
                 e.setMotd("" + ChatColor.GRAY + pg.getGamestate());

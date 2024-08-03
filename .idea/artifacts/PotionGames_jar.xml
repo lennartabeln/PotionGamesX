@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="PotionGames:jar">
-    <output-path>D:/Privat/Temp/Server/PotionGames/plugins</output-path>
+    <output-path>$PROJECT_DIR$/../../PotionGames/plugins</output-path>
     <root id="archive" name="PotionGames.jar">
       <element id="module-output" name="PotionGames" />
     </root>
