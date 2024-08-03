@@ -11,13 +11,13 @@ import java.util.Scanner;
 
 public record UpdateChecker(JavaPlugin plugin, int resourceId) {
     public void getVersion(final Consumer<String> consumer) {
-        Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
-            try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.resourceId + "&" + System.currentTimeMillis()).openStream(); Scanner scanner = new Scanner(inputStream)) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try (InputStream inputStream = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId + "&" + System.currentTimeMillis()).openStream(); Scanner scanner = new Scanner(inputStream)) {
                 if (scanner.hasNext()) {
                     consumer.accept(scanner.next());
                 }
             } catch (IOException ex) {
-                this.plugin.getLogger().info("Cannot look for updates: " + ex.getMessage());
+                plugin.getLogger().info("Cannot look for updates: " + ex.getMessage());
             }
         });
     }

@@ -5,8 +5,8 @@ import com.asga.potiongames.commands.Commands;
 import com.asga.potiongames.events.Events;
 import com.asga.potiongames.gamestates.GameStates;
 import com.asga.potiongames.updatechecker.UpdateChecker;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
@@ -34,7 +34,6 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -234,9 +233,9 @@ public class PotionGames extends JavaPlugin {
         arenadata = YamlConfiguration.loadConfiguration(arenadatafile);
         kitdata = YamlConfiguration.loadConfiguration(kitdatafile);
         chestdata = YamlConfiguration.loadConfiguration(chestdatafile);
-        PluginManager pm = getServer().getPluginManager();
+        PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new Events(this), this);
-        Objects.requireNonNull(this.getCommand("pg")).setExecutor(new Commands(this));
+        Objects.requireNonNull(getCommand("pg")).setExecutor(new Commands(this));
         chatmessages.add("Waiting for players!");
         chatmessages.add("The game starts in");
         chatmessages.add("Player-Finder");
@@ -706,6 +705,11 @@ public class PotionGames extends JavaPlugin {
             }
             message++;
         }
+        try {
+            messages.save(messagesfile);
+        } catch (IOException e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
+        }
         int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
             if (shopdata.get("pg.potions." + shopitem) == null) {
@@ -732,6 +736,16 @@ public class PotionGames extends JavaPlugin {
                 shopsale.set(shopitem - 1, sale);
             }
             shopitem++;
+        }
+        try {
+            shopdata.save(shopdatafile);
+        } catch (IOException e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
+        }
+        try {
+            arenadata.save(arenadatafile);
+        } catch (IOException e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
         }
         if (!kitallowed) {
             kitallowed = true;
@@ -762,9 +776,6 @@ public class PotionGames extends JavaPlugin {
             kititem++;
         }
         try {
-            messages.save(messagesfile);
-            shopdata.save(shopdatafile);
-            arenadata.save(arenadatafile);
             kitdata.save(kitdatafile);
         } catch (IOException e) {
             Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
@@ -789,7 +800,7 @@ public class PotionGames extends JavaPlugin {
         ConnectMySQL();
         ItemMeta coinmeta = coin.getItemMeta();
         assert coinmeta != null;
-        coinmeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(55)));
+        coinmeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(55));
         coin.setItemMeta(coinmeta);
         if (gameServer) {
             if (!lobbySystem) {
@@ -966,19 +977,19 @@ public class PotionGames extends JavaPlugin {
         if (activateMysql && !mysql) {
             Bukkit.getPluginManager().disablePlugin(this);
         } else {
-            getServer().getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chatmessages.get(40));
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GREEN + chatmessages.get(40));
         }
         new UpdateChecker(this, 87633).getVersion(version -> {
-            if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GRAY + chatmessages.get(76) + " " + this.getDescription().getVersion());
+            if (getDescription().getVersion().equalsIgnoreCase(version)) {
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GRAY + chatmessages.get(76) + " " + getDescription().getVersion());
             } else {
-                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GRAY + chatmessages.get(77) + " " + this.getDescription().getVersion() + " -> " + version);
+                Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.GRAY + chatmessages.get(77) + " " + getDescription().getVersion() + " -> " + version);
             }
         });
         if (enableRewards) {
             if (!setupEconomy()) {
                 log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
-                getServer().getPluginManager().disablePlugin(this);
+                Bukkit.getPluginManager().disablePlugin(this);
                 return;
             }
         }
@@ -1007,10 +1018,10 @@ public class PotionGames extends JavaPlugin {
                     BlockState b = ranksign.get(iii).getBlock().getState();
                     OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                     Sign sign = (Sign) b;
-                    sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                    sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                    sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                    sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                    sign.setLine(0, chatmessages.get(33) + " #" + id);
+                    sign.setLine(1, Objects.requireNonNull(name.getName()));
+                    sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                    sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                     sign.update();
                 }
             } catch (SQLException e) {
@@ -1235,6 +1246,11 @@ public class PotionGames extends JavaPlugin {
             }
             message++;
         }
+        try {
+            messages.save(messagesfile);
+        } catch (IOException e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
+        }
         int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
             if (shopdata.get("pg.potions." + shopitem) == null) {
@@ -1263,9 +1279,11 @@ public class PotionGames extends JavaPlugin {
             shopitem++;
         }
         try {
-            kitdata.save(kitdatafile);
-            messages.save(messagesfile);
             shopdata.save(shopdatafile);
+        } catch (IOException e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
+        }
+        try {
             arenadata.save(arenadatafile);
         } catch (IOException e) {
             Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
@@ -1305,6 +1323,11 @@ public class PotionGames extends JavaPlugin {
                 kits.set(kititem - 1, name);
             }
             kititem++;
+        }
+        try {
+            kitdata.save(kitdatafile);
+        } catch (IOException e) {
+            Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(63) + ": " + e.getMessage());
         }
         chestData();
         if (getConfig().get("pg.mysql") == null) {
@@ -1517,10 +1540,10 @@ public class PotionGames extends JavaPlugin {
                     BlockState b = ranksign.get(iii).getBlock().getState();
                     OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                     Sign sign = (Sign) b;
-                    sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                    sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                    sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                    sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                    sign.setLine(0, chatmessages.get(33) + " #" + id);
+                    sign.setLine(1, Objects.requireNonNull(name.getName()));
+                    sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                    sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                     sign.update();
                 }
             } catch (SQLException e) {
@@ -1535,7 +1558,7 @@ public class PotionGames extends JavaPlugin {
         close();
         if (gameServer && startOnJoin && !lobbySystem) {
             for (Player all : Bukkit.getOnlinePlayers()) {
-                all.kick(Component.text(prefix + ChatColor.RED + chatmessages.get(25)));
+                all.kickPlayer(prefix + ChatColor.RED + chatmessages.get(25));
             }
         }
         if (!startOnJoin) {
@@ -1567,14 +1590,14 @@ public class PotionGames extends JavaPlugin {
                 }
             }
         }
-        getServer().getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(41));
+        Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(41));
     }
 
     private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             return false;
         }
@@ -1643,10 +1666,10 @@ public class PotionGames extends JavaPlugin {
                         BlockState b = ranksign.get(iii).getBlock().getState();
                         OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                         Sign sign = (Sign) b;
-                        sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                        sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                        sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                        sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                        sign.setLine(0, chatmessages.get(33) + " #" + id);
+                        sign.setLine(1, Objects.requireNonNull(name.getName()));
+                        sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                        sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                         sign.update();
                     }
                 } catch (SQLException e) {
@@ -1703,7 +1726,7 @@ public class PotionGames extends JavaPlugin {
         ItemStack itemStack2 = new ItemStack(Material.TNT, 1);
         ItemMeta itemMeta2 = itemStack2.getItemMeta();
         assert itemMeta2 != null;
-        itemMeta2.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(79)));
+        itemMeta2.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(79));
         itemStack2.setItemMeta(itemMeta2);
         weapons1.add(itemStack2);
         weapons1.add(new ItemStack(Material.WOODEN_SWORD, 1));
@@ -1719,7 +1742,7 @@ public class PotionGames extends JavaPlugin {
         ItemStack itemStack3 = new ItemStack(Material.COMPASS, 1);
         ItemMeta itemMeta3 = itemStack3.getItemMeta();
         assert itemMeta3 != null;
-        itemMeta3.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(2)));
+        itemMeta3.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(2));
         itemStack3.setItemMeta(itemMeta3);
         weapons2.add(itemStack3);
         weapons2.add(new ItemStack(Material.REDSTONE_TORCH, 1));
@@ -1888,7 +1911,7 @@ public class PotionGames extends JavaPlugin {
         }
         ItemMeta examplemeta = itemStack.getItemMeta();
         assert examplemeta != null;
-        examplemeta.displayName(Component.text(ChatColor.RED + "EXAMPLE"));
+        examplemeta.setDisplayName(ChatColor.RED + "EXAMPLE");
         if (examplemeta instanceof Damageable) {
             ((Damageable) examplemeta).setDamage(60);
         }
@@ -1907,7 +1930,7 @@ public class PotionGames extends JavaPlugin {
         ItemStack firebow = new ItemStack(Material.BOW);
         ItemMeta firebowmeta = firebow.getItemMeta();
         assert firebowmeta != null;
-        firebowmeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(11)));
+        firebowmeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(11));
         firebow.setItemMeta(firebowmeta);
         firebow.addEnchantment(Enchantment.ARROW_FIRE, 1);
         if (chestdata.get("pg.customchests." + 2) == null) {
@@ -1974,45 +1997,45 @@ public class PotionGames extends JavaPlugin {
         ItemStack addlobby = new ItemStack(Material.STICK);
         ItemMeta addlobbymeta = addlobby.getItemMeta();
         assert addlobbymeta != null;
-        addlobbymeta.displayName(Component.text(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby"));
+        addlobbymeta.setDisplayName(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Lobby");
         addlobby.setItemMeta(addlobbymeta);
         p.getInventory().setItem(1, addlobby);
         if (lobbySystem) {
             ItemStack chooselobby = new ItemStack(Material.CLOCK);
             ItemMeta chooselobbymeta = chooselobby.getItemMeta();
             assert chooselobbymeta != null;
-            chooselobbymeta.displayName(Component.text(ChatColor.DARK_AQUA + "Choose Lobby"));
+            chooselobbymeta.setDisplayName(ChatColor.DARK_AQUA + "Choose Lobby");
             chooselobby.setItemMeta(chooselobbymeta);
             p.getInventory().setItem(2, chooselobby);
         }
         ItemStack addarena = new ItemStack(Material.STICK);
         ItemMeta addarenameta = addarena.getItemMeta();
         assert addarenameta != null;
-        addarenameta.displayName(Component.text(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena"));
+        addarenameta.setDisplayName(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Arena");
         addarena.setItemMeta(addarenameta);
         p.getInventory().setItem(3, addarena);
         ItemStack choosearena = new ItemStack(Material.CLOCK);
         ItemMeta choosearenameta = choosearena.getItemMeta();
         assert choosearenameta != null;
-        choosearenameta.displayName(Component.text(ChatColor.DARK_AQUA + "Choose Arena"));
+        choosearenameta.setDisplayName(ChatColor.DARK_AQUA + "Choose Arena");
         choosearena.setItemMeta(choosearenameta);
         p.getInventory().setItem(4, choosearena);
         ItemStack addspawn = new ItemStack(Material.STICK);
         ItemMeta addspawnmeta = addspawn.getItemMeta();
         assert addspawnmeta != null;
-        addspawnmeta.displayName(Component.text(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn"));
+        addspawnmeta.setDisplayName(ChatColor.DARK_AQUA + "Add(Left)/Del(Right) Spawn");
         addspawn.setItemMeta(addspawnmeta);
         p.getInventory().setItem(5, addspawn);
         ItemStack signsetup = new ItemStack(Material.OAK_SIGN);
         ItemMeta signsetupmeta = signsetup.getItemMeta();
         assert signsetupmeta != null;
-        signsetupmeta.displayName(Component.text(ChatColor.DARK_AQUA + "Set Join-Sign"));
+        signsetupmeta.setDisplayName(ChatColor.DARK_AQUA + "Set Join-Sign");
         signsetup.setItemMeta(signsetupmeta);
         p.getInventory().setItem(6, signsetup);
         ItemStack leavesetup = new ItemStack(Material.BARRIER);
         ItemMeta leavesetupmeta = leavesetup.getItemMeta();
         assert leavesetupmeta != null;
-        leavesetupmeta.displayName(Component.text(ChatColor.DARK_AQUA + "Leave Setup-Mode"));
+        leavesetupmeta.setDisplayName(ChatColor.DARK_AQUA + "Leave Setup-Mode");
         leavesetup.setItemMeta(leavesetupmeta);
         p.getInventory().setItem(7, leavesetup);
     }
@@ -2076,53 +2099,54 @@ public class PotionGames extends JavaPlugin {
                         case WAITING -> {
                             if (activateScoreboard) {
                                 for (Player all : pgPlayers) {
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("").setScore(11);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Map").setScore(10);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore(" ").setScore(9);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("  ").setScore(8);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Team").setScore(7);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("   ").setScore(6);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("    ").setScore(5);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Kit").setScore(4);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("     ").setScore(3);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("      ").setScore(2);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Players").setScore(1);
-                                    Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("       ").setScore(0);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("").setScore(11);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Map").setScore(10);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore(" ").setScore(9);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("  ").setScore(8);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Team").setScore(7);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("   ").setScore(6);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("    ").setScore(5);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Kit").setScore(4);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("     ").setScore(3);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("      ").setScore(2);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Players").setScore(1);
+                                    Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("       ").setScore(0);
                                 }
                             }
                             if (getConfig().contains("pg.Lobby") && getConfig().getLocation("pg.Lobby.sign") != null) {
                                 Location loc = getConfig().getLocation("pg.Lobby.sign");
                                 assert loc != null;
                                 BlockState b = loc.getBlock().getState();
-                                Sign sign = (Sign) b;
-                                sign.line(0, Component.text("PotionGames"));
-                                if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
-                                    sign.line(1, Component.text(ChatColor.GREEN + gamestate.toString()));
-                                } else {
-                                    sign.line(1, Component.text(ChatColor.RED + gamestate.toString()));
-                                }
-                                if (getVote() != null) {
-                                    sign.line(2, Component.text(ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString()));
-                                    if (activateScoreboard) {
-                                        for (Player all : pgPlayers) {
-                                            Objects.requireNonNull(info.get(all).getTeam("map")).prefix(Component.text(ChatColor.DARK_AQUA + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString()));
+                                if (b instanceof Sign sign) {
+                                    sign.setLine(0, "PotionGames");
+                                    if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
+                                        sign.setLine(1, ChatColor.GREEN + gamestate.toString());
+                                    } else {
+                                        sign.setLine(1, ChatColor.RED + gamestate.toString());
+                                    }
+                                    if (getVote() != null) {
+                                        sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
+                                        if (activateScoreboard) {
+                                            for (Player all : pgPlayers) {
+                                                Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
+                                            }
+                                        }
+                                    } else {
+                                        sign.setLine(2, ChatColor.AQUA + "Voting");
+                                        if (activateScoreboard) {
+                                            for (Player all : pgPlayers) {
+                                                Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + "Voting");
+                                            }
                                         }
                                     }
-                                } else {
-                                    sign.line(2, Component.text(ChatColor.AQUA + "Voting"));
+                                    sign.setLine(3, ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                     if (activateScoreboard) {
                                         for (Player all : pgPlayers) {
-                                            Objects.requireNonNull(info.get(all).getTeam("map")).prefix(Component.text(ChatColor.DARK_AQUA + "Voting"));
+                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix("" + ChatColor.DARK_AQUA + getPlayerAmount() + "/" + maxPlayers);
                                         }
                                     }
+                                    sign.update();
                                 }
-                                sign.line(3, Component.text(ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]"));
-                                if (activateScoreboard) {
-                                    for (Player all : pgPlayers) {
-                                        Objects.requireNonNull(info.get(all).getTeam("players")).prefix(Component.text("" + ChatColor.DARK_AQUA + getPlayerAmount() + "/" + maxPlayers));
-                                    }
-                                }
-                                sign.update();
                             }
                             specPlayers.clear();
                             move = true;
@@ -2195,7 +2219,7 @@ public class PotionGames extends JavaPlugin {
                             if (getPlayerAmount() < minPlayers) {
                                 for (Player all : pgPlayers) {
                                     all.setLevel(0);
-                                    all.sendActionBar(Component.text(prefix + chatmessages.get(0) + " " + "[" + ChatColor.AQUA + getPlayerAmount() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
+                                    all.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(prefix + chatmessages.get(0) + " " + "[" + ChatColor.AQUA + getPlayerAmount() + ChatColor.GRAY + "/" + ChatColor.AQUA + minPlayers + ChatColor.GRAY + "]"));
                                 }
                                 setCountdown(getConfig().getInt("pg.countdown"));
                             } else {
@@ -2219,31 +2243,31 @@ public class PotionGames extends JavaPlugin {
                                 assert loc != null;
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
-                                sign.line(0, Component.text("PotionGames"));
+                                sign.setLine(0, "PotionGames");
                                 if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
-                                    sign.line(1, Component.text(ChatColor.GREEN + gamestate.toString()));
+                                    sign.setLine(1, ChatColor.GREEN + gamestate.toString());
                                 } else {
-                                    sign.line(0, Component.text(ChatColor.RED + gamestate.toString()));
+                                    sign.setLine(1, ChatColor.RED + gamestate.toString());
                                 }
                                 if (getVote() != null) {
-                                    sign.line(2, Component.text(ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString()));
+                                    sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
                                     if (activateScoreboard) {
                                         for (Player all : pgPlayers) {
-                                            Objects.requireNonNull(info.get(all).getTeam("map")).prefix(Component.text(ChatColor.DARK_AQUA + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString()));
+                                            Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
                                         }
                                     }
                                 } else {
-                                    sign.line(0, Component.text(ChatColor.AQUA + "Voting"));
+                                    sign.setLine(2, ChatColor.AQUA + "Voting");
                                     if (activateScoreboard) {
                                         for (Player all : pgPlayers) {
-                                            Objects.requireNonNull(info.get(all).getTeam("map")).prefix(Component.text(ChatColor.DARK_AQUA + "Voting"));
+                                            Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + "Voting");
                                         }
                                     }
                                 }
-                                sign.line(3, Component.text(ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]"));
+                                sign.setLine(3, ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                 if (activateScoreboard) {
                                     for (Player all : pgPlayers) {
-                                        Objects.requireNonNull(info.get(all).getTeam("players")).prefix(Component.text("" + ChatColor.DARK_AQUA + getPlayerAmount() + "/" + maxPlayers));
+                                        Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix("" + ChatColor.DARK_AQUA + getPlayerAmount() + "/" + maxPlayers);
                                     }
                                 }
                                 sign.update();
@@ -2284,21 +2308,21 @@ public class PotionGames extends JavaPlugin {
                                 assert loc != null;
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
-                                sign.line(0, Component.text("PotionGames"));
+                                sign.setLine(0, "PotionGames");
                                 if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
-                                    sign.line(1, Component.text(ChatColor.GREEN + gamestate.toString()));
+                                    sign.setLine(1, ChatColor.GREEN + gamestate.toString());
                                 } else {
-                                    sign.line(1, Component.text(ChatColor.RED + gamestate.toString()));
+                                    sign.setLine(1, ChatColor.RED + gamestate.toString());
                                 }
                                 if (getVote() != null) {
-                                    sign.line(2, Component.text(ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString()));
+                                    sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.arenas." + getVote() + ".name")).toString());
                                 } else {
-                                    sign.line(2, Component.text(ChatColor.AQUA + "Voting"));
+                                    sign.setLine(2, ChatColor.AQUA + "Voting");
                                 }
-                                sign.line(3, Component.text(ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]"));
+                                sign.setLine(3, ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                 if (activateScoreboard) {
                                     for (Player all : pgPlayers) {
-                                        Objects.requireNonNull(info.get(all).getTeam("players")).prefix(Component.text("" + ChatColor.DARK_AQUA + getPlayerAmount() + "/" + maxPlayers));
+                                        Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix("" + ChatColor.DARK_AQUA + getPlayerAmount() + "/" + maxPlayers);
                                     }
                                 }
                                 sign.update();
@@ -2309,11 +2333,11 @@ public class PotionGames extends JavaPlugin {
                                         String name = arenadata.getString("pg.arenas." + world + ".world");
                                         assert name != null;
                                         worlds.add(name);
-                                        Objects.requireNonNull(getServer().getWorld(name)).setPVP(false);
+                                        Objects.requireNonNull(Bukkit.getWorld(name)).setPVP(false);
                                         if (changeGamerules) {
                                             setGameRules(name);
-                                            Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
-                                            Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
+                                            Objects.requireNonNull(Bukkit.getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
+                                            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
                                         }
                                     }
                                 }
@@ -2327,7 +2351,7 @@ public class PotionGames extends JavaPlugin {
                                         ItemStack playercompass = new ItemStack(Material.COMPASS);
                                         ItemMeta playercompassmeta = playercompass.getItemMeta();
                                         assert playercompassmeta != null;
-                                        playercompassmeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(2)));
+                                        playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(2));
                                         playercompass.setItemMeta(playercompassmeta);
                                         if (compassOnSpawn) {
                                             all.getInventory().setItem(8, playercompass);
@@ -2354,11 +2378,11 @@ public class PotionGames extends JavaPlugin {
                                             String name = arenadata.getString("pg.arenas." + world + ".world");
                                             assert name != null;
                                             worlds.add(name);
-                                            Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
+                                            Objects.requireNonNull(Bukkit.getWorld(name)).setPVP(true);
                                             if (changeGamerules) {
                                                 setGameRules(name);
-                                                Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
-                                                Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                                Objects.requireNonNull(Bukkit.getWorld(name)).setDifficulty(Difficulty.EASY);
+                                                Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                                             }
                                         }
                                     }
@@ -2381,18 +2405,18 @@ public class PotionGames extends JavaPlugin {
                                             info.get(all).resetScores("    ");
                                             info.get(all).resetScores("Kit");
                                             info.get(all).resetScores("     ");
-                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("           ").setScore(8);
-                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Time").setScore(7);
-                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("          ").setScore(6);
-                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("         ").setScore(5);
-                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Kills").setScore(4);
-                                            Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("        ").setScore(3);
-                                            Objects.requireNonNull(info.get(all).getTeam("timeScoreboard")).prefix(Component.text("" + ChatColor.DARK_AQUA + roundTimeSeconds / 60 + " min"));
-                                            Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text(ChatColor.DARK_AQUA + "0"));
-                                            String tempString = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(info.get(all).getTeam("kills")).prefix());
+                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("           ").setScore(8);
+                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Time").setScore(7);
+                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("          ").setScore(6);
+                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("         ").setScore(5);
+                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Kills").setScore(4);
+                                            Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("        ").setScore(3);
+                                            Objects.requireNonNull(info.get(all).getTeam("timeScoreboard")).setPrefix("" + ChatColor.DARK_AQUA + roundTimeSeconds / 60 + " min");
+                                            Objects.requireNonNull(info.get(all).getTeam("kills")).setPrefix(ChatColor.DARK_AQUA + "0");
+                                            String tempString = Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("kills"))).getPrefix();
                                             tempString = ChatColor.stripColor(tempString);
                                             int tempInt = Integer.parseInt(tempString);
-                                            Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text("" + ChatColor.DARK_AQUA + tempInt));
+                                            Objects.requireNonNull(info.get(all).getTeam("kills")).setPrefix("" + ChatColor.DARK_AQUA + tempInt);
                                         }
                                     }
                                     if (activateTeams) {
@@ -2605,11 +2629,11 @@ public class PotionGames extends JavaPlugin {
                                                     String name = arenadata.getString("pg.arenas." + world + ".world");
                                                     assert name != null;
                                                     worlds.add(name);
-                                                    Objects.requireNonNull(getServer().getWorld(name)).setPVP(false);
+                                                    Objects.requireNonNull(Bukkit.getWorld(name)).setPVP(false);
                                                     if (changeGamerules) {
                                                         setGameRules(name);
-                                                        Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
-                                                        Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
+                                                        Objects.requireNonNull(Bukkit.getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
+                                                        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
                                                     }
                                                 }
                                             }
@@ -2638,11 +2662,11 @@ public class PotionGames extends JavaPlugin {
                                                     String name = arenadata.getString("pg.arenas." + world + ".world");
                                                     assert name != null;
                                                     worlds.add(name);
-                                                    Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
+                                                    Objects.requireNonNull(Bukkit.getWorld(name)).setPVP(true);
                                                     if (changeGamerules) {
                                                         setGameRules(name);
-                                                        Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
-                                                        Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                                        Objects.requireNonNull(Bukkit.getWorld(name)).setDifficulty(Difficulty.EASY);
+                                                        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                                                     }
                                                 }
                                             }
@@ -2696,10 +2720,10 @@ public class PotionGames extends JavaPlugin {
                                         BlockState b = ranksign.get(iii).getBlock().getState();
                                         OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                                         Sign sign = (Sign) b;
-                                        sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                                        sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                                        sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                                        sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                                        sign.setLine(0, chatmessages.get(33) + " #" + id);
+                                        sign.setLine(1, Objects.requireNonNull(name.getName()));
+                                        sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                                        sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                                         sign.update();
                                     }
                                 } catch (SQLException e) {
@@ -2714,8 +2738,8 @@ public class PotionGames extends JavaPlugin {
                                     info.get(all).resetScores("         ");
                                     info.get(all).resetScores("Kills");
                                     info.get(all).resetScores("        ");
-                                    Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("team"))).prefix(Component.text(ChatColor.DARK_AQUA + "none"));
-                                    Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("kit"))).prefix(Component.text(ChatColor.DARK_AQUA + "none"));
+                                    Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("team"))).setPrefix(ChatColor.DARK_AQUA + "none");
+                                    Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("kit"))).setPrefix(ChatColor.DARK_AQUA + "none");
                                 }
                             }
                             if (getConfig().contains("pg.Lobby") && getConfig().getLocation("pg.Lobby.sign") != null) {
@@ -2723,14 +2747,14 @@ public class PotionGames extends JavaPlugin {
                                 assert loc != null;
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
-                                sign.line(0, Component.text("PotionGames"));
+                                sign.setLine(0, "PotionGames");
                                 if (gamestate == GameStates.WAITING || gamestate == GameStates.PREPARING) {
-                                    sign.line(1, Component.text(ChatColor.GREEN + gamestate.toString()));
+                                    sign.setLine(1, ChatColor.GREEN + gamestate.toString());
                                 } else {
-                                    sign.line(1, Component.text(ChatColor.RED + gamestate.toString()));
+                                    sign.setLine(1, ChatColor.RED + gamestate.toString());
                                 }
-                                sign.line(2, Component.text(ChatColor.AQUA + "Voting"));
-                                sign.line(3, Component.text(ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]"));
+                                sign.setLine(2, ChatColor.AQUA + "Voting");
+                                sign.setLine(3, ChatColor.GRAY + "[" + getPlayerAmount() + "/" + maxPlayers + "]");
                                 sign.update();
                             }
                             reset = 10;
@@ -2758,7 +2782,7 @@ public class PotionGames extends JavaPlugin {
                                     ItemStack teamselector = new ItemStack(Material.CLOCK);
                                     ItemMeta teamselectormeta = teamselector.getItemMeta();
                                     assert teamselectormeta != null;
-                                    teamselectormeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(43)));
+                                    teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(43));
                                     teamselector.setItemMeta(teamselectormeta);
                                     inv.setItem(4, teamselector);
                                 }
@@ -2766,7 +2790,7 @@ public class PotionGames extends JavaPlugin {
                                     ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
                                     ItemMeta kitselectormeta = kitselector.getItemMeta();
                                     assert kitselectormeta != null;
-                                    kitselectormeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(62)));
+                                    kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(62));
                                     kitselector.setItemMeta(kitselectormeta);
                                     inv.setItem(2, kitselector);
                                 }
@@ -2774,7 +2798,7 @@ public class PotionGames extends JavaPlugin {
                                     ItemStack votepaper = new ItemStack(Material.PAPER);
                                     ItemMeta votepapaermeta = votepaper.getItemMeta();
                                     assert votepapaermeta != null;
-                                    votepapaermeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(14)));
+                                    votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(14));
                                     votepaper.setItemMeta(votepapaermeta);
                                     inv.setItem(0, votepaper);
                                 }
@@ -2782,14 +2806,14 @@ public class PotionGames extends JavaPlugin {
                                     ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
                                     ItemMeta leavemeta = leave.getItemMeta();
                                     assert leavemeta != null;
-                                    leavemeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(80)));
+                                    leavemeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(80));
                                     leave.setItemMeta(leavemeta);
                                     inv.setItem(8, leave);
                                 }
                                 ItemStack stats = new ItemStack(Material.EMERALD);
                                 ItemMeta statsmeta = stats.getItemMeta();
                                 assert statsmeta != null;
-                                statsmeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(56)));
+                                statsmeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(56));
                                 stats.setItemMeta(statsmeta);
                                 inv.setItem(6, stats);
                             }
@@ -2809,11 +2833,13 @@ public class PotionGames extends JavaPlugin {
                             checkArenas = false;
                             singleArena = false;
                             deathmatch = false;
-                            Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
-                            if (changeGamerules) {
-                                setGameRules(getConfig().getString("pg.Lobby.world"));
-                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
-                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setGameRule(GameRule.FALL_DAMAGE, false);
+                            if (getConfig().getString("pg.Lobby.world") != null) {
+                                Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setPVP(false);
+                                if (changeGamerules) {
+                                    setGameRules(getConfig().getString("pg.Lobby.world"));
+                                    Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setDifficulty(Difficulty.PEACEFUL);
+                                    Objects.requireNonNull(Bukkit.getWorld(Objects.requireNonNull(getConfig().getString("pg.Lobby.world")))).setGameRule(GameRule.FALL_DAMAGE, false);
+                                }
                             }
                             if (!voteallowed) {
                                 voteallowed = true;
@@ -2865,7 +2891,7 @@ public class PotionGames extends JavaPlugin {
                                 if (arenadata.contains("pg.arenas." + world)) {
                                     String name = arenadata.getString("pg.arenas." + world + ".world");
                                     assert name != null;
-                                    World worldName = getServer().getWorld(name);
+                                    World worldName = Bukkit.getWorld(name);
                                     assert worldName != null;
                                     List<Entity> entList = worldName.getEntities();
                                     for (Entity current : entList) {
@@ -2964,7 +2990,8 @@ public class PotionGames extends JavaPlugin {
             setVote(winner);
         } catch (Exception e) {
             Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(90));
-            for (Player all : pgPlayers) {
+            ArrayList<Player> leavingPgPlayers = new ArrayList<>(pgPlayers);
+            for (Player all : leavingPgPlayers) {
                 all.sendMessage(prefix + ChatColor.RED + chatmessages.get(90));
                 all.sendMessage(prefix + ChatColor.RED + chatmessages.get(86));
                 onLeave(all);
@@ -2995,7 +3022,7 @@ public class PotionGames extends JavaPlugin {
                                 teamed.add(all.getName());
                                 teamplayernames.put(all, Integer.toString(rndTeam));
                                 if (activateScoreboard) {
-                                    Objects.requireNonNull(all.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + Integer.toString(rndTeam)));
+                                    Objects.requireNonNull(all.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                 }
                             }
                         }
@@ -3011,7 +3038,7 @@ public class PotionGames extends JavaPlugin {
                         kited.add(all.getName());
                         kitplayernames.put(all, kits.get(rndKit));
                         if (activateScoreboard) {
-                            Objects.requireNonNull(all.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + kits.get(rndKit)));
+                            Objects.requireNonNull(all.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + kits.get(rndKit));
                         }
                         if (kits.get(rndKit).equals("Rich Kid")) {
                             richkidPlayers.add(all);
@@ -3079,16 +3106,16 @@ public class PotionGames extends JavaPlugin {
         try {
             if (activateScoreboard) {
                 Scoreboard temp = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
-                temp.registerNewObjective("pg", Criteria.DUMMY, Component.text(" " + prefix));
-                Objects.requireNonNull(temp.getObjective("pg")).setDisplaySlot(DisplaySlot.SIDEBAR);
+                temp.registerNewObjective("main-content", "dummy", " " + prefix);
+                Objects.requireNonNull(temp.getObjective("main-content")).setDisplaySlot(DisplaySlot.SIDEBAR);
                 temp.registerNewTeam("team");
                 temp.registerNewTeam("kit");
                 temp.registerNewTeam("players");
                 temp.registerNewTeam("timeScoreboard");
                 temp.registerNewTeam("map");
                 temp.registerNewTeam("kills");
-                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("team"))).prefix(Component.text(ChatColor.DARK_AQUA + "none"));
-                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("kit"))).prefix(Component.text(ChatColor.DARK_AQUA + "none"));
+                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("team"))).setPrefix(ChatColor.DARK_AQUA + "none");
+                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("kit"))).setPrefix(ChatColor.DARK_AQUA + "none");
                 Objects.requireNonNull(temp.getTeam("map")).addEntry(" ");
                 Objects.requireNonNull(temp.getTeam("players")).addEntry("       ");
                 Objects.requireNonNull(temp.getTeam("timeScoreboard")).addEntry("          ");
@@ -3133,7 +3160,7 @@ public class PotionGames extends JavaPlugin {
                     ItemStack teamselector = new ItemStack(Material.CLOCK);
                     ItemMeta teamselectormeta = teamselector.getItemMeta();
                     assert teamselectormeta != null;
-                    teamselectormeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(43)));
+                    teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(43));
                     teamselector.setItemMeta(teamselectormeta);
                     p.getInventory().setItem(4, teamselector);
                 }
@@ -3141,7 +3168,7 @@ public class PotionGames extends JavaPlugin {
                     ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
                     ItemMeta kitselectormeta = kitselector.getItemMeta();
                     assert kitselectormeta != null;
-                    kitselectormeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(62)));
+                    kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(62));
                     kitselector.setItemMeta(kitselectormeta);
                     p.getInventory().setItem(2, kitselector);
                 }
@@ -3149,7 +3176,7 @@ public class PotionGames extends JavaPlugin {
                     ItemStack votepaper = new ItemStack(Material.PAPER);
                     ItemMeta votepapaermeta = votepaper.getItemMeta();
                     assert votepapaermeta != null;
-                    votepapaermeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(14)));
+                    votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(14));
                     votepaper.setItemMeta(votepapaermeta);
                     p.getInventory().setItem(0, votepaper);
                 }
@@ -3157,14 +3184,14 @@ public class PotionGames extends JavaPlugin {
                     ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
                     ItemMeta leavemeta = leave.getItemMeta();
                     assert leavemeta != null;
-                    leavemeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(80)));
+                    leavemeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(80));
                     leave.setItemMeta(leavemeta);
                     p.getInventory().setItem(8, leave);
                 }
                 ItemStack stats = new ItemStack(Material.EMERALD);
                 ItemMeta statsmeta = stats.getItemMeta();
                 assert statsmeta != null;
-                statsmeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(56)));
+                statsmeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(56));
                 stats.setItemMeta(statsmeta);
                 p.getInventory().setItem(6, stats);
                 p.sendMessage(prefix + ChatColor.GREEN + chatmessages.get(30));
@@ -3192,13 +3219,14 @@ public class PotionGames extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(87));
             p.sendMessage(prefix + ChatColor.RED + chatmessages.get(87));
             p.sendMessage(prefix + ChatColor.RED + chatmessages.get(86));
+            onLeave(p);
         }
     }
 
     public void onLeave(Player p) {
         if (activateScoreboard) {
-            Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(""));
-            Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(""));
+            Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix("");
+            Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix("");
             p.setScoreboard(Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard());
         }
         joinChannel(p.getPlayer(), "Global");
@@ -3276,18 +3304,18 @@ public class PotionGames extends JavaPlugin {
                             if (activateScoreboard) {
                                 for (Player all : playerLobby.keySet()) {
                                     if (playerLobby.get(all).equals(s)) {
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("").setScore(11);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Map").setScore(10);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore(" ").setScore(9);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("  ").setScore(8);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Team").setScore(7);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("   ").setScore(6);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("    ").setScore(5);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Kit").setScore(4);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("     ").setScore(3);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("      ").setScore(2);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Players").setScore(1);
-                                        Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("       ").setScore(0);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("").setScore(11);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Map").setScore(10);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore(" ").setScore(9);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("  ").setScore(8);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Team").setScore(7);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("   ").setScore(6);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("    ").setScore(5);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Kit").setScore(4);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("     ").setScore(3);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("      ").setScore(2);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Players").setScore(1);
+                                        Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("       ").setScore(0);
                                     }
                                 }
                             }
@@ -3296,41 +3324,41 @@ public class PotionGames extends JavaPlugin {
                                 assert loc != null;
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
-                                sign.line(0, Component.text(s));
+                                sign.setLine(0, s);
                                 if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
-                                    sign.line(1, Component.text(ChatColor.GREEN + lobbyStates.get(s).toString()));
+                                    sign.setLine(1, ChatColor.GREEN + lobbyStates.get(s).toString());
                                 } else {
-                                    sign.line(1, Component.text(ChatColor.RED + lobbyStates.get(s).toString()));
+                                    sign.setLine(1, ChatColor.RED + lobbyStates.get(s).toString());
                                 }
                                 if (lobbyVote.get(s) != null) {
-                                    sign.line(2, Component.text(ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString()));
+                                    sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString());
                                     if (activateScoreboard) {
                                         for (Player all : playerLobby.keySet()) {
                                             if (playerLobby.get(all).equals(s)) {
-                                                Objects.requireNonNull(info.get(all).getTeam("map")).prefix(Component.text(ChatColor.DARK_AQUA + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString()));
+                                                Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString());
                                             }
                                         }
                                     }
                                 } else {
-                                    sign.line(2, Component.text(ChatColor.AQUA + "Voting"));
+                                    sign.setLine(2, ChatColor.AQUA + "Voting");
                                     if (activateScoreboard) {
                                         for (Player all : playerLobby.keySet()) {
                                             if (playerLobby.get(all).equals(s)) {
-                                                Objects.requireNonNull(info.get(all).getTeam("map")).prefix(Component.text(ChatColor.DARK_AQUA + "Voting"));
+                                                Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + "Voting");
                                             }
                                         }
                                     }
                                 }
-                                sign.line(3, Component.text(ChatColor.GRAY + "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]"));
+                                sign.setLine(3, ChatColor.GRAY + "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]");
                                 if (activateScoreboard) {
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
-                                            Objects.requireNonNull(info.get(all).getTeam("players")).prefix(Component.text("" + ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s)));
+                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix("" + ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s));
                                         }
                                     }
                                 }
                                 sign.update();
-                                infoLobby.replace(s, "" + sign.line(1) + ChatColor.WHITE + ", " + sign.line(2) + ChatColor.WHITE + ", " + sign.line(3));
+                                infoLobby.replace(s, sign.getLine(1) + ChatColor.WHITE + ", " + sign.getLine(2) + ChatColor.WHITE + ", " + sign.getLine(3));
                             }
                             if (!lobbyCheckArenas.get(s)) {
                                 lobbyCheckArenas.replace(s, true);
@@ -3375,7 +3403,7 @@ public class PotionGames extends JavaPlugin {
                                 for (Player all : playerLobby.keySet()) {
                                     if (playerLobby.get(all).equals(s)) {
                                         all.setLevel(0);
-                                        all.sendActionBar(Component.text(prefix + chatmessages.get(0) + " " + "[" + ChatColor.AQUA + lobbyAmount.get(s) + ChatColor.GRAY + "/" + ChatColor.AQUA + lobbyminPlayers.get(s) + ChatColor.GRAY + "]"));
+                                        all.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(prefix + chatmessages.get(0) + " " + "[" + ChatColor.AQUA + lobbyAmount.get(s) + ChatColor.GRAY + "/" + ChatColor.AQUA + lobbyminPlayers.get(s) + ChatColor.GRAY + "]"));
                                     }
                                 }
                                 countdownLobby.replace(s, getConfig().getInt("pg.countdown"));
@@ -3402,41 +3430,41 @@ public class PotionGames extends JavaPlugin {
                                 assert loc != null;
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
-                                sign.line(0, Component.text(s));
+                                sign.setLine(0, s);
                                 if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
-                                    sign.line(1, Component.text(ChatColor.GREEN + lobbyStates.get(s).toString()));
+                                    sign.setLine(1, ChatColor.GREEN + lobbyStates.get(s).toString());
                                 } else {
-                                    sign.line(1, Component.text(ChatColor.RED + lobbyStates.get(s).toString()));
+                                    sign.setLine(1, ChatColor.RED + lobbyStates.get(s).toString());
                                 }
                                 if (lobbyVote.get(s) != null) {
-                                    sign.line(2, Component.text(ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString()));
+                                    sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString());
                                     if (activateScoreboard) {
                                         for (Player all : playerLobby.keySet()) {
                                             if (playerLobby.get(all).equals(s)) {
-                                                Objects.requireNonNull(info.get(all).getTeam("map")).prefix(Component.text(ChatColor.DARK_AQUA + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString()));
+                                                Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString());
                                             }
                                         }
                                     }
                                 } else {
-                                    sign.line(2, Component.text(ChatColor.AQUA + "Voting"));
+                                    sign.setLine(2, ChatColor.AQUA + "Voting");
                                     if (activateScoreboard) {
                                         for (Player all : playerLobby.keySet()) {
                                             if (playerLobby.get(all).equals(s)) {
-                                                Objects.requireNonNull(info.get(all).getTeam("map")).prefix(Component.text(ChatColor.DARK_AQUA + "Voting"));
+                                                Objects.requireNonNull(info.get(all).getTeam("map")).setPrefix(ChatColor.DARK_AQUA + "Voting");
                                             }
                                         }
                                     }
                                 }
-                                sign.line(3, Component.text(ChatColor.GRAY + "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]"));
+                                sign.setLine(3, ChatColor.GRAY + "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]");
                                 if (activateScoreboard) {
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
-                                            Objects.requireNonNull(info.get(all).getTeam("players")).prefix(Component.text("" + ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s)));
+                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix("" + ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s));
                                         }
                                     }
                                 }
                                 sign.update();
-                                infoLobby.replace(s, "" + sign.line(1) + ChatColor.WHITE + ", " + sign.line(2) + ChatColor.WHITE + ", " + sign.line(3));
+                                infoLobby.replace(s, sign.getLine(1) + ChatColor.WHITE + ", " + sign.getLine(2) + ChatColor.WHITE + ", " + sign.getLine(3));
                             }
                             if (lobbyAmount.get(s) >= lobbyminPlayers.get(s)) {
                                 for (Player all : playerLobby.keySet()) {
@@ -3482,27 +3510,27 @@ public class PotionGames extends JavaPlugin {
                                 assert loc != null;
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
-                                sign.line(0, Component.text(s));
+                                sign.setLine(0, s);
                                 if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
-                                    sign.line(1, Component.text(ChatColor.GREEN + lobbyStates.get(s).toString()));
+                                    sign.setLine(1, ChatColor.GREEN + lobbyStates.get(s).toString());
                                 } else {
-                                    sign.line(1, Component.text(ChatColor.RED + lobbyStates.get(s).toString()));
+                                    sign.setLine(1, ChatColor.RED + lobbyStates.get(s).toString());
                                 }
                                 if (lobbyVote.get(s) != null) {
-                                    sign.line(2, Component.text(ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString()));
+                                    sign.setLine(2, ChatColor.GOLD + Objects.requireNonNull(arenadata.get("pg.lobbies." + s + "." + lobbyVote.get(s) + ".name")).toString());
                                 } else {
-                                    sign.line(2, Component.text(ChatColor.AQUA + "Voting"));
+                                    sign.setLine(2, ChatColor.AQUA + "Voting");
                                 }
-                                sign.line(3, Component.text(ChatColor.GRAY + "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]"));
+                                sign.setLine(3, ChatColor.GRAY + "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]");
                                 if (activateScoreboard) {
                                     for (Player all : playerLobby.keySet()) {
                                         if (playerLobby.get(all).equals(s)) {
-                                            Objects.requireNonNull(info.get(all).getTeam("players")).prefix(Component.text("" + ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s)));
+                                            Objects.requireNonNull(info.get(all).getTeam("players")).setPrefix("" + ChatColor.DARK_AQUA + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s));
                                         }
                                     }
                                 }
                                 sign.update();
-                                infoLobby.replace(s, "" + sign.line(1) + ChatColor.WHITE + ", " + sign.line(2) + ChatColor.WHITE + ", " + sign.line(3));
+                                infoLobby.replace(s, sign.getLine(1) + ChatColor.WHITE + ", " + sign.getLine(2) + ChatColor.WHITE + ", " + sign.getLine(3));
                             }
                             if (countdownLobby.get(s) != 0 && countdownLobby.get(s) != -1 && countdownLobby.get(s) != -4) {
                                 for (int world = 1; world < 27; world++) {
@@ -3510,11 +3538,11 @@ public class PotionGames extends JavaPlugin {
                                         String name = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
                                         assert name != null;
                                         worlds.add(name);
-                                        Objects.requireNonNull(getServer().getWorld(name)).setPVP(false);
+                                        Objects.requireNonNull(Bukkit.getWorld(name)).setPVP(false);
                                         if (changeGamerules) {
                                             setGameRules(name);
-                                            Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
-                                            Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
+                                            Objects.requireNonNull(Bukkit.getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
+                                            Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
                                         }
                                     }
                                 }
@@ -3529,7 +3557,7 @@ public class PotionGames extends JavaPlugin {
                                             ItemStack playercompass = new ItemStack(Material.COMPASS);
                                             ItemMeta playercompassmeta = playercompass.getItemMeta();
                                             assert playercompassmeta != null;
-                                            playercompassmeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(2)));
+                                            playercompassmeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(2));
                                             playercompass.setItemMeta(playercompassmeta);
                                             if (compassOnSpawn) {
                                                 all.getInventory().setItem(8, playercompass);
@@ -3561,11 +3589,11 @@ public class PotionGames extends JavaPlugin {
                                             String name = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
                                             assert name != null;
                                             worlds.add(name);
-                                            Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
+                                            Objects.requireNonNull(Bukkit.getWorld(name)).setPVP(true);
                                             if (changeGamerules) {
                                                 setGameRules(name);
-                                                Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
-                                                Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                                Objects.requireNonNull(Bukkit.getWorld(name)).setDifficulty(Difficulty.EASY);
+                                                Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                                             }
                                         }
                                     }
@@ -3591,18 +3619,18 @@ public class PotionGames extends JavaPlugin {
                                                 info.get(all).resetScores("    ");
                                                 info.get(all).resetScores("Kit");
                                                 info.get(all).resetScores("     ");
-                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("           ").setScore(8);
-                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Time").setScore(7);
-                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("          ").setScore(6);
-                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("         ").setScore(5);
-                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("Kills").setScore(4);
-                                                Objects.requireNonNull(info.get(all).getObjective("pg")).getScore("        ").setScore(3);
-                                                Objects.requireNonNull(info.get(all).getTeam("timeScoreboard")).prefix(Component.text("" + ChatColor.DARK_AQUA + lobbyroundTimeSeconds.get(s) / 60 + " min"));
-                                                Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text(ChatColor.DARK_AQUA + "0"));
-                                                String tempString = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(info.get(all).getTeam("kills")).prefix());
+                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("           ").setScore(8);
+                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Time").setScore(7);
+                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("          ").setScore(6);
+                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("         ").setScore(5);
+                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("Kills").setScore(4);
+                                                Objects.requireNonNull(info.get(all).getObjective("main-content")).getScore("        ").setScore(3);
+                                                Objects.requireNonNull(info.get(all).getTeam("timeScoreboard")).setPrefix("" + ChatColor.DARK_AQUA + lobbyroundTimeSeconds.get(s) / 60 + " min");
+                                                Objects.requireNonNull(info.get(all).getTeam("kills")).setPrefix(ChatColor.DARK_AQUA + "0");
+                                                String tempString = Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("kills"))).getPrefix();
                                                 tempString = ChatColor.stripColor(tempString);
                                                 int tempInt = Integer.parseInt(tempString);
-                                                Objects.requireNonNull(info.get(all).getTeam("kills")).prefix(Component.text("" + ChatColor.DARK_AQUA + tempInt));
+                                                Objects.requireNonNull(info.get(all).getTeam("kills")).setPrefix("" + ChatColor.DARK_AQUA + tempInt);
                                             }
                                         }
                                     }
@@ -3916,11 +3944,11 @@ public class PotionGames extends JavaPlugin {
                                                     String name = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
                                                     assert name != null;
                                                     worlds.add(name);
-                                                    Objects.requireNonNull(getServer().getWorld(name)).setPVP(false);
+                                                    Objects.requireNonNull(Bukkit.getWorld(name)).setPVP(false);
                                                     if (changeGamerules) {
                                                         setGameRules(name);
-                                                        Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
-                                                        Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
+                                                        Objects.requireNonNull(Bukkit.getWorld(name)).setDifficulty(Difficulty.PEACEFUL);
+                                                        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, false);
                                                     }
                                                 }
                                             }
@@ -3957,11 +3985,11 @@ public class PotionGames extends JavaPlugin {
                                                     String name = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
                                                     assert name != null;
                                                     worlds.add(name);
-                                                    Objects.requireNonNull(getServer().getWorld(name)).setPVP(true);
+                                                    Objects.requireNonNull(Bukkit.getWorld(name)).setPVP(true);
                                                     if (changeGamerules) {
                                                         setGameRules(name);
-                                                        Objects.requireNonNull(getServer().getWorld(name)).setDifficulty(Difficulty.EASY);
-                                                        Objects.requireNonNull(getServer().getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
+                                                        Objects.requireNonNull(Bukkit.getWorld(name)).setDifficulty(Difficulty.EASY);
+                                                        Objects.requireNonNull(Bukkit.getWorld(name)).setGameRule(GameRule.FALL_DAMAGE, true);
                                                     }
                                                 }
                                             }
@@ -4025,10 +4053,10 @@ public class PotionGames extends JavaPlugin {
                                         BlockState b = ranksign.get(iii).getBlock().getState();
                                         OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
                                         Sign sign = (Sign) b;
-                                        sign.line(0, Component.text(chatmessages.get(33) + " #" + id));
-                                        sign.line(1, Component.text(Objects.requireNonNull(name.getName())));
-                                        sign.line(2, Component.text("Wins: " + getWins(rank.get(id))));
-                                        sign.line(3, Component.text("K/D: " + getKD(rank.get(id))));
+                                        sign.setLine(0, chatmessages.get(33) + " #" + id);
+                                        sign.setLine(1, Objects.requireNonNull(name.getName()));
+                                        sign.setLine(2, "Wins: " + getWins(rank.get(id)));
+                                        sign.setLine(3, "K/D: " + getKD(rank.get(id)));
                                         sign.update();
                                     }
                                 } catch (SQLException e) {
@@ -4044,8 +4072,8 @@ public class PotionGames extends JavaPlugin {
                                         info.get(all).resetScores("         ");
                                         info.get(all).resetScores("Kills");
                                         info.get(all).resetScores("        ");
-                                        Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("team"))).prefix(Component.text(ChatColor.DARK_AQUA + "none"));
-                                        Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("kit"))).prefix(Component.text(ChatColor.DARK_AQUA + "none"));
+                                        Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("team"))).setPrefix(ChatColor.DARK_AQUA + "none");
+                                        Objects.requireNonNull(Objects.requireNonNull(info.get(all).getTeam("kit"))).setPrefix(ChatColor.DARK_AQUA + "none");
                                     }
                                 }
                             }
@@ -4054,16 +4082,16 @@ public class PotionGames extends JavaPlugin {
                                 assert loc != null;
                                 BlockState b = loc.getBlock().getState();
                                 Sign sign = (Sign) b;
-                                sign.line(0, Component.text(s));
+                                sign.setLine(0, s);
                                 if (lobbyStates.get(s) == GameStates.WAITING || lobbyStates.get(s) == GameStates.PREPARING) {
-                                    sign.line(1, Component.text(ChatColor.GREEN + lobbyStates.get(s).toString()));
+                                    sign.setLine(1, ChatColor.GREEN + lobbyStates.get(s).toString());
                                 } else {
-                                    sign.line(1, Component.text(ChatColor.RED + lobbyStates.get(s).toString()));
+                                    sign.setLine(1, ChatColor.RED + lobbyStates.get(s).toString());
                                 }
-                                sign.line(2, Component.text(ChatColor.AQUA + "Voting"));
-                                sign.line(3, Component.text(ChatColor.GRAY + "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]"));
+                                sign.setLine(2, ChatColor.AQUA + "Voting");
+                                sign.setLine(3, ChatColor.GRAY + "[" + lobbyAmount.get(s).toString() + "/" + lobbymaxPlayers.get(s) + "]");
                                 sign.update();
-                                infoLobby.replace(s, "" + sign.line(1) + ChatColor.WHITE + ", " + sign.line(2) + ChatColor.WHITE + ", " + sign.line(3));
+                                infoLobby.replace(s, sign.getLine(1) + ChatColor.WHITE + ", " + sign.getLine(2) + ChatColor.WHITE + ", " + sign.getLine(3));
                             }
                             resetLobby.replace(s, reset);
                             countdownLobby.replace(s, getConfig().getInt("pg.countdown"));
@@ -4091,7 +4119,7 @@ public class PotionGames extends JavaPlugin {
                                         ItemStack teamselector = new ItemStack(Material.CLOCK);
                                         ItemMeta teamselectormeta = teamselector.getItemMeta();
                                         assert teamselectormeta != null;
-                                        teamselectormeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(43)));
+                                        teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(43));
                                         teamselector.setItemMeta(teamselectormeta);
                                         inv.setItem(4, teamselector);
                                     }
@@ -4099,7 +4127,7 @@ public class PotionGames extends JavaPlugin {
                                         ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
                                         ItemMeta kitselectormeta = kitselector.getItemMeta();
                                         assert kitselectormeta != null;
-                                        kitselectormeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(62)));
+                                        kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(62));
                                         kitselector.setItemMeta(kitselectormeta);
                                         inv.setItem(2, kitselector);
                                     }
@@ -4107,7 +4135,7 @@ public class PotionGames extends JavaPlugin {
                                         ItemStack votepaper = new ItemStack(Material.PAPER);
                                         ItemMeta votepapaermeta = votepaper.getItemMeta();
                                         assert votepapaermeta != null;
-                                        votepapaermeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(14)));
+                                        votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(14));
                                         votepaper.setItemMeta(votepapaermeta);
                                         inv.setItem(0, votepaper);
                                     }
@@ -4115,14 +4143,14 @@ public class PotionGames extends JavaPlugin {
                                         ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
                                         ItemMeta leavemeta = leave.getItemMeta();
                                         assert leavemeta != null;
-                                        leavemeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(80)));
+                                        leavemeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(80));
                                         leave.setItemMeta(leavemeta);
                                         inv.setItem(8, leave);
                                     }
                                     ItemStack stats = new ItemStack(Material.EMERALD);
                                     ItemMeta statsmeta = stats.getItemMeta();
                                     assert statsmeta != null;
-                                    statsmeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(56)));
+                                    statsmeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(56));
                                     stats.setItemMeta(statsmeta);
                                     inv.setItem(6, stats);
                                 }
@@ -4221,7 +4249,7 @@ public class PotionGames extends JavaPlugin {
                                 if (arenadata.contains("pg.lobbies." + s + "." + world)) {
                                     String ename = arenadata.getString("pg.lobbies." + s + "." + world + ".world");
                                     assert ename != null;
-                                    World worldName = getServer().getWorld(ename);
+                                    World worldName = Bukkit.getWorld(ename);
                                     assert worldName != null;
                                     List<Entity> entList = worldName.getEntities();
                                     for (Entity current : entList) {
@@ -4328,8 +4356,9 @@ public class PotionGames extends JavaPlugin {
             lobbyVote.replace(s, winner);
         } catch (Exception e) {
             Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(90) + " Lobby: " + s);
-            for (Player all : playerLobby.keySet()) {
-                if (playerLobby.get(all).equals(s)) {
+            HashMap<Player, String> leavingPlayerLobby = new HashMap<>(playerLobby);
+            for (Player all : leavingPlayerLobby.keySet()) {
+                if (leavingPlayerLobby.get(all).equals(s)) {
                     all.sendMessage(prefix + ChatColor.RED + chatmessages.get(90));
                     all.sendMessage(prefix + ChatColor.RED + chatmessages.get(86));
                     onLeaveLobby(all, s);
@@ -4368,7 +4397,7 @@ public class PotionGames extends JavaPlugin {
                                     lobbyTeamed.put(all, s);
                                     lobbyteamplayernames.get(s).put(all, Integer.toString(rndTeam));
                                     if (activateScoreboard) {
-                                        Objects.requireNonNull(all.getScoreboard().getTeam("team")).prefix(Component.text(ChatColor.DARK_AQUA + Integer.toString(rndTeam)));
+                                        Objects.requireNonNull(all.getScoreboard().getTeam("team")).setPrefix(ChatColor.DARK_AQUA + Integer.toString(rndTeam));
                                     }
                                 }
                             }
@@ -4384,7 +4413,7 @@ public class PotionGames extends JavaPlugin {
                             lobbyKited.put(all, s);
                             kitplayernames.put(all, kits.get(rndKit));
                             if (activateScoreboard) {
-                                Objects.requireNonNull(all.getScoreboard().getTeam("kit")).prefix(Component.text(ChatColor.DARK_AQUA + kits.get(rndKit)));
+                                Objects.requireNonNull(all.getScoreboard().getTeam("kit")).setPrefix(ChatColor.DARK_AQUA + kits.get(rndKit));
                             }
                             if (kits.get(rndKit).equals("Rich Kid")) {
                                 richkidPlayers.add(all);
@@ -4468,16 +4497,16 @@ public class PotionGames extends JavaPlugin {
         try {
             if (activateScoreboard) {
                 Scoreboard temp = Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard();
-                temp.registerNewObjective("pg", Criteria.DUMMY, Component.text(" " + prefix));
-                Objects.requireNonNull(temp.getObjective("pg")).setDisplaySlot(DisplaySlot.SIDEBAR);
+                temp.registerNewObjective("main-content", "dummy", " " + prefix);
+                Objects.requireNonNull(temp.getObjective("main-content")).setDisplaySlot(DisplaySlot.SIDEBAR);
                 temp.registerNewTeam("team");
                 temp.registerNewTeam("kit");
                 temp.registerNewTeam("players");
                 temp.registerNewTeam("timeScoreboard");
                 temp.registerNewTeam("map");
                 temp.registerNewTeam("kills");
-                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("team"))).prefix(Component.text(ChatColor.DARK_AQUA + "none"));
-                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("kit"))).prefix(Component.text(ChatColor.DARK_AQUA + "none"));
+                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("team"))).setPrefix(ChatColor.DARK_AQUA + "none");
+                Objects.requireNonNull(Objects.requireNonNull(temp.getTeam("kit"))).setPrefix(ChatColor.DARK_AQUA + "none");
                 Objects.requireNonNull(temp.getTeam("map")).addEntry(" ");
                 Objects.requireNonNull(temp.getTeam("players")).addEntry("       ");
                 Objects.requireNonNull(temp.getTeam("timeScoreboard")).addEntry("          ");
@@ -4522,7 +4551,7 @@ public class PotionGames extends JavaPlugin {
                     ItemStack teamselector = new ItemStack(Material.CLOCK);
                     ItemMeta teamselectormeta = teamselector.getItemMeta();
                     assert teamselectormeta != null;
-                    teamselectormeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(43)));
+                    teamselectormeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(43));
                     teamselector.setItemMeta(teamselectormeta);
                     p.getInventory().setItem(4, teamselector);
                 }
@@ -4530,7 +4559,7 @@ public class PotionGames extends JavaPlugin {
                     ItemStack kitselector = new ItemStack(Material.ENDER_CHEST);
                     ItemMeta kitselectormeta = kitselector.getItemMeta();
                     assert kitselectormeta != null;
-                    kitselectormeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(62)));
+                    kitselectormeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(62));
                     kitselector.setItemMeta(kitselectormeta);
                     p.getInventory().setItem(2, kitselector);
                 }
@@ -4538,7 +4567,7 @@ public class PotionGames extends JavaPlugin {
                     ItemStack votepaper = new ItemStack(Material.PAPER);
                     ItemMeta votepapaermeta = votepaper.getItemMeta();
                     assert votepapaermeta != null;
-                    votepapaermeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(14)));
+                    votepapaermeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(14));
                     votepaper.setItemMeta(votepapaermeta);
                     p.getInventory().setItem(0, votepaper);
                 }
@@ -4546,14 +4575,14 @@ public class PotionGames extends JavaPlugin {
                     ItemStack leave = new ItemStack(Material.MAGMA_CREAM);
                     ItemMeta leavemeta = leave.getItemMeta();
                     assert leavemeta != null;
-                    leavemeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(80)));
+                    leavemeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(80));
                     leave.setItemMeta(leavemeta);
                     p.getInventory().setItem(8, leave);
                 }
                 ItemStack stats = new ItemStack(Material.EMERALD);
                 ItemMeta statsmeta = stats.getItemMeta();
                 assert statsmeta != null;
-                statsmeta.displayName(Component.text(ChatColor.DARK_AQUA + chatmessages.get(56)));
+                statsmeta.setDisplayName(ChatColor.DARK_AQUA + chatmessages.get(56));
                 stats.setItemMeta(statsmeta);
                 p.getInventory().setItem(6, stats);
                 p.sendMessage(prefix + ChatColor.GREEN + chatmessages.get(30) + " " + ChatColor.AQUA + s);
@@ -4581,13 +4610,14 @@ public class PotionGames extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(87) + " Lobby: " + s);
             p.sendMessage(prefix + ChatColor.RED + chatmessages.get(87));
             p.sendMessage(prefix + ChatColor.RED + chatmessages.get(86));
+            onLeaveLobby(p, s);
         }
     }
 
     public void onLeaveLobby(Player p, String s) {
         if (activateScoreboard) {
-            Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(""));
-            Objects.requireNonNull(p.getScoreboard().getTeam("kit")).prefix(Component.text(""));
+            Objects.requireNonNull(p.getScoreboard().getTeam("team")).setPrefix("");
+            Objects.requireNonNull(p.getScoreboard().getTeam("kit")).setPrefix("");
             p.setScoreboard(Objects.requireNonNull(Bukkit.getScoreboardManager()).getNewScoreboard());
         }
         joinChannel(p.getPlayer(), "Global");
@@ -4751,6 +4781,7 @@ public class PotionGames extends JavaPlugin {
             if (rs.next()) {
                 return rs.getString("UUID") != null;
             }
+            return false;
         } catch (SQLException e) {
             Bukkit.getConsoleSender().sendMessage(prefix + ChatColor.RED + chatmessages.get(37) + ": " + e.getMessage());
         }

@@ -2,7 +2,6 @@ package com.asga.potiongames.commands;
 
 import com.asga.potiongames.main.PotionGames;
 import com.asga.potiongames.updatechecker.UpdateChecker;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -253,7 +252,7 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                                 if (pg.pgPlayers.contains(p) || pg.specPlayers.contains(p)) {
                                     pg.onLeave(p);
                                     if (pg.isStartOnJoin()) {
-                                        p.kick(Component.text(pg.prefix + ChatColor.RED + pg.chatmessages.get(25)));
+                                        p.kickPlayer(pg.prefix + ChatColor.RED + pg.chatmessages.get(25));
                                     }
                                 }
                             }
@@ -280,16 +279,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                     if (p.hasPermission("pg.join")) {
                         if (pg.isLobbySystem()) {
                             if (!pg.playerLobby.containsKey(p)) {
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Component.text(pg.prefix + ChatColor.DARK_AQUA + "Lobby List"));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, pg.prefix + ChatColor.DARK_AQUA + "Lobby List");
                                 for (int slot = 1; slot <= 27; slot++) {
                                     if (pg.arenadata.contains("pg.lobbies." + slot)) {
-                                        ArrayList<Component> listlore = new ArrayList<>();
+                                        ArrayList<String> listlore = new ArrayList<>();
                                         ItemStack listmap = new ItemStack(Material.MAP);
                                         ItemMeta listmappmeta = listmap.getItemMeta();
                                         assert listmappmeta != null;
-                                        listmappmeta.displayName(Component.text(Integer.toString(slot)));
-                                        listlore.add(Component.text(pg.infoLobby.get(Integer.toString(slot))));
-                                        listmappmeta.lore(listlore);
+                                        listmappmeta.setDisplayName(Integer.toString(slot));
+                                        listlore.add(pg.infoLobby.get(Integer.toString(slot)));
+                                        listmappmeta.setLore(listlore);
                                         listmap.setItemMeta(listmappmeta);
                                         inv.setItem(slot - 1, listmap);
                                     }
@@ -686,7 +685,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int spawnNumber = 1;
                             int arenaNumber = 1;
                             try {
-                                arenaNumber = getArenaNumber(args, arenaNumber);
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
                                 while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + spawnNumber)) {
                                     spawnNumber++;
                                 }
@@ -704,7 +712,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int arenaNumber = 1;
                             int spawnNumber = 1;
                             try {
-                                arenaNumber = getArenaNumber(args, arenaNumber);
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
                                 int max = 1;
                                 while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + max)) {
                                     spawnNumber = max;
@@ -724,7 +741,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int spawnNumber = 1;
                             int arenaNumber = 1;
                             try {
-                                arenaNumber = getArenaNumber(args, arenaNumber);
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
                                 while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".deathmatch." + spawnNumber)) {
                                     spawnNumber++;
                                 }
@@ -742,7 +768,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int arenaNumber = 1;
                             int spawnNumber = 1;
                             try {
-                                arenaNumber = getArenaNumber(args, arenaNumber);
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
                                 int max = 1;
                                 while (pg.arenadata.contains("pg.arenas." + arenaNumber + ".deathmatch." + max)) {
                                     spawnNumber = max;
@@ -847,7 +882,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int spawnNumber = 1;
                             int arenaNumber = 1;
                             try {
-                                arenaNumber = getArenaNumberLobby(args, arenaNumber);
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
                                 while (pg.arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + spawnNumber)) {
                                     spawnNumber++;
                                 }
@@ -865,7 +909,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int arenaNumber = 1;
                             int spawnNumber = 1;
                             try {
-                                arenaNumber = getArenaNumberLobby(args, arenaNumber);
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
                                 int max = 1;
                                 while (pg.arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".spawns." + max)) {
                                     spawnNumber = max;
@@ -885,7 +938,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int spawnNumber = 1;
                             int arenaNumber = 1;
                             try {
-                                arenaNumber = getArenaNumberLobby(args, arenaNumber);
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
                                 while (pg.arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".deathmatch." + spawnNumber)) {
                                     spawnNumber++;
                                 }
@@ -903,7 +965,16 @@ public record Commands(PotionGames pg) implements CommandExecutor {
                             int arenaNumber = 1;
                             int spawnNumber = 1;
                             try {
-                                arenaNumber = getArenaNumberLobby(args, arenaNumber);
+                                int i = 1;
+                                boolean arenaName = false;
+                                while (!arenaName) {
+                                    if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
+                                        arenaNumber = i;
+                                        arenaName = true;
+                                    } else {
+                                        i++;
+                                    }
+                                }
                                 int max = 1;
                                 while (pg.arenadata.contains("pg.lobbies." + args[1] + "." + arenaNumber + ".deathmatch." + max)) {
                                     spawnNumber = max;
@@ -996,33 +1067,5 @@ public record Commands(PotionGames pg) implements CommandExecutor {
             }
         }
         return false;
-    }
-
-    private int getArenaNumber(String[] args, int arenaNumber) {
-        int i = 1;
-        boolean arenaName = false;
-        while (!arenaName) {
-            if (args[1].matches(Objects.requireNonNull(pg.arenadata.getString("pg.arenas." + i + ".name")))) {
-                arenaNumber = i;
-                arenaName = true;
-            } else {
-                i++;
-            }
-        }
-        return arenaNumber;
-    }
-
-    private int getArenaNumberLobby(String[] args, int arenaNumber) {
-        int i = 1;
-        boolean arenaName = false;
-        while (!arenaName) {
-            if (args[2].matches(Objects.requireNonNull(pg.arenadata.getString("pg.lobbies." + args[1] + "." + i + ".name")))) {
-                arenaNumber = i;
-                arenaName = true;
-            } else {
-                i++;
-            }
-        }
-        return arenaNumber;
     }
 }

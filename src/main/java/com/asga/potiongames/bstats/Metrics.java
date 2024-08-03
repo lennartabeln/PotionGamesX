@@ -38,14 +38,12 @@ public class Metrics {
             config.addDefault("logFailedRequests", false);
             config.addDefault("logSentData", false);
             config.addDefault("logResponseStatusText", false);
-            ArrayList<String> header = new ArrayList<>();
-            header.add("""
-                            bStats (https://bStats.org) collects some basic information for plugin authors, like how
+            config.options().header("""
+                    bStats (https://bStats.org) collects some basic information for plugin authors, like how
                     many people use their plugin and their total player count. It's recommended to keep bStats
                     enabled, but if you're not comfortable with this, you can turn this setting off. There is no
                     performance penalty associated with having metrics enabled, and data sent to bStats is fully
-                    anonymous.""");
-            config.options().setHeader(header).copyDefaults(true);
+                    anonymous.""").copyDefaults(true);
             config.save(configFile);
         }
         boolean enabled = config.getBoolean("enabled", true);
@@ -515,20 +513,22 @@ public class Metrics {
             return this;
         }
 
-        public void appendField(String key, int[] values) {
+        public JsonObjectBuilder appendField(String key, int[] values) {
             if (values == null) {
                 throw new IllegalArgumentException("JSON values must not be null");
             }
             String escapedValues = Arrays.stream(values).mapToObj(String::valueOf).collect(Collectors.joining(","));
             appendFieldUnescaped(key, "[" + escapedValues + "]");
+            return this;
         }
 
-        public void appendField(String key, JsonObject[] values) {
+        public JsonObjectBuilder appendField(String key, JsonObject[] values) {
             if (values == null) {
                 throw new IllegalArgumentException("JSON values must not be null");
             }
             String escapedValues = Arrays.stream(values).map(JsonObject::toString).collect(Collectors.joining(","));
             appendFieldUnescaped(key, "[" + escapedValues + "]");
+            return this;
         }
 
         private void appendFieldUnescaped(String key, String escapedValue) {
@@ -554,7 +554,12 @@ public class Metrics {
             return object;
         }
 
-        public record JsonObject(String value) {
+        public static class JsonObject {
+            private final String value;
+
+            private JsonObject(String value) {
+                this.value = value;
+            }
 
             @Override
             public String toString() {
