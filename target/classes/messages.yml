@@ -1,0 +1,317 @@
+# Default localized messages for PotionGames
+en_US:
+  messages:
+    admin:
+      please_inform: "Please inform an admin!"
+    airdrop:
+      falling_at: "Airdrop is falling at"
+      falling_here: "Airdrop is falling at your location!"
+    arena:
+      added: "Arena %s added successfully. (Lobby: %d)"
+      removed: "Arena %s removed successfully. (Lobby: %d)"
+      could_not_load: "Could not load an arena!"
+      forced: "has been forced as arena!"
+      not_arena: "is not an arena!"
+      not_exists: "This arena does not exists!"
+      does_not_exist: "This arena does not exists!"
+      selector: "Arena-Selector"
+    build:
+      toggle: "Build"
+    coin:
+      single: "Coin"
+    coins:
+      label: "Coins"
+    commands:
+      label: "Commands"
+    database:
+      closed: "Connection to database closed!"
+      close_failed: "Failed to close connection to database! For more information see console."
+      connect_failed: "Connection to database failed! For more information see console."
+      connected: "Connection to database established!"
+    dead:
+      label: "Dead"
+    deathmatch:
+      started: "Deathmatch started!"
+      starting_in: "Deathmatch is starting in"
+      teleport_in: "Teleporting to deathmatch arena in"
+      teleport_now: "Teleporting to deathmatch arena now!"
+    deaths:
+      label: "Deaths"
+    duration:
+      label: "Duration"
+    error:
+      generic: "An error occurred"
+    file:
+      save_failed: "File loading / saving fail! For more information see console."
+    game:
+      already_started: "The game has already started!"
+      started: "The game has been started!"
+      starts_in: "The game starts in"
+      starts_now: "The game starts now!"
+      waiting: "Waiting for players!"
+    head:
+      set: "Head successfully set!"
+    help:
+      use_pg_help: "Use /pg help for help!"
+    join:
+      could_not_join_lobby: "Could not join lobby!"
+      success: "Successfully joined lobby"
+    kd:
+      label: "K/D"
+    kill:
+      reward: "For killing a player you get"
+    killed:
+      by: "was killed by"
+    kills:
+      label: "Kills"
+    kit:
+      now_have: "You now have the kit"
+      selector: "Kit-Selector"
+    leave:
+      label: "Leave"
+    lobby:
+      added: "Lobby %d added successfully."
+      added_failed: "Failed to add lobby %d."
+      could_not_spawn: "could not be teleported to a spawn!"
+      could_not_teleport: "could not be teleported to the lobby!"
+      disabled: "Lobby disabled!"
+      does_not_exist: "This lobby does not exists!"
+      enabled: "Lobby enabled!"
+      removed: "Lobby %d removed successfully."
+      removed_failed: "Failed to remove lobby %d."
+      removed_success: "Lobby successfully removed!"
+      starting_broadcast: "Lobby %d is starting! Join with /pg join %d"
+      success_set: "Lobby successfully set!"
+    lost:
+      label: "Lost"
+    no_player_found: "No player found!"
+    pause:
+      toggle: "Pause"
+    place:
+      label: "Place"
+    player:
+      finder: "Player-Finder"
+    players:
+      label: "Players"
+    plugin:
+      reloaded: "Plugin successfully reloaded!"
+      started: "Plugin started successfully!"
+      stopped: "Plugin stopped successfully!"
+    price:
+      label: "Price"
+    random:
+      label: "Random"
+    rankwall:
+      could_not_update: "Could not update Rank-Wall!"
+    reward:
+      label: "Reward"
+    round:
+      nobody_won: "Nobody won this round!"
+      seconds_remaining: "seconds remaining to end this round!"
+    rounds:
+      label: "Rounds"
+    selector:
+      team: "Team-Selector"
+    server:
+      stopped: "Server stopped!"
+    shop:
+      label: "Shop"
+    sign:
+      set: "Sign successfully set!"
+    spawn:
+      added: "Spawn %d added successfully. (Arena: %s, Lobby: %d)"
+      removed: "Spawn %d removed successfully. (Arena: %s, Lobby: %d)"
+      invalid: "is not a valid spawn!"
+    stats:
+      label: "Stats"
+    team:
+      already_full: "This team is already full!"
+      now_in: "You are now in team"
+    teleport:
+      to_arena_failed: "Could not teleport to arena!"
+      to_dm_failed: "Could not teleport to deathmatch arena!"
+      to_lobby_in: "Teleporting to lobby in"
+      to_lobby_now: "Teleporting to lobby now!"
+    tnt:
+      extremely_explosive: "Extremely explosive TNT"
+    type:
+      arena_name_add: "Type arena name in chat to add it!"
+      arena_name_remove: "Type arena name in chat to remove it!"
+      lobby_number_add: "Type lobby number in chat to add it!"
+      lobby_number_remove: "Type lobby number in chat to remove it!"
+    update:
+      available: "There is a new update available. %s -> %s"
+      checker_error: "Update-Checker-Error"
+      not_available: "There is not a new update available."
+    vote:
+      label: "Votes"
+      you_have_voted_for: "You have voted for"
+    will_be_played: "will be played!"
+    winner:
+      has_won_the_game: "has won the game!"
+    won:
+      label: "Won"
+    you:
+      block_above: "You have a block above you!"
+      in_spectator_mode: "in spectator mode"
+      not_empty_bottle: "You not have an empty bottle!"
+      not_enough_coins: "You not have enough Coins!"
+
+de_DE:
+  messages:
+    admin:
+      please_inform: "Bitte informiere einen Admin!"
+    airdrop:
+      falling_at: "Airdrop fällt bei"
+      falling_here: "Airdrop fällt an deinem Standort!"
+    arena:
+      added: "Arena %s erfolgreich hinzugefügt. (Lobby: %d)"
+      removed: "Arena %s erfolgreich entfernt. (Lobby: %d)"
+      could_not_load: "Konnte keine Arena laden!"
+      forced: "wurde als Arena erzwungen!"
+      not_arena: "ist keine Arena!"
+      not_exists: "Diese Arena existiert nicht!"
+      does_not_exist: "Diese Arena existiert nicht!"
+      selector: "Arena-Auswahl"
+    build:
+      toggle: "Bauen"
+    coin:
+      single: "Münze"
+    coins:
+      label: "Münzen"
+    commands:
+      label: "Befehle"
+    database:
+      closed: "Verbindung zur Datenbank geschlossen!"
+      close_failed: "Schließen der Datenbankverbindung fehlgeschlagen! Weitere Informationen in der Konsole."
+      connect_failed: "Verbindung zur Datenbank fehlgeschlagen! Weitere Informationen in der Konsole."
+      connected: "Verbindung zur Datenbank hergestellt!"
+    dead:
+      label: "Tot"
+    deathmatch:
+      started: "Deathmatch gestartet!"
+      starting_in: "Deathmatch startet in"
+      teleport_in: "Teleportiere zur Deathmatch-Arena in"
+      teleport_now: "Teleportiere jetzt zur Deathmatch-Arena!"
+    deaths:
+      label: "Tode"
+    duration:
+      label: "Dauer"
+    error:
+      generic: "Ein Fehler ist aufgetreten"
+    file:
+      fail: "Datei laden/speichern fehlgeschlagen! Weitere Informationen in der Konsole."
+      save_failed: "Datei laden/speichern fehlgeschlagen! Weitere Informationen in der Konsole."
+    game:
+      already_started: "Das Spiel hat bereits begonnen!"
+      started: "Das Spiel wurde gestartet!"
+      starts_in: "Das Spiel startet in"
+      starts_now: "Das Spiel startet jetzt!"
+      waiting: "Warte auf Spieler!"
+    head:
+      set: "Kopf erfolgreich gesetzt!"
+    help:
+      use_pg_help: "Benutze /pg help für Hilfe!"
+    join:
+      could_not_join_lobby: "Konnte der Lobby nicht beitreten!"
+      success: "Erfolgreich der Lobby beigetreten"
+    kd:
+      label: "K/D"
+    kill:
+      reward: "Für das Töten eines Spielers erhältst du"
+    killed:
+      by: "wurde getötet von"
+    kills:
+      label: "Kills"
+    kit:
+      now_have: "Du hast jetzt das Kit"
+      selector: "Kit-Auswahl"
+    leave:
+      label: "Verlassen"
+    lobby:
+      added: "Lobby %d erfolgreich hinzugefügt."
+      added_failed: "Lobby %d konnte nicht hinzugefügt werden."
+      could_not_spawn: "konnte nicht zu einem Spawn teleportiert werden!"
+      could_not_teleport: "konnte nicht in die Lobby teleportiert werden!"
+      disabled: "Lobby deaktiviert!"
+      does_not_exist: "Diese Lobby existiert nicht!"
+      enabled: "Lobby aktiviert!"
+      removed: "Lobby %d erfolgreich entfernt."
+      removed_failed: "Lobby %d konnte nicht entfernt werden."
+      removed_success: "Lobby erfolgreich entfernt!"
+      starting_broadcast: "Lobby %d startet! Trete mit /pg join %d bei"
+      success_set: "Lobby erfolgreich gesetzt!"
+    lost:
+      label: "Verloren"
+    no_player_found: "Kein Spieler gefunden!"
+    pause:
+      toggle: "Pause"
+    place:
+      label: "Platz"
+    player:
+      finder: "Spieler-Finder"
+    players:
+      label: "Spieler"
+    plugin:
+      reloaded: "Plugin erfolgreich neu geladen!"
+      started: "Plugin erfolgreich gestartet!"
+      stopped: "Plugin erfolgreich gestoppt!"
+    price:
+      label: "Preis"
+    random:
+      label: "Zufällig"
+    rankwall:
+      could_not_update: "Rangwand konnte nicht aktualisiert werden!"
+    reward:
+      label: "Belohnung"
+    round:
+      nobody_won: "Niemand hat diese Runde gewonnen!"
+      seconds_remaining: "Sekunden verbleiben bis zum Ende dieser Runde!"
+    rounds:
+      label: "Runden"
+    selector:
+      team: "Team-Auswahl"
+    server:
+      stopped: "Server gestoppt!"
+    shop:
+      label: "Shop"
+    sign:
+      set: "Schild erfolgreich gesetzt!"
+    spawn:
+      added: "Spawn %d erfolgreich hinzugefügt. (Arena: %s, Lobby: %d)"
+      removed: "Spawn %d erfolgreich entfernt. (Arena: %s, Lobby: %d)"
+      invalid: "ist kein gültiger Spawn!"
+    stats:
+      label: "Statistiken"
+    team:
+      already_full: "Dieses Team ist bereits voll!"
+      now_in: "Du bist jetzt im Team"
+    teleport:
+      to_arena_failed: "Konnte nicht zur Arena teleportieren!"
+      to_dm_failed: "Konnte nicht zur Deathmatch-Arena teleportieren!"
+      to_lobby_in: "Teleportiere in die Lobby in"
+      to_lobby_now: "Teleportiere jetzt in die Lobby!"
+    tnt:
+      extremely_explosive: "Extrem explosives TNT"
+    type:
+      arena_name_add: "Gib den Arenanamen im Chat ein, um ihn hinzuzufügen!"
+      arena_name_remove: "Gib den Arenanamen im Chat ein, um ihn zu entfernen!"
+      lobby_number_add: "Gib die Lobbynummer im Chat ein, um sie hinzuzufügen!"
+      lobby_number_remove: "Gib die Lobbynummer im Chat ein, um sie zu entfernen!"
+    update:
+      available: "Es ist ein neues Update verfügbar. %s -> %s"
+      checker_error: "Update-Checker-Fehler"
+      not_available: "Es ist kein neues Update verfügbar."
+    vote:
+      label: "Stimmen"
+      you_have_voted_for: "Du hast abgestimmt für"
+    will_be_played: "wird gespielt!"
+    winner:
+      has_won_the_game: "hat das Spiel gewonnen!"
+    won:
+      label: "Gewonnen"
+    you:
+      block_above: "Über dir befindet sich ein Block!"
+      in_spectator_mode: "im Zuschauermodus"
+      not_empty_bottle: "Du hast keine leere Flasche!"
+      not_enough_coins: "Du hast nicht genug Münzen!"
