@@ -17,6 +17,9 @@ public class Game {
     private HashMap<Player, String> playerTeams = new HashMap<>();    // teamplayernames
     private HashMap<Player, String> playerKits = new HashMap<>();     // kitplayernames
     private HashMap<Player, String> playerVotes = new HashMap<>();    // voteplayernames
+    private HashMap<Player, String> playerChannels = new HashMap<>(); // playerChannel
+    private HashMap<Player, String> playerLobbies = new HashMap<>();  // playerLobby (multi-lobby)
+    private HashMap<Player, String> specLobbies = new HashMap<>();    // specLobby (multi-lobby)
 
     public void load() {
         if (Settings.arenadata.contains("pg.lobbies")) {
@@ -159,6 +162,9 @@ public class Game {
         playerTeams.clear();
         playerKits.clear();
         playerVotes.clear();
+        playerChannels.clear();
+        playerLobbies.clear();
+        specLobbies.clear();
     }
     
     // ===== Team Management =====
@@ -249,5 +255,121 @@ public class Game {
      */
     public boolean hasVoted(Player player) {
         return playerVotes.containsKey(player);
+    }
+    
+    // ===== Channel Management (Chat Channels) =====
+    
+    /**
+     * Set player's channel
+     */
+    public void setPlayerChannel(Player player, String channel) {
+        playerChannels.put(player, channel);
+    }
+    
+    /**
+     * Get player's channel
+     */
+    public String getPlayerChannel(Player player) {
+        return playerChannels.get(player);
+    }
+    
+    /**
+     * Remove player from channel
+     */
+    public void removePlayerChannel(Player player) {
+        playerChannels.remove(player);
+    }
+    
+    /**
+     * Check if player has channel assigned
+     */
+    public boolean hasChannel(Player player) {
+        return playerChannels.containsKey(player);
+    }
+    
+    // ===== Lobby Management (Multi-Lobby Only) =====
+    
+    /**
+     * Set player's lobby (multi-lobby mode)
+     */
+    public void setPlayerLobby(Player player, String lobbyId) {
+        playerLobbies.put(player, lobbyId);
+    }
+    
+    /**
+     * Get player's lobby (multi-lobby mode)
+     */
+    public String getPlayerLobby(Player player) {
+        return playerLobbies.get(player);
+    }
+    
+    /**
+     * Remove player from lobby
+     */
+    public void removePlayerLobby(Player player) {
+        playerLobbies.remove(player);
+    }
+    
+    /**
+     * Check if player is in a lobby
+     */
+    public boolean isInLobby(Player player) {
+        return playerLobbies.containsKey(player);
+    }
+    
+    /**
+     * Get all players in a specific lobby
+     */
+    public ArrayList<Player> getPlayersInLobby(String lobbyId) {
+        ArrayList<Player> lobbyPlayers = new ArrayList<>();
+        for (Player p : playerLobbies.keySet()) {
+            if (playerLobbies.get(p).equals(lobbyId)) {
+                lobbyPlayers.add(p);
+            }
+        }
+        return lobbyPlayers;
+    }
+    
+    // ===== Spectator Lobby Management (Multi-Lobby Only) =====
+    
+    /**
+     * Set spectator's lobby (multi-lobby mode)
+     */
+    public void setSpectatorLobby(Player player, String lobbyId) {
+        specLobbies.put(player, lobbyId);
+    }
+    
+    /**
+     * Get spectator's lobby (multi-lobby mode)
+     */
+    public String getSpectatorLobby(Player player) {
+        return specLobbies.get(player);
+    }
+    
+    /**
+     * Remove spectator from lobby
+     */
+    public void removeSpectatorLobby(Player player) {
+        specLobbies.remove(player);
+    }
+    
+    /**
+     * Check if player is spectating in a lobby
+     */
+    public boolean isSpectatingInLobby(Player player) {
+        return specLobbies.containsKey(player);
+    }
+    
+    /**
+     * Get all spectators in a specific lobby
+     */
+    public ArrayList<Player> getSpectatorsInLobby(String lobbyId) {
+        ArrayList<Player> lobbySpecs = new ArrayList<>();
+        for (Player p : specLobbies.keySet()) {
+            if (specLobbies.get(p).equals(lobbyId)) {
+                lobbySpecs.add(p);
+            }
+        }
+        return lobbySpecs;
     }
 }

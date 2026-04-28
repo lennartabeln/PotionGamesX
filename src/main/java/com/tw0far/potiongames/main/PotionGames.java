@@ -116,6 +116,48 @@ public class PotionGames extends JavaPlugin {
     public String getPlayerKit(Player player) {
         return game.getPlayerKit(player);
     }
+    
+    /**
+     * Set player's channel (delegates to Game class)
+     */
+    public void setPlayerChannel(Player player, String channel) {
+        game.setPlayerChannel(player, channel);
+    }
+    
+    /**
+     * Get player's channel (delegates to Game class)
+     */
+    public String getPlayerChannel(Player player) {
+        return game.getPlayerChannel(player);
+    }
+    
+    /**
+     * Set player's lobby (delegates to Game class - multi-lobby)
+     */
+    public void setPlayerLobby(Player player, String lobbyId) {
+        game.setPlayerLobby(player, lobbyId);
+    }
+    
+    /**
+     * Get player's lobby (delegates to Game class - multi-lobby)
+     */
+    public String getPlayerLobby(Player player) {
+        return game.getPlayerLobby(player);
+    }
+    
+    /**
+     * Set spectator's lobby (delegates to Game class - multi-lobby)
+     */
+    public void setSpectatorLobby(Player player, String lobbyId) {
+        game.setSpectatorLobby(player, lobbyId);
+    }
+    
+    /**
+     * Get spectator's lobby (delegates to Game class - multi-lobby)
+     */
+    public String getSpectatorLobby(Player player) {
+        return game.getSpectatorLobby(player);
+    }
 
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
