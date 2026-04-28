@@ -88,6 +88,34 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<Player> getSpectatorPlayers() {
         return game.getSpectatorPlayers();
     }
+    
+    /**
+     * Set player's team (delegates to Game class)
+     */
+    public void setPlayerTeam(Player player, String team) {
+        game.setPlayerTeam(player, team);
+    }
+    
+    /**
+     * Get player's team (delegates to Game class)
+     */
+    public String getPlayerTeam(Player player) {
+        return game.getPlayerTeam(player);
+    }
+    
+    /**
+     * Set player's kit (delegates to Game class)
+     */
+    public void setPlayerKit(Player player, String kit) {
+        game.setPlayerKit(player, kit);
+    }
+    
+    /**
+     * Get player's kit (delegates to Game class)
+     */
+    public String getPlayerKit(Player player) {
+        return game.getPlayerKit(player);
+    }
 
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;

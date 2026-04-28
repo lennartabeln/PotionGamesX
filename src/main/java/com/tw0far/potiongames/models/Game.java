@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -11,6 +12,11 @@ public class Game {
     // Player tracking (migrated from PotionGames)
     private ArrayList<Player> activePlayers = new ArrayList<>();      // pgPlayers
     private ArrayList<Player> spectatorPlayers = new ArrayList<>();   // specPlayers
+    
+    // Player state mappings
+    private HashMap<Player, String> playerTeams = new HashMap<>();    // teamplayernames
+    private HashMap<Player, String> playerKits = new HashMap<>();     // kitplayernames
+    private HashMap<Player, String> playerVotes = new HashMap<>();    // voteplayernames
 
     public void load() {
         if (Settings.arenadata.contains("pg.lobbies")) {
@@ -150,5 +156,98 @@ public class Game {
     public void clearAllPlayers() {
         activePlayers.clear();
         spectatorPlayers.clear();
+        playerTeams.clear();
+        playerKits.clear();
+        playerVotes.clear();
+    }
+    
+    // ===== Team Management =====
+    
+    /**
+     * Set player's team
+     */
+    public void setPlayerTeam(Player player, String team) {
+        playerTeams.put(player, team);
+    }
+    
+    /**
+     * Get player's team
+     */
+    public String getPlayerTeam(Player player) {
+        return playerTeams.get(player);
+    }
+    
+    /**
+     * Remove player from team
+     */
+    public void removePlayerTeam(Player player) {
+        playerTeams.remove(player);
+    }
+    
+    /**
+     * Check if player has team assigned
+     */
+    public boolean hasTeam(Player player) {
+        return playerTeams.containsKey(player);
+    }
+    
+    // ===== Kit Management =====
+    
+    /**
+     * Set player's kit
+     */
+    public void setPlayerKit(Player player, String kit) {
+        playerKits.put(player, kit);
+    }
+    
+    /**
+     * Get player's kit
+     */
+    public String getPlayerKit(Player player) {
+        return playerKits.get(player);
+    }
+    
+    /**
+     * Remove player from kit
+     */
+    public void removePlayerKit(Player player) {
+        playerKits.remove(player);
+    }
+    
+    /**
+     * Check if player has kit assigned
+     */
+    public boolean hasKit(Player player) {
+        return playerKits.containsKey(player);
+    }
+    
+    // ===== Vote Management =====
+    
+    /**
+     * Set player's vote
+     */
+    public void setPlayerVote(Player player, String vote) {
+        playerVotes.put(player, vote);
+    }
+    
+    /**
+     * Get player's vote
+     */
+    public String getPlayerVote(Player player) {
+        return playerVotes.get(player);
+    }
+    
+    /**
+     * Remove player's vote
+     */
+    public void removePlayerVote(Player player) {
+        playerVotes.remove(player);
+    }
+    
+    /**
+     * Check if player has voted
+     */
+    public boolean hasVoted(Player player) {
+        return playerVotes.containsKey(player);
     }
 }
