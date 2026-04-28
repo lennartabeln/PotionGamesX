@@ -1,0 +1,82 @@
+package com.tw0far.potiongames.commands;
+
+import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+/**
+ * /pg stats [player] - Show player statistics
+ */
+public class StatsCommand implements ICommand {
+    private final PotionGames plugin;
+    
+    public StatsCommand(PotionGames plugin) {
+        this.plugin = plugin;
+    }
+    
+    @Override
+    public String getName() {
+        return "stats";
+    }
+    
+    @Override
+    public String getPermission() {
+        return "pg.stats";
+    }
+    
+    @Override
+    public boolean requiresGameServer() {
+        return true;
+    }
+    
+    @Override
+    public boolean execute(Player player, String[] args) {
+        if (args.length == 0) {
+            // Show stats for command sender
+            int wins = plugin.getWins(player.getUniqueId().toString());
+            int losses = plugin.getLosses(player.getUniqueId().toString());
+            int rounds = plugin.getRounds(player.getUniqueId().toString());
+            int kills = plugin.getKills(player.getUniqueId().toString());
+            int deaths = plugin.getDeaths(player.getUniqueId().toString());
+            double kd = plugin.getKD(player.getUniqueId().toString());
+            
+            player.sendMessage(Messages.StatsLabel());
+            player.sendMessage(Messages.RoundsLabel(rounds));
+            player.sendMessage(Messages.WinsLabel(wins));
+            player.sendMessage(Messages.LossesLabel(losses));
+            player.sendMessage(Messages.KillsLabel(kills));
+            player.sendMessage(Messages.DeathsLabel(deaths));
+            player.sendMessage(Messages.KDLabel(kd));
+            player.sendMessage(Messages.StatsLabel());
+        } else {
+            // Show stats for specified player
+            Player target = Bukkit.getPlayer(args[0]);
+            player.sendMessage(Messages.StatsLabel());
+            if (target != null) {
+                int wins = plugin.getWins(target.getUniqueId().toString());
+                int losses = plugin.getLosses(target.getUniqueId().toString());
+                int rounds = plugin.getRounds(target.getUniqueId().toString());
+                int kills = plugin.getKills(target.getUniqueId().toString());
+                int deaths = plugin.getDeaths(target.getUniqueId().toString());
+                double kd = plugin.getKD(target.getUniqueId().toString());
+                
+                player.sendMessage(Messages.RoundsLabel(rounds));
+                player.sendMessage(Messages.WinsLabel(wins));
+                player.sendMessage(Messages.LossesLabel(losses));
+                player.sendMessage(Messages.KillsLabel(kills));
+                player.sendMessage(Messages.DeathsLabel(deaths));
+                player.sendMessage(Messages.KDLabel(kd));
+            } else {
+                player.sendMessage(Messages.NoPlayerFound());
+            }
+            player.sendMessage(Messages.StatsLabel());
+        }
+        return true;
+    }
+    
+    @Override
+    public String getUsage() {
+        return "/pg stats [player] - Show player statistics";
+    }
+}

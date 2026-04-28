@@ -61,9 +61,10 @@ public class PotionGames extends JavaPlugin {
 
     //New
     private static PotionGames instance;
-    public static PotionGames getInstance() { return instance; }
-    public ISetupHandler setupHandler = new SetupHandler(this);
     public final Game game = new Game();
+    public static PotionGames getInstance() { return instance; }
+    public Game getGame() { return game; }
+    public ISetupHandler setupHandler = new SetupHandler(this);
 
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
