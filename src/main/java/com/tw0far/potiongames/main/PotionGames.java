@@ -31,10 +31,13 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
 
-import com.tw0far.potiongames.commands.Commands;
-import com.tw0far.potiongames.events.Events;
+import com.tw0far.potiongames.commands.CommandDispatcher;
 import com.tw0far.potiongames.handlers.ISetupHandler;
 import com.tw0far.potiongames.handlers.SetupHandler;
+import com.tw0far.potiongames.listeners.BlockEventListener;
+import com.tw0far.potiongames.listeners.CombatEventListener;
+import com.tw0far.potiongames.listeners.InventoryEventListener;
+import com.tw0far.potiongames.listeners.PlayerEventListener;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Messages;
@@ -240,8 +243,15 @@ public class PotionGames extends JavaPlugin {
         instance = this;
         saveDefaultConfig();
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new Events(this), this);
-        Objects.requireNonNull(getCommand("pg")).setExecutor(new Commands(this));
+        
+        // Register new event listeners (refactored from monolithic Events.java)
+        pm.registerEvents(new PlayerEventListener(this), this);
+        pm.registerEvents(new BlockEventListener(this), this);
+        pm.registerEvents(new CombatEventListener(this), this);
+        pm.registerEvents(new InventoryEventListener(this), this);
+        
+        // Register new command dispatcher (refactored from monolithic Commands.java)
+        Objects.requireNonNull(getCommand("pg")).setExecutor(new CommandDispatcher(this));
 
         //New
         Settings.arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");

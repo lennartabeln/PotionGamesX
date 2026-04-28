@@ -33,6 +33,7 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\SetupHa
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\BlockEventListener.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\CombatEventListener.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\InventoryEventListener.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\PlayerEventListener.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\main\PotionGames.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\ConfigurationManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\DatabaseManager.java

@@ -1,0 +1,114 @@
+package com.tw0far.potiongames.listeners;
+
+import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.updatechecker.UpdateChecker;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.Objects;
+
+/**
+ * Handles player-specific events (join, quit, move).
+ * Extracted from monolithic Events.java.
+ */
+public class PlayerEventListener implements Listener {
+    private final PotionGames plugin;
+
+    public PlayerEventListener(PotionGames plugin) {
+        this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        Player p = e.getPlayer();
+        plugin.createPlayer(p.getUniqueId().toString());
+        plugin.joinChannel(p.getPlayer(), "Global");
+        if (plugin.isGameServer() && plugin.isStartOnJoin() && !plugin.isLobbySystem()) {
+            plugin.onJoin(p);
+            e.joinMessage(null);
+        }
+        if (p.hasPermission("pg.update")) {
+            new UpdateChecker(plugin, 87633).getVersion(version -> {
+                if (!plugin.getPluginMeta().getVersion().equalsIgnoreCase(version)) {
+                    p.sendMessage(Messages.UpdateAvailable(plugin.getPluginMeta().getVersion(), version));
+                }
+            });
+        }
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent e) {
+        Player p = e.getPlayer();
+        if (plugin.isGameServer()) {
+            if (plugin.isLobbySystem()) {
+                if (plugin.playerLobby.containsKey(p)) {
+                    String s = null;
+                    for (int ii = 1; ii <= 27; ii++) {
+                        if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                            s = Integer.toString(ii);
+                        }
+                    }
+                    if (!plugin.lobbyMove.get(s)) {
+                        if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
+                            Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
+                            loc.setYaw(e.getTo().getYaw());
+                            loc.setPitch(e.getTo().getPitch());
+                            p.teleport(loc);
+                        }
+                    }
+                }
+            } else {
+                if (plugin.pgPlayers.contains(p)) {
+                    if (!plugin.isMove()) {
+                        if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
+                            Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
+                            loc.setYaw(e.getTo().getYaw());
+                            loc.setPitch(e.getTo().getPitch());
+                            p.teleport(loc);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
+        if (plugin.isGameServer()) {
+            if (plugin.isLobbySystem()) {
+                String s;
+                if (plugin.playerLobby.containsKey(p)) {
+                    for (int ii = 1; ii <= 27; ii++) {
+                        if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                            s = Integer.toString(ii);
+                            plugin.onLeaveLobby(p, s);
+                            e.quitMessage(null);
+                            break;
+                        }
+                    }
+                } else if (plugin.specLobby.containsKey(p)) {
+                    for (int ii = 1; ii <= 27; ii++) {
+                        if (plugin.specLobby.get(p).contains(Integer.toString(ii))) {
+                            s = Integer.toString(ii);
+                            plugin.onLeaveLobby(p, s);
+                            e.quitMessage(null);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                if (plugin.pgPlayers.contains(p) || plugin.specPlayers.contains(p)) {
+                    plugin.onLeave(p);
+                    e.quitMessage(null);
+                }
+            }
+        }
+    }
+}

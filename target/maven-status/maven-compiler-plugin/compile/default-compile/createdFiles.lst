@@ -43,6 +43,7 @@ com\tw0far\potiongames\examples\ManagerErrorHandlingExample$ConfigValidationExce
 com\tw0far\potiongames\handlers\ReloadHandler.class
 com\tw0far\potiongames\models\GameStates.class
 com\tw0far\potiongames\util\MessageUtil.class
+com\tw0far\potiongames\listeners\PlayerEventListener.class
 com\tw0far\potiongames\error\ErrorContext$ErrorLevel.class
 com\tw0far\potiongames\listeners\BlockEventListener$1.class
 com\tw0far\potiongames\commands\StatsCommand.class
