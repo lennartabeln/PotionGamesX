@@ -1,6 +1,5 @@
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\BuildCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\CommandDispatcher.java
-E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\Commands.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\ForceCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\HelpCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\ICommand.java
@@ -21,7 +20,6 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\database\Databas
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\error\ErrorContext.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\error\ErrorHandler.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\error\PotionGamesError.java
-E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\events\Events.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\examples\CommandErrorHandlingExample.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\examples\ConfigurationIntegrationExample.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\examples\ManagerErrorHandlingExample.java

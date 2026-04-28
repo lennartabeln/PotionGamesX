@@ -10,14 +10,12 @@ com\tw0far\potiongames\managers\DatabaseManager.class
 com\tw0far\potiongames\models\Messages.class
 com\tw0far\potiongames\models\LootTable.class
 com\tw0far\potiongames\commands\SetupCommand.class
-com\tw0far\potiongames\events\Events$1.class
 com\tw0far\potiongames\models\Participant.class
 com\tw0far\potiongames\database\DatabaseQueryBuilder$UpdateBuilder.class
 com\tw0far\potiongames\util\ItemBuilder.class
 com\tw0far\potiongames\models\Shop.class
 com\tw0far\potiongames\config\ShopBuilder.class
 com\tw0far\potiongames\config\ShopBuilder$ShopItemEntry.class
-com\tw0far\potiongames\commands\Commands.class
 com\tw0far\potiongames\managers\PlayerManager.class
 com\tw0far\potiongames\database\DatabaseQueryBuilder$CachedQuery.class
 com\tw0far\potiongames\models\Team.class
@@ -30,7 +28,6 @@ com\tw0far\potiongames\examples\ConfigurationIntegrationExample.class
 com\tw0far\potiongames\managers\ConfigurationManager.class
 com\tw0far\potiongames\commands\BuildCommand.class
 com\tw0far\potiongames\models\MySqlConfiguration.class
-com\tw0far\potiongames\events\Events.class
 com\tw0far\potiongames\listeners\CombatEventListener.class
 com\tw0far\potiongames\main\PotionGames$1.class
 com\tw0far\potiongames\util\LocationUtil.class
