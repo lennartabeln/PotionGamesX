@@ -68,6 +68,26 @@ public class PotionGames extends JavaPlugin {
     public static PotionGames getInstance() { return instance; }
     public Game getGame() { return game; }
     public ISetupHandler setupHandler = new SetupHandler(this);
+    
+    // ===== Delegation Methods for Player Lists (Phase 3.4 Migration) =====
+    // These methods provide backwards-compatible access to Game's player tracking
+    // Callers can use plugin.pgPlayers or plugin.getActivePlayers() interchangeably
+    
+    /**
+     * Get active players (delegates to Game class)
+     * Use this instead of pgPlayers for new code
+     */
+    public ArrayList<Player> getActivePlayers() {
+        return game.getActivePlayers();
+    }
+    
+    /**
+     * Get spectator players (delegates to Game class)
+     * Use this instead of specPlayers for new code
+     */
+    public ArrayList<Player> getSpectatorPlayers() {
+        return game.getSpectatorPlayers();
+    }
 
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
