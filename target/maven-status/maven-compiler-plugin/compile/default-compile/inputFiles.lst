@@ -67,9 +67,11 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\Specta
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\TeleportEventListener.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\WeatherEventListener.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\main\PotionGames.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\ArenaStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\ConfigurationManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\DatabaseManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\GameManager.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IArenaStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IConfigurationManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\ILobbyStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IManager.java

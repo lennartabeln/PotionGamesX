@@ -85,6 +85,7 @@ com\tw0far\potiongames\main\PotionGames$1.class
 com\tw0far\potiongames\listeners\FoodLevelEventListener.class
 com\tw0far\potiongames\managers\ILobbyStateManager.class
 com\tw0far\potiongames\managers\GameManager.class
+com\tw0far\potiongames\managers\ArenaStateManager.class
 com\tw0far\potiongames\handlers\ISetupHandler.class
 com\tw0far\potiongames\managers\IManager.class
 com\tw0far\potiongames\handlers\ReloadHandler.class
@@ -116,4 +117,5 @@ com\tw0far\potiongames\config\ChestLootBuilder.class
 com\tw0far\potiongames\error\ErrorContext$Builder.class
 com\tw0far\potiongames\error\ErrorContext.class
 com\tw0far\potiongames\error\ErrorHandler.class
+com\tw0far\potiongames\managers\IArenaStateManager.class
 com\tw0far\potiongames\listeners\BucketEventListener.class
