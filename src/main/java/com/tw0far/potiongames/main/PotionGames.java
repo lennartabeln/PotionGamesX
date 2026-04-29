@@ -5186,31 +5186,31 @@ public class PotionGames extends JavaPlugin {
     }
 
     public int getMaxPlayers() {
-        return maxPlayers;
+        return configManager.getMaxPlayers();
     }
 
     public int getMinPlayers() {
-        return minPlayers;
+        return configManager.getMinPlayers();
     }
 
     public int getTeamSize() {
-        return teamSize;
+        return configManager.getTeamSize();
     }
 
     public int getPlayerAmount() {
-        return playerAmount;
+        return configManager.getPlayerAmount();
     }
 
     public int getTeamAmount() {
-        return teamAmount;
+        return configManager.getTeamAmount();
     }
 
     public int getCountdown() {
-        return countdown;
+        return configManager.getCountdown();
     }
 
     public void setCountdown(int countdown) {
-        this.countdown = countdown;
+        configManager.setCountdown(countdown);
     }
 
     public void setReload(boolean reload) {
@@ -5218,15 +5218,15 @@ public class PotionGames extends JavaPlugin {
     }
 
     public int getActivePotions() {
-        return activePotions;
+        return configManager.getActivePotions();
     }
 
     public int getActiveKits() {
-        return activeKits;
+        return configManager.getActiveKits();
     }
 
     public int getKillReward() {
-        return killReward;
+        return configManager.getKillReward();
     }
 
     public String getVote() {
@@ -5246,63 +5246,63 @@ public class PotionGames extends JavaPlugin {
     }
 
     public boolean isEnableRewards() {
-        return enableRewards;
+        return configManager.isEnableRewards();
     }
 
     public boolean isStartOnJoin() {
-        return startOnJoin;
+        return configManager.isStartOnJoin();
     }
 
     public boolean isActivateTeams() {
-        return activateTeams;
+        return configManager.isActivateTeams();
     }
 
     public boolean isActivateShop() {
-        return activateShop;
+        return configManager.isActivateShop();
     }
 
     public boolean isActivateAirdrops() {
-        return activateAirdrops;
+        return configManager.isActivateAirdrops();
     }
 
     public boolean isLobbySystem() {
-        return lobbySystem;
+        return configManager.isLobbySystem();
     }
 
     public boolean isGameServer() {
-        return gameServer;
+        return configManager.isGameServer();
     }
 
     public boolean isAllowOutsideChat() {
-        return allowOutsideChat;
+        return configManager.isAllowOutsideChat();
     }
 
     public boolean isActivateScoreboard() {
-        return activateScoreboard;
+        return configManager.isActivateScoreboard();
     }
 
     public boolean isFriendlyFire() {
-        return friendlyFire;
+        return configManager.isFriendlyFire();
     }
 
     public boolean isMove() {
-        return move;
+        return configManager.isMove();
     }
 
     public boolean isPause() {
-        return pause;
+        return configManager.isPause();
     }
 
     public void changePause() {
-        pause = !pause;
+        configManager.setPause(!configManager.isPause());
     }
 
     public boolean isBuild() {
-        return build;
+        return configManager.isBuild();
     }
 
     public void changeBuild() {
-        build = !build;
+        configManager.setBuild(!configManager.isBuild());
     }
 
     public boolean isAddlobby() {
