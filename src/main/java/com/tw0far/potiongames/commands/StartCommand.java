@@ -32,36 +32,34 @@ public class StartCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         if (plugin.isLobbySystem()) {
-            if (plugin.playerLobby.containsKey(player) || plugin.specLobby.containsKey(player)) {
-                String lobbyId = null;
-                for (int ii = 1; ii <= 27; ii++) {
-                    if (plugin.playerLobby.containsKey(player) && plugin.playerLobby.get(player).contains(Integer.toString(ii))) {
-                        lobbyId = Integer.toString(ii);
-                    }
-                }
-                if (lobbyId != null) {
-                    if (plugin.lobbyAmount.get(lobbyId) >= plugin.lobbyminPlayers.get(lobbyId)) {
-                        if (plugin.countdownLobby.get(lobbyId) >= 10) {
-                            plugin.countdownLobby.replace(lobbyId, 10);
-                            for (Player all : plugin.playerLobby.keySet()) {
-                                if (plugin.playerLobby.get(all).equals(lobbyId)) {
-                                    all.sendMessage(Messages.GameStarted());
-                                }
-                            }
-                        } else {
-                            player.sendMessage(Messages.GameAlreadyStarted());
+            // Multi-lobby mode
+            String lobbyId = plugin.game.getPlayerLobby(player);
+            if (lobbyId == null) {
+                lobbyId = plugin.game.getSpectatorLobby(player);
+            }
+            
+            if (lobbyId != null) {
+                if (plugin.lobbyAmount.get(lobbyId) >= plugin.lobbyminPlayers.get(lobbyId)) {
+                    if (plugin.countdownLobby.get(lobbyId) >= 10) {
+                        plugin.countdownLobby.replace(lobbyId, 10);
+                        // Broadcast to all players in this lobby
+                        for (Player all : plugin.game.getPlayersInLobby(lobbyId)) {
+                            all.sendMessage(Messages.GameStarted());
                         }
                     } else {
-                        player.sendMessage(Messages.GameNotEnoughPlayers());
+                        player.sendMessage(Messages.GameAlreadyStarted());
                     }
+                } else {
+                    player.sendMessage(Messages.GameNotEnoughPlayers());
                 }
             }
         } else {
-            if (plugin.pgPlayers.contains(player) || plugin.specPlayers.contains(player)) {
-                if (plugin.pgPlayers.size() >= plugin.getMinPlayers()) {
+            // Single-lobby mode
+            if (plugin.game.isActivePlayer(player) || plugin.game.isSpectatorPlayer(player)) {
+                if (plugin.game.getActivePlayers().size() >= plugin.getMinPlayers()) {
                     if (plugin.getCountdown() >= 10) {
                         plugin.setCountdown(10);
-                        for (Player all : plugin.pgPlayers) {
+                        for (Player all : plugin.game.getActivePlayers()) {
                             all.sendMessage(Messages.GameStarted());
                         }
                     } else {

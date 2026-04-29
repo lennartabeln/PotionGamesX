@@ -32,41 +32,38 @@ public class BuildCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         if (plugin.isLobbySystem()) {
-            if (plugin.playerLobby.containsKey(player) || plugin.specLobby.containsKey(player)) {
-                String lobbyId = null;
-                for (int ii = 1; ii <= 27; ii++) {
-                    if (plugin.playerLobby.containsKey(player) && plugin.playerLobby.get(player).contains(Integer.toString(ii))) {
-                        lobbyId = Integer.toString(ii);
-                    }
+            // Multi-lobby mode: get player's lobby and toggle build mode for that lobby
+            String lobbyId = plugin.game.getPlayerLobby(player);
+            if (lobbyId == null) {
+                lobbyId = plugin.game.getSpectatorLobby(player);
+            }
+            
+            if (lobbyId != null) {
+                // Toggle build mode
+                if (plugin.lobbyBuild.get(lobbyId)) {
+                    plugin.lobbyBuild.replace(lobbyId, false);
+                } else {
+                    plugin.lobbyBuild.replace(lobbyId, true);
                 }
-                if (lobbyId != null) {
-                    if (plugin.lobbyBuild.get(lobbyId)) {
-                        plugin.lobbyBuild.replace(lobbyId, false);
-                    } else {
-                        plugin.lobbyBuild.replace(lobbyId, true);
-                    }
-                    
-                    boolean buildEnabled = plugin.lobbyBuild.get(lobbyId);
-                    for (Player all : plugin.playerLobby.keySet()) {
-                        if (plugin.playerLobby.get(all).equals(lobbyId)) {
-                            all.sendMessage(Messages.BuildToggle(buildEnabled));
-                        }
-                    }
-                    for (Player all : plugin.specLobby.keySet()) {
-                        if (plugin.specLobby.get(all).equals(lobbyId)) {
-                            all.sendMessage(Messages.BuildToggle(buildEnabled));
-                        }
-                    }
+                
+                // Broadcast to all players in this lobby
+                boolean buildEnabled = plugin.lobbyBuild.get(lobbyId);
+                for (Player p : plugin.game.getPlayersInLobby(lobbyId)) {
+                    p.sendMessage(Messages.BuildToggle(buildEnabled));
+                }
+                for (Player p : plugin.game.getSpectatorsInLobby(lobbyId)) {
+                    p.sendMessage(Messages.BuildToggle(buildEnabled));
                 }
             }
         } else {
-            if (plugin.pgPlayers.contains(player) || plugin.specPlayers.contains(player)) {
+            // Single-lobby mode: toggle build mode for all players
+            if (plugin.game.isActivePlayer(player) || plugin.game.isSpectatorPlayer(player)) {
                 plugin.changeBuild();
                 boolean buildEnabled = plugin.isBuild();
-                for (Player all : plugin.pgPlayers) {
+                for (Player all : plugin.game.getActivePlayers()) {
                     all.sendMessage(Messages.BuildToggle(buildEnabled));
                 }
-                for (Player all : plugin.specPlayers) {
+                for (Player all : plugin.game.getSpectatorPlayers()) {
                     all.sendMessage(Messages.BuildToggle(buildEnabled));
                 }
             }

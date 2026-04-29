@@ -41,40 +41,38 @@ public class ForceCommand implements ICommand {
         String arena = args[0];
         
         if (plugin.isLobbySystem()) {
-            if (plugin.playerLobby.containsKey(player) || plugin.specLobby.containsKey(player)) {
-                String lobbyId = null;
-                for (int ii = 1; ii <= 27; ii++) {
-                    if (plugin.playerLobby.containsKey(player) && plugin.playerLobby.get(player).contains(Integer.toString(ii))) {
-                        lobbyId = Integer.toString(ii);
-                    }
-                }
-                if (lobbyId != null) {
-                    try {
-                        plugin.lobbyForcearena.replace(lobbyId, true);
-                        int i = 1;
-                        boolean votetedarena = false;
-                        while (!votetedarena) {
-                            if (arena.matches(Objects.requireNonNull(Settings.arenadata.getString("pg.arenas." + i + ".name")))) {
-                                String arenaNumber = Integer.toString(i);
-                                plugin.lobbyVotedarena.replace(lobbyId, arena);
-                                plugin.lobbyVote.replace(lobbyId, arenaNumber);
-                                votetedarena = true;
-                            } else {
-                                i++;
-                            }
+            // Multi-lobby mode
+            String lobbyId = plugin.game.getPlayerLobby(player);
+            if (lobbyId == null) {
+                lobbyId = plugin.game.getSpectatorLobby(player);
+            }
+            
+            if (lobbyId != null) {
+                try {
+                    plugin.lobbyForcearena.replace(lobbyId, true);
+                    int i = 1;
+                    boolean votetedarena = false;
+                    while (!votetedarena) {
+                        if (arena.matches(Objects.requireNonNull(Settings.arenadata.getString("pg.arenas." + i + ".name")))) {
+                            String arenaNumber = Integer.toString(i);
+                            plugin.lobbyVotedarena.replace(lobbyId, arena);
+                            plugin.lobbyVote.replace(lobbyId, arenaNumber);
+                            votetedarena = true;
+                        } else {
+                            i++;
                         }
-                        for (Player all : plugin.playerLobby.keySet()) {
-                            if (plugin.playerLobby.get(all).equals(lobbyId)) {
-                                all.sendMessage(Messages.ArenaForced(arena));
-                            }
-                        }
-                    } catch (Exception ex) {
-                        player.sendMessage(Messages.ArenaNotArena(arena));
                     }
+                    // Broadcast to all players in this lobby
+                    for (Player all : plugin.game.getPlayersInLobby(lobbyId)) {
+                        all.sendMessage(Messages.ArenaForced(arena));
+                    }
+                } catch (Exception ex) {
+                    player.sendMessage(Messages.ArenaNotArena(arena));
                 }
             }
         } else {
-            if (plugin.pgPlayers.contains(player) || plugin.specPlayers.contains(player)) {
+            // Single-lobby mode
+            if (plugin.game.isActivePlayer(player) || plugin.game.isSpectatorPlayer(player)) {
                 try {
                     plugin.setForcearena(true);
                     int i = 1;
@@ -89,7 +87,7 @@ public class ForceCommand implements ICommand {
                             i++;
                         }
                     }
-                    for (Player all : plugin.pgPlayers) {
+                    for (Player all : plugin.game.getActivePlayers()) {
                         all.sendMessage(Messages.ArenaForced(arena));
                     }
                 } catch (Exception ex) {

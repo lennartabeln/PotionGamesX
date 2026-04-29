@@ -32,41 +32,38 @@ public class PauseCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         if (plugin.isLobbySystem()) {
-            if (plugin.playerLobby.containsKey(player) || plugin.specLobby.containsKey(player)) {
-                String lobbyId = null;
-                for (int ii = 1; ii <= 27; ii++) {
-                    if (plugin.playerLobby.containsKey(player) && plugin.playerLobby.get(player).contains(Integer.toString(ii))) {
-                        lobbyId = Integer.toString(ii);
-                    }
+            // Multi-lobby mode: get player's lobby and toggle pause for that lobby
+            String lobbyId = plugin.game.getPlayerLobby(player);
+            if (lobbyId == null) {
+                lobbyId = plugin.game.getSpectatorLobby(player);
+            }
+            
+            if (lobbyId != null) {
+                // Toggle pause mode
+                if (plugin.lobbyPause.get(lobbyId)) {
+                    plugin.lobbyPause.replace(lobbyId, false);
+                } else {
+                    plugin.lobbyPause.replace(lobbyId, true);
                 }
-                if (lobbyId != null) {
-                    if (plugin.lobbyPause.get(lobbyId)) {
-                        plugin.lobbyPause.replace(lobbyId, false);
-                    } else {
-                        plugin.lobbyPause.replace(lobbyId, true);
-                    }
-                    
-                    boolean paused = plugin.lobbyPause.get(lobbyId);
-                    for (Player all : plugin.playerLobby.keySet()) {
-                        if (plugin.playerLobby.get(all).equals(lobbyId)) {
-                            all.sendMessage(Messages.PauseToggle(paused));
-                        }
-                    }
-                    for (Player all : plugin.specLobby.keySet()) {
-                        if (plugin.specLobby.get(all).equals(lobbyId)) {
-                            all.sendMessage(Messages.PauseToggle(paused));
-                        }
-                    }
+                
+                // Broadcast to all players in this lobby
+                boolean paused = plugin.lobbyPause.get(lobbyId);
+                for (Player p : plugin.game.getPlayersInLobby(lobbyId)) {
+                    p.sendMessage(Messages.PauseToggle(paused));
+                }
+                for (Player p : plugin.game.getSpectatorsInLobby(lobbyId)) {
+                    p.sendMessage(Messages.PauseToggle(paused));
                 }
             }
         } else {
-            if (plugin.pgPlayers.contains(player) || plugin.specPlayers.contains(player)) {
+            // Single-lobby mode: toggle pause mode for all players
+            if (plugin.game.isActivePlayer(player) || plugin.game.isSpectatorPlayer(player)) {
                 plugin.changePause();
                 boolean paused = plugin.isPause();
-                for (Player all : plugin.pgPlayers) {
+                for (Player all : plugin.game.getActivePlayers()) {
                     all.sendMessage(Messages.PauseToggle(paused));
                 }
-                for (Player all : plugin.specPlayers) {
+                for (Player all : plugin.game.getSpectatorPlayers()) {
                     all.sendMessage(Messages.PauseToggle(paused));
                 }
             }
