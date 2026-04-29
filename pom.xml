@@ -5,19 +5,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tw0far.potiongames</groupId>
-    <artifactId>PotionGames</artifactId>
-    <version>8.0.0</version>
+    <artifactId>PotionGamesX</artifactId>
+    <version>1.0.0</version>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
         <repository>
             <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <url>https://repo.papermc.io/repository/maven-public/</url> 
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -29,7 +29,8 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.11-R0.1-SNAPSHOT</version>
+            <version>[26.1.2.build,)</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
