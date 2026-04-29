@@ -32,13 +32,31 @@ public class CommandDispatcher implements CommandExecutor {
         // Player commands
         registerCommand(new JoinCommand(plugin));
         registerCommand(new LeaveCommand(plugin));
+        registerCommand(new ListCommand(plugin));
         registerCommand(new StatsCommand(plugin));
         registerCommand(new HelpCommand(plugin));
         registerCommand(new ReloadCommand(plugin));
         registerCommand(new VersionCommand(plugin));
         
-        // Admin commands
+        // Admin commands - Setup
         registerCommand(new SetupCommand(plugin));
+        registerCommand(new SetLobbyCommand(plugin));
+        registerCommand(new DelLobbyCommand(plugin));
+        registerCommand(new AddArenaCommand(plugin));
+        registerCommand(new DelArenaCommand(plugin));
+        registerCommand(new AddSpawnCommand(plugin));
+        registerCommand(new DelSpawnCommand(plugin));
+        registerCommand(new AddDeathmatchCommand(plugin));
+        registerCommand(new DelDeathmatchCommand(plugin));
+        registerCommand(new JoinSignCommand(plugin));
+        registerCommand(new HeadP1Command(plugin));
+        registerCommand(new HeadP2Command(plugin));
+        registerCommand(new HeadP3Command(plugin));
+        registerCommand(new SignP1Command(plugin));
+        registerCommand(new SignP2Command(plugin));
+        registerCommand(new SignP3Command(plugin));
+        
+        // Admin commands - Game control
         registerCommand(new BuildCommand(plugin));
         registerCommand(new PauseCommand(plugin));
         registerCommand(new ForceCommand(plugin));
