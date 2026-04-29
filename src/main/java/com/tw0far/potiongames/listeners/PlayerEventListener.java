@@ -78,28 +78,18 @@ public class PlayerEventListener implements Listener {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
             if (plugin.isLobbySystem()) {
-                String s;
-                if (plugin.playerLobby.containsKey(p)) {
-                    for (int ii = 1; ii <= 27; ii++) {
-                        if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
-                            plugin.onLeaveLobby(p, s);
-                            e.quitMessage(null);
-                            break;
-                        }
-                    }
-                } else if (plugin.specLobby.containsKey(p)) {
-                    for (int ii = 1; ii <= 27; ii++) {
-                        if (plugin.specLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
-                            plugin.onLeaveLobby(p, s);
-                            e.quitMessage(null);
-                            break;
-                        }
-                    }
+                String lobbyId = null;
+                if (plugin.game.isInLobby(p)) {
+                    lobbyId = plugin.game.getPlayerLobby(p);
+                } else if (plugin.game.isInSpecLobby(p)) {
+                    lobbyId = plugin.game.getSpectatorLobby(p);
+                }
+                if (lobbyId != null) {
+                    plugin.onLeaveLobby(p, lobbyId);
+                    e.quitMessage(null);
                 }
             } else {
-                if (plugin.pgPlayers.contains(p) || plugin.specPlayers.contains(p)) {
+                if (plugin.game.isActivePlayer(p) || plugin.game.isSpectatorPlayer(p)) {
                     plugin.onLeave(p);
                     e.quitMessage(null);
                 }

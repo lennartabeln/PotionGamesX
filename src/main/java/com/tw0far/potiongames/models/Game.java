@@ -361,6 +361,13 @@ public class Game {
     }
     
     /**
+     * Check if player is in spec lobby (alias for isSpectatingInLobby)
+     */
+    public boolean isInSpecLobby(Player player) {
+        return specLobbies.containsKey(player);
+    }
+    
+    /**
      * Get all spectators in a specific lobby
      */
     public ArrayList<Player> getSpectatorsInLobby(String lobbyId) {

@@ -128,21 +128,18 @@ public class BlockEventListener implements Listener {
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
         var p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.pgPlayers.contains(p) || plugin.playerLobby.containsKey(p)) {
+            if (plugin.game.isActivePlayer(p) || plugin.game.isInLobby(p)) {
                 if (plugin.isLobbySystem()) {
-                    String s = null;
-                    for (int ii = 1; ii <= 27; ii++) {
-                        if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
-                        }
-                    }
-                    if (!plugin.lobbyBuild.get(s)) {
-                        if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
-                            if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
-                                Block block = e.getBlockClicked().getRelative(e.getBlockFace());
-                                Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
-                                plugin.lobbyLiquidPlacedData.put(loc, block);
-                                plugin.lobbyLiquidPlaced.put(s, plugin.lobbyLiquidPlacedData);
+                    String s = plugin.game.getPlayerLobby(p);
+                    if (s != null) {
+                        if (!plugin.lobbyBuild.get(s)) {
+                            if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                                if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
+                                    Block block = e.getBlockClicked().getRelative(e.getBlockFace());
+                                    Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
+                                    plugin.lobbyLiquidPlacedData.put(loc, block);
+                                    plugin.lobbyLiquidPlaced.put(s, plugin.lobbyLiquidPlacedData);
+                                }
                             }
                         }
                     }
