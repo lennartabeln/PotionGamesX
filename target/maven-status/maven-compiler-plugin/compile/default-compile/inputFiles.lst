@@ -73,8 +73,10 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\GameMan
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IConfigurationManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\ILobbyStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IManager.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IPlayerStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\LobbyStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\PlayerManager.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\PlayerStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\Arena.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\BlockTracker.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\Game.java
