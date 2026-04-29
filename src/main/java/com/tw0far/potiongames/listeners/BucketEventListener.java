@@ -25,7 +25,22 @@ public class BucketEventListener implements Listener {
             return;
         }
         
-        // Bucket usage logic would go here
-        // Typically prevents water bucket placement during games
+        // Get the player's lobby
+        String lobbyId = plugin.game.getPlayerLobby(p);
+        
+        if (lobbyId == null) {
+            return;
+        }
+        
+        // Prevent water bucket placement during games
+        // Water can be used for escape/defensive purposes, which may be too powerful
+        if (e.getBucket().toString().contains("WATER")) {
+            e.setCancelled(true);
+            p.sendMessage("§cWater buckets are not allowed during games!");
+            return;
+        }
+        
+        // Allow lava bucket (for damage purposes)
+        // Allow milk bucket (for potion effects)
     }
 }

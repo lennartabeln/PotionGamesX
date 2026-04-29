@@ -4,6 +4,7 @@ import com.tw0far.potiongames.main.PotionGames;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.event.weather.LightningStrikeEvent;
 
 /**
  * Handles weather change events.
@@ -22,7 +23,32 @@ public class WeatherEventListener implements Listener {
             return;
         }
         
-        // Weather change prevention logic would go here
-        // Typically prevents weather during active games
+        // Check if there's an active game
+        boolean gameActive = plugin.game.getActivePlayerCount() > 0;
+        
+        if (!gameActive) {
+            return;
+        }
+        
+        // Prevent weather changes during active games
+        if (e.toWeatherState()) {
+            // Prevent rain/storm during games
+            e.setCancelled(true);
+        }
+    }
+    
+    @EventHandler
+    public void onLightningStrike(LightningStrikeEvent e) {
+        if (!plugin.isGameServer()) {
+            return;
+        }
+        
+        // Check if there's an active game
+        boolean gameActive = plugin.game.getActivePlayerCount() > 0;
+        
+        if (gameActive) {
+            // Prevent lightning during games
+            e.setCancelled(true);
+        }
     }
 }

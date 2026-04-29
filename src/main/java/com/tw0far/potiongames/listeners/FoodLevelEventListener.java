@@ -29,6 +29,8 @@ public class FoodLevelEventListener implements Listener {
             return;
         }
         
-        // Food level management logic would go here
+        // Allow hunger changes during games (natural hunger is managed by games)
+        // If hunger is dropping rapidly, player is using items - allow it
+        // This lets soup healing work and natural hunger progression happen
     }
 }

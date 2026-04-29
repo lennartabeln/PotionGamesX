@@ -25,11 +25,22 @@ public class DamageEventListener implements Listener {
         }
         
         Player p = (Player) e.getEntity();
-        if (!plugin.game.isActivePlayer(p) && !plugin.game.isInLobby(p)) {
+        
+        boolean isActive = plugin.game.isActivePlayer(p);
+        boolean isSpectator = plugin.game.isSpectatorPlayer(p);
+        
+        if (!isActive && !isSpectator) {
             return;
         }
         
-        // Damage handling logic would go here
+        // Spectators cannot take damage
+        if (isSpectator) {
+            e.setCancelled(true);
+            return;
+        }
+        
+        // Allow damage to active players
+        // Damage is processed normally during games
     }
     
     @EventHandler
@@ -39,17 +50,55 @@ public class DamageEventListener implements Listener {
         }
         
         Player victim = (Player) e.getEntity();
+        
         if (!(e.getDamager() instanceof Player)) {
             return;
         }
         
         Player attacker = (Player) e.getDamager();
         
-        // Check if both are in game
-        if (!plugin.game.isActivePlayer(victim) && !plugin.game.isInLobby(victim)) {
+        boolean victimActive = plugin.game.isActivePlayer(victim);
+        boolean attackerActive = plugin.game.isActivePlayer(attacker);
+        
+        // Both must be active players to fight
+        if (!victimActive || !attackerActive) {
+            e.setCancelled(true);
             return;
         }
         
-        // Damage by entity logic would go here
+        // Check friendly fire (same team)
+        if (plugin.isLobbySystem() && plugin.isActivateTeams()) {
+            String victimLobby = plugin.game.getPlayerLobby(victim);
+            String attackerLobby = plugin.game.getPlayerLobby(attacker);
+            
+            // Must be in same lobby
+            if (victimLobby == null || !victimLobby.equals(attackerLobby)) {
+                e.setCancelled(true);
+                return;
+            }
+            
+            // Check if same team
+            if (plugin.isActivateTeams()) {
+                String victimTeam = plugin.game.getPlayerTeam(victim);
+                String attackerTeam = plugin.game.getPlayerTeam(attacker);
+                
+                if (victimTeam != null && victimTeam.equals(attackerTeam)) {
+                    // Friendly fire - by default allow it, could add config option
+                    e.setCancelled(false);
+                    return;
+                }
+            }
+        } else if (!plugin.isLobbySystem() && plugin.isActivateTeams()) {
+            // Single-lobby teams
+            String victimTeam = plugin.game.getPlayerTeam(victim);
+            String attackerTeam = plugin.game.getPlayerTeam(attacker);
+            
+            if (victimTeam != null && victimTeam.equals(attackerTeam)) {
+                e.setCancelled(false);
+                return;
+            }
+        }
+        
+        // Damage allowed - attacker has hit victim
     }
 }

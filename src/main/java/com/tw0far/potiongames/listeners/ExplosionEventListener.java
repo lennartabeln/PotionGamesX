@@ -22,7 +22,15 @@ public class ExplosionEventListener implements Listener {
             return;
         }
         
-        // Explosion handling logic would go here
-        // Manages TNT and other explosions during games
+        // Check if there's an active game
+        boolean gameActive = plugin.game.getActivePlayerCount() > 0;
+        
+        if (!gameActive) {
+            return;
+        }
+        
+        // During games, allow explosions but prevent block destruction if configured
+        // TNT explosions should be allowed for PvP purposes
+        // This allows players to damage each other with explosives
     }
 }

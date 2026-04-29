@@ -25,7 +25,15 @@ public class ItemDropEventListener implements Listener {
             return;
         }
         
-        // Drop prevention logic would go here
-        // Typically prevents dropping items during lobby phase
+        // During lobby phase, prevent dropping items
+        if (plugin.game.isInLobby(p) && !plugin.game.isActivePlayer(p)) {
+            e.setCancelled(true);
+            return;
+        }
+        
+        // During active games, allow item dropping (for PvP purposes)
+        if (plugin.game.isActivePlayer(p)) {
+            return;
+        }
     }
 }

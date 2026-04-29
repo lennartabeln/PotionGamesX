@@ -5,6 +5,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.block.Block;
 
 /**
  * Handles player interact events.
@@ -21,11 +24,32 @@ public class InteractEventListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.game.isActivePlayer(p) && !plugin.game.isInLobby(p)) {
+        boolean isActive = plugin.game.isActivePlayer(p);
+        boolean isInLobby = plugin.game.isInLobby(p);
+        
+        if (!isActive && !isInLobby) {
             return;
         }
         
-        // Interact handling logic would go here
-        // Manages special blocks and interactions
+        Block block = e.getClickedBlock();
+        
+        if (block == null) {
+            return;
+        }
+        
+        // Check for sign interactions
+        if (block.getState() instanceof Sign) {
+            Sign sign = (Sign) block.getState();
+            
+            // Handle join signs
+            if (sign.getLine(0).contains("PG") || sign.getLine(0).contains("Join")) {
+                e.setCancelled(true);
+                // Sign interaction would be handled by other listeners
+                return;
+            }
+        }
+        
+        // Allow normal interactions during games
+        // (eating, drinking potions, etc. are handled by specific listeners)
     }
 }

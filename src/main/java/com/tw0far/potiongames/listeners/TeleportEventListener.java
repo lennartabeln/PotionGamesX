@@ -21,11 +21,35 @@ public class TeleportEventListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.game.isActivePlayer(p) && !plugin.game.isSpectatorPlayer(p)) {
+        boolean isActive = plugin.game.isActivePlayer(p);
+        boolean isSpectator = plugin.game.isSpectatorPlayer(p);
+        
+        if (!isActive && !isSpectator) {
             return;
         }
         
-        // Teleport handling logic would go here
-        // Could prevent unauthorized teleports during games
+        // Allow spectator teleportation (they can freely move around)
+        if (isSpectator) {
+            return;
+        }
+        
+        // Active players can teleport normally during games
+        // (Ender pearls, chorus fruit, etc. should work for pvp)
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL 
+            || e.getCause() == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT) {
+            return;
+        }
+        
+        // Allow other teleport causes for active players
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.UNKNOWN
+            || e.getCause() == PlayerTeleportEvent.TeleportCause.PLUGIN) {
+            // Allow plugin-based teleports (e.g., respawn)
+            return;
+        }
+        
+        // Allow command-based teleports
+        if (e.getCause() == PlayerTeleportEvent.TeleportCause.COMMAND) {
+            return;
+        }
     }
 }

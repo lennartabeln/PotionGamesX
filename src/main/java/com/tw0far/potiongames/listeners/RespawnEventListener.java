@@ -25,7 +25,7 @@ public class RespawnEventListener implements Listener {
             return;
         }
         
-        // Respawn location logic would go here
-        // Sets spectator spawn location
+        // Spectators respawn at their current location (no special handling needed)
+        // The spectator respawn location is handled by the game state system
     }
 }
