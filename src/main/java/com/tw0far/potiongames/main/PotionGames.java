@@ -34,10 +34,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import com.tw0far.potiongames.commands.CommandDispatcher;
 import com.tw0far.potiongames.handlers.ISetupHandler;
 import com.tw0far.potiongames.handlers.SetupHandler;
-import com.tw0far.potiongames.listeners.BlockEventListener;
-import com.tw0far.potiongames.listeners.CombatEventListener;
-import com.tw0far.potiongames.listeners.InventoryEventListener;
-import com.tw0far.potiongames.listeners.PlayerEventListener;
+import com.tw0far.potiongames.listeners.*;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Messages;
@@ -335,9 +332,36 @@ public class PotionGames extends JavaPlugin {
         PluginManager pm = Bukkit.getPluginManager();
         
         // Register new event listeners (refactored from monolithic Events.java)
+        // Player-related events
         pm.registerEvents(new PlayerEventListener(this), this);
+        pm.registerEvents(new RespawnEventListener(this), this);
+        pm.registerEvents(new SpectatorEventListener(this), this);
+        pm.registerEvents(new TeleportEventListener(this), this);
+        pm.registerEvents(new ChatEventListener(this), this);
+        pm.registerEvents(new ItemDropEventListener(this), this);
+        pm.registerEvents(new ItemConsumeEventListener(this), this);
+        pm.registerEvents(new FoodLevelEventListener(this), this);
+        
+        // Block-related events
         pm.registerEvents(new BlockEventListener(this), this);
+        pm.registerEvents(new BlockFadeEventListener(this), this);
+        pm.registerEvents(new LeavesDecayEventListener(this), this);
+        pm.registerEvents(new BlockFlowEventListener(this), this);
+        pm.registerEvents(new BucketEventListener(this), this);
+        pm.registerEvents(new InteractEventListener(this), this);
+        
+        // Combat-related events
         pm.registerEvents(new CombatEventListener(this), this);
+        pm.registerEvents(new DamageEventListener(this), this);
+        pm.registerEvents(new DeathEventListener(this), this);
+        
+        // Environmental events
+        pm.registerEvents(new WeatherEventListener(this), this);
+        pm.registerEvents(new ExplosionEventListener(this), this);
+        pm.registerEvents(new CreatureSpawnEventListener(this), this);
+        pm.registerEvents(new SignChangeEventListener(this), this);
+        
+        // Inventory events
         pm.registerEvents(new InventoryEventListener(this), this);
         
         // Register new command dispatcher (refactored from monolithic Commands.java)

@@ -1,0 +1,34 @@
+package com.tw0far.potiongames.listeners;
+
+import com.tw0far.potiongames.main.PotionGames;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.entity.Player;
+
+/**
+ * Handles food level change events.
+ * Manages hunger during games.
+ */
+public class FoodLevelEventListener implements Listener {
+    private final PotionGames plugin;
+    
+    public FoodLevelEventListener(PotionGames plugin) {
+        this.plugin = plugin;
+    }
+    
+    @EventHandler
+    public void onFoodLevelChange(FoodLevelChangeEvent e) {
+        if (!(e.getEntity() instanceof Player)) {
+            return;
+        }
+        
+        Player p = (Player) e.getEntity();
+        
+        if (!plugin.pgPlayers.contains(p)) {
+            return;
+        }
+        
+        // Food level management logic would go here
+    }
+}
