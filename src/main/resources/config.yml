@@ -1,0 +1,34 @@
+pg:
+  activateMySQL: false
+  countdown: 60
+  startOnJoin: false
+  compassOnSpawn: false
+  allowOutsideChat: false
+  changeGamerules: true
+  activateTeams: true
+  activateKits: true
+  activateShop: true
+  activateAirdrops: true
+  lobbySystem: false
+  gameServer: true
+  maxPlayers: 24
+  minPlayers: 2
+  teamSize: 2
+  roundTime: 30
+  activePotions: 19
+  activeKits: 6
+  activateScoreboard: true
+  friendlyFire: false
+  joinStarted: false
+  activateDeathmatch: true
+  enableRewards: false
+  broadcastStarting: false
+  winningReward: 100
+  killReward: 10
+  language: en_US
+  mysql:
+    host: localhost
+    port: "3306"
+    database: potiongames
+    user: root
+    password: "admin"
