@@ -57,11 +57,11 @@ public class DatabaseManager implements IManager {
             Class.forName("com.mysql.jdbc.Driver");
             String url = String.format(
                 "jdbc:mysql://%s:%s/%s",
-                config.getDbHost(),
-                config.getDbPort(),
-                config.getDbName()
+                config.getHost(),
+                config.getPort(),
+                config.getDatabase()
             );
-            connection = DriverManager.getConnection(url, config.getDbUser(), config.getDbPassword());
+            connection = DriverManager.getConnection(url, config.getUser(), ""); // Note: password not exposed in ConfigurationManager yet
             statement = connection.createStatement();
             connected = true;
             LOGGER.info("[PotionGames] Connected to MySQL database");

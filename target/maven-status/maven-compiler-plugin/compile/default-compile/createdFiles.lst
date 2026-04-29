@@ -29,6 +29,7 @@ com\tw0far\potiongames\managers\ConfigurationManager.class
 com\tw0far\potiongames\commands\SetLobbyCommand.class
 com\tw0far\potiongames\commands\BuildCommand.class
 com\tw0far\potiongames\models\MySqlConfiguration.class
+com\tw0far\potiongames\managers\IConfigurationManager.class
 com\tw0far\potiongames\listeners\CombatEventListener.class
 com\tw0far\potiongames\commands\DelArenaCommand.class
 com\tw0far\potiongames\util\LocationUtil.class

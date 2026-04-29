@@ -35,6 +35,8 @@ import com.tw0far.potiongames.commands.CommandDispatcher;
 import com.tw0far.potiongames.handlers.ISetupHandler;
 import com.tw0far.potiongames.handlers.SetupHandler;
 import com.tw0far.potiongames.listeners.*;
+import com.tw0far.potiongames.managers.IConfigurationManager;
+import com.tw0far.potiongames.managers.ConfigurationManager;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Messages;
@@ -62,8 +64,10 @@ public class PotionGames extends JavaPlugin {
     //New
     private static PotionGames instance;
     public final Game game = new Game();
+    private IConfigurationManager configManager;
     public static PotionGames getInstance() { return instance; }
     public Game getGame() { return game; }
+    public IConfigurationManager getConfigManager() { return configManager; }
     public ISetupHandler setupHandler = new SetupHandler(this);
     
     // ===== Delegation Methods for Player Lists (Phase 3.4 Migration) =====
@@ -329,6 +333,11 @@ public class PotionGames extends JavaPlugin {
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+        
+        // Initialize configuration manager
+        configManager = new ConfigurationManager(this);
+        configManager.onEnable();
+        
         PluginManager pm = Bukkit.getPluginManager();
         
         // Register new event listeners (refactored from monolithic Events.java)
