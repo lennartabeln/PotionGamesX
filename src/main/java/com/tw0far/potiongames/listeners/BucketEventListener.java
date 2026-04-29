@@ -21,7 +21,7 @@ public class BucketEventListener implements Listener {
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.pgPlayers.contains(p)) {
+        if (!plugin.game.isActivePlayer(p)) {
             return;
         }
         

@@ -24,7 +24,7 @@ public class BlockFadeEventListener implements Listener {
         }
         
         // Prevent block fade during active games
-        if (plugin.pgPlayers.size() > 0 || plugin.playerLobby.size() > 0) {
+        if (plugin.game.getActivePlayerCount() > 0) {
             e.setCancelled(true);
         }
     }

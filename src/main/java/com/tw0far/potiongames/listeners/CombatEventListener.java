@@ -50,14 +50,16 @@ public class CombatEventListener implements Listener {
                 }
                 if (!plugin.isFriendlyFire()) {
                     if (e.getEntity() instanceof Player p && e.getDamager() instanceof Player d) {
-                        String s = null;
-                        for (int ii = 1; ii <= 27; ii++) {
-                            if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
-                                s = Integer.toString(ii);
+                        // Get lobby ID for both players
+                        String pLobby = plugin.game.getPlayerLobby(p);
+                        String dLobby = plugin.game.getPlayerLobby(d);
+                        
+                        // Both must be in same lobby for friendly fire check
+                        if (pLobby != null && pLobby.equals(dLobby)) {
+                            if (Objects.equals(SafeMapAccess.get(plugin.lobbyteamplayernames, pLobby, p, null), 
+                                             SafeMapAccess.get(plugin.lobbyteamplayernames, pLobby, d, null))) {
+                                e.setCancelled(true);
                             }
-                        }
-                        if (Objects.equals(SafeMapAccess.get(plugin.lobbyteamplayernames, s, p, null), SafeMapAccess.get(plugin.lobbyteamplayernames, s, d, null))) {
-                            e.setCancelled(true);
                         }
                     }
                 }
@@ -69,13 +71,13 @@ public class CombatEventListener implements Listener {
     public void onDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
         if (plugin.isGameServer()) {
-            if (plugin.pgPlayers.contains(p) || plugin.playerLobby.containsKey(p)) {
-                String s = null;
-                for (int ii = 1; ii <= 27; ii++) {
-                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
-                        s = Integer.toString(ii);
-                    }
-                }
+            // Get lobby ID using Game class
+            String s = plugin.game.getPlayerLobby(p);
+            if (s == null && plugin.game.isActivePlayer(p)) {
+                s = "0"; // Single-lobby mode
+            }
+            
+            if (s != null) {
                 if (!plugin.lobbyBuild.get(s)) {
                     if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
                         if (p.getKiller() != null) {
@@ -108,121 +110,110 @@ public class CombatEventListener implements Listener {
                             plugin.addDeaths(p.getUniqueId().toString(), 1);
                             plugin.addLosses(p.getUniqueId().toString(), 1);
                         }
-                        if (plugin.playerLobby.containsKey(p)) {
-                            e.setKeepLevel(true);
-                            plugin.playerLobby.remove(p);
-                            plugin.specLobby.put(p, s);
-                            if (plugin.lobbyActivateTeams.get(s)) {
-                                String teamname = null;
-                                for (int i = 1; i <= plugin.lobbyteamAmount.get(s); i++) {
-                                    if (SafeMapAccess.contains(plugin.lobbyteamplayernames, s, p)) {
-                                        @SuppressWarnings("unchecked")
-                                        Map<Player, String> lobbyTeams = (Map<Player, String>) plugin.lobbyteamplayernames.get(s);
-                                        if (lobbyTeams != null && lobbyTeams.containsValue(Integer.toString(i))) {
-                                            if (Objects.equals(SafeMapAccess.get(plugin.lobbyteamplayernames, s, p, null), Integer.toString(i))) {
-                                                teamname = Integer.toString(i);
-                                            }
+                        // Move player from active to spectator
+                        plugin.game.removePlayerLobby(p);
+                        plugin.game.setSpectatorLobby(p, s);
+                        plugin.specLobby.put(p, s);
+                        if (plugin.lobbyActivateTeams.get(s)) {
+                            String teamname = null;
+                            for (int i = 1; i <= plugin.lobbyteamAmount.get(s); i++) {
+                                if (SafeMapAccess.contains(plugin.lobbyteamplayernames, s, p)) {
+                                    @SuppressWarnings("unchecked")
+                                    Map<Player, String> lobbyTeams = (Map<Player, String>) plugin.lobbyteamplayernames.get(s);
+                                    if (lobbyTeams != null && lobbyTeams.containsValue(Integer.toString(i))) {
+                                        if (Objects.equals(SafeMapAccess.get(plugin.lobbyteamplayernames, s, p, null), Integer.toString(i))) {
+                                            teamname = Integer.toString(i);
                                         }
                                     }
                                 }
-                                SafeMapAccess.remove(plugin.lobbyteamplayernames, s, p);
-                                assert teamname != null;
-                                int teamamount = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0);
-                                teamamount--;
-                                SafeMapAccess.put(plugin.lobbyteams, s, Integer.parseInt(teamname), teamamount);
-                                if (SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0) == 0) {
-                                    SafeMapAccess.remove(plugin.lobbyteams, s, Integer.parseInt(teamname));
-                                }
-                                plugin.teamed.remove(p.getName());
                             }
-                            int amountPlayers = plugin.lobbyAmount.get(s);
-                            int player = 0;
-                            for (Player all : plugin.playerLobby.keySet()) {
-                                if (plugin.playerLobby.get(all).equals(s)) {
-                                    player++;
-                                }
+                            SafeMapAccess.remove(plugin.lobbyteamplayernames, s, p);
+                            assert teamname != null;
+                            int teamamount = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0);
+                            teamamount--;
+                            SafeMapAccess.put(plugin.lobbyteams, s, Integer.parseInt(teamname), teamamount);
+                            if (SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0) == 0) {
+                                SafeMapAccess.remove(plugin.lobbyteams, s, Integer.parseInt(teamname));
                             }
-                            try {
-                                Player killer = p.getKiller();
-                                assert killer != null;
-                                killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
-                                killer.playSound(killer.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 1, 1);
-                                p.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1, 1);
-                                if (Objects.equals(plugin.kitplayernames.get(p), "Rich Kid")) {
-                                    for (int i = 0; i < 10; i++) {
-                                        killer.getInventory().addItem(plugin.getCoin());
-                                    }
-                                } else {
-                                    for (int i = 0; i < 5; i++) {
-                                        killer.getInventory().addItem(plugin.getCoin());
-                                    }
-                                }
-                                for (Player all : plugin.playerLobby.keySet()) {
-                                    if (plugin.playerLobby.get(all).equals(s)) {
-                                        all.sendMessage(Settings.prefix
-                                            .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
-                                            .append(Component.text(" " + plugin.chatmessages.get(9) + " ").color(NamedTextColor.GRAY))
-                                            .append(Component.text(killer.getName()).color(NamedTextColor.DARK_GREEN))
-                                            .append(Component.text(" [").color(NamedTextColor.GRAY))
-                                            .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
-                                            .append(Component.text("/").color(NamedTextColor.GRAY))
-                                            .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
-                                            .append(Component.text("]").color(NamedTextColor.GRAY)));
-                                    }
-                                }
-                                for (Player all : plugin.specLobby.keySet()) {
-                                    if (plugin.specLobby.get(all).equals(s)) {
-                                        all.sendMessage(Settings.prefix
-                                            .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
-                                            .append(Component.text(" " + plugin.chatmessages.get(9) + " ").color(NamedTextColor.GRAY))
-                                            .append(Component.text(killer.getName()).color(NamedTextColor.DARK_GREEN))
-                                            .append(Component.text(" [").color(NamedTextColor.GRAY))
-                                            .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
-                                            .append(Component.text("/").color(NamedTextColor.GRAY))
-                                            .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
-                                            .append(Component.text("]").color(NamedTextColor.GRAY)));
-                                    }
-                                }
-                                e.deathMessage(null);
-                            } catch (Exception ex) {
-                                for (Player all : plugin.playerLobby.keySet()) {
-                                    if (plugin.playerLobby.get(all).equals(s)) {
-                                        all.sendMessage(Settings.prefix
-                                            .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
-                                            .append(Component.text(" " + plugin.chatmessages.get(10) + " ").color(NamedTextColor.GRAY))
-                                            .append(Component.text(" [").color(NamedTextColor.GRAY))
-                                            .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
-                                            .append(Component.text("/").color(NamedTextColor.GRAY))
-                                            .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
-                                            .append(Component.text("]").color(NamedTextColor.GRAY)));
-                                    }
-                                }
-                                for (Player all : plugin.specLobby.keySet()) {
-                                    if (plugin.specLobby.get(all).equals(s)) {
-                                        all.sendMessage(Settings.prefix
-                                            .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
-                                            .append(Component.text(" " + plugin.chatmessages.get(10) + " ").color(NamedTextColor.GRAY))
-                                            .append(Component.text(" [").color(NamedTextColor.GRAY))
-                                            .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
-                                            .append(Component.text("/").color(NamedTextColor.GRAY))
-                                            .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
-                                            .append(Component.text("]").color(NamedTextColor.GRAY)));
-                                    }
-                                }
-                                e.deathMessage(null);
-                            }
-                            p.setGameMode(GameMode.SPECTATOR);
-                            p.getWorld().strikeLightning(p.getLocation());
-                            p.setAllowFlight(true);
-                            p.setFlying(true);
-                            p.setLevel(0);
-                            p.setExp(0);
-                            p.setFireTicks(0);
-                            p.setHealth(20);
-                            p.setFoodLevel(20);
-                            p.setCanPickupItems(false);
-                            p.setCollidable(false);
+                            plugin.teamed.remove(p.getName());
                         }
+                        int amountPlayers = plugin.lobbyAmount.get(s);
+                        int player = 0;
+                        for (Player all : plugin.game.getPlayersInLobby(s)) {
+                            player++;
+                        }
+                        try {
+                            Player killer = p.getKiller();
+                            assert killer != null;
+                            killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
+                            killer.playSound(killer.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 1, 1);
+                            p.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1, 1);
+                            if (Objects.equals(plugin.kitplayernames.get(p), "Rich Kid")) {
+                                for (int i = 0; i < 10; i++) {
+                                    killer.getInventory().addItem(plugin.getCoin());
+                                }
+                            } else {
+                                for (int i = 0; i < 5; i++) {
+                                    killer.getInventory().addItem(plugin.getCoin());
+                                }
+                            }
+                            for (Player all : plugin.game.getPlayersInLobby(s)) {
+                                all.sendMessage(Settings.prefix
+                                    .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
+                                    .append(Component.text(" " + plugin.chatmessages.get(9) + " ").color(NamedTextColor.GRAY))
+                                    .append(Component.text(killer.getName()).color(NamedTextColor.DARK_GREEN))
+                                    .append(Component.text(" [").color(NamedTextColor.GRAY))
+                                    .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
+                                    .append(Component.text("/").color(NamedTextColor.GRAY))
+                                    .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
+                                    .append(Component.text("]").color(NamedTextColor.GRAY)));
+                            }
+                            for (Player all : plugin.game.getSpectatorsInLobby(s)) {
+                                all.sendMessage(Settings.prefix
+                                    .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
+                                    .append(Component.text(" " + plugin.chatmessages.get(9) + " ").color(NamedTextColor.GRAY))
+                                    .append(Component.text(killer.getName()).color(NamedTextColor.DARK_GREEN))
+                                    .append(Component.text(" [").color(NamedTextColor.GRAY))
+                                    .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
+                                    .append(Component.text("/").color(NamedTextColor.GRAY))
+                                    .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
+                                    .append(Component.text("]").color(NamedTextColor.GRAY)));
+                            }
+                            e.deathMessage(null);
+                        } catch (Exception ex) {
+                            for (Player all : plugin.game.getPlayersInLobby(s)) {
+                                all.sendMessage(Settings.prefix
+                                    .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
+                                    .append(Component.text(" " + plugin.chatmessages.get(10) + " ").color(NamedTextColor.GRAY))
+                                    .append(Component.text(" [").color(NamedTextColor.GRAY))
+                                    .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
+                                    .append(Component.text("/").color(NamedTextColor.GRAY))
+                                    .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
+                                    .append(Component.text("]").color(NamedTextColor.GRAY)));
+                            }
+                            for (Player all : plugin.game.getSpectatorsInLobby(s)) {
+                                all.sendMessage(Settings.prefix
+                                    .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
+                                    .append(Component.text(" " + plugin.chatmessages.get(10) + " ").color(NamedTextColor.GRAY))
+                                    .append(Component.text(" [").color(NamedTextColor.GRAY))
+                                    .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
+                                    .append(Component.text("/").color(NamedTextColor.GRAY))
+                                    .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
+                                    .append(Component.text("]").color(NamedTextColor.GRAY)));
+                            }
+                            e.deathMessage(null);
+                        }
+                        p.setGameMode(GameMode.SPECTATOR);
+                        p.getWorld().strikeLightning(p.getLocation());
+                        p.setAllowFlight(true);
+                        p.setFlying(true);
+                        p.setLevel(0);
+                        p.setExp(0);
+                        p.setFireTicks(0);
+                        p.setHealth(20);
+                        p.setFoodLevel(20);
+                        p.setCanPickupItems(false);
+                        p.setCollidable(false);
                     }
                 }
             }

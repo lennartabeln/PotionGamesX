@@ -25,7 +25,7 @@ public class DamageEventListener implements Listener {
         }
         
         Player p = (Player) e.getEntity();
-        if (!plugin.pgPlayers.contains(p) && !plugin.playerLobby.containsKey(p)) {
+        if (!plugin.game.isActivePlayer(p) && !plugin.game.isInLobby(p)) {
             return;
         }
         
@@ -46,7 +46,7 @@ public class DamageEventListener implements Listener {
         Player attacker = (Player) e.getDamager();
         
         // Check if both are in game
-        if (!plugin.pgPlayers.contains(victim) && !plugin.playerLobby.containsKey(victim)) {
+        if (!plugin.game.isActivePlayer(victim) && !plugin.game.isInLobby(victim)) {
             return;
         }
         

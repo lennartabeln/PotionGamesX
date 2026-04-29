@@ -21,7 +21,7 @@ public class InteractEventListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.pgPlayers.contains(p) && !plugin.playerLobby.containsKey(p)) {
+        if (!plugin.game.isActivePlayer(p) && !plugin.game.isInLobby(p)) {
             return;
         }
         

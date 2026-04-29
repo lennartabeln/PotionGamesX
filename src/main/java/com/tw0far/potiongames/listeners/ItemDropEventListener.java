@@ -21,7 +21,7 @@ public class ItemDropEventListener implements Listener {
     public void onItemDrop(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.pgPlayers.contains(p) && !plugin.playerLobby.containsKey(p)) {
+        if (!plugin.game.isActivePlayer(p) && !plugin.game.isInLobby(p)) {
             return;
         }
         

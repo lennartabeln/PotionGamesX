@@ -52,15 +52,18 @@ public class InventoryEventListener implements Listener {
     public void onInventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         if (plugin.isGameServer()) {
-            if (plugin.pgPlayers.contains(p) || plugin.playerLobby.containsKey(p)) {
-                String s = null;
-                for (int ii = 1; ii <= 27; ii++) {
-                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
-                        s = Integer.toString(ii);
-                    }
-                }
-                if (plugin.lobbyStates.get(s) == GameStates.WAITING && !plugin.lobbyBuild.get(s) && plugin.playerLobby.containsKey(p) 
-                    || plugin.lobbyStates.get(s) == GameStates.PREPARING && !plugin.lobbyBuild.get(s) && plugin.playerLobby.containsKey(p)) {
+            // Get lobby ID using Game class methods
+            String s = plugin.game.getPlayerLobby(p);
+            if (s == null) {
+                s = plugin.game.getSpectatorLobby(p);
+            }
+            if (s == null && plugin.game.isActivePlayer(p)) {
+                s = "0"; // Single-lobby mode
+            }
+            
+            if (s != null) {
+                if (plugin.lobbyStates.get(s) == GameStates.WAITING && !plugin.lobbyBuild.get(s) 
+                    || plugin.lobbyStates.get(s) == GameStates.PREPARING && !plugin.lobbyBuild.get(s)) {
                     handleArenaVoting(e, p, s);
                     handleTeamSelection(e, p, s);
                     handleShop(e, p, s);

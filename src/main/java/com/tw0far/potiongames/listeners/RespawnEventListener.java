@@ -21,7 +21,7 @@ public class RespawnEventListener implements Listener {
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.specPlayers.contains(p)) {
+        if (!plugin.game.isSpectatorPlayer(p)) {
             return;
         }
         

@@ -21,7 +21,7 @@ public class ItemConsumeEventListener implements Listener {
     public void onItemConsume(PlayerItemConsumeEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.pgPlayers.contains(p) && !plugin.playerLobby.containsKey(p)) {
+        if (!plugin.game.isActivePlayer(p) && !plugin.game.isInLobby(p)) {
             return;
         }
         

@@ -21,7 +21,7 @@ public class TeleportEventListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.pgPlayers.contains(p) && !plugin.specPlayers.contains(p)) {
+        if (!plugin.game.isActivePlayer(p) && !plugin.game.isSpectatorPlayer(p)) {
             return;
         }
         

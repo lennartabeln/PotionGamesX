@@ -47,14 +47,9 @@ public class PlayerEventListener implements Listener {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
             if (plugin.isLobbySystem()) {
-                if (plugin.playerLobby.containsKey(p)) {
-                    String s = null;
-                    for (int ii = 1; ii <= 27; ii++) {
-                        if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
-                            s = Integer.toString(ii);
-                        }
-                    }
-                    if (!plugin.lobbyMove.get(s)) {
+                String lobbyId = plugin.game.getPlayerLobby(p);
+                if (lobbyId != null) {
+                    if (!plugin.lobbyMove.get(lobbyId)) {
                         if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
                             Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
                             loc.setYaw(e.getTo().getYaw());
@@ -64,7 +59,7 @@ public class PlayerEventListener implements Listener {
                     }
                 }
             } else {
-                if (plugin.pgPlayers.contains(p)) {
+                if (plugin.game.isActivePlayer(p)) {
                     if (!plugin.isMove()) {
                         if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
                             Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());

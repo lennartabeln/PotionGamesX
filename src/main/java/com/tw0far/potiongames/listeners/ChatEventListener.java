@@ -21,7 +21,7 @@ public class ChatEventListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.pgPlayers.contains(p) && !plugin.specPlayers.contains(p)) {
+        if (!plugin.game.isActivePlayer(p) && !plugin.game.isSpectatorPlayer(p)) {
             return;
         }
         

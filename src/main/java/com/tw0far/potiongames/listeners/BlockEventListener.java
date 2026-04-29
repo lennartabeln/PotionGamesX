@@ -31,13 +31,17 @@ public class BlockEventListener implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
         var p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.pgPlayers.contains(p) || plugin.playerLobby.containsKey(p)) {
-                String s = null;
-                for (int ii = 1; ii <= 27; ii++) {
-                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
-                        s = Integer.toString(ii);
-                    }
-                }
+            // Try to get from active player list or by lobby ID
+            String s = null;
+            if (plugin.game.isActivePlayer(p)) {
+                // Single-lobby mode - player is active
+                s = "0"; // Single-lobby mode uses implicit lobby
+            } else {
+                // Multi-lobby mode - get from game
+                s = plugin.game.getPlayerLobby(p);
+            }
+            
+            if (s != null) {
                 if (!plugin.lobbyBuild.get(s)) {
                     if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
                         if (isAllowedBreakBlock(e.getBlock().getType())) {
@@ -57,13 +61,17 @@ public class BlockEventListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent e) {
         var p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.pgPlayers.contains(p) || plugin.playerLobby.containsKey(p)) {
-                String s = null;
-                for (int ii = 1; ii <= 27; ii++) {
-                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
-                        s = Integer.toString(ii);
-                    }
-                }
+            // Try to get from active player list or by lobby ID
+            String s = null;
+            if (plugin.game.isActivePlayer(p)) {
+                // Single-lobby mode - player is active
+                s = "0"; // Single-lobby mode uses implicit lobby
+            } else {
+                // Multi-lobby mode - get from game
+                s = plugin.game.getPlayerLobby(p);
+            }
+            
+            if (s != null) {
                 if (!plugin.lobbyBuild.get(s)) {
                     if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
                         if (isAllowedPlaceBlock(e.getBlock().getType())) {

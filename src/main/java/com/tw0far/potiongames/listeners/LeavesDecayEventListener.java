@@ -23,7 +23,7 @@ public class LeavesDecayEventListener implements Listener {
         }
         
         // Prevent leaves decay during active games
-        if (plugin.pgPlayers.size() > 0) {
+        if (plugin.game.getActivePlayerCount() > 0) {
             e.setCancelled(true);
         }
     }

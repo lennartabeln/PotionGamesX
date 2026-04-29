@@ -21,7 +21,7 @@ public class SpectatorEventListener implements Listener {
     public void onSpectatorMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.specPlayers.contains(p)) {
+        if (!plugin.game.isSpectatorPlayer(p)) {
             return;
         }
         
