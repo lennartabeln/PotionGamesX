@@ -14,4 +14,9 @@ public interface IManager {
      * Called when the plugin disables
      */
     void onDisable();
+    
+    /**
+     * Called when configuration is reloaded
+     */
+    void reload();
 }

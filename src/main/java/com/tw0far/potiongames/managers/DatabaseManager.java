@@ -49,6 +49,12 @@ public class DatabaseManager implements IManager {
         closeConnection();
     }
     
+    @Override
+    public void reload() {
+        closeConnection();
+        onEnable();
+    }
+    
     /**
      * Connect to MySQL database
      */

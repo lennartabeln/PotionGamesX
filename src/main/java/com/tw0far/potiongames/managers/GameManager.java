@@ -50,6 +50,13 @@ public class GameManager implements IManager {
         clearAllEffects();
     }
     
+    @Override
+    public void reload() {
+        stopGameLoop();
+        this.countdown = config.getCountdown();
+        startGameLoop();
+    }
+    
     /**
      * Start the main game tick loop
      */

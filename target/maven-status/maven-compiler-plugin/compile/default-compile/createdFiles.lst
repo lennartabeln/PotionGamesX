@@ -82,6 +82,7 @@ com\tw0far\potiongames\models\Game.class
 com\tw0far\potiongames\commands\SignP1Command.class
 com\tw0far\potiongames\main\PotionGames$1.class
 com\tw0far\potiongames\listeners\FoodLevelEventListener.class
+com\tw0far\potiongames\managers\ILobbyStateManager.class
 com\tw0far\potiongames\managers\GameManager.class
 com\tw0far\potiongames\handlers\ISetupHandler.class
 com\tw0far\potiongames\managers\IManager.class
@@ -104,6 +105,7 @@ com\tw0far\potiongames\error\PotionGamesError.class
 com\tw0far\potiongames\listeners\WeatherEventListener.class
 com\tw0far\potiongames\database\DatabaseQueryBuilder$InsertBuilder.class
 com\tw0far\potiongames\database\DatabaseQueryBuilder.class
+com\tw0far\potiongames\managers\LobbyStateManager.class
 com\tw0far\potiongames\listeners\InventoryEventListener.class
 com\tw0far\potiongames\commands\ICommand.class
 com\tw0far\potiongames\database\DatabaseQueryBuilder$DeleteBuilder.class

@@ -54,6 +54,11 @@ public class PlayerManager implements IManager {
         clear();
     }
     
+    @Override
+    public void reload() {
+        clear();
+    }
+    
     // ===== ACTIVE PLAYER TRACKING =====
     public void addActivePlayer(Player player) {
         activePlayers.add(player);
