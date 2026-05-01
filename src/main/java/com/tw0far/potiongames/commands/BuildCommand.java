@@ -40,14 +40,11 @@ public class BuildCommand implements ICommand {
             
             if (lobbyId != null) {
                 // Toggle build mode
-                if (plugin.lobbyBuild.get(lobbyId)) {
-                    plugin.lobbyBuild.replace(lobbyId, false);
-                } else {
-                    plugin.lobbyBuild.replace(lobbyId, true);
-                }
+                boolean currentBuild = plugin.isLobbyBuildAllowed(lobbyId);
+                plugin.setLobbyBuildAllowed(lobbyId, !currentBuild);
                 
                 // Broadcast to all players in this lobby
-                boolean buildEnabled = plugin.lobbyBuild.get(lobbyId);
+                boolean buildEnabled = plugin.isLobbyBuildAllowed(lobbyId);
                 for (Player p : plugin.game.getPlayersInLobby(lobbyId)) {
                     p.sendMessage(Messages.BuildToggle(buildEnabled));
                 }

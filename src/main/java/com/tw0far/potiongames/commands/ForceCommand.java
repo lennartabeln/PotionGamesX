@@ -49,14 +49,14 @@ public class ForceCommand implements ICommand {
             
             if (lobbyId != null) {
                 try {
-                    plugin.lobbyForcearena.replace(lobbyId, true);
+                    plugin.setLobbyForcearena(lobbyId, true);
                     int i = 1;
                     boolean votetedarena = false;
                     while (!votetedarena) {
                         if (arena.matches(Objects.requireNonNull(Settings.arenadata.getString("pg.arenas." + i + ".name")))) {
                             String arenaNumber = Integer.toString(i);
-                            plugin.lobbyVotedarena.replace(lobbyId, arena);
-                            plugin.lobbyVote.replace(lobbyId, arenaNumber);
+                            plugin.setLobbyVotedArena(lobbyId, arena);
+                            plugin.setLobbyCurrentVote(lobbyId, arenaNumber);
                             votetedarena = true;
                         } else {
                             i++;

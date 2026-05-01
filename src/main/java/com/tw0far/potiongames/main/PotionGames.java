@@ -211,6 +211,54 @@ public class PotionGames extends JavaPlugin {
     public void setLobbyMoveAllowed(String lobbyId, boolean value) {
         lobbyStateManager.setMoveAllowed(lobbyId, value);
     }
+    
+    public boolean isLobbyForcearena(String lobbyId) {
+        return lobbyStateManager.isForcearena(lobbyId);
+    }
+    
+    public void setLobbyForcearena(String lobbyId, boolean value) {
+        lobbyStateManager.setForcearena(lobbyId, value);
+    }
+    
+    public String getLobbyCurrentVote(String lobbyId) {
+        return lobbyStateManager.getCurrentVote(lobbyId);
+    }
+    
+    public void setLobbyCurrentVote(String lobbyId, String votedArena) {
+        lobbyStateManager.setCurrentVote(lobbyId, votedArena);
+    }
+    
+    public String getLobbyVotedArena(String lobbyId) {
+        return lobbyStateManager.getVotedArena(lobbyId);
+    }
+    
+    public void setLobbyVotedArena(String lobbyId, String votedArena) {
+        lobbyStateManager.setVotedArena(lobbyId, votedArena);
+    }
+    
+    public boolean isLobbyBuildAllowed(String lobbyId) {
+        return lobbyStateManager.isBuildAllowed(lobbyId);
+    }
+    
+    public void setLobbyBuildAllowed(String lobbyId, boolean value) {
+        lobbyStateManager.setBuildAllowed(lobbyId, value);
+    }
+    
+    public boolean isLobbyPaused(String lobbyId) {
+        return lobbyStateManager.isPaused(lobbyId);
+    }
+    
+    public void setLobbyPaused(String lobbyId, boolean value) {
+        lobbyStateManager.setPaused(lobbyId, value);
+    }
+    
+    public int getLobbyMinPlayers(String lobbyId) {
+        return lobbyStateManager.getMinPlayers(lobbyId);
+    }
+    
+    public void setLobbyMinPlayers(String lobbyId, int value) {
+        lobbyStateManager.setMinPlayers(lobbyId, value);
+    }
 
     // ===== Delegation Methods for PlayerStateManager (Phase 4.2) =====
     // These methods provide convenient access to player tracking state
@@ -237,6 +285,69 @@ public class PotionGames extends JavaPlugin {
     
     public void removeSpectatorPlayer(Player player) {
         playerStateManager.removeSpectator(player);
+    }
+    
+    // ===== Delegation Methods for Player Setup State (Phase 4.2.1) =====
+    // These methods save/restore player state for setup mode
+    
+    public void addSetupPlayer(Player player) {
+        setupPlayer.add(player);
+    }
+    
+    public void removeSetupPlayer(Player player) {
+        setupPlayer.remove(player);
+    }
+    
+    public boolean isSetupPlayer(Player player) {
+        return setupPlayer.contains(player);
+    }
+    
+    public void savePlayerInventory(Player player, ItemStack[] inventory) {
+        inv.put(player.getName(), inventory);
+    }
+    
+    public ItemStack[] getPlayerInventory(Player player) {
+        return inv.get(player.getName());
+    }
+    
+    public void savePlayerArmor(Player player, ItemStack[] armor) {
+        this.armor.put(player.getName(), armor);
+    }
+    
+    public ItemStack[] getPlayerArmor(Player player) {
+        return this.armor.get(player.getName());
+    }
+    
+    public void savePlayerLevel(Player player, int level) {
+        lvl.put(player.getName(), level);
+    }
+    
+    public Integer getPlayerLevel(Player player) {
+        return lvl.get(player.getName());
+    }
+    
+    public void savePlayerExp(Player player, float exp) {
+        this.exp.put(player.getName(), exp);
+    }
+    
+    public Float getPlayerExp(Player player) {
+        return this.exp.get(player.getName());
+    }
+    
+    public void savePlayerLocation(Player player, Location location) {
+        loc.put(player.getName(), location);
+    }
+    
+    public Location getPlayerLocation(Player player) {
+        return loc.get(player.getName());
+    }
+    
+    public void savePlayerGameMode(Player player, GameMode gameMode) {
+        gm.put(player.getName(), gameMode);
+    }
+    
+    public GameMode getPlayerGameMode(Player player) {
+        return gm.get(player.getName());
     }
 
     // ===== Delegation Methods for ArenaStateManager (Phase 4.3) =====

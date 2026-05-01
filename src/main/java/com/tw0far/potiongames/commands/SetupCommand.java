@@ -34,13 +34,13 @@ public class SetupCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         try {
-            plugin.setupPlayer.add(player);
-            plugin.inv.put(player.getName(), player.getInventory().getContents());
-            plugin.armor.put(player.getName(), player.getInventory().getArmorContents());
-            plugin.lvl.put(player.getName(), player.getLevel());
-            plugin.exp.put(player.getName(), player.getExp());
-            plugin.loc.put(player.getName(), player.getLocation());
-            plugin.gm.put(player.getName(), player.getGameMode());
+            plugin.addSetupPlayer(player);
+            plugin.savePlayerInventory(player, player.getInventory().getContents());
+            plugin.savePlayerArmor(player, player.getInventory().getArmorContents());
+            plugin.savePlayerLevel(player, player.getLevel());
+            plugin.savePlayerExp(player, player.getExp());
+            plugin.savePlayerLocation(player, player.getLocation());
+            plugin.savePlayerGameMode(player, player.getGameMode());
             
             PlayerInventory inventory = player.getInventory();
             inventory.clear();
