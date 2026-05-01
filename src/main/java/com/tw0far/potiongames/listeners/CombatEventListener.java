@@ -78,8 +78,8 @@ public class CombatEventListener implements Listener {
             }
             
             if (s != null) {
-                if (!plugin.lobbyBuild.get(s)) {
-                    if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                if (!plugin.lobbyBuild.getOrDefault(s, true)) {
+                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                         if (p.getKiller() != null) {
                             plugin.addDeaths(p.getUniqueId().toString(), 1);
                             plugin.addLosses(p.getUniqueId().toString(), 1);
@@ -114,30 +114,20 @@ public class CombatEventListener implements Listener {
                         plugin.game.removePlayerLobby(p);
                         plugin.game.setSpectatorLobby(p, s);
                         plugin.specLobby.put(p, s);
-                        if (plugin.lobbyActivateTeams.get(s)) {
-                            String teamname = null;
-                            for (int i = 1; i <= plugin.lobbyteamAmount.get(s); i++) {
-                                if (SafeMapAccess.contains(plugin.lobbyteamplayernames, s, p)) {
-                                    @SuppressWarnings("unchecked")
-                                    Map<Player, String> lobbyTeams = (Map<Player, String>) plugin.lobbyteamplayernames.get(s);
-                                    if (lobbyTeams != null && lobbyTeams.containsValue(Integer.toString(i))) {
-                                        if (Objects.equals(SafeMapAccess.get(plugin.lobbyteamplayernames, s, p, null), Integer.toString(i))) {
-                                            teamname = Integer.toString(i);
-                                        }
-                                    }
-                                }
-                            }
+                        if (plugin.lobbyActivateTeams.getOrDefault(s, false)) {
+                            String teamname = SafeMapAccess.get(plugin.lobbyteamplayernames, s, p, null);
                             SafeMapAccess.remove(plugin.lobbyteamplayernames, s, p);
-                            assert teamname != null;
-                            int teamamount = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0);
-                            teamamount--;
-                            SafeMapAccess.put(plugin.lobbyteams, s, Integer.parseInt(teamname), teamamount);
-                            if (SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0) == 0) {
-                                SafeMapAccess.remove(plugin.lobbyteams, s, Integer.parseInt(teamname));
+                            if (teamname != null) {
+                                int teamamount = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0);
+                                teamamount--;
+                                SafeMapAccess.put(plugin.lobbyteams, s, Integer.parseInt(teamname), teamamount);
+                                if (SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0) == 0) {
+                                    SafeMapAccess.remove(plugin.lobbyteams, s, Integer.parseInt(teamname));
+                                }
                             }
                             plugin.teamed.remove(p.getName());
                         }
-                        int amountPlayers = plugin.lobbyAmount.get(s);
+                        int amountPlayers = plugin.lobbyAmount.getOrDefault(s, 0);
                         int player = 0;
                         for (Player all : plugin.game.getPlayersInLobby(s)) {
                             player++;

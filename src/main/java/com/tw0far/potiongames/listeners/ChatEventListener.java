@@ -52,7 +52,7 @@ public class ChatEventListener implements Listener {
                 }
                 
                 // Add colored name prefix based on team
-                if (plugin.lobbyActivateTeams.get(lobbyId)) {
+                if (plugin.lobbyActivateTeams.getOrDefault(lobbyId, false)) {
                     String teamName = plugin.game.getPlayerTeam(p);
                     if (teamName != null) {
                         String prefix = "§e[" + teamName + "] §r";

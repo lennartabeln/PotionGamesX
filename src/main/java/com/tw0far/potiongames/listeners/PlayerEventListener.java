@@ -49,7 +49,7 @@ public class PlayerEventListener implements Listener {
             if (plugin.isLobbySystem()) {
                 String lobbyId = plugin.game.getPlayerLobby(p);
                 if (lobbyId != null) {
-                    if (!plugin.lobbyMove.get(lobbyId)) {
+                    if (!plugin.lobbyMove.getOrDefault(lobbyId, true)) {
                         if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
                             Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
                             loc.setYaw(e.getTo().getYaw());

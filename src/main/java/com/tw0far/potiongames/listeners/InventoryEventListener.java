@@ -32,6 +32,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
@@ -62,8 +63,9 @@ public class InventoryEventListener implements Listener {
             }
             
             if (s != null) {
-                if (plugin.lobbyStates.get(s) == GameStates.WAITING && !plugin.lobbyBuild.get(s) 
-                    || plugin.lobbyStates.get(s) == GameStates.PREPARING && !plugin.lobbyBuild.get(s)) {
+                GameStates lobbyState = plugin.lobbyStates.getOrDefault(s, GameStates.WAITING);
+                boolean canBuild = plugin.lobbyBuild.getOrDefault(s, true);
+                if ((lobbyState == GameStates.WAITING || lobbyState == GameStates.PREPARING) && !canBuild) {
                     handleArenaVoting(e, p, s);
                     handleTeamSelection(e, p, s);
                     handleShop(e, p, s);
@@ -97,8 +99,10 @@ public class InventoryEventListener implements Listener {
                     } else {
                         p.closeInventory();
                         String arenaname = null;
-                        for (int i = 0; i <= plugin.lobbyvotes.get(s).size(); i++) {
-                            for (String all : plugin.lobbyvoteplayernames.get(s).values()) {
+                        Map<String, Integer> voteMap = plugin.lobbyvotes.getOrDefault(s, new HashMap<>());
+                        for (int i = 0; i <= voteMap.size(); i++) {
+                            Map<Player, String> voteNames = plugin.lobbyvoteplayernames.getOrDefault(s, new HashMap<>());
+                            for (String all : voteNames.values()) {
                                 if (Objects.equals(SafeMapAccess.get(plugin.lobbyvoteplayernames, s, p, null), all)) {
                                     arenaname = all;
                                 }
@@ -145,12 +149,12 @@ public class InventoryEventListener implements Listener {
     }
     
     private void handleTeamSelection(InventoryClickEvent e, Player p, String s) {
-        if (plugin.lobbyActivateTeams.get(s)) {
+        if (plugin.lobbyActivateTeams.getOrDefault(s, false)) {
             if (e.getView().title().equals(Settings.prefix.append(Component.text(plugin.chatmessages.get(43)).color(NamedTextColor.DARK_AQUA)))) {
                 if (e.getCurrentItem() != null) {
                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                         String displayname = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName());
-                        int maxteamplayers = plugin.lobbyteamSize.get(s);
+                        int maxteamplayers = plugin.lobbyteamSize.getOrDefault(s, 1);
                         if (!plugin.lobbyTeamed.containsKey(p)) {
                             if (e.getCurrentItem().getItemMeta().displayName().equals(Messages.RandomLabel())) {
                                 assignRandomTeam(e, p, s, maxteamplayers);
@@ -168,9 +172,10 @@ public class InventoryEventListener implements Listener {
     
     private void assignRandomTeam(InventoryClickEvent e, Player p, String s, int maxteamplayers) {
         boolean teamfound = false;
-        while (!teamfound) {
+        Map<Integer, Integer> lobbyTeamsMap = plugin.lobbyteams.getOrDefault(s, new HashMap<>());
+        while (!teamfound && !lobbyTeamsMap.isEmpty()) {
             Random rnd = new Random();
-            int rndTeam = rnd.nextInt(plugin.lobbyteams.get(s).size());
+            int rndTeam = rnd.nextInt(lobbyTeamsMap.size());
             rndTeam++;
             Integer teamPlayers = SafeMapAccess.get(plugin.lobbyteams, s, rndTeam, null);
             if (teamPlayers != null && teamPlayers < maxteamplayers && teamPlayers >= 0) {
@@ -179,11 +184,13 @@ public class InventoryEventListener implements Listener {
                 int players = SafeMapAccess.get(plugin.lobbyteams, s, rndTeam, 0);
                 players++;
                 HashMap<Integer, Integer> temp = new HashMap<>();
-                for (int max = 1; max <= plugin.lobbyteamAmount.get(s); max++) {
+                int maxTeams = plugin.lobbyteamAmount.getOrDefault(s, 1);
+                for (int max = 1; max <= maxTeams; max++) {
                     int oldplayers = SafeMapAccess.get(plugin.lobbyteams, s, max, 0);
                     temp.put(max, oldplayers);
                 }
                 temp.put(rndTeam, players);
+                plugin.lobbyteams.putIfAbsent(s, new HashMap<>());
                 plugin.lobbyteams.replace(s, temp);
                 p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
                 p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(45) + ": ").color(NamedTextColor.GREEN)).append(Component.text(rndTeam).color(NamedTextColor.LIGHT_PURPLE)));
@@ -204,11 +211,13 @@ public class InventoryEventListener implements Listener {
             int players = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(displayname), 0);
             players++;
             HashMap<Integer, Integer> temp = new HashMap<>();
-            for (int max = 1; max <= plugin.lobbyteamAmount.get(s); max++) {
+            int maxTeams = plugin.lobbyteamAmount.getOrDefault(s, 1);
+            for (int max = 1; max <= maxTeams; max++) {
                 int oldplayers = SafeMapAccess.get(plugin.lobbyteams, s, max, 0);
                 temp.put(max, oldplayers);
             }
             temp.put(Integer.parseInt(displayname), players);
+            plugin.lobbyteams.putIfAbsent(s, new HashMap<>());
             plugin.lobbyteams.replace(s, temp);
             p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
             p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(45) + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
@@ -230,22 +239,26 @@ public class InventoryEventListener implements Listener {
     private void switchTeam(InventoryClickEvent e, Player p, String s, String displayname, int maxteamplayers) {
         p.closeInventory();
         String teamname = null;
-        for (String all : plugin.lobbyteamplayernames.get(s).values()) {
+        Map<Player, String> teamMap = plugin.lobbyteamplayernames.getOrDefault(s, new HashMap<>());
+        for (String all : teamMap.values()) {
             if (Objects.equals(SafeMapAccess.get(plugin.lobbyteamplayernames, s, p, null), all)) {
                 teamname = all;
             }
         }
         SafeMapAccess.remove(plugin.lobbyteamplayernames, s, p);
-        assert teamname != null;
-        int teamamount = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0);
-        teamamount--;
-        HashMap<Integer, Integer> tempold = new HashMap<>();
-        for (int max = 1; max <= plugin.lobbyteamAmount.get(s); max++) {
-            int oldplayers = SafeMapAccess.get(plugin.lobbyteams, s, max, 0);
-            tempold.put(max, oldplayers);
+        if (teamname != null) {
+            int teamamount = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0);
+            teamamount--;
+            HashMap<Integer, Integer> tempold = new HashMap<>();
+            int maxTeams = plugin.lobbyteamAmount.getOrDefault(s, 1);
+            for (int max = 1; max <= maxTeams; max++) {
+                int oldplayers = SafeMapAccess.get(plugin.lobbyteams, s, max, 0);
+                tempold.put(max, oldplayers);
+            }
+            tempold.put(Integer.parseInt(teamname), teamamount);
+            plugin.lobbyteams.putIfAbsent(s, new HashMap<>());
+            plugin.lobbyteams.replace(s, tempold);
         }
-        tempold.put(Integer.parseInt(teamname), teamamount);
-        plugin.lobbyteams.replace(s, tempold);
         plugin.lobbyTeamed.remove(p, s);
         if (e.getCurrentItem().getItemMeta().displayName().equals(Messages.RandomLabel())) {
             assignRandomTeam(e, p, s, maxteamplayers);
@@ -334,7 +347,7 @@ public class InventoryEventListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.pgPlayers.contains(p) || plugin.playerLobby.containsKey(p)) {
+            if (plugin.game.isActivePlayer(p) || plugin.game.isInLobby(p)) {
                 if (e.getAction() == Action.PHYSICAL && Objects.requireNonNull(e.getClickedBlock()).getType() == Material.FARMLAND) {
                     e.setCancelled(true);
                 }
@@ -342,13 +355,8 @@ public class InventoryEventListener implements Listener {
                     if (e.getHand() == EquipmentSlot.HAND) {
                         if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(Settings.chestdata.get("pg.chestblocks.normal")).toString())) {
                             if (plugin.isLobbySystem()) {
-                                String s = null;
-                                for (int ii = 1; ii <= 27; ii++) {
-                                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
-                                        s = Integer.toString(ii);
-                                    }
-                                }
-                                if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                                String s = plugin.game.getPlayerLobby(p);
+                                if (s != null && plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                                     if (!plugin.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                         Inventory inv;
                                         inv = Bukkit.createInventory(p, 27, Settings.prefix);
@@ -364,7 +372,7 @@ public class InventoryEventListener implements Listener {
                                             int slot = rnd.nextInt(27);
                                             int roll = rnd.nextInt(100);
                                             if (roll < 20) {
-                                                if (plugin.lobbyActivateShop.get(s)) {
+                                                if (plugin.lobbyActivateShop.getOrDefault(s, false)) {
                                                     ArrayList<ItemStack> potions1 = new ArrayList<>();
                                                     potions1.add(new ItemStack(Material.GLASS_BOTTLE, 1));
                                                     ArrayList<ItemStack> potions2 = new ArrayList<>();
@@ -516,11 +524,11 @@ public class InventoryEventListener implements Listener {
                                     if (plugin.isLobbySystem()) {
                                         String s = null;
                                         for (int ii = 1; ii <= 27; ii++) {
-                                            if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                            if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                                 s = Integer.toString(ii);
                                             }
                                         }
-                                        if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                                        if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                                             if (!plugin.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                                 Inventory inv;
                                                 inv = Bukkit.createInventory(p, Settings.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), Settings.prefix);
@@ -559,12 +567,12 @@ public class InventoryEventListener implements Listener {
                             if (plugin.isLobbySystem()) {
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.lobbyActivateShop.get(s)) {
-                                    if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                                if (plugin.lobbyActivateShop.getOrDefault(s, false)) {
+                                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                                         for (ItemStack item : p.getInventory().getContents()) {
                                             if (item != null) {
                                                 if (item.getType() == plugin.getCoin().getType()) {
@@ -646,7 +654,7 @@ public class InventoryEventListener implements Listener {
                         if (plugin.isLobbySystem()) {
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
-                                if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
                             }
@@ -667,11 +675,11 @@ public class InventoryEventListener implements Listener {
                             if (plugin.isLobbySystem()) {
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                                if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                                     double health = p.getHealth();
                                     int foodlvl = p.getFoodLevel();
                                     if (health >= 20 && foodlvl >= 13) {
@@ -716,12 +724,12 @@ public class InventoryEventListener implements Listener {
                             if (plugin.isLobbySystem()) {
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
                                 if (plugin.lobbyActivateAirdrops.get(s)) {
-                                    if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                                         boolean blocked = false;
                                         Location loc = p.getEyeLocation().add(0, 1, 0);
                                         while (loc.getY() <= 320) {
@@ -780,11 +788,11 @@ public class InventoryEventListener implements Listener {
                             if (plugin.isLobbySystem()) {
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                                if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                                     plugin.clearEffects(p);
                                     p.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
                                 }
@@ -799,11 +807,11 @@ public class InventoryEventListener implements Listener {
                             if (plugin.isLobbySystem()) {
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                                if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                                     Player result = null;
                                     double lastDistance = Double.MAX_VALUE;
                                     for (Player cp : p.getWorld().getPlayers()) {
@@ -857,11 +865,11 @@ public class InventoryEventListener implements Listener {
                         if (plugin.isLobbySystem()) {
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
-                                if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (plugin.lobbyStates.get(s) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
+                            if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
@@ -924,11 +932,11 @@ public class InventoryEventListener implements Listener {
                         if (plugin.isLobbySystem()) {
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
-                                if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (plugin.lobbyStates.get(s) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
+                            if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
@@ -991,11 +999,11 @@ public class InventoryEventListener implements Listener {
                         if (plugin.isLobbySystem()) {
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
-                                if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                                if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (plugin.lobbyStates.get(s) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
+                            if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
@@ -1039,11 +1047,11 @@ public class InventoryEventListener implements Listener {
                     if (plugin.isLobbySystem()) {
                         String s = null;
                         for (int ii = 1; ii <= 27; ii++) {
-                            if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                            if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                 s = Integer.toString(ii);
                             }
                         }
-                        if (plugin.lobbyStates.get(s) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
+                        if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
                             plugin.onLeaveLobby(p, s);
                         }
                     } else {
@@ -1427,11 +1435,11 @@ public class InventoryEventListener implements Listener {
                 if (plugin.isLobbySystem()) {
                     String s = null;
                     for (int ii = 1; ii <= 27; ii++) {
-                        if (plugin.playerLobby.get(p).contains(Integer.toString(ii))) {
+                        if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
                     }
-                    e.setCancelled(plugin.lobbyStates.get(s) != GameStates.INGAME && plugin.playerLobby.get(p).contains(Objects.requireNonNull(s)));
+                    GameStates state = plugin.lobbyStates.getOrDefault(s, GameStates.WAITING); e.setCancelled(state != GameStates.INGAME && !Objects.equals(plugin.game.getPlayerLobby(p), s));
                 } else {
                     e.setCancelled(plugin.getGamestate() != GameStates.INGAME && plugin.pgPlayers.contains(p));
                 }
@@ -1439,3 +1447,9 @@ public class InventoryEventListener implements Listener {
         }
     }
 }
+
+
+
+
+
+

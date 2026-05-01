@@ -130,13 +130,12 @@ public class BlockEventListener implements Listener {
                 if (plugin.isLobbySystem()) {
                     String s = plugin.game.getPlayerLobby(p);
                     if (s != null) {
-                        if (!plugin.lobbyBuild.get(s)) {
-                            if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                        if (!plugin.lobbyBuild.getOrDefault(s, true)) {
+                            if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                                 if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
                                     Block block = e.getBlockClicked().getRelative(e.getBlockFace());
                                     Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
-                                    plugin.lobbyLiquidPlacedData.put(loc, block);
-                                    plugin.lobbyLiquidPlaced.put(s, plugin.lobbyLiquidPlacedData);
+                                    plugin.trackWaterBlock(loc, block.getBlockData());
                                 }
                             }
                         }
@@ -147,7 +146,7 @@ public class BlockEventListener implements Listener {
                             if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
                                 Block block = e.getBlockClicked().getRelative(e.getBlockFace());
                                 Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
-                                plugin.liquidPlaced.put(loc, block);
+                                plugin.trackWaterBlock(loc, block.getBlockData());
                             }
                         }
                     }
