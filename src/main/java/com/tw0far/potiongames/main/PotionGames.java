@@ -35,8 +35,7 @@ import com.tw0far.potiongames.commands.CommandDispatcher;
 import com.tw0far.potiongames.handlers.ISetupHandler;
 import com.tw0far.potiongames.handlers.SetupHandler;
 import com.tw0far.potiongames.listeners.*;
-import com.tw0far.potiongames.managers.IConfigurationManager;
-import com.tw0far.potiongames.managers.ConfigurationManager;
+import com.tw0far.potiongames.managers.*;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Messages;
@@ -65,9 +64,19 @@ public class PotionGames extends JavaPlugin {
     private static PotionGames instance;
     public final Game game = new Game();
     private IConfigurationManager configManager;
+    private ILobbyStateManager lobbyStateManager;
+    private IPlayerStateManager playerStateManager;
+    private IArenaStateManager arenaStateManager;
+    private IItemStateManager itemStateManager;
+    private IBlockStateManager blockStateManager;
     public static PotionGames getInstance() { return instance; }
     public Game getGame() { return game; }
     public IConfigurationManager getConfigManager() { return configManager; }
+    public ILobbyStateManager getLobbyStateManager() { return lobbyStateManager; }
+    public IPlayerStateManager getPlayerStateManager() { return playerStateManager; }
+    public IArenaStateManager getArenaStateManager() { return arenaStateManager; }
+    public IItemStateManager getItemStateManager() { return itemStateManager; }
+    public IBlockStateManager getBlockStateManager() { return blockStateManager; }
     public ISetupHandler setupHandler = new SetupHandler(this);
     
     // ===== Delegation Methods for Player Lists (Phase 3.4 Migration) =====
@@ -158,6 +167,117 @@ public class PotionGames extends JavaPlugin {
      */
     public String getSpectatorLobby(Player player) {
         return game.getSpectatorLobby(player);
+    }
+
+    // ===== Delegation Methods for LobbyStateManager (Phase 4.1) =====
+    // These methods provide convenient access to lobby-specific state
+    
+    public int getLobbyCountdown(String lobbyId) {
+        return lobbyStateManager.getCountdown(lobbyId);
+    }
+    
+    public void setLobbyCountdown(String lobbyId, int value) {
+        lobbyStateManager.setCountdown(lobbyId, value);
+    }
+    
+    public GameStates getLobbyGameState(String lobbyId) {
+        return lobbyStateManager.getGameState(lobbyId);
+    }
+    
+    public void setLobbyGameState(String lobbyId, GameStates state) {
+        lobbyStateManager.setGameState(lobbyId, state);
+    }
+    
+    public boolean isLobbyDeathmatchEnabled(String lobbyId) {
+        return lobbyStateManager.isDeathmatchEnabled(lobbyId);
+    }
+    
+    public void setLobbyDeathmatchEnabled(String lobbyId, boolean value) {
+        lobbyStateManager.setDeathmatchEnabled(lobbyId, value);
+    }
+    
+    public boolean isLobbyMoveAllowed(String lobbyId) {
+        return lobbyStateManager.isMoveAllowed(lobbyId);
+    }
+    
+    public void setLobbyMoveAllowed(String lobbyId, boolean value) {
+        lobbyStateManager.setMoveAllowed(lobbyId, value);
+    }
+
+    // ===== Delegation Methods for PlayerStateManager (Phase 4.2) =====
+    // These methods provide convenient access to player tracking state
+    
+    public boolean isActivePlayer(Player player) {
+        return playerStateManager.isActivePlayer(player);
+    }
+    
+    public boolean isSpectatorPlayer(Player player) {
+        return playerStateManager.isSpectator(player);
+    }
+    
+    public void addActivePlayer(Player player) {
+        playerStateManager.addActivePlayer(player);
+    }
+    
+    public void removeActivePlayer(Player player) {
+        playerStateManager.removeActivePlayer(player);
+    }
+    
+    public void addSpectatorPlayer(Player player) {
+        playerStateManager.addSpectator(player);
+    }
+    
+    public void removeSpectatorPlayer(Player player) {
+        playerStateManager.removeSpectator(player);
+    }
+
+    // ===== Delegation Methods for ArenaStateManager (Phase 4.3) =====
+    // These methods provide convenient access to arena and voting state
+    
+    public void recordPlayerVote(Player player, String arena) {
+        arenaStateManager.recordPlayerVote(player, arena);
+    }
+    
+    public String getPlayerVote(Player player) {
+        return arenaStateManager.getPlayerVote(player);
+    }
+    
+    public String getWinningArena() {
+        return arenaStateManager.getWinningArena();
+    }
+
+    // ===== Delegation Methods for ItemStateManager (Phase 4.4) =====
+    // These methods provide convenient access to loot and shop state
+    
+    public ItemStack getRandomFood1() {
+        return itemStateManager.getRandomFood1();
+    }
+    
+    public ItemStack getRandomFood2() {
+        return itemStateManager.getRandomFood2();
+    }
+    
+    public ItemStack getRandomArmor(int poolId) {
+        return itemStateManager.getRandomArmor(poolId);
+    }
+    
+    public ItemStack getRandomWeapon(int poolId) {
+        return itemStateManager.getRandomWeapon(poolId);
+    }
+
+    // ===== Delegation Methods for BlockStateManager (Phase 4.5) =====
+    // These methods provide convenient access to block tracking state
+    
+    public void trackPlacedBlock(Location location, Material material) {
+        blockStateManager.trackPlacedBlock(location, material);
+    }
+    
+    public void trackBrokenBlock(Location location, Material material) {
+        blockStateManager.trackBrokenBlock(location, material);
+    }
+    
+    public void trackWaterBlock(Location location, BlockData blockData) {
+        blockStateManager.trackWaterBlock(location, blockData);
     }
 
     private static final Logger log = Logger.getLogger("Minecraft");
@@ -337,6 +457,18 @@ public class PotionGames extends JavaPlugin {
         // Initialize configuration manager
         configManager = new ConfigurationManager(this);
         configManager.onEnable();
+        
+        // Initialize state managers
+        lobbyStateManager = new LobbyStateManager(this);
+        lobbyStateManager.onEnable();
+        playerStateManager = new PlayerStateManager();
+        playerStateManager.onEnable();
+        arenaStateManager = new ArenaStateManager();
+        arenaStateManager.onEnable();
+        itemStateManager = new ItemStateManager();
+        itemStateManager.onEnable();
+        blockStateManager = new BlockStateManager();
+        blockStateManager.onEnable();
         
         PluginManager pm = Bukkit.getPluginManager();
         
@@ -1697,6 +1829,15 @@ public class PotionGames extends JavaPlugin {
     @Override
     public void onDisable() {
         log.info(String.format("[%s] Disabled Version %s", getPluginMeta().getName(), getPluginMeta().getVersion()));
+        
+        // Disable state managers
+        if (configManager != null) configManager.onDisable();
+        if (lobbyStateManager != null) lobbyStateManager.onDisable();
+        if (playerStateManager != null) playerStateManager.onDisable();
+        if (arenaStateManager != null) arenaStateManager.onDisable();
+        if (itemStateManager != null) itemStateManager.onDisable();
+        if (blockStateManager != null) blockStateManager.onDisable();
+        
         close();
         if (gameServer && startOnJoin && !lobbySystem) {
             for (Player all : Bukkit.getOnlinePlayers()) {
