@@ -42,11 +42,10 @@ public class BlockEventListener implements Listener {
             }
             
             if (s != null) {
-                if (!plugin.lobbyBuild.get(s)) {
-                    if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                if (!plugin.lobbyBuild.getOrDefault(s, true)) {
+                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                         if (isAllowedBreakBlock(e.getBlock().getType())) {
-                            plugin.lobbyBreakedBlocksData.put(e.getBlock().getLocation(), e.getBlock().getType());
-                            plugin.lobbyBreakedBlocks.put(s, plugin.lobbyBreakedBlocksData);
+                            plugin.trackBrokenBlock(e.getBlock().getLocation(), e.getBlock().getType());
                             e.setCancelled(false);
                         } else {
                             e.setCancelled(true);
@@ -72,11 +71,10 @@ public class BlockEventListener implements Listener {
             }
             
             if (s != null) {
-                if (!plugin.lobbyBuild.get(s)) {
-                    if (plugin.lobbyStates.get(s) == GameStates.INGAME) {
+                if (!plugin.lobbyBuild.getOrDefault(s, true)) {
+                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
                         if (isAllowedPlaceBlock(e.getBlock().getType())) {
-                            plugin.lobbyPlacedBlocksData.put(e.getBlock().getLocation(), e.getBlock().getType());
-                            plugin.lobbyPlacedBlocks.put(s, plugin.lobbyPlacedBlocksData);
+                            plugin.trackPlacedBlock(e.getBlock().getLocation(), e.getBlock().getType());
                             e.setCancelled(false);
                         } else if (e.getBlock().getType() == Material.TNT) {
                             e.setCancelled(true);
