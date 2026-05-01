@@ -1003,7 +1003,7 @@ public class InventoryEventListener implements Listener {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
+                            if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
@@ -1051,7 +1051,7 @@ public class InventoryEventListener implements Listener {
                                 s = Integer.toString(ii);
                             }
                         }
-                        if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
+                        if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
                             plugin.onLeaveLobby(p, s);
                         }
                     } else {
@@ -1439,7 +1439,7 @@ public class InventoryEventListener implements Listener {
                             s = Integer.toString(ii);
                         }
                     }
-                    GameStates state = plugin.lobbyStates.getOrDefault(s, GameStates.WAITING); e.setCancelled(state != GameStates.INGAME && !Objects.equals(plugin.game.getPlayerLobby(p), s));
+                    GameStates state = plugin.getLobbyGameState(s); e.setCancelled(state != GameStates.INGAME && !Objects.equals(plugin.game.getPlayerLobby(p), s));
                 } else {
                     e.setCancelled(plugin.getGamestate() != GameStates.INGAME && plugin.pgPlayers.contains(p));
                 }
