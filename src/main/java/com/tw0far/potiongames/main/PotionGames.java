@@ -180,6 +180,14 @@ public class PotionGames extends JavaPlugin {
         lobbyStateManager.setCountdown(lobbyId, value);
     }
     
+    public int getLobbyAmount(String lobbyId) {
+        return lobbyStateManager.getLobbyAmount(lobbyId);
+    }
+    
+    public void setLobbyAmount(String lobbyId, int value) {
+        lobbyStateManager.setLobbyAmount(lobbyId, value);
+    }
+    
     public GameStates getLobbyGameState(String lobbyId) {
         return lobbyStateManager.getGameState(lobbyId);
     }

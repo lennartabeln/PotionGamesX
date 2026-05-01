@@ -39,9 +39,9 @@ public class StartCommand implements ICommand {
             }
             
             if (lobbyId != null) {
-                if (plugin.lobbyAmount.get(lobbyId) >= plugin.lobbyminPlayers.get(lobbyId)) {
-                    if (plugin.countdownLobby.get(lobbyId) >= 10) {
-                        plugin.countdownLobby.replace(lobbyId, 10);
+                if (plugin.getLobbyAmount(lobbyId) >= plugin.lobbyminPlayers.get(lobbyId)) {
+                    if (plugin.getLobbyCountdown(lobbyId) >= 10) {
+                        plugin.setLobbyCountdown(lobbyId, 10);
                         // Broadcast to all players in this lobby
                         for (Player all : plugin.game.getPlayersInLobby(lobbyId)) {
                             all.sendMessage(Messages.GameStarted());
