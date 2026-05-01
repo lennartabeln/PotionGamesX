@@ -63,8 +63,8 @@ public class InventoryEventListener implements Listener {
             }
             
             if (s != null) {
-                GameStates lobbyState = plugin.lobbyStates.getOrDefault(s, GameStates.WAITING);
-                boolean canBuild = plugin.lobbyBuild.getOrDefault(s, true);
+                GameStates lobbyState = plugin.getLobbyGameState(s);
+                boolean canBuild = plugin.isLobbyBuildAllowed(s);
                 if ((lobbyState == GameStates.WAITING || lobbyState == GameStates.PREPARING) && !canBuild) {
                     handleArenaVoting(e, p, s);
                     handleTeamSelection(e, p, s);
@@ -356,7 +356,7 @@ public class InventoryEventListener implements Listener {
                         if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(Settings.chestdata.get("pg.chestblocks.normal")).toString())) {
                             if (plugin.isLobbySystem()) {
                                 String s = plugin.game.getPlayerLobby(p);
-                                if (s != null && plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                                if (s != null && plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                     if (!plugin.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                         Inventory inv;
                                         inv = Bukkit.createInventory(p, 27, Settings.prefix);
@@ -528,7 +528,7 @@ public class InventoryEventListener implements Listener {
                                                 s = Integer.toString(ii);
                                             }
                                         }
-                                        if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                                        if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                             if (!plugin.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
                                                 Inventory inv;
                                                 inv = Bukkit.createInventory(p, Settings.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), Settings.prefix);
@@ -572,7 +572,7 @@ public class InventoryEventListener implements Listener {
                                     }
                                 }
                                 if (plugin.lobbyActivateShop.getOrDefault(s, false)) {
-                                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                                    if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                         for (ItemStack item : p.getInventory().getContents()) {
                                             if (item != null) {
                                                 if (item.getType() == plugin.getCoin().getType()) {
@@ -679,7 +679,7 @@ public class InventoryEventListener implements Listener {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                                if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                     double health = p.getHealth();
                                     int foodlvl = p.getFoodLevel();
                                     if (health >= 20 && foodlvl >= 13) {
@@ -729,7 +729,7 @@ public class InventoryEventListener implements Listener {
                                     }
                                 }
                                 if (plugin.lobbyActivateAirdrops.get(s)) {
-                                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                                    if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                         boolean blocked = false;
                                         Location loc = p.getEyeLocation().add(0, 1, 0);
                                         while (loc.getY() <= 320) {
@@ -792,7 +792,7 @@ public class InventoryEventListener implements Listener {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                                if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                     plugin.clearEffects(p);
                                     p.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
                                 }
@@ -811,7 +811,7 @@ public class InventoryEventListener implements Listener {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                                if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                     Player result = null;
                                     double lastDistance = Double.MAX_VALUE;
                                     for (Player cp : p.getWorld().getPlayers()) {
@@ -869,7 +869,7 @@ public class InventoryEventListener implements Listener {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
+                            if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
@@ -936,7 +936,7 @@ public class InventoryEventListener implements Listener {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.WAITING || plugin.lobbyStates.get(s) == GameStates.PREPARING) {
+                            if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 assert randombarriermeta != null;

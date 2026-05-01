@@ -42,8 +42,8 @@ public class BlockEventListener implements Listener {
             }
             
             if (s != null) {
-                if (!plugin.lobbyBuild.getOrDefault(s, true)) {
-                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                if (!plugin.isLobbyBuildAllowed(s)) {
+                    if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                         if (isAllowedBreakBlock(e.getBlock().getType())) {
                             plugin.trackBrokenBlock(e.getBlock().getLocation(), e.getBlock().getType());
                             e.setCancelled(false);
@@ -71,8 +71,8 @@ public class BlockEventListener implements Listener {
             }
             
             if (s != null) {
-                if (!plugin.lobbyBuild.getOrDefault(s, true)) {
-                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                if (!plugin.isLobbyBuildAllowed(s)) {
+                    if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                         if (isAllowedPlaceBlock(e.getBlock().getType())) {
                             plugin.trackPlacedBlock(e.getBlock().getLocation(), e.getBlock().getType());
                             e.setCancelled(false);
@@ -130,8 +130,8 @@ public class BlockEventListener implements Listener {
                 if (plugin.isLobbySystem()) {
                     String s = plugin.game.getPlayerLobby(p);
                     if (s != null) {
-                        if (!plugin.lobbyBuild.getOrDefault(s, true)) {
-                            if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                        if (!plugin.isLobbyBuildAllowed(s)) {
+                            if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                 if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
                                     Block block = e.getBlockClicked().getRelative(e.getBlockFace());
                                     Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();

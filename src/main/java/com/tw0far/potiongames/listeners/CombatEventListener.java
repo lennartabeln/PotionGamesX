@@ -78,8 +78,8 @@ public class CombatEventListener implements Listener {
             }
             
             if (s != null) {
-                if (!plugin.lobbyBuild.getOrDefault(s, true)) {
-                    if (plugin.lobbyStates.getOrDefault(s, GameStates.WAITING) == GameStates.INGAME) {
+                if (!plugin.isLobbyBuildAllowed(s)) {
+                    if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                         if (p.getKiller() != null) {
                             plugin.addDeaths(p.getUniqueId().toString(), 1);
                             plugin.addLosses(p.getUniqueId().toString(), 1);
@@ -127,7 +127,7 @@ public class CombatEventListener implements Listener {
                             }
                             plugin.teamed.remove(p.getName());
                         }
-                        int amountPlayers = plugin.lobbyAmount.getOrDefault(s, 0);
+                        int amountPlayers = plugin.getLobbyAmount(s);
                         int player = 0;
                         for (Player all : plugin.game.getPlayersInLobby(s)) {
                             player++;
