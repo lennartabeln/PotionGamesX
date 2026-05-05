@@ -70,6 +70,7 @@ public class PotionGames extends JavaPlugin {
     private IArenaStateManager arenaStateManager;
     private IItemStateManager itemStateManager;
     private IBlockStateManager blockStateManager;
+    private ISetupStateManager setupStateManager;
     private IManager databaseManager;
     public static PotionGames getInstance() { return instance; }
     public Game getGame() { return game; }
@@ -79,6 +80,7 @@ public class PotionGames extends JavaPlugin {
     public IArenaStateManager getArenaStateManager() { return arenaStateManager; }
     public IItemStateManager getItemStateManager() { return itemStateManager; }
     public IBlockStateManager getBlockStateManager() { return blockStateManager; }
+    public ISetupStateManager getSetupStateManager() { return setupStateManager; }
     public IManager getDatabaseManager() { return databaseManager; }
     public ISetupHandler setupHandler = new SetupHandler(this);
     
@@ -669,6 +671,8 @@ public class PotionGames extends JavaPlugin {
         itemStateManager.onEnable();
         blockStateManager = new BlockStateManager();
         blockStateManager.onEnable();
+        setupStateManager = new SetupStateManager();
+        setupStateManager.onEnable();
         
         // Initialize database manager
         databaseManager = new DatabaseManager(this, (ConfigurationManager) configManager);

@@ -2,6 +2,7 @@ package com.tw0far.potiongames.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -9,6 +10,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.tw0far.potiongames.main.PotionGames;
 
@@ -42,6 +44,48 @@ public class Lobby {
     private int prepareTimer = 60;
     private int gameTimer = roundTime * 60;
     private int[] announceRoundTimes = new int[] { 0, 1, 2, 3, 4, 5, 10, 30, 60, 60 * 5, 60 * 10, 60 * 30 };
+    
+    // ===== PHASE 7.2: Runtime State (Countdown, Flags, etc.) =====
+    // Countdown timers
+    private int countdown = 60;
+    private int reset = 10;
+    
+    // Runtime boolean flags (per-lobby state)
+    private boolean deathmatch = false;
+    private boolean move = true;
+    private boolean joinable = true;
+    private boolean forcearena = false;
+    private boolean voteallowed = false;
+    private boolean teamallowed = false;
+    private boolean kitallowed = false;
+    private boolean tickstarted = false;
+    private boolean build = false;
+    private boolean pause = false;
+    private boolean checkArenas = false;
+    private boolean singleArena = false;
+    
+    // Per-lobby chests
+    private HashMap<Location, ItemStack[]> chests = new HashMap<>();
+    
+    // Per-lobby block tracking
+    private HashMap<Location, java.lang.Object> placedBlocks = new HashMap<>();    // Location -> Material
+    private HashMap<Location, java.lang.Object> breakedBlocks = new HashMap<>();    // Location -> Material
+    private HashMap<Location, Object> waterBlocks = new HashMap<>();               // Location -> BlockData
+    private HashMap<Location, Object> liquidPlaced = new HashMap<>();              // Location -> Block
+    
+    // Per-lobby voting
+    private HashMap<String, Integer> lobbyvotes = new HashMap<>();                 // arena -> count
+    private HashMap<Player, String> lobbyvoteplayernames = new HashMap<>();        // player -> voted arena
+    private HashMap<Player, String> lobbyVoted = new HashMap<>();                  // player -> vote status
+    private String lobbyVote = null;                                              // current vote in progress
+    private String lobbyVotedArena = null;                                        // final voted arena
+    
+    // Per-lobby teams
+    private HashMap<Integer, Integer> lobbyteams = new HashMap<>();               // team id -> player count
+    private HashMap<Player, String> lobbyteamplayernames = new HashMap<>();       // player -> team id
+    private HashMap<Player, String> lobbyTeamed = new HashMap<>();                // player -> team status
+    private int lobbyteamSize = teamSize;                                         // team size
+    private int lobbyteamAmount = teamAmount;                                     // number of teams
 
     public Lobby(int id) {
         this.id = id;
@@ -373,5 +417,251 @@ public class Lobby {
 
     public int getPlayerCount() {
         return this.playerCount;
+    }
+    
+    // ===== PHASE 7.2: Runtime State Accessors =====
+    
+    /**
+     * Get countdown timer
+     */
+    public int getCountdown() {
+        return countdown;
+    }
+    
+    /**
+     * Set countdown timer
+     */
+    public void setCountdown(int countdown) {
+        this.countdown = countdown;
+    }
+    
+    /**
+     * Get reset timer
+     */
+    public int getReset() {
+        return reset;
+    }
+    
+    /**
+     * Set reset timer
+     */
+    public void setReset(int reset) {
+        this.reset = reset;
+    }
+    
+    // ===== PHASE 7.2: Boolean Flags =====
+    
+    public boolean isDeathmatch() { return deathmatch; }
+    public void setDeathmatch(boolean value) { this.deathmatch = value; }
+    
+    public boolean isMoveAllowed() { return move; }
+    public void setMoveAllowed(boolean value) { this.move = value; }
+    
+    public boolean isJoinable() { return joinable; }
+    public void setJoinable(boolean value) { this.joinable = value; }
+    
+    public boolean isForcearena() { return forcearena; }
+    public void setForcearena(boolean value) { this.forcearena = value; }
+    
+    public boolean isVoteallowed() { return voteallowed; }
+    public void setVoteallowed(boolean value) { this.voteallowed = value; }
+    
+    public boolean isTeamallowed() { return teamallowed; }
+    public void setTeamallowed(boolean value) { this.teamallowed = value; }
+    
+    public boolean isKitallowed() { return kitallowed; }
+    public void setKitallowed(boolean value) { this.kitallowed = value; }
+    
+    public boolean isTickstarted() { return tickstarted; }
+    public void setTickstarted(boolean value) { this.tickstarted = value; }
+    
+    public boolean isBuildAllowed() { return build; }
+    public void setBuildAllowed(boolean value) { this.build = value; }
+    
+    public boolean isPaused() { return pause; }
+    public void setPaused(boolean value) { this.pause = value; }
+    
+    public boolean isCheckArenas() { return checkArenas; }
+    public void setCheckArenas(boolean value) { this.checkArenas = value; }
+    
+    public boolean isSingleArena() { return singleArena; }
+    public void setSingleArena(boolean value) { this.singleArena = value; }
+    
+    // ===== PHASE 7.2: Chest Accessors =====
+    
+    /**
+     * Get chests map for this lobby
+     */
+    public HashMap<Location, ItemStack[]> getChests() {
+        return chests;
+    }
+    
+    /**
+     * Clear all chests in this lobby
+     */
+    public void clearChests() {
+        chests.clear();
+    }
+    
+    // ===== PHASE 7.2: Block Tracking Accessors =====
+    
+    /**
+     * Get placed blocks map
+     */
+    public HashMap<Location, java.lang.Object> getPlacedBlocks() {
+        return placedBlocks;
+    }
+    
+    /**
+     * Get broken blocks map
+     */
+    public HashMap<Location, java.lang.Object> getBreakeedBlocks() {
+        return breakedBlocks;
+    }
+    
+    /**
+     * Get water blocks map
+     */
+    public HashMap<Location, Object> getWaterBlocks() {
+        return waterBlocks;
+    }
+    
+    /**
+     * Get liquid placed map
+     */
+    public HashMap<Location, Object> getLiquidPlaced() {
+        return liquidPlaced;
+    }
+    
+    /**
+     * Clear all block tracking
+     */
+    public void clearBlockTracking() {
+        placedBlocks.clear();
+        breakedBlocks.clear();
+        waterBlocks.clear();
+        liquidPlaced.clear();
+    }
+    
+    // ===== PHASE 7.2: Voting Accessors =====
+    
+    /**
+     * Get voting map (arena -> votes)
+     */
+    public HashMap<String, Integer> getVotingMap() {
+        return lobbyvotes;
+    }
+    
+    /**
+     * Get player vote player names map
+     */
+    public HashMap<Player, String> getVotePlayerNamesMap() {
+        return lobbyvoteplayernames;
+    }
+    
+    /**
+     * Get player voted map
+     */
+    public HashMap<Player, String> getVotedMap() {
+        return lobbyVoted;
+    }
+    
+    /**
+     * Get current vote
+     */
+    public String getCurrentVote() {
+        return lobbyVote;
+    }
+    
+    /**
+     * Set current vote
+     */
+    public void setCurrentVote(String vote) {
+        this.lobbyVote = vote;
+    }
+    
+    /**
+     * Get voted arena
+     */
+    public String getVotedArenaName() {
+        return lobbyVotedArena;
+    }
+    
+    /**
+     * Set voted arena
+     */
+    public void setVotedArenaName(String arena) {
+        this.lobbyVotedArena = arena;
+    }
+    
+    /**
+     * Clear all voting data
+     */
+    public void clearVoting() {
+        lobbyvotes.clear();
+        lobbyvoteplayernames.clear();
+        lobbyVoted.clear();
+        lobbyVote = null;
+        lobbyVotedArena = null;
+    }
+    
+    // ===== PHASE 7.2: Team Accessors =====
+    
+    /**
+     * Get teams map (team id -> player count)
+     */
+    public HashMap<Integer, Integer> getTeamsMap() {
+        return lobbyteams;
+    }
+    
+    /**
+     * Get team player names map (player -> team id)
+     */
+    public HashMap<Player, String> getTeamPlayerNamesMap() {
+        return lobbyteamplayernames;
+    }
+    
+    /**
+     * Get teamed map (player -> team status)
+     */
+    public HashMap<Player, String> getTeamedMap() {
+        return lobbyTeamed;
+    }
+    
+    /**
+     * Get team size
+     */
+    public int getTeamSize() {
+        return lobbyteamSize;
+    }
+    
+    /**
+     * Set team size
+     */
+    public void setTeamSize(int size) {
+        this.lobbyteamSize = size;
+    }
+    
+    /**
+     * Get team amount
+     */
+    public int getTeamAmount() {
+        return lobbyteamAmount;
+    }
+    
+    /**
+     * Set team amount
+     */
+    public void setTeamAmount(int amount) {
+        this.lobbyteamAmount = amount;
+    }
+    
+    /**
+     * Clear all team data
+     */
+    public void clearTeams() {
+        lobbyteams.clear();
+        lobbyteamplayernames.clear();
+        lobbyTeamed.clear();
     }
 }

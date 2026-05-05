@@ -82,6 +82,7 @@ com\tw0far\potiongames\listeners\SignChangeEventListener.class
 com\tw0far\potiongames\commands\AddDeathmatchCommand.class
 com\tw0far\potiongames\managers\IDatabaseManager.class
 com\tw0far\potiongames\database\DatabaseQueryBuilder$CachedQuery.class
+com\tw0far\potiongames\managers\SetupStateManager.class
 com\tw0far\potiongames\models\Game.class
 com\tw0far\potiongames\commands\SignP1Command.class
 com\tw0far\potiongames\main\PotionGames$1.class
@@ -117,6 +118,7 @@ com\tw0far\potiongames\listeners\InventoryEventListener.class
 com\tw0far\potiongames\commands\ICommand.class
 com\tw0far\potiongames\database\DatabaseQueryBuilder$DeleteBuilder.class
 com\tw0far\potiongames\handlers\IQueryHandler.class
+com\tw0far\potiongames\managers\ISetupStateManager.class
 com\tw0far\potiongames\config\ChestLootBuilder.class
 com\tw0far\potiongames\error\ErrorContext$Builder.class
 com\tw0far\potiongames\error\ErrorContext.class

@@ -2,9 +2,12 @@ package com.tw0far.potiongames.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.scoreboard.Scoreboard;
 
 public class Game {
     private ArrayList<Lobby> lobbies = new ArrayList<>();
@@ -12,6 +15,7 @@ public class Game {
     // Player tracking (migrated from PotionGames)
     private ArrayList<Player> activePlayers = new ArrayList<>();      // pgPlayers
     private ArrayList<Player> spectatorPlayers = new ArrayList<>();   // specPlayers
+    private ArrayList<Player> setupPlayers = new ArrayList<>();       // setupPlayer
     
     // Player state mappings
     private HashMap<Player, String> playerTeams = new HashMap<>();    // teamplayernames
@@ -20,6 +24,52 @@ public class Game {
     private HashMap<Player, String> playerChannels = new HashMap<>(); // playerChannel
     private HashMap<Player, String> playerLobbies = new HashMap<>();  // playerLobby (multi-lobby)
     private HashMap<Player, String> specLobbies = new HashMap<>();    // specLobby (multi-lobby)
+    
+    // ===== PHASE 7.1: Global Shop & Loot State =====
+    // Shop items (single-arena mode)
+    private ArrayList<String> shopitem = new ArrayList<>();
+    private ArrayList<String> shopkit = new ArrayList<>();
+    private ArrayList<Integer> shopcost = new ArrayList<>();
+    private ArrayList<Integer> shopsale = new ArrayList<>();
+    
+    // Rank data (leaderboard/signs)
+    private HashMap<Integer, String> rank = new HashMap<>();
+    private ArrayList<Location> rankhead = new ArrayList<>();
+    private ArrayList<Location> ranksign = new ArrayList<>();
+    
+    // Loot items
+    private ArrayList<ItemStack> food1 = new ArrayList<>();
+    private ArrayList<ItemStack> food2 = new ArrayList<>();
+    private ArrayList<ItemStack> armour1 = new ArrayList<>();
+    private ArrayList<ItemStack> armour2 = new ArrayList<>();
+    private ArrayList<ItemStack> armour3 = new ArrayList<>();
+    private ArrayList<ItemStack> armour4 = new ArrayList<>();
+    private ArrayList<ItemStack> armour5 = new ArrayList<>();
+    private ArrayList<ItemStack> weapons1 = new ArrayList<>();
+    private ArrayList<ItemStack> weapons2 = new ArrayList<>();
+    private ArrayList<PotionEffect> potions = new ArrayList<>();
+    
+    // Global team/kit players (single-arena mode)
+    private HashMap<String, Integer> teamplayers = new HashMap<>();   // team name -> count
+    private HashMap<String, Integer> kitplayers = new HashMap<>();    // kit name -> count
+    private HashMap<String, Integer> votes = new HashMap<>();         // arena name -> vote count
+    
+    // Global chests
+    private HashMap<Location, ItemStack[]> chests = new HashMap<>();
+    
+    // Global scoreboards
+    private HashMap<Player, Scoreboard> info = new HashMap<>();
+    
+    // Channel tracking
+    private HashMap<String, ArrayList<Player>> channels = new HashMap<>();
+    
+    // Setup player state backup (for /pg setup command)
+    private HashMap<String, ItemStack[]> inv = new HashMap<>();       // player name -> inventory
+    private HashMap<String, ItemStack[]> armor = new HashMap<>();     // player name -> armor
+    private HashMap<String, Integer> lvl = new HashMap<>();           // player name -> level
+    private HashMap<String, Float> exp = new HashMap<>();             // player name -> exp
+    private HashMap<String, Location> loc = new HashMap<>();          // player name -> location
+    private HashMap<String, GameMode> gm = new HashMap<>();           // player name -> game mode
 
     public void load() {
         if (Settings.arenadata.contains("pg.lobbies")) {
@@ -378,5 +428,411 @@ public class Game {
             }
         }
         return lobbySpecs;
+    }
+    
+    // ===== PHASE 7.1: Setup Player Management =====
+    
+    /**
+     * Add player to setup mode
+     */
+    public void addSetupPlayer(Player player) {
+        if (!setupPlayers.contains(player)) {
+            setupPlayers.add(player);
+        }
+    }
+    
+    /**
+     * Remove player from setup mode
+     */
+    public void removeSetupPlayer(Player player) {
+        setupPlayers.remove(player);
+    }
+    
+    /**
+     * Check if player is in setup mode
+     */
+    public boolean isSetupPlayer(Player player) {
+        return setupPlayers.contains(player);
+    }
+    
+    /**
+     * Clear all setup players
+     */
+    public void clearSetupPlayers() {
+        setupPlayers.clear();
+        inv.clear();
+        armor.clear();
+        lvl.clear();
+        exp.clear();
+        loc.clear();
+        gm.clear();
+    }
+    
+    // ===== PHASE 7.1: Setup State Backup (Player Inventory, etc.) =====
+    
+    /**
+     * Save player's inventory
+     */
+    public void savePlayerInventory(Player player, ItemStack[] inventory) {
+        inv.put(player.getName(), inventory);
+    }
+    
+    /**
+     * Get player's saved inventory
+     */
+    public ItemStack[] getPlayerInventory(Player player) {
+        return inv.get(player.getName());
+    }
+    
+    /**
+     * Remove player's saved inventory
+     */
+    public void removeSavedInventory(Player player) {
+        inv.remove(player.getName());
+    }
+    
+    /**
+     * Save player's armor
+     */
+    public void savePlayerArmor(Player player, ItemStack[] armor) {
+        this.armor.put(player.getName(), armor);
+    }
+    
+    /**
+     * Get player's saved armor
+     */
+    public ItemStack[] getPlayerArmor(Player player) {
+        return this.armor.get(player.getName());
+    }
+    
+    /**
+     * Remove player's saved armor
+     */
+    public void removeSavedArmor(Player player) {
+        this.armor.remove(player.getName());
+    }
+    
+    /**
+     * Save player's level
+     */
+    public void savePlayerLevel(Player player, int level) {
+        lvl.put(player.getName(), level);
+    }
+    
+    /**
+     * Get player's saved level
+     */
+    public Integer getPlayerLevel(Player player) {
+        return lvl.get(player.getName());
+    }
+    
+    /**
+     * Remove player's saved level
+     */
+    public void removeSavedLevel(Player player) {
+        lvl.remove(player.getName());
+    }
+    
+    /**
+     * Save player's experience
+     */
+    public void savePlayerExp(Player player, float experience) {
+        exp.put(player.getName(), experience);
+    }
+    
+    /**
+     * Get player's saved experience
+     */
+    public Float getPlayerExp(Player player) {
+        return exp.get(player.getName());
+    }
+    
+    /**
+     * Remove player's saved experience
+     */
+    public void removeSavedExp(Player player) {
+        exp.remove(player.getName());
+    }
+    
+    /**
+     * Save player's location
+     */
+    public void savePlayerLocation(Player player, Location location) {
+        loc.put(player.getName(), location);
+    }
+    
+    /**
+     * Get player's saved location
+     */
+    public Location getPlayerLocation(Player player) {
+        return loc.get(player.getName());
+    }
+    
+    /**
+     * Remove player's saved location
+     */
+    public void removeSavedLocation(Player player) {
+        loc.remove(player.getName());
+    }
+    
+    /**
+     * Save player's game mode
+     */
+    public void savePlayerGameMode(Player player, GameMode gameMode) {
+        gm.put(player.getName(), gameMode);
+    }
+    
+    /**
+     * Get player's saved game mode
+     */
+    public GameMode getPlayerGameMode(Player player) {
+        return gm.get(player.getName());
+    }
+    
+    /**
+     * Remove player's saved game mode
+     */
+    public void removeSavedGameMode(Player player) {
+        gm.remove(player.getName());
+    }
+    
+    // ===== PHASE 7.1: Shop Accessors =====
+    
+    /**
+     * Get shop items list
+     */
+    public ArrayList<String> getShopItems() {
+        return shopitem;
+    }
+    
+    /**
+     * Get shop kits list
+     */
+    public ArrayList<String> getShopKits() {
+        return shopkit;
+    }
+    
+    /**
+     * Get shop costs list
+     */
+    public ArrayList<Integer> getShopCosts() {
+        return shopcost;
+    }
+    
+    /**
+     * Get shop sale prices list
+     */
+    public ArrayList<Integer> getShopSales() {
+        return shopsale;
+    }
+    
+    /**
+     * Clear all shop items
+     */
+    public void clearShopItems() {
+        shopitem.clear();
+        shopkit.clear();
+        shopcost.clear();
+        shopsale.clear();
+    }
+    
+    // ===== PHASE 7.1: Rank Accessors =====
+    
+    /**
+     * Get rank map (rank position -> player name)
+     */
+    public HashMap<Integer, String> getRankMap() {
+        return rank;
+    }
+    
+    /**
+     * Get rank head locations
+     */
+    public ArrayList<Location> getRankHeads() {
+        return rankhead;
+    }
+    
+    /**
+     * Get rank sign locations
+     */
+    public ArrayList<Location> getRankSigns() {
+        return ranksign;
+    }
+    
+    /**
+     * Clear all rank data
+     */
+    public void clearRankData() {
+        rank.clear();
+        rankhead.clear();
+        ranksign.clear();
+    }
+    
+    // ===== PHASE 7.1: Loot Accessors =====
+    
+    /**
+     * Get food tier 1
+     */
+    public ArrayList<ItemStack> getFoodTier1() {
+        return food1;
+    }
+    
+    /**
+     * Get food tier 2
+     */
+    public ArrayList<ItemStack> getFoodTier2() {
+        return food2;
+    }
+    
+    /**
+     * Get armor tier 1
+     */
+    public ArrayList<ItemStack> getArmourTier1() {
+        return armour1;
+    }
+    
+    /**
+     * Get armor tier 2
+     */
+    public ArrayList<ItemStack> getArmourTier2() {
+        return armour2;
+    }
+    
+    /**
+     * Get armor tier 3
+     */
+    public ArrayList<ItemStack> getArmourTier3() {
+        return armour3;
+    }
+    
+    /**
+     * Get armor tier 4
+     */
+    public ArrayList<ItemStack> getArmourTier4() {
+        return armour4;
+    }
+    
+    /**
+     * Get armor tier 5
+     */
+    public ArrayList<ItemStack> getArmourTier5() {
+        return armour5;
+    }
+    
+    /**
+     * Get weapons tier 1
+     */
+    public ArrayList<ItemStack> getWeaponsTier1() {
+        return weapons1;
+    }
+    
+    /**
+     * Get weapons tier 2
+     */
+    public ArrayList<ItemStack> getWeaponsTier2() {
+        return weapons2;
+    }
+    
+    /**
+     * Get potions list
+     */
+    public ArrayList<PotionEffect> getPotions() {
+        return potions;
+    }
+    
+    /**
+     * Clear all loot
+     */
+    public void clearAllLoot() {
+        food1.clear();
+        food2.clear();
+        armour1.clear();
+        armour2.clear();
+        armour3.clear();
+        armour4.clear();
+        armour5.clear();
+        weapons1.clear();
+        weapons2.clear();
+        potions.clear();
+    }
+    
+    // ===== PHASE 7.1: Team/Kit/Vote Accessors =====
+    
+    /**
+     * Get team players map (team name -> count)
+     */
+    public HashMap<String, Integer> getTeamPlayers() {
+        return teamplayers;
+    }
+    
+    /**
+     * Get kit players map (kit name -> count)
+     */
+    public HashMap<String, Integer> getKitPlayers() {
+        return kitplayers;
+    }
+    
+    /**
+     * Get votes map (arena name -> count)
+     */
+    public HashMap<String, Integer> getVotes() {
+        return votes;
+    }
+    
+    /**
+     * Clear team/kit/vote data
+     */
+    public void clearTeamKitVotes() {
+        teamplayers.clear();
+        kitplayers.clear();
+        votes.clear();
+    }
+    
+    // ===== PHASE 7.1: Chest Accessors =====
+    
+    /**
+     * Get global chests map
+     */
+    public HashMap<Location, ItemStack[]> getChests() {
+        return chests;
+    }
+    
+    /**
+     * Clear all chests
+     */
+    public void clearChests() {
+        chests.clear();
+    }
+    
+    // ===== PHASE 7.1: Scoreboard Accessors =====
+    
+    /**
+     * Get scoreboards map (player -> scoreboard)
+     */
+    public HashMap<Player, Scoreboard> getScoreboards() {
+        return info;
+    }
+    
+    /**
+     * Clear all scoreboards
+     */
+    public void clearScoreboards() {
+        info.clear();
+    }
+    
+    // ===== PHASE 7.1: Channel Accessors =====
+    
+    /**
+     * Get channels map (channel name -> players)
+     */
+    public HashMap<String, ArrayList<Player>> getChannels() {
+        return channels;
+    }
+    
+    /**
+     * Clear all channels
+     */
+    public void clearChannels() {
+        channels.clear();
     }
 }
