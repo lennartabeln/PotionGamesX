@@ -69,6 +69,7 @@ public class PotionGames extends JavaPlugin {
     private IArenaStateManager arenaStateManager;
     private IItemStateManager itemStateManager;
     private IBlockStateManager blockStateManager;
+    private IManager databaseManager;
     public static PotionGames getInstance() { return instance; }
     public Game getGame() { return game; }
     public IConfigurationManager getConfigManager() { return configManager; }
@@ -77,6 +78,7 @@ public class PotionGames extends JavaPlugin {
     public IArenaStateManager getArenaStateManager() { return arenaStateManager; }
     public IItemStateManager getItemStateManager() { return itemStateManager; }
     public IBlockStateManager getBlockStateManager() { return blockStateManager; }
+    public IManager getDatabaseManager() { return databaseManager; }
     public ISetupHandler setupHandler = new SetupHandler(this);
     
     // ===== Delegation Methods for Player Lists (Phase 3.4 Migration) =====
@@ -588,6 +590,10 @@ public class PotionGames extends JavaPlugin {
         itemStateManager.onEnable();
         blockStateManager = new BlockStateManager();
         blockStateManager.onEnable();
+        
+        // Initialize database manager
+        databaseManager = new DatabaseManager(this, (ConfigurationManager) configManager);
+        databaseManager.onEnable();
         
         PluginManager pm = Bukkit.getPluginManager();
         
@@ -1949,13 +1955,14 @@ public class PotionGames extends JavaPlugin {
     public void onDisable() {
         log.info(String.format("[%s] Disabled Version %s", getPluginMeta().getName(), getPluginMeta().getVersion()));
         
-        // Disable state managers
+        // Disable state managers and database manager
         if (configManager != null) configManager.onDisable();
         if (lobbyStateManager != null) lobbyStateManager.onDisable();
         if (playerStateManager != null) playerStateManager.onDisable();
         if (arenaStateManager != null) arenaStateManager.onDisable();
         if (itemStateManager != null) itemStateManager.onDisable();
         if (blockStateManager != null) blockStateManager.onDisable();
+        if (databaseManager != null) databaseManager.onDisable();
         
         close();
         if (gameServer && startOnJoin && !lobbySystem) {
