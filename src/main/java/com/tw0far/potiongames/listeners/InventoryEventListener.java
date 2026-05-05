@@ -328,8 +328,8 @@ public class InventoryEventListener implements Listener {
                                                     potions2.add(plugin.getCoin());
                                                     int item = rnd.nextInt(5);
                                                     if (item < 3) {
-                                                        int item1 = rnd.nextInt(plugin.food1.size());
-                                                        inv.setItem(slot, plugin.food1.get(item1));
+                                                        int item1 = rnd.nextInt(plugin.getFoodTier1().size());
+                                                        inv.setItem(slot, plugin.getFoodTier1().get(item1));
                                                     } else if (item < 4) {
                                                         int item1 = 0;
                                                         inv.setItem(slot, potions1.get(item1));
@@ -338,33 +338,33 @@ public class InventoryEventListener implements Listener {
                                                         inv.setItem(slot, potions2.get(item1));
                                                     }
                                                 } else {
-                                                    int item1 = rnd.nextInt(plugin.food1.size());
-                                                    inv.setItem(slot, plugin.food1.get(item1));
+                                                    int item1 = rnd.nextInt(plugin.getFoodTier1().size());
+                                                    inv.setItem(slot, plugin.getFoodTier1().get(item1));
                                                 }
                                             } else if (roll < 30) {
-                                                int item2 = rnd.nextInt(plugin.food2.size());
-                                                inv.setItem(slot, plugin.food2.get(item2));
+                                                int item2 = rnd.nextInt(plugin.getFoodTier2().size());
+                                                inv.setItem(slot, plugin.getFoodTier2().get(item2));
                                             } else if (roll < 45) {
-                                                int item3 = rnd.nextInt(plugin.armour1.size());
-                                                inv.setItem(slot, plugin.armour1.get(item3));
+                                                int item3 = rnd.nextInt(plugin.getArmourTier1().size());
+                                                inv.setItem(slot, plugin.getArmourTier1().get(item3));
                                             } else if (roll < 60) {
-                                                int item4 = rnd.nextInt(plugin.armour2.size());
-                                                inv.setItem(slot, plugin.armour2.get(item4));
+                                                int item4 = rnd.nextInt(plugin.getArmourTier2().size());
+                                                inv.setItem(slot, plugin.getArmourTier2().get(item4));
                                             } else if (roll < 67) {
-                                                int item5 = rnd.nextInt(plugin.armour3.size());
-                                                inv.setItem(slot, plugin.armour3.get(item5));
+                                                int item5 = rnd.nextInt(plugin.getArmourTier3().size());
+                                                inv.setItem(slot, plugin.getArmourTier3().get(item5));
                                             } else if (roll < 72) {
-                                                int item6 = rnd.nextInt(plugin.armour4.size());
-                                                inv.setItem(slot, plugin.armour4.get(item6));
+                                                int item6 = rnd.nextInt(plugin.getArmourTier4().size());
+                                                inv.setItem(slot, plugin.getArmourTier4().get(item6));
                                             } else if (roll < 75) {
-                                                int item7 = rnd.nextInt(plugin.armour5.size());
-                                                inv.setItem(slot, plugin.armour5.get(item7));
+                                                int item7 = rnd.nextInt(plugin.getArmourTier5().size());
+                                                inv.setItem(slot, plugin.getArmourTier5().get(item7));
                                             } else if (roll < 95) {
-                                                int item8 = rnd.nextInt(plugin.weapons1.size());
-                                                inv.setItem(slot, plugin.weapons1.get(item8));
+                                                int item8 = rnd.nextInt(plugin.getWeaponsTier1().size());
+                                                inv.setItem(slot, plugin.getWeaponsTier1().get(item8));
                                             } else {
-                                                int item9 = rnd.nextInt(plugin.weapons2.size());
-                                                inv.setItem(slot, plugin.weapons2.get(item9));
+                                                int item9 = rnd.nextInt(plugin.getWeaponsTier2().size());
+                                                inv.setItem(slot, plugin.getWeaponsTier2().get(item9));
                                             }
                                         }
                                         plugin.lobbychests.put(e.getClickedBlock().getLocation(), s);
@@ -408,8 +408,8 @@ public class InventoryEventListener implements Listener {
                                                     potions2.add(plugin.getCoin());
                                                     int item = rnd.nextInt(5);
                                                     if (item < 3) {
-                                                        int item1 = rnd.nextInt(plugin.food1.size());
-                                                        inv.setItem(slot, plugin.food1.get(item1));
+                                                        int item1 = rnd.nextInt(plugin.getFoodTier1().size());
+                                                        inv.setItem(slot, plugin.getFoodTier1().get(item1));
                                                     } else if (item < 4) {
                                                         int item1 = 0;
                                                         inv.setItem(slot, potions1.get(item1));
@@ -418,33 +418,33 @@ public class InventoryEventListener implements Listener {
                                                         inv.setItem(slot, potions2.get(item1));
                                                     }
                                                 } else {
-                                                    int item1 = rnd.nextInt(plugin.food1.size());
-                                                    inv.setItem(slot, plugin.food1.get(item1));
+                                                    int item1 = rnd.nextInt(plugin.getFoodTier1().size());
+                                                    inv.setItem(slot, plugin.getFoodTier1().get(item1));
                                                 }
                                             } else if (roll < 30) {
-                                                int item2 = rnd.nextInt(plugin.food2.size());
-                                                inv.setItem(slot, plugin.food2.get(item2));
+                                                int item2 = rnd.nextInt(plugin.getFoodTier2().size());
+                                                inv.setItem(slot, plugin.getFoodTier2().get(item2));
                                             } else if (roll < 45) {
-                                                int item3 = rnd.nextInt(plugin.armour1.size());
-                                                inv.setItem(slot, plugin.armour1.get(item3));
+                                                int item3 = rnd.nextInt(plugin.getArmourTier1().size());
+                                                inv.setItem(slot, plugin.getArmourTier1().get(item3));
                                             } else if (roll < 60) {
-                                                int item4 = rnd.nextInt(plugin.armour2.size());
-                                                inv.setItem(slot, plugin.armour2.get(item4));
+                                                int item4 = rnd.nextInt(plugin.getArmourTier2().size());
+                                                inv.setItem(slot, plugin.getArmourTier2().get(item4));
                                             } else if (roll < 67) {
-                                                int item5 = rnd.nextInt(plugin.armour3.size());
-                                                inv.setItem(slot, plugin.armour3.get(item5));
+                                                int item5 = rnd.nextInt(plugin.getArmourTier3().size());
+                                                inv.setItem(slot, plugin.getArmourTier3().get(item5));
                                             } else if (roll < 72) {
-                                                int item6 = rnd.nextInt(plugin.armour4.size());
-                                                inv.setItem(slot, plugin.armour4.get(item6));
+                                                int item6 = rnd.nextInt(plugin.getArmourTier4().size());
+                                                inv.setItem(slot, plugin.getArmourTier4().get(item6));
                                             } else if (roll < 75) {
-                                                int item7 = rnd.nextInt(plugin.armour5.size());
-                                                inv.setItem(slot, plugin.armour5.get(item7));
+                                                int item7 = rnd.nextInt(plugin.getArmourTier5().size());
+                                                inv.setItem(slot, plugin.getArmourTier5().get(item7));
                                             } else if (roll < 95) {
-                                                int item8 = rnd.nextInt(plugin.weapons1.size());
-                                                inv.setItem(slot, plugin.weapons1.get(item8));
+                                                int item8 = rnd.nextInt(plugin.getWeaponsTier1().size());
+                                                inv.setItem(slot, plugin.getWeaponsTier1().get(item8));
                                             } else {
-                                                int item9 = rnd.nextInt(plugin.weapons2.size());
-                                                inv.setItem(slot, plugin.weapons2.get(item9));
+                                                int item9 = rnd.nextInt(plugin.getWeaponsTier2().size());
+                                                inv.setItem(slot, plugin.getWeaponsTier2().get(item9));
                                             }
                                         }
                                         plugin.chests.put(e.getClickedBlock().getLocation(), inv);

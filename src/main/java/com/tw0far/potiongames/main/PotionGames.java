@@ -512,6 +512,46 @@ public class PotionGames extends JavaPlugin {
     public Lobby getLobbyByPlayer(Player player) {
         return game.getLobbyByPlayer(player);
     }
+    
+    // ===== Delegation Methods for Game Loot Data (Phase 7.5) =====
+    // These delegate to Game class for global loot tables
+    
+    public ArrayList<ItemStack> getFoodTier1() {
+        return game.getFoodTier1();
+    }
+    
+    public ArrayList<ItemStack> getFoodTier2() {
+        return game.getFoodTier2();
+    }
+    
+    public ArrayList<ItemStack> getArmourTier1() {
+        return game.getArmourTier1();
+    }
+    
+    public ArrayList<ItemStack> getArmourTier2() {
+        return game.getArmourTier2();
+    }
+    
+    public ArrayList<ItemStack> getArmourTier3() {
+        return game.getArmourTier3();
+    }
+    
+    public ArrayList<ItemStack> getArmourTier4() {
+        return game.getArmourTier4();
+    }
+    
+    public ArrayList<ItemStack> getArmourTier5() {
+        return game.getArmourTier5();
+    }
+    
+    public ArrayList<ItemStack> getWeaponsTier1() {
+        return game.getWeaponsTier1();
+    }
+    
+    public ArrayList<ItemStack> getWeaponsTier2() {
+        return game.getWeaponsTier2();
+    }
+
 
 
 
