@@ -17,11 +17,14 @@ public class Game {
     private ArrayList<Player> spectatorPlayers = new ArrayList<>();   // specPlayers
     private ArrayList<Player> setupPlayers = new ArrayList<>();       // setupPlayer
     
-    // Player state mappings
-    private HashMap<Player, String> playerTeams = new HashMap<>();    // teamplayernames
-    private HashMap<Player, String> playerKits = new HashMap<>();     // kitplayernames
-    private HashMap<Player, String> playerVotes = new HashMap<>();    // voteplayernames
-    private HashMap<Player, String> playerChannels = new HashMap<>(); // playerChannel
+    // Player lobby tracking (GAME-LEVEL ONLY)
+    // Player team/kit are stored in Participant objects within their Lobby
+    // But we keep these for backwards-compatibility with existing code
+    // DEPRECATED: New code should use Lobby.getParticipant(player).getTeam()
+    private HashMap<Player, String> playerTeams = new HashMap<>();    // teamplayernames (deprecated - use Participant)
+    private HashMap<Player, String> playerKits = new HashMap<>();     // kitplayernames (deprecated - use Participant)
+    private HashMap<Player, String> playerVotes = new HashMap<>();    // voteplayernames (deprecated - use Participant)
+    private HashMap<Player, String> playerChannels = new HashMap<>(); // playerChannel (chat)
     private HashMap<Player, String> playerLobbies = new HashMap<>();  // playerLobby (multi-lobby)
     private HashMap<Player, String> specLobbies = new HashMap<>();    // specLobby (multi-lobby)
     
@@ -48,11 +51,6 @@ public class Game {
     private ArrayList<ItemStack> weapons1 = new ArrayList<>();
     private ArrayList<ItemStack> weapons2 = new ArrayList<>();
     private ArrayList<PotionEffect> potions = new ArrayList<>();
-    
-    // Global team/kit players (single-arena mode)
-    private HashMap<String, Integer> teamplayers = new HashMap<>();   // team name -> count
-    private HashMap<String, Integer> kitplayers = new HashMap<>();    // kit name -> count
-    private HashMap<String, Integer> votes = new HashMap<>();         // arena name -> vote count
     
     // Global chests
     private HashMap<Location, ItemStack[]> chests = new HashMap<>();
@@ -759,34 +757,6 @@ public class Game {
     // ===== PHASE 7.1: Team/Kit/Vote Accessors =====
     
     /**
-     * Get team players map (team name -> count)
-     */
-    public HashMap<String, Integer> getTeamPlayers() {
-        return teamplayers;
-    }
-    
-    /**
-     * Get kit players map (kit name -> count)
-     */
-    public HashMap<String, Integer> getKitPlayers() {
-        return kitplayers;
-    }
-    
-    /**
-     * Get votes map (arena name -> count)
-     */
-    public HashMap<String, Integer> getVotes() {
-        return votes;
-    }
-    
-    /**
-     * Clear team/kit/vote data
-     */
-    public void clearTeamKitVotes() {
-        teamplayers.clear();
-        kitplayers.clear();
-        votes.clear();
-    }
     
     // ===== PHASE 7.1: Chest Accessors =====
     
