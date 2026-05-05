@@ -143,6 +143,72 @@ public interface IArenaStateManager extends IManager {
      */
     void clearAllLobbyVotes();
     
+    // ===== LOBBY TEAM MANAGEMENT =====
+    /**
+     * Get player count for a team in a lobby
+     */
+    Integer getLobbyTeamPlayerCount(String lobbyId, Integer teamId);
+    
+    /**
+     * Increment player count for a team in a lobby
+     */
+    void incrementLobbyTeamPlayers(String lobbyId, Integer teamId);
+    
+    /**
+     * Decrement player count for a team in a lobby
+     */
+    void decrementLobbyTeamPlayers(String lobbyId, Integer teamId);
+    
+    /**
+     * Record player team assignment in a lobby
+     */
+    void recordPlayerTeamInLobby(String lobbyId, Player player, String teamId);
+    
+    /**
+     * Get team assignment for player in a lobby
+     */
+    String getPlayerTeamInLobby(String lobbyId, Player player);
+    
+    /**
+     * Remove player team assignment in a lobby
+     */
+    void removePlayerTeamInLobby(String lobbyId, Player player);
+    
+    /**
+     * Check if player is assigned to team in lobby
+     */
+    boolean hasPlayerTeamInLobby(String lobbyId, Player player);
+    
+    /**
+     * Get all teams and their player counts for a lobby
+     */
+    Map<Integer, Integer> getLobbyTeams(String lobbyId);
+    
+    /**
+     * Initialize teams for a lobby
+     */
+    void initializeLobbyTeams(String lobbyId, Integer teamCount);
+    
+    /**
+     * Set maximum players per team for a lobby
+     */
+    void setLobbyTeamSize(String lobbyId, Integer teamSize);
+    
+    /**
+     * Get maximum players per team for a lobby
+     */
+    Integer getLobbyTeamSize(String lobbyId);
+    
+    /**
+     * Get number of teams in a lobby
+     */
+    Integer getLobbyTeamAmount(String lobbyId);
+    
+    /**
+     * Clear team data for a specific lobby
+     */
+    void clearLobbyTeams(String lobbyId);
+    
     // ===== BATCH OPERATIONS =====
     /**
      * Clear all arena state

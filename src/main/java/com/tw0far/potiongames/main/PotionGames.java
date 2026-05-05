@@ -52,6 +52,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Random;
@@ -365,6 +366,55 @@ public class PotionGames extends JavaPlugin {
     
     public String getWinningArena() {
         return arenaStateManager.getWinningArena();
+    }
+    
+    // Team management delegation methods (Phase 5.2)
+    public Integer getLobbyTeamPlayerCount(String lobbyId, Integer teamId) {
+        return arenaStateManager.getLobbyTeamPlayerCount(lobbyId, teamId);
+    }
+    
+    public void incrementLobbyTeamPlayers(String lobbyId, Integer teamId) {
+        arenaStateManager.incrementLobbyTeamPlayers(lobbyId, teamId);
+    }
+    
+    public void decrementLobbyTeamPlayers(String lobbyId, Integer teamId) {
+        arenaStateManager.decrementLobbyTeamPlayers(lobbyId, teamId);
+    }
+    
+    public void recordPlayerTeamInLobby(String lobbyId, Player player, String teamId) {
+        arenaStateManager.recordPlayerTeamInLobby(lobbyId, player, teamId);
+    }
+    
+    public String getPlayerTeamInLobby(String lobbyId, Player player) {
+        return arenaStateManager.getPlayerTeamInLobby(lobbyId, player);
+    }
+    
+    public void removePlayerTeamInLobby(String lobbyId, Player player) {
+        arenaStateManager.removePlayerTeamInLobby(lobbyId, player);
+    }
+    
+    public boolean hasPlayerTeamInLobby(String lobbyId, Player player) {
+        return arenaStateManager.hasPlayerTeamInLobby(lobbyId, player);
+    }
+    
+    public Map<Integer, Integer> getLobbyTeams(String lobbyId) {
+        return arenaStateManager.getLobbyTeams(lobbyId);
+    }
+    
+    public void initializeLobbyTeams(String lobbyId, Integer teamCount) {
+        arenaStateManager.initializeLobbyTeams(lobbyId, teamCount);
+    }
+    
+    public void setLobbyTeamSize(String lobbyId, Integer teamSize) {
+        arenaStateManager.setLobbyTeamSize(lobbyId, teamSize);
+    }
+    
+    public Integer getLobbyTeamSize(String lobbyId) {
+        return arenaStateManager.getLobbyTeamSize(lobbyId);
+    }
+    
+    public Integer getLobbyTeamAmount(String lobbyId) {
+        return arenaStateManager.getLobbyTeamAmount(lobbyId);
     }
 
     // ===== Delegation Methods for ItemStateManager (Phase 4.4) =====

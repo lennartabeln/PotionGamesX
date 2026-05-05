@@ -28,6 +28,13 @@ public class ArenaStateManager implements IArenaStateManager {
     private final Map<Player, String> lobbyvoted = new HashMap<>();  // Player -> lobbyId
     private final Map<Player, String> lobbyVoted = new HashMap<>();  // Player -> voted arena
     
+    // Per-lobby team state
+    private final Map<String, Map<Integer, Integer>> lobbyteams = new HashMap<>();  // lobbyId -> (teamId -> playerCount)
+    private final Map<String, Map<Player, String>> lobbyteamplayernames = new HashMap<>();  // lobbyId -> (player -> teamId)
+    private final Map<Player, String> lobbyTeamed = new HashMap<>();  // player -> lobbyId
+    private final Map<String, Integer> lobbyteamSize = new HashMap<>();  // lobbyId -> maxTeamSize
+    private final Map<String, Integer> lobbyteamAmount = new HashMap<>();  // lobbyId -> numberOfTeams
+    
     @Override
     public void onEnable() {
         // No initialization needed
@@ -237,6 +244,107 @@ public class ArenaStateManager implements IArenaStateManager {
         lobbyVoted.clear();
     }
     
+    // ===== LOBBY TEAM MANAGEMENT =====
+    @Override
+    public Integer getLobbyTeamPlayerCount(String lobbyId, Integer teamId) {
+        Map<Integer, Integer> teams = lobbyteams.get(lobbyId);
+        if (teams == null) {
+            return 0;
+        }
+        return teams.getOrDefault(teamId, 0);
+    }
+    
+    @Override
+    public void incrementLobbyTeamPlayers(String lobbyId, Integer teamId) {
+        Map<Integer, Integer> teams = lobbyteams.computeIfAbsent(lobbyId, k -> new HashMap<>());
+        Integer current = teams.getOrDefault(teamId, 0);
+        teams.put(teamId, current + 1);
+    }
+    
+    @Override
+    public void decrementLobbyTeamPlayers(String lobbyId, Integer teamId) {
+        Map<Integer, Integer> teams = lobbyteams.get(lobbyId);
+        if (teams != null) {
+            Integer current = teams.getOrDefault(teamId, 0);
+            if (current > 0) {
+                teams.put(teamId, current - 1);
+            }
+        }
+    }
+    
+    @Override
+    public void recordPlayerTeamInLobby(String lobbyId, Player player, String teamId) {
+        Map<Player, String> teamPlayers = lobbyteamplayernames.computeIfAbsent(lobbyId, k -> new HashMap<>());
+        teamPlayers.put(player, teamId);
+        lobbyTeamed.put(player, lobbyId);
+    }
+    
+    @Override
+    public String getPlayerTeamInLobby(String lobbyId, Player player) {
+        Map<Player, String> teamPlayers = lobbyteamplayernames.get(lobbyId);
+        if (teamPlayers == null) {
+            return null;
+        }
+        return teamPlayers.get(player);
+    }
+    
+    @Override
+    public void removePlayerTeamInLobby(String lobbyId, Player player) {
+        Map<Player, String> teamPlayers = lobbyteamplayernames.get(lobbyId);
+        if (teamPlayers != null) {
+            teamPlayers.remove(player);
+        }
+        lobbyTeamed.remove(player);
+    }
+    
+    @Override
+    public boolean hasPlayerTeamInLobby(String lobbyId, Player player) {
+        Map<Player, String> teamPlayers = lobbyteamplayernames.get(lobbyId);
+        if (teamPlayers == null) {
+            return false;
+        }
+        return teamPlayers.containsKey(player);
+    }
+    
+    @Override
+    public Map<Integer, Integer> getLobbyTeams(String lobbyId) {
+        return lobbyteams.getOrDefault(lobbyId, new HashMap<>());
+    }
+    
+    @Override
+    public void initializeLobbyTeams(String lobbyId, Integer teamCount) {
+        Map<Integer, Integer> teams = lobbyteams.computeIfAbsent(lobbyId, k -> new HashMap<>());
+        teams.clear();
+        for (int i = 1; i <= teamCount; i++) {
+            teams.put(i, 0);
+        }
+        lobbyteamAmount.put(lobbyId, teamCount);
+    }
+    
+    @Override
+    public void setLobbyTeamSize(String lobbyId, Integer teamSize) {
+        lobbyteamSize.put(lobbyId, teamSize);
+    }
+    
+    @Override
+    public Integer getLobbyTeamSize(String lobbyId) {
+        return lobbyteamSize.getOrDefault(lobbyId, 1);
+    }
+    
+    @Override
+    public Integer getLobbyTeamAmount(String lobbyId) {
+        return lobbyteamAmount.getOrDefault(lobbyId, 1);
+    }
+    
+    @Override
+    public void clearLobbyTeams(String lobbyId) {
+        lobbyteams.remove(lobbyId);
+        lobbyteamplayernames.remove(lobbyId);
+        lobbyTeamed.entrySet().removeIf(entry -> entry.getValue().equals(lobbyId));
+        lobbyteamSize.remove(lobbyId);
+        lobbyteamAmount.remove(lobbyId);
+    }
+    
     // ===== BATCH OPERATIONS =====
     @Override
     public void clearAll() {
@@ -245,5 +353,14 @@ public class ArenaStateManager implements IArenaStateManager {
         voteplayernames.clear();
         voted.clear();
         clearAllLobbyVotes();
+        clearAllLobbyTeams();
+    }
+    
+    public void clearAllLobbyTeams() {
+        lobbyteams.clear();
+        lobbyteamplayernames.clear();
+        lobbyTeamed.clear();
+        lobbyteamSize.clear();
+        lobbyteamAmount.clear();
     }
 }
