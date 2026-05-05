@@ -179,14 +179,19 @@ public class ReloadHandler {
     
     /**
      * Step 5: Clear all collections to free memory
+     * Uses manager delegation to clear all state managers instead of direct HashMap access.
      */
     private void clearCollections() {
         try {
-            // Player lists
-            plugin.pgPlayers.clear();
-            plugin.specPlayers.clear();
-            plugin.richkidPlayers.clear();
-            plugin.setupPlayer.clear();
+            // Use managers to clear their collections
+            plugin.getPlayerStateManager().clearAll();
+            plugin.getLobbyStateManager().clearAllLobbies();
+            plugin.getArenaStateManager().clearAll();
+            plugin.getItemStateManager().clearAll();
+            plugin.getBlockStateManager().clearAll();
+            
+            // Clear legacy collections still in PotionGames (that aren't managed yet)
+            // These should be eliminated in Phase 5.1+ cleanup
             
             // Arena data
             plugin.arenas.clear();
@@ -195,26 +200,6 @@ public class ReloadHandler {
             plugin.teamed.clear();
             plugin.kits.clear();
             plugin.kited.clear();
-            
-            // Shop data
-            plugin.shop.clear();
-            plugin.shoppotion.clear();
-            plugin.shoppotiontype.clear();
-            plugin.shopkit.clear();
-            plugin.shopcost.clear();
-            plugin.shopsale.clear();
-            
-            // Loot data
-            plugin.food1.clear();
-            plugin.food2.clear();
-            plugin.armour1.clear();
-            plugin.armour2.clear();
-            plugin.armour3.clear();
-            plugin.armour4.clear();
-            plugin.armour5.clear();
-            plugin.weapons1.clear();
-            plugin.weapons2.clear();
-            plugin.potions.clear();
             
             // Rank data
             plugin.rankhead.clear();
@@ -232,86 +217,15 @@ public class ReloadHandler {
             plugin.kitplayers.clear();
             plugin.kitplayernames.clear();
             
-            // Chest and block data
+            // Chest and scoreboard data
             plugin.chests.clear();
             plugin.lobbychests.clear();
             plugin.lobbychestsdata.clear();
-            plugin.placedBlocks.clear();
-            plugin.breakedBlocks.clear();
-            plugin.waterBlocks.clear();
-            plugin.liquidPlaced.clear();
-            
-            // Player state
-            plugin.inv.clear();
-            plugin.armor.clear();
-            plugin.lvl.clear();
-            plugin.exp.clear();
-            plugin.loc.clear();
-            plugin.gm.clear();
+            plugin.info.clear();
             
             // Channel data
             plugin.channels.clear();
             plugin.playerChannel.clear();
-            plugin.playerLobby.clear();
-            plugin.specLobby.clear();
-            
-            // Lobby state (per-lobby)
-            plugin.countdownLobby.clear();
-            plugin.resetLobby.clear();
-            plugin.lobbyAmount.clear();
-            plugin.lobbyStates.clear();
-            plugin.lobbyDeathmatch.clear();
-            plugin.lobbyMove.clear();
-            plugin.lobbyJoinable.clear();
-            plugin.lobbyForcearena.clear();
-            plugin.lobbyVoteallowed.clear();
-            plugin.lobbyTeamallowed.clear();
-            plugin.lobbyKitallowed.clear();
-            plugin.lobbyTickstarted.clear();
-            plugin.lobbyBuild.clear();
-            plugin.lobbyPause.clear();
-            plugin.lobbyActivateTeams.clear();
-            plugin.lobbyActivateKits.clear();
-            plugin.lobbyActivateShop.clear();
-            plugin.lobbyActivateAirdrops.clear();
-            plugin.lobbyCheckArenas.clear();
-            plugin.lobbySingleArena.clear();
-            
-            // Voting data
-            plugin.lobbyVote.clear();
-            plugin.lobbyVotedarena.clear();
-            plugin.lobbyVoted.clear();
-            
-            // Team and kit data
-            plugin.lobbyTeamed.clear();
-            plugin.lobbyKited.clear();
-            plugin.lobbyteams.clear();
-            plugin.lobbyteamplayernamesdata.clear();
-            plugin.lobbyteamplayernames.clear();
-            plugin.lobbyvotes.clear();
-            plugin.lobbyvoteplayernamesdata.clear();
-            plugin.lobbyvoteplayernames.clear();
-            
-            // Round data
-            plugin.lobbyteamSize.clear();
-            plugin.lobbymaxPlayers.clear();
-            plugin.lobbyminPlayers.clear();
-            plugin.lobbyteamAmount.clear();
-            plugin.lobbyroundTime.clear();
-            plugin.lobbyroundTimeSeconds.clear();
-            
-            // Block tracking per lobby
-            plugin.lobbyLiquidPlaced.clear();
-            plugin.lobbyPlacedBlocks.clear();
-            plugin.lobbyBreakedBlocks.clear();
-            plugin.lobbyWaterBlocks.clear();
-            plugin.lobbyLiquidPlacedData.clear();
-            plugin.lobbyPlacedBlocksData.clear();
-            plugin.lobbyBreakedBlocksData.clear();
-            plugin.lobbyWaterBlocksData.clear();
-            
-            // Scoreboard data
-            plugin.info.clear();
             
             plugin.getLogger().info("All collections cleared");
             
