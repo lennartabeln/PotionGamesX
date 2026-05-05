@@ -38,6 +38,7 @@ import com.tw0far.potiongames.listeners.*;
 import com.tw0far.potiongames.managers.*;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.GameStates;
+import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import com.tw0far.potiongames.updatechecker.UpdateChecker;
@@ -481,6 +482,38 @@ public class PotionGames extends JavaPlugin {
     public void trackWaterBlock(Location location, BlockData blockData) {
         blockStateManager.trackWaterBlock(location, blockData);
     }
+
+    // ===== Delegation Methods for Game Shop/Kit/Loot (Phase 7.5) =====
+    // These delegate to Game class for global shop/loot items
+    
+    public ArrayList<String> getGameShopItems() {
+        return game.getShopItems();
+    }
+    
+    public ArrayList<String> getGameShopKits() {
+        return game.getShopKits();
+    }
+    
+    public ArrayList<Integer> getGameShopCosts() {
+        return game.getShopCosts();
+    }
+    
+    public ArrayList<Integer> getGameShopSales() {
+        return game.getShopSales();
+    }
+    
+    // ===== Delegation Methods for Accessing Lobbies (Phase 7.5) =====
+    // Get Lobby object by ID for accessing per-lobby state
+    
+    public Lobby getLobbyById(int lobbyId) {
+        return game.getLobby(lobbyId);
+    }
+    
+    public Lobby getLobbyByPlayer(Player player) {
+        return game.getLobbyByPlayer(player);
+    }
+
+
 
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;

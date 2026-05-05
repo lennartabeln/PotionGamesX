@@ -221,14 +221,20 @@ public class InventoryEventListener implements Listener {
                     }
                 }
                 int shopitem = 1;
-                for (int i = 0; i < plugin.shop.size(); i++) {
+                // Get shop data from Game via delegation
+                ArrayList<String> shopItems = plugin.getGameShopItems();
+                ArrayList<String> shopKits = plugin.getGameShopKits();
+                ArrayList<Integer> shopCosts = plugin.getGameShopCosts();
+                ArrayList<Integer> shopSales = plugin.getGameShopSales();
+                
+                for (int i = 0; i < shopItems.size(); i++) {
                     int coinamount;
-                    if (plugin.kitplayernames.containsKey(p) && plugin.kitplayernames.containsValue(plugin.shopkit.get(shopitem - 1))) {
-                        coinamount = plugin.shopsale.get(shopitem - 1);
+                    if (plugin.kitplayernames.containsKey(p) && plugin.kitplayernames.containsValue(shopKits.get(shopitem - 1))) {
+                        coinamount = shopSales.get(shopitem - 1);
                     } else {
-                        coinamount = plugin.shopcost.get(shopitem - 1);
+                        coinamount = shopCosts.get(shopitem - 1);
                     }
-                    if (Objects.requireNonNull(PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName())).matches(plugin.shop.get(shopitem - 1))) {
+                    if (Objects.requireNonNull(PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName())).matches(shopItems.get(shopitem - 1))) {
                         if (bottle >= 1) {
                             if (amount >= coinamount) {
                                 amount = amount - coinamount;
@@ -237,7 +243,7 @@ public class InventoryEventListener implements Listener {
                                 PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
                                 randombarriermeta.addCustomEffect(new PotionEffect(plugin.shoppotion.get(shopitem - 1).getType(), plugin.shoppotion.get(shopitem - 1).getDuration(), plugin.shoppotion.get(shopitem - 1).getAmplifier()), true);
-                                randombarriermeta.displayName(Component.text(plugin.shop.get(shopitem - 1)));
+                                randombarriermeta.displayName(Component.text(shopItems.get(shopitem - 1)));
                                 randombarrier.setItemMeta(randombarriermeta);
                                 p.getInventory().addItem(randombarrier);
                                 for (int k = 0; k < coinamount; k++) {
