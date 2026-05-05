@@ -80,88 +80,52 @@ public class InventoryEventListener implements Listener {
             if (e.getCurrentItem() != null) {
                 if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                     String displayname = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName());
-                    int randomvotes;
-                    if (!plugin.lobbyVoted.containsKey(p)) {
+                    
+                    // Check if player has already voted using delegation
+                    if (!plugin.hasPlayerVotedInLobby(s, p)) {
+                        // First time voting - add vote
                         p.closeInventory();
-                        int votes = SafeMapAccess.get(plugin.lobbyvotes, s, displayname, 0);
-                        votes++;
-                        HashMap<String, Integer> temp = new HashMap<>();
-                        randomvotes = SafeMapAccess.get(plugin.lobbyvotes, s, "Random", 0);
-                        temp.put("Random", randomvotes);
-                        for (int max = 1; max < 27; max++) {
-                            if (Settings.arenadata.contains("pg.lobbies." + s + "." + max)) {
-                                int oldvotes = SafeMapAccess.get(plugin.lobbyvotes, s, Settings.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
-                                temp.put(Settings.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
-                            }
-                        }
-                        temp.put(displayname, votes);
-                        plugin.lobbyvotes.replace(s, temp);
+                        plugin.addLobbyVote(s, displayname);
+                        plugin.recordPlayerVoteInLobby(s, p, displayname);
                     } else {
+                        // Switching vote - remove old vote and add new
                         p.closeInventory();
-                        String arenaname = null;
-                        Map<String, Integer> voteMap = plugin.lobbyvotes.getOrDefault(s, new HashMap<>());
-                        for (int i = 0; i <= voteMap.size(); i++) {
-                            Map<Player, String> voteNames = plugin.lobbyvoteplayernames.getOrDefault(s, new HashMap<>());
-                            for (String all : voteNames.values()) {
-                                if (Objects.equals(SafeMapAccess.get(plugin.lobbyvoteplayernames, s, p, null), all)) {
-                                    arenaname = all;
-                                }
-                            }
+                        String previousVote = plugin.getPlayerVoteInLobby(s, p);
+                        if (previousVote != null) {
+                            plugin.removeLobbyVote(s, previousVote);
                         }
-                        SafeMapAccess.remove(plugin.lobbyvoteplayernames, s, p);
-                        int votes = SafeMapAccess.get(plugin.lobbyvotes, s, arenaname, 0);
-                        votes--;
-                        HashMap<String, Integer> tempold = new HashMap<>();
-                        randomvotes = SafeMapAccess.get(plugin.lobbyvotes, s, "Random", 0);
-                        tempold.put("Random", randomvotes);
-                        for (int max = 1; max < 27; max++) {
-                            if (Settings.arenadata.contains("pg.lobbies." + s + "." + max)) {
-                                int oldvotes = SafeMapAccess.get(plugin.lobbyvotes, s, Settings.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
-                                tempold.put(Settings.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
-                            }
-                        }
-                        tempold.put(arenaname, votes);
-                        plugin.lobbyvotes.replace(s, tempold);
-                        plugin.lobbyVoted.remove(p, s);
-                        votes = SafeMapAccess.get(plugin.lobbyvotes, s, displayname, 0);
-                        votes++;
-                        HashMap<String, Integer> temp = new HashMap<>();
-                        randomvotes = SafeMapAccess.get(plugin.lobbyvotes, s, "Random", 0);
-                        temp.put("Random", randomvotes);
-                        for (int max = 1; max < 27; max++) {
-                            if (Settings.arenadata.contains("pg.lobbies." + s + "." + max)) {
-                                int oldvotes = SafeMapAccess.get(plugin.lobbyvotes, s, Settings.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
-                                temp.put(Settings.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), oldvotes);
-                            }
-                        }
-                        temp.put(displayname, votes);
-                        plugin.lobbyvotes.replace(s, temp);
+                        plugin.addLobbyVote(s, displayname);
+                        plugin.recordPlayerVoteInLobby(s, p, displayname);
                     }
+                    
+                    // Send feedback messages
                     p.sendMessage(Messages.ArenaSelector());
                     p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(16) + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
-                    p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(15) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.lobbyvotes, s, displayname, 0))).color(NamedTextColor.AQUA)));
+                    p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(15) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyVoteCount(s, displayname))).color(NamedTextColor.AQUA)));
                     p.sendMessage(Messages.ArenaSelector());
-                    plugin.lobbyVoted.put(p, s);
-                    SafeMapAccess.put(plugin.lobbyvoteplayernames, s, p, displayname);
                 }
             }
         }
     }
     
     private void handleTeamSelection(InventoryClickEvent e, Player p, String s) {
-        if (plugin.lobbyActivateTeams.getOrDefault(s, false)) {
+        if (plugin.isActivateTeams(s)) {
             if (e.getView().title().equals(Settings.prefix.append(Component.text(plugin.chatmessages.get(43)).color(NamedTextColor.DARK_AQUA)))) {
                 if (e.getCurrentItem() != null) {
                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                         String displayname = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName());
-                        int maxteamplayers = plugin.lobbyteamSize.getOrDefault(s, 1);
-                        if (!plugin.lobbyTeamed.containsKey(p)) {
+                        int maxteamplayers = plugin.getLobbyTeamSize(s);
+                        
+                        // Check if player already has a team using delegation
+                        if (!plugin.hasPlayerTeamInLobby(s, p)) {
+                            // First time assigning team
                             if (e.getCurrentItem().getItemMeta().displayName().equals(Messages.RandomLabel())) {
                                 assignRandomTeam(e, p, s, maxteamplayers);
                             } else {
                                 assignSpecificTeam(e, p, s, displayname, maxteamplayers);
                             }
                         } else {
+                            // Switching teams
                             switchTeam(e, p, s, displayname, maxteamplayers);
                         }
                     }
@@ -172,32 +136,29 @@ public class InventoryEventListener implements Listener {
     
     private void assignRandomTeam(InventoryClickEvent e, Player p, String s, int maxteamplayers) {
         boolean teamfound = false;
-        Map<Integer, Integer> lobbyTeamsMap = plugin.lobbyteams.getOrDefault(s, new HashMap<>());
-        while (!teamfound && !lobbyTeamsMap.isEmpty()) {
+        Map<Integer, Integer> lobbyTeamsMap = plugin.getLobbyTeams(s);
+        
+        if (lobbyTeamsMap == null || lobbyTeamsMap.isEmpty()) {
+            return;
+        }
+        
+        while (!teamfound) {
             Random rnd = new Random();
-            int rndTeam = rnd.nextInt(lobbyTeamsMap.size());
-            rndTeam++;
-            Integer teamPlayers = SafeMapAccess.get(plugin.lobbyteams, s, rndTeam, null);
-            if (teamPlayers != null && teamPlayers < maxteamplayers && teamPlayers >= 0) {
+            int rndTeam = rnd.nextInt(lobbyTeamsMap.size()) + 1;
+            Integer teamPlayers = plugin.getLobbyTeamPlayerCount(s, rndTeam);
+            
+            if (teamPlayers != null && teamPlayers < maxteamplayers) {
                 teamfound = true;
                 p.closeInventory();
-                int players = SafeMapAccess.get(plugin.lobbyteams, s, rndTeam, 0);
-                players++;
-                HashMap<Integer, Integer> temp = new HashMap<>();
-                int maxTeams = plugin.lobbyteamAmount.getOrDefault(s, 1);
-                for (int max = 1; max <= maxTeams; max++) {
-                    int oldplayers = SafeMapAccess.get(plugin.lobbyteams, s, max, 0);
-                    temp.put(max, oldplayers);
-                }
-                temp.put(rndTeam, players);
-                plugin.lobbyteams.putIfAbsent(s, new HashMap<>());
-                plugin.lobbyteams.replace(s, temp);
+                plugin.incrementLobbyTeamPlayers(s, rndTeam);
+                plugin.recordPlayerTeamInLobby(s, p, Integer.toString(rndTeam));
+                
+                // Send feedback
                 p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
                 p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(45) + ": ").color(NamedTextColor.GREEN)).append(Component.text(rndTeam).color(NamedTextColor.LIGHT_PURPLE)));
-                p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(44) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.lobbyteams, s, rndTeam, 0))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
+                p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(44) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyTeamPlayerCount(s, rndTeam))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
                 p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
-                plugin.lobbyTeamed.put((Player) e.getWhoClicked(), s);
-                SafeMapAccess.put(plugin.lobbyteamplayernames, s, p, Integer.toString(rndTeam));
+                
                 if (plugin.isActivateScoreboard()) {
                     Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(Integer.toString(rndTeam)).color(NamedTextColor.DARK_AQUA));
                 }
@@ -206,25 +167,20 @@ public class InventoryEventListener implements Listener {
     }
     
     private void assignSpecificTeam(InventoryClickEvent e, Player p, String s, String displayname, int maxteamplayers) {
-        if (SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(displayname), 0) < maxteamplayers) {
+        int teamId = Integer.parseInt(displayname);
+        Integer currentPlayers = plugin.getLobbyTeamPlayerCount(s, teamId);
+        
+        if (currentPlayers != null && currentPlayers < maxteamplayers) {
             p.closeInventory();
-            int players = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(displayname), 0);
-            players++;
-            HashMap<Integer, Integer> temp = new HashMap<>();
-            int maxTeams = plugin.lobbyteamAmount.getOrDefault(s, 1);
-            for (int max = 1; max <= maxTeams; max++) {
-                int oldplayers = SafeMapAccess.get(plugin.lobbyteams, s, max, 0);
-                temp.put(max, oldplayers);
-            }
-            temp.put(Integer.parseInt(displayname), players);
-            plugin.lobbyteams.putIfAbsent(s, new HashMap<>());
-            plugin.lobbyteams.replace(s, temp);
+            plugin.incrementLobbyTeamPlayers(s, teamId);
+            plugin.recordPlayerTeamInLobby(s, p, displayname);
+            
+            // Send feedback
             p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
             p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(45) + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
-            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(44) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(displayname), 0))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
+            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(44) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyTeamPlayerCount(s, teamId))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
             p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
-            plugin.lobbyTeamed.put((Player) e.getWhoClicked(), s);
-            SafeMapAccess.put(plugin.lobbyteamplayernames, s, p, displayname);
+            
             if (plugin.isActivateScoreboard()) {
                 Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(displayname).color(NamedTextColor.DARK_AQUA));
             }
@@ -238,28 +194,15 @@ public class InventoryEventListener implements Listener {
     
     private void switchTeam(InventoryClickEvent e, Player p, String s, String displayname, int maxteamplayers) {
         p.closeInventory();
-        String teamname = null;
-        Map<Player, String> teamMap = plugin.lobbyteamplayernames.getOrDefault(s, new HashMap<>());
-        for (String all : teamMap.values()) {
-            if (Objects.equals(SafeMapAccess.get(plugin.lobbyteamplayernames, s, p, null), all)) {
-                teamname = all;
-            }
+        
+        // Get player's current team and remove from it
+        String previousTeam = plugin.getPlayerTeamInLobby(s, p);
+        if (previousTeam != null) {
+            plugin.decrementLobbyTeamPlayers(s, Integer.parseInt(previousTeam));
+            plugin.removePlayerTeamInLobby(s, p);
         }
-        SafeMapAccess.remove(plugin.lobbyteamplayernames, s, p);
-        if (teamname != null) {
-            int teamamount = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0);
-            teamamount--;
-            HashMap<Integer, Integer> tempold = new HashMap<>();
-            int maxTeams = plugin.lobbyteamAmount.getOrDefault(s, 1);
-            for (int max = 1; max <= maxTeams; max++) {
-                int oldplayers = SafeMapAccess.get(plugin.lobbyteams, s, max, 0);
-                tempold.put(max, oldplayers);
-            }
-            tempold.put(Integer.parseInt(teamname), teamamount);
-            plugin.lobbyteams.putIfAbsent(s, new HashMap<>());
-            plugin.lobbyteams.replace(s, tempold);
-        }
-        plugin.lobbyTeamed.remove(p, s);
+        
+        // Assign to new team
         if (e.getCurrentItem().getItemMeta().displayName().equals(Messages.RandomLabel())) {
             assignRandomTeam(e, p, s, maxteamplayers);
         } else {

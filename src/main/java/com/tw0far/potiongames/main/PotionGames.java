@@ -416,6 +416,35 @@ public class PotionGames extends JavaPlugin {
     public Integer getLobbyTeamAmount(String lobbyId) {
         return arenaStateManager.getLobbyTeamAmount(lobbyId);
     }
+    
+    // Lobby voting delegation methods (Phase 5.2)
+    public Integer getLobbyVoteCount(String lobbyId, String arenaName) {
+        return arenaStateManager.getLobbyVoteCount(lobbyId, arenaName);
+    }
+    
+    public void addLobbyVote(String lobbyId, String arenaName) {
+        arenaStateManager.addLobbyVote(lobbyId, arenaName);
+    }
+    
+    public void removeLobbyVote(String lobbyId, String arenaName) {
+        arenaStateManager.removeLobbyVote(lobbyId, arenaName);
+    }
+    
+    public String getWinningArenaForLobby(String lobbyId) {
+        return arenaStateManager.getWinningArenaForLobby(lobbyId);
+    }
+    
+    public void recordPlayerVoteInLobby(String lobbyId, Player player, String arenaName) {
+        arenaStateManager.recordPlayerVoteInLobby(lobbyId, player, arenaName);
+    }
+    
+    public String getPlayerVoteInLobby(String lobbyId, Player player) {
+        return arenaStateManager.getPlayerVoteInLobby(lobbyId, player);
+    }
+    
+    public boolean hasPlayerVotedInLobby(String lobbyId, Player player) {
+        return arenaStateManager.hasPlayerVotedInLobby(lobbyId, player);
+    }
 
     // ===== Delegation Methods for ItemStateManager (Phase 4.4) =====
     // These methods provide convenient access to loot and shop state
@@ -5572,6 +5601,10 @@ public class PotionGames extends JavaPlugin {
 
     public boolean isActivateTeams() {
         return configManager.isActivateTeams();
+    }
+    
+    public boolean isActivateTeams(String lobbyId) {
+        return lobbyStateManager.isActivateTeams(lobbyId);
     }
 
     public boolean isActivateShop() {
