@@ -450,6 +450,48 @@ public class Lobby {
     }
     
     /**
+     * Check if teams are activated for this lobby
+     */
+    public boolean isActivateTeams() {
+        return activateTeams;
+    }
+    
+    /**
+     * Set teams activation for this lobby
+     */
+    public void setActivateTeams(boolean value) {
+        this.activateTeams = value;
+    }
+    
+    /**
+     * Check if kits are activated for this lobby
+     */
+    public boolean isActivateKits() {
+        return activateKits;
+    }
+    
+    /**
+     * Set kits activation for this lobby
+     */
+    public void setActivateKits(boolean value) {
+        this.activateKits = value;
+    }
+    
+    /**
+     * Check if airdrops are activated for this lobby
+     */
+    public boolean isActivateAirdrops() {
+        return activateAirdrops;
+    }
+    
+    /**
+     * Set airdrops activation for this lobby
+     */
+    public void setActivateAirdrops(boolean value) {
+        this.activateAirdrops = value;
+    }
+
+    /**
      * Check if shop is activated for this lobby
      */
     public boolean isActivateShop() {
@@ -708,4 +750,51 @@ public class Lobby {
         lobbyteamplayernames.clear();
         lobbyTeamed.clear();
     }
+    
+    // ===== PHASE 7.5: Team Operations =====
+    
+    /**
+     * Get player's team ID
+     */
+    public String getPlayerTeam(Player player) {
+        return lobbyteamplayernames.get(player);
+    }
+    
+    /**
+     * Set player's team ID
+     */
+    public void setPlayerTeam(Player player, String teamId) {
+        lobbyteamplayernames.put(player, teamId);
+    }
+    
+    /**
+     * Remove player from team
+     */
+    public void removePlayerTeam(Player player) {
+        lobbyteamplayernames.remove(player);
+    }
+    
+    /**
+     * Increment team player count
+     */
+    public void incrementTeamCount(int teamId) {
+        int count = lobbyteams.getOrDefault(teamId, 0);
+        lobbyteams.put(teamId, count + 1);
+    }
+    
+    /**
+     * Decrement team player count
+     */
+    public void decrementTeamCount(int teamId) {
+        int count = lobbyteams.getOrDefault(teamId, 0);
+        if (count > 0) {
+            count--;
+            if (count == 0) {
+                lobbyteams.remove(teamId);
+            } else {
+                lobbyteams.put(teamId, count);
+            }
+        }
+    }
 }
+

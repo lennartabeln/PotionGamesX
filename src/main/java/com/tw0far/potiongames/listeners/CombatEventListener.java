@@ -3,7 +3,6 @@ package com.tw0far.potiongames.listeners;
 import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Settings;
-import com.tw0far.potiongames.util.SafeMapAccess;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -56,8 +55,9 @@ public class CombatEventListener implements Listener {
                         
                         // Both must be in same lobby for friendly fire check
                         if (pLobby != null && pLobby.equals(dLobby)) {
-                            if (Objects.equals(SafeMapAccess.get(plugin.lobbyteamplayernames, pLobby, p, null), 
-                                             SafeMapAccess.get(plugin.lobbyteamplayernames, pLobby, d, null))) {
+                            String pTeam = plugin.getPlayerTeam(pLobby, p);
+                            String dTeam = plugin.getPlayerTeam(dLobby, d);
+                            if (Objects.equals(pTeam, dTeam)) {
                                 e.setCancelled(true);
                             }
                         }
@@ -112,17 +112,16 @@ public class CombatEventListener implements Listener {
                         }
                         // Move player from active to spectator
                         plugin.game.removePlayerLobby(p);
-                        plugin.game.setSpectatorLobby(p, s);
-                        plugin.specLobby.put(p, s);
-                        if (plugin.lobbyActivateTeams.getOrDefault(s, false)) {
-                            String teamname = SafeMapAccess.get(plugin.lobbyteamplayernames, s, p, null);
-                            SafeMapAccess.remove(plugin.lobbyteamplayernames, s, p);
+                        plugin.setSpectatorLobby(p, s);
+                        if (plugin.isLobbyActivateTeams(s)) {
+                            String teamname = plugin.getPlayerTeam(s, p);
+                            plugin.removePlayerTeam(s, p);
                             if (teamname != null) {
-                                int teamamount = SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0);
-                                teamamount--;
-                                SafeMapAccess.put(plugin.lobbyteams, s, Integer.parseInt(teamname), teamamount);
-                                if (SafeMapAccess.get(plugin.lobbyteams, s, Integer.parseInt(teamname), 0) == 0) {
-                                    SafeMapAccess.remove(plugin.lobbyteams, s, Integer.parseInt(teamname));
+                                try {
+                                    int teamId = Integer.parseInt(teamname);
+                                    plugin.decrementTeamCount(s, teamId);
+                                } catch (NumberFormatException ex) {
+                                    // Invalid team ID
                                 }
                             }
                             plugin.teamed.remove(p.getName());
@@ -138,7 +137,7 @@ public class CombatEventListener implements Listener {
                             killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
                             killer.playSound(killer.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 1, 1);
                             p.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1, 1);
-                            if (Objects.equals(plugin.kitplayernames.get(p), "Rich Kid")) {
+                            if (Objects.equals(plugin.getPlayerKit(p), "Rich Kid")) {
                                 for (int i = 0; i < 10; i++) {
                                     killer.getInventory().addItem(plugin.getCoin());
                                 }

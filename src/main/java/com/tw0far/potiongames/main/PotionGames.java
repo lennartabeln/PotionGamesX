@@ -630,9 +630,80 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<ItemStack> getWeaponsTier2() {
         return game.getWeaponsTier2();
     }
-
-
-
+    
+    // ===== PHASE 7.5: Team Delegation Methods =====
+    
+    public String getPlayerTeam(String lobbyId, Player player) {
+        if (isLobbySystem()) {
+            try {
+                int id = Integer.parseInt(lobbyId);
+                Lobby lobby = game.getLobby(id);
+                if (lobby != null) {
+                    return lobby.getPlayerTeam(player);
+                }
+            } catch (NumberFormatException e) {
+                // Invalid lobbyId
+            }
+        }
+        return null;
+    }
+    
+    public void setPlayerTeam(String lobbyId, Player player, String teamId) {
+        if (isLobbySystem()) {
+            try {
+                int id = Integer.parseInt(lobbyId);
+                Lobby lobby = game.getLobby(id);
+                if (lobby != null) {
+                    lobby.setPlayerTeam(player, teamId);
+                }
+            } catch (NumberFormatException e) {
+                // Invalid lobbyId
+            }
+        }
+    }
+    
+    public void removePlayerTeam(String lobbyId, Player player) {
+        if (isLobbySystem()) {
+            try {
+                int id = Integer.parseInt(lobbyId);
+                Lobby lobby = game.getLobby(id);
+                if (lobby != null) {
+                    lobby.removePlayerTeam(player);
+                }
+            } catch (NumberFormatException e) {
+                // Invalid lobbyId
+            }
+        }
+    }
+    
+    public void decrementTeamCount(String lobbyId, int teamId) {
+        if (isLobbySystem()) {
+            try {
+                int id = Integer.parseInt(lobbyId);
+                Lobby lobby = game.getLobby(id);
+                if (lobby != null) {
+                    lobby.decrementTeamCount(teamId);
+                }
+            } catch (NumberFormatException e) {
+                // Invalid lobbyId
+            }
+        }
+    }
+    
+    public boolean isLobbyActivateTeams(String lobbyId) {
+        if (isLobbySystem()) {
+            try {
+                int id = Integer.parseInt(lobbyId);
+                Lobby lobby = game.getLobby(id);
+                if (lobby != null) {
+                    return lobby.isActivateTeams();
+                }
+            } catch (NumberFormatException e) {
+                // Invalid lobbyId
+            }
+        }
+        return isActivateTeams();
+    }
 
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
