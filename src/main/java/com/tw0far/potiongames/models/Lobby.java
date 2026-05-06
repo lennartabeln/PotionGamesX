@@ -512,11 +512,40 @@ public class Lobby {
     }
     
     /**
+     * Store chest inventory at location
+     */
+    public void setChestInventory(Location loc, ItemStack[] items) {
+        chests.put(loc, items);
+    }
+    
+    /**
+     * Get chest inventory at location
+     */
+    public ItemStack[] getChestInventory(Location loc) {
+        return chests.get(loc);
+    }
+    
+    /**
+     * Check if location has chest inventory stored
+     */
+    public boolean hasChestInventory(Location loc) {
+        return chests.containsKey(loc);
+    }
+    
+    /**
+     * Remove chest inventory at location
+     */
+    public void removeChestInventory(Location loc) {
+        chests.remove(loc);
+    }
+    
+    /**
      * Clear all chests in this lobby
      */
     public void clearChests() {
         chests.clear();
     }
+
     
     // ===== PHASE 7.2: Block Tracking Accessors =====
     

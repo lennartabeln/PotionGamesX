@@ -306,7 +306,7 @@ public class InventoryEventListener implements Listener {
                             if (plugin.isLobbySystem()) {
                                 String s = plugin.game.getPlayerLobby(p);
                                 if (s != null && plugin.getLobbyGameState(s) == GameStates.INGAME) {
-                                    if (!plugin.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
+                                    if (!plugin.hasLobbyChest(s, e.getClickedBlock().getLocation())) {
                                         Inventory inv;
                                         inv = Bukkit.createInventory(p, 27, Settings.prefix);
                                         plugin.chestData();
@@ -367,10 +367,12 @@ public class InventoryEventListener implements Listener {
                                                 inv.setItem(slot, plugin.getWeaponsTier2().get(item9));
                                             }
                                         }
-                                        plugin.lobbychests.put(e.getClickedBlock().getLocation(), s);
-                                        plugin.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
+                                        plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
                                     }
-                                    p.openInventory(plugin.lobbychestsdata.get(e.getClickedBlock().getLocation()));
+                                    Inventory chestInv = plugin.getLobbyChestInventory(s, e.getClickedBlock().getLocation());
+                                    if (chestInv != null) {
+                                        p.openInventory(chestInv);
+                                    }
                                     if (p.getActivePotionEffects().isEmpty()) {
                                         Random effect = new Random();
                                         int max = 3;
@@ -478,18 +480,20 @@ public class InventoryEventListener implements Listener {
                                             }
                                         }
                                         if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
-                                            if (!plugin.lobbychests.containsKey(e.getClickedBlock().getLocation())) {
+                                            if (!plugin.hasLobbyChest(s, e.getClickedBlock().getLocation())) {
                                                 Inventory inv;
                                                 inv = Bukkit.createInventory(p, Settings.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), Settings.prefix);
-                                                plugin.lobbychests.put(e.getClickedBlock().getLocation(), s);
-                                                plugin.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
-                                                p.openInventory(plugin.lobbychestsdata.get(e.getClickedBlock().getLocation()));
+                                                plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
+                                                p.openInventory(inv);
                                                 while (Settings.chestdata.contains("pg.customchests." + chestnumber + "." + chestitem)) {
                                                     inv.setItem(Settings.chestdata.getInt("pg.customchests." + chestnumber + "." + chestitem + ".slot") - 1, Settings.chestdata.getItemStack("pg.customchests." + chestnumber + "." + chestitem + ".item"));
                                                     chestitem++;
                                                 }
                                             } else {
-                                                p.openInventory(plugin.lobbychestsdata.get(e.getClickedBlock().getLocation()));
+                                                Inventory chestInv = plugin.getLobbyChestInventory(s, e.getClickedBlock().getLocation());
+                                                if (chestInv != null) {
+                                                    p.openInventory(chestInv);
+                                                }
                                             }
                                         }
                                     } else {
@@ -534,8 +538,7 @@ public class InventoryEventListener implements Listener {
                                         }
                                         Inventory inv;
                                         inv = Bukkit.createInventory(p, 9 * 3, Settings.prefix.append(Component.text(plugin.chatmessages.get(49))).color(NamedTextColor.DARK_AQUA));
-                                        plugin.lobbychests.put(e.getClickedBlock().getLocation(), s);
-                                        plugin.lobbychestsdata.put(e.getClickedBlock().getLocation(), inv);
+                                        plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
                                         int shopitem = 1;
                                         for (int i = 0; i < plugin.getActivePotions(); i++) {
                                             int coinamount;
@@ -557,7 +560,10 @@ public class InventoryEventListener implements Listener {
                                             shopitem++;
                                         }
                                     }
-                                    p.openInventory(plugin.lobbychestsdata.get(e.getClickedBlock().getLocation()));
+                                    Inventory chestInv = plugin.getLobbyChestInventory(s, e.getClickedBlock().getLocation());
+                                    if (chestInv != null) {
+                                        p.openInventory(chestInv);
+                                    }
                                 }
                             } else {
                                 if (plugin.isActivateShop()) {

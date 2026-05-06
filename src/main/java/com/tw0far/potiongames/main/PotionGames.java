@@ -540,6 +540,56 @@ public class PotionGames extends JavaPlugin {
             // ignore
         }
     }
+    
+    /**
+     * Get or create chest inventory in a lobby
+     */
+    public void setLobbyChestInventory(String lobbyId, Location location, Inventory inventory) {
+        try {
+            int id = Integer.parseInt(lobbyId);
+            Lobby lobby = game.getLobby(id);
+            if (lobby != null && inventory != null) {
+                lobby.setChestInventory(location, inventory.getContents());
+            }
+        } catch (NumberFormatException e) {
+            // ignore
+        }
+    }
+    
+    /**
+     * Get chest inventory from a lobby
+     */
+    public Inventory getLobbyChestInventory(String lobbyId, Location location) {
+        try {
+            int id = Integer.parseInt(lobbyId);
+            Lobby lobby = game.getLobby(id);
+            if (lobby != null && lobby.hasChestInventory(location)) {
+                Inventory inv = Bukkit.createInventory(null, 27);
+                ItemStack[] items = lobby.getChestInventory(location);
+                if (items != null) {
+                    inv.setContents(items);
+                }
+                return inv;
+            }
+        } catch (NumberFormatException e) {
+            // ignore
+        }
+        return null;
+    }
+    
+    /**
+     * Check if lobby has chest at location
+     */
+    public boolean hasLobbyChest(String lobbyId, Location location) {
+        try {
+            int id = Integer.parseInt(lobbyId);
+            Lobby lobby = game.getLobby(id);
+            return lobby != null && lobby.hasChestInventory(location);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
 
     
     // ===== Delegation Methods for Game Loot Data (Phase 7.5) =====
