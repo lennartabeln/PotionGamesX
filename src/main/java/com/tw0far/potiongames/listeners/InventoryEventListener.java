@@ -321,7 +321,7 @@ public class InventoryEventListener implements Listener {
                                             int slot = rnd.nextInt(27);
                                             int roll = rnd.nextInt(100);
                                             if (roll < 20) {
-                                                if (plugin.lobbyActivateShop.getOrDefault(s, false)) {
+                                                if (plugin.isLobbyActivateShop(s)) {
                                                     ArrayList<ItemStack> potions1 = new ArrayList<>();
                                                     potions1.add(new ItemStack(Material.GLASS_BOTTLE, 1));
                                                     ArrayList<ItemStack> potions2 = new ArrayList<>();
@@ -520,7 +520,7 @@ public class InventoryEventListener implements Listener {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.lobbyActivateShop.getOrDefault(s, false)) {
+                                if (plugin.isLobbyActivateShop(s)) {
                                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                         for (ItemStack item : p.getInventory().getContents()) {
                                             if (item != null) {

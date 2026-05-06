@@ -513,6 +513,35 @@ public class PotionGames extends JavaPlugin {
         return game.getLobbyByPlayer(player);
     }
     
+    /**
+     * Check if shop is activated for a specific lobby ID
+     */
+    public boolean isLobbyActivateShop(String lobbyId) {
+        try {
+            int id = Integer.parseInt(lobbyId);
+            Lobby lobby = game.getLobby(id);
+            return lobby != null && lobby.isActivateShop();
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Set shop activation for a specific lobby ID
+     */
+    public void setLobbyActivateShop(String lobbyId, boolean value) {
+        try {
+            int id = Integer.parseInt(lobbyId);
+            Lobby lobby = game.getLobby(id);
+            if (lobby != null) {
+                lobby.setActivateShop(value);
+            }
+        } catch (NumberFormatException e) {
+            // ignore
+        }
+    }
+
+    
     // ===== Delegation Methods for Game Loot Data (Phase 7.5) =====
     // These delegate to Game class for global loot tables
     

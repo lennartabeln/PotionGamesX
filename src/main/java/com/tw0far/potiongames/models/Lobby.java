@@ -449,6 +449,21 @@ public class Lobby {
         this.reset = reset;
     }
     
+    /**
+     * Check if shop is activated for this lobby
+     */
+    public boolean isActivateShop() {
+        return activateShop;
+    }
+    
+    /**
+     * Set shop activation for this lobby
+     */
+    public void setActivateShop(boolean value) {
+        this.activateShop = value;
+    }
+
+    
     // ===== PHASE 7.2: Boolean Flags =====
     
     public boolean isDeathmatch() { return deathmatch; }
