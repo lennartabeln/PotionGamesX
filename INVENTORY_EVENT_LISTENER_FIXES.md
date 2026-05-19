@@ -13,7 +13,6 @@ Fixed all compilation errors in `InventoryEventListener.java` related to undefin
 ```java
 } else if (p.getInventory().getItemInMainHand().getItemMeta().displayName().equals(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA))) {
     Inventory inv = Bukkit.createInventory(...);
-    if (plugin.isLobbySystem()) {
         for (int slot = 1; slot < 27; slot++) {
             if (Settings.arenadata.contains("pg.lobbies." + lobby + "." + slot)) { // <-- undefined
 ```
@@ -30,20 +29,17 @@ Fixed all compilation errors in `InventoryEventListener.java` related to undefin
 ---
 
 ### 2. Set Join-Sign (OAK_SIGN) - Lines 1156-1181
-**Issue:** Code block referenced undefined `lobby` variable in lobby system branch  
-**Fix:** Commented out lobby system branch while keeping non-lobby branch active
+**Issue:** Code block referenced undefined `lobby` variable in lobby setup branch  
+**Fix:** Commented out the broken branch while keeping the lobby flow active
 
 **Original Code (PARTIALLY COMMENTED OUT):**
 ```java
 if (p.hasPermission("pg.setup")) {
-    if (!plugin.isLobbySystem()) {
-        // This part stays active
-        plugin.getConfig().set("pg.Lobby.sign", ...);
-    }
+    // This part stays active
+    plugin.getConfig().set("pg.Lobby.sign", ...);
 }
 // if (p.hasPermission("pg.setup")) {
-//     if (plugin.isLobbySystem()) {
-//         Settings.arenadata.set("pg.lobbies." + lobby + ".sign", ...); // <-- undefined
+//     Settings.arenadata.set("pg.lobbies." + lobby + ".sign", ...); // <-- undefined
 ```
 
 ---
@@ -56,13 +52,11 @@ if (p.hasPermission("pg.setup")) {
 ```java
 } else if (p.getInventory().getItemInMainHand().getItemMeta().displayName().equals(Component.text("Add(Left)/Del(Right) Spawn").color(NamedTextColor.DARK_AQUA))) {
     if (p.hasPermission("pg.setup")) {
-        if (!plugin.isLobbySystem()) {
-            // References undefined 'arena'
-            if (arena.toString().matches(...)) { // <-- undefined
+        // References undefined 'arena'
+        if (arena.toString().matches(...)) { // <-- undefined
         }
-        if (plugin.isLobbySystem()) {
-            // References undefined 'lobby' and 'arena'
-            if (arena.toString().matches("pg.lobbies." + lobby + "." + i)) { // <-- both undefined
+        // References undefined 'lobby' and 'arena'
+        if (arena.toString().matches("pg.lobbies." + lobby + "." + i)) { // <-- both undefined
 ```
 
 **Current Code:**
@@ -84,7 +78,6 @@ if (p.hasPermission("pg.setup")) {
 ```java
 } else if (p.getInventory().getItemInMainHand().getItemMeta().displayName().equals(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA))) {
     Inventory inv = Bukkit.createInventory(...);
-    if (plugin.isLobbySystem()) {
         for (int slot = 1; slot < 27; slot++) {
             if (Settings.arenadata.contains("pg.lobbies." + lobby + "." + slot)) { // <-- undefined
 ```

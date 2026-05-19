@@ -40,9 +40,8 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 5. Add `mv.bypass.gamemode.*: true` to your permissions.yml
 6. Start your server
 7. Import your worlds with `/mv import [worldname] NORMAL`
-8. Change `lobbySystem` to `false` or `true`
-9. Change the .yml files in the PotionGames folder like you want them
-10. Restart your server to reload the changed plugin files
+8. Change the .yml files in the PotionGames folder like you want them
+9. Restart your server to reload the changed plugin files
 
 ## Usage
 
@@ -58,15 +57,6 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 4. Add arena spawns `/pg addspawn [lobbynumber] [arenaname]`
 5. Add chests to your arena
 6. Add deathmatch spawns `/pg adddeathmatch [lobbynumber] [arenaname]` (activateDeathmatch = true)
-
-#### Single-Lobby-System
-
-1. You need to be op or have the permission `pg.setup`
-2. Create lobby `/pg setlobby`
-3. Create arena `/pg addarena [arenaname]`
-4. Add arena spawns `/pg addspawn [arenaname]`
-5. Add chests to your arena
-6. Add deathmatch spawns `/pg adddeathmatch [arenaname]` (activateDeathmatch = true)
 
 #### Chest-Types
 
@@ -89,7 +79,7 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 #### Create Join and Stats Signs
 
 * Join Sign
-    * Place a Sign and look at it, then use the command for your Lobby-System type
+    * Place a Sign and look at it, then use the lobby command for that sign
 * Stats Sign
     * Place a Sign and type in the second line `PotionGames` and in the third line `Stats`
 
@@ -135,42 +125,16 @@ PotionGames is a minigames plugin that works like SurvivalGames but with potions
 * Error messages - Permission: `pg.admin`
 * Update Checker - Permission: `pg.update`
 
-#### Single-Lobby-System
-
-* `/pg` or `/pg help` or `/pg commands` - Get list of commands + permissions - Permission: `none`
-* `/pg setlobby` - Set lobby - Permission: `pg.setup`
-* `/pg addarena [arenaname]` - Add an arena - Permission: `pg.setup`
-* `/pg addspawn [arenaname]` - Add a spawn - Permission: `pg.setup`
-* `/pg adddeathmatch [arenaname]` - Add a deathmatch spawn - Permission: `pg.setup`
-* `/pg delarena [arenaname]` - Remove an arena - Permission: `pg.setup`
-* `/pg delspawn [arenaname]` - Remove last spawn - Permission: `pg.setup`
-* `/pg deldeathmatch [arenaname]` - Remove last deathmatch spawn - Permission: `pg.setup`
-* `/pg build` - Activate build mode - Permission: `pg.build`
-* `/pg pause` - Pause timer/countdown - Permission: `pg.pause`
-* `/pg force [arenaname]` - Force an arena - Permission: `pg.force`
-* `/pg start` - Set lobby countdown to 10 - Permission: `pg.start`
-* `/pg join` - Join the game (`startOnJoin = false`) - Permission: `pg.join`
-* `/pg leave` - Leave the game (`startOnJoin = false`)
-* `/pg stats [player]` - Show player stats - Permission: `pg.stats`
-* `/pg version` - Show your and latest version of plugin - Permission: `pg.update`
-* `/pg reload` - Reload all config files - Permission: `pg.setup`
-* `/pg headp1(2;3)` - Add Player Head to Stats-Wall - Permission: `pg.setup`
-* `/pg signp1(2;3)` - Add Player Sign to Stats-Wall - Permission: `pg.setup`
-* `/pg joinsign` - Set Join-Sign - Permission: `pg.setup`
-* `/pg setup` - Set up the plugin - Permission: `pg.setup`
-
-####
-
-* Colored name in player and spectator chat - Permission: `pg.admin`
-* Error messages - Permission: `pg.admin`
-* Update Checker - Permission: `pg.update`
-
 ### Config
+
+Lobby-first config model (new):
+* `pg.defaults.*` stores global defaults for every lobby.
+* `pg.lobbies.<id>.settings.*` stores per-lobby overrides.
+* If a lobby setting is missing, it falls back to `pg.defaults.*` (and remains compatible with legacy `pg.*` keys).
 
 * `activateMySQL: false` - Change between SQLite `false` and MySQL `true` database
 * `mysql:` - Setup your mysql database
 * `gameServer: true` - Change between Game-Server `true` and Hub-Server `false`
-* `lobbySystem: false` - Change between Single-Lobby `false` and Multi-Lobby `true`
 * `countdown: 60` - Set the lobby countdown
 * `maxPlayers: 24` - Set the amount of maximum amount of players
 * `minPlayers: 12` - Set the amount of minimal amount of players to start the game

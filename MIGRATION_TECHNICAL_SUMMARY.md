@@ -52,8 +52,8 @@ Extracted and implemented **17 event handlers** from Events.java (2,673 lines) i
 Extracted and implemented **11 commands** from Commands.java (822 lines) into individual command classes:
 
 #### JoinCommand.java (81 lines)
-- `/pg join [lobbyId]` - Join specific lobby (multi-lobby) or default to lobby 1 (single-lobby)
-- Handles both lobby system modes
+- `/pg join [lobbyId]` - Join a specific lobby
+- Handles lobby-based flow only
 - Permission: `pg.join`
 - Implements full ICommand interface with getName(), getPermission(), execute(), getUsage()
 

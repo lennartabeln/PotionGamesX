@@ -31,38 +31,24 @@ public class BuildCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (plugin.isLobbySystem()) {
-            // Multi-lobby mode: get player's lobby and toggle build mode for that lobby
-            String lobbyId = plugin.game.getPlayerLobby(player);
-            if (lobbyId == null) {
-                lobbyId = plugin.game.getSpectatorLobby(player);
-            }
+        // Multi-lobby mode: get player's lobby and toggle build mode for that lobby
+        String lobbyId = plugin.game.getPlayerLobby(player);
+        if (lobbyId == null) {
+            lobbyId = plugin.game.getSpectatorLobby(player);
+        }
+        
+        if (lobbyId != null) {
+            // Toggle build mode
+            boolean currentBuild = plugin.isLobbyBuildAllowed(lobbyId);
+            plugin.setLobbyBuildAllowed(lobbyId, !currentBuild);
             
-            if (lobbyId != null) {
-                // Toggle build mode
-                boolean currentBuild = plugin.isLobbyBuildAllowed(lobbyId);
-                plugin.setLobbyBuildAllowed(lobbyId, !currentBuild);
-                
-                // Broadcast to all players in this lobby
-                boolean buildEnabled = plugin.isLobbyBuildAllowed(lobbyId);
-                for (Player p : plugin.game.getPlayersInLobby(lobbyId)) {
-                    p.sendMessage(Messages.BuildToggle(buildEnabled));
-                }
-                for (Player p : plugin.game.getSpectatorsInLobby(lobbyId)) {
-                    p.sendMessage(Messages.BuildToggle(buildEnabled));
-                }
+            // Broadcast to all players in this lobby
+            boolean buildEnabled = plugin.isLobbyBuildAllowed(lobbyId);
+            for (Player p : plugin.game.getPlayersInLobby(lobbyId)) {
+                p.sendMessage(Messages.BuildToggle(buildEnabled));
             }
-        } else {
-            // Single-lobby mode: toggle build mode for all players
-            if (plugin.game.isActivePlayer(player) || plugin.game.isSpectatorPlayer(player)) {
-                plugin.changeBuild();
-                boolean buildEnabled = plugin.isBuild();
-                for (Player all : plugin.game.getActivePlayers()) {
-                    all.sendMessage(Messages.BuildToggle(buildEnabled));
-                }
-                for (Player all : plugin.game.getSpectatorPlayers()) {
-                    all.sendMessage(Messages.BuildToggle(buildEnabled));
-                }
+            for (Player p : plugin.game.getSpectatorsInLobby(lobbyId)) {
+                p.sendMessage(Messages.BuildToggle(buildEnabled));
             }
         }
         return true;

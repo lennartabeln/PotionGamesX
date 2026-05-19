@@ -31,16 +31,7 @@ public class BlockEventListener implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
         var p = e.getPlayer();
         if (plugin.isGameServer()) {
-            // Try to get from active player list or by lobby ID
-            String s = null;
-            if (plugin.game.isActivePlayer(p)) {
-                // Single-lobby mode - player is active
-                s = "0"; // Single-lobby mode uses implicit lobby
-            } else {
-                // Multi-lobby mode - get from game
-                s = plugin.game.getPlayerLobby(p);
-            }
-            
+            String s = plugin.game.getPlayerLobby(p);
             if (s != null) {
                 if (!plugin.isLobbyBuildAllowed(s)) {
                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
@@ -60,16 +51,7 @@ public class BlockEventListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent e) {
         var p = e.getPlayer();
         if (plugin.isGameServer()) {
-            // Try to get from active player list or by lobby ID
-            String s = null;
-            if (plugin.game.isActivePlayer(p)) {
-                // Single-lobby mode - player is active
-                s = "0"; // Single-lobby mode uses implicit lobby
-            } else {
-                // Multi-lobby mode - get from game
-                s = plugin.game.getPlayerLobby(p);
-            }
-            
+            String s = plugin.game.getPlayerLobby(p);
             if (s != null) {
                 if (!plugin.isLobbyBuildAllowed(s)) {
                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
@@ -94,7 +76,7 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onBlockFade(BlockFadeEvent event) {
         if (plugin.isGameServer()) {
-            if (plugin.worlds.contains(event.getBlock().getWorld().getName())) {
+            if (plugin.getWorlds().contains(event.getBlock().getWorld().getName())) {
                 event.setCancelled(true);
             }
         }
@@ -103,7 +85,7 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onLeavesDecay(LeavesDecayEvent event) {
         if (plugin.isGameServer()) {
-            if (plugin.worlds.contains(event.getBlock().getWorld().getName())) {
+            if (plugin.getWorlds().contains(event.getBlock().getWorld().getName())) {
                 switch (event.getBlock().getType()) {
                     case ACACIA_LEAVES, BIRCH_LEAVES, DARK_OAK_LEAVES, JUNGLE_LEAVES, OAK_LEAVES, SPRUCE_LEAVES ->
                             event.setCancelled(true);
@@ -116,7 +98,7 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onBlockFromTo(BlockFromToEvent event) {
         if (plugin.isGameServer()) {
-            if (plugin.worlds.contains(event.getBlock().getWorld().getName())) {
+            if (plugin.getWorlds().contains(event.getBlock().getWorld().getName())) {
                 event.setCancelled(true);
             }
         }
@@ -126,28 +108,14 @@ public class BlockEventListener implements Listener {
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
         var p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.game.isActivePlayer(p) || plugin.game.isInLobby(p)) {
-                if (plugin.isLobbySystem()) {
-                    String s = plugin.game.getPlayerLobby(p);
-                    if (s != null) {
-                        if (!plugin.isLobbyBuildAllowed(s)) {
-                            if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
-                                if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
-                                    Block block = e.getBlockClicked().getRelative(e.getBlockFace());
-                                    Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
-                                    plugin.trackWaterBlock(loc, block.getBlockData());
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (!plugin.isBuild()) {
-                        if (plugin.getGamestate() == GameStates.INGAME) {
-                            if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
-                                Block block = e.getBlockClicked().getRelative(e.getBlockFace());
-                                Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
-                                plugin.trackWaterBlock(loc, block.getBlockData());
-                            }
+            String s = plugin.game.getPlayerLobby(p);
+            if (s != null) {
+                if (!plugin.isLobbyBuildAllowed(s)) {
+                    if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
+                        if (e.getBucket() != Material.WATER_BUCKET || e.getBucket() != Material.LAVA_BUCKET) {
+                            Block block = e.getBlockClicked().getRelative(e.getBlockFace());
+                            Location loc = e.getBlockClicked().getRelative(e.getBlockFace()).getLocation();
+                            plugin.trackWaterBlock(loc, block.getBlockData());
                         }
                     }
                 }

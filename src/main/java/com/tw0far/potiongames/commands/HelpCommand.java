@@ -37,34 +37,19 @@ public class HelpCommand implements ICommand {
         player.sendMessage(Messages.CommandsLabel());
         
         if (player.hasPermission("pg.setup")) {
-            if (plugin.isLobbySystem()) {
-                player.sendMessage(Settings.prefix.append(Component.text("/pg setup - Set up plugin").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg addlobby [lobbynumber] - Add a lobby").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg removelobby [lobbynumber] - Remove a lobby").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg addarena [lobbynumber] [arenaname] - Add an arena").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg addspawn [lobbynumber] [arenaname] - Add a spawn").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg adddeathmatch [lobbynumber] [arenaname] - Add a deathmatch spawn").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg removerena [lobbynumber] [arenaname] - Remove an arena").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg removespawn [lobbynumber] [arenaname] - Remove last spawn").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg removedeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg headp1(2;3) - Add Player Head to Stats-Wall").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg signp1(2;3) - Add Player Sign to Stats-Wall").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg joinsign [lobbynumber] - Add Join-Sign").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg reload - Reload all configs").color(NamedTextColor.GRAY)));
-            } else {
-                player.sendMessage(Settings.prefix.append(Component.text("/pg setup - Set up plugin").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg addlobby - Add a lobby").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg addarena [arenaname] - Add an arena").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg addspawn [arenaname] - Add a spawn").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg adddeathmatch [arenaname] - Add a deathmatch spawn").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg removearena [arenaname] - Remove an arena").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg removespawn [arenaname] - Remove last spawn").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg removedeathmatch [arenaname] - Remove last deathmatch spawn").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg headp1(2;3) - Add Player Head to Stats-Wall").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg signp1(2;3) - Add Player Sign to Stats-Wall").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg joinsign - Set Join-Sign").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg reload - Reload all configs").color(NamedTextColor.GRAY)));
-            }
+            player.sendMessage(Settings.prefix.append(Component.text("/pg setup - Set up plugin").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg addlobby [lobbynumber] - Add a lobby").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg removelobby [lobbynumber] - Remove a lobby").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg addarena [lobbynumber] [arenaname] - Add an arena").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg addspawn [lobbynumber] [arenaname] - Add a spawn").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg adddeathmatch [lobbynumber] [arenaname] - Add a deathmatch spawn").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg removerena [lobbynumber] [arenaname] - Remove an arena").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg removespawn [lobbynumber] [arenaname] - Remove last spawn").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg removedeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg headp1(2;3) - Add Player Head to Stats-Wall").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg signp1(2;3) - Add Player Sign to Stats-Wall").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg joinsign [lobbynumber] - Add Join-Sign").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text("/pg reload - Reload all configs").color(NamedTextColor.GRAY)));
         }
         
         if (player.hasPermission("pg.build")) {
@@ -85,12 +70,8 @@ public class HelpCommand implements ICommand {
         
         if (player.hasPermission("pg.join")) {
             if (!plugin.isStartOnJoin()) {
-                if (plugin.isLobbySystem()) {
-                    player.sendMessage(Settings.prefix.append(Component.text("/pg join # - Join a game").color(NamedTextColor.GRAY)));
-                    player.sendMessage(Settings.prefix.append(Component.text("/pg list - List of all lobbies").color(NamedTextColor.GRAY)));
-                } else {
-                    player.sendMessage(Settings.prefix.append(Component.text("/pg join - Join the game").color(NamedTextColor.GRAY)));
-                }
+                player.sendMessage(Settings.prefix.append(Component.text("/pg join # - Join a game").color(NamedTextColor.GRAY)));
+                player.sendMessage(Settings.prefix.append(Component.text("/pg list - List of all lobbies").color(NamedTextColor.GRAY)));
             }
         }
         

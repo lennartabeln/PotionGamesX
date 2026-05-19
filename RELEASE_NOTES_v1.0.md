@@ -368,7 +368,7 @@ From Phase 7 optimization:
 ### Phase 8.3: Legacy Code Removal
 1. Remove single-game mode branches
 2. Simplify lobby-only logic
-3. Remove fields: startOnJoin, conditional lobbySystem checks
+3. Remove legacy single-game branching and conditional mode checks
 
 ### Phase 8.4: Performance Profiling
 1. Memory usage benchmarking

@@ -1,9 +1,12 @@
 package com.tw0far.potiongames.config;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -147,16 +150,27 @@ public class YamlConfigLoader {
             return lobbySettingsCache.get(lobbyId);
         }
         
-        String path = "pg.lobbies.lobby" + lobbyId;
+        String numericPath = "pg.lobbies." + lobbyId;
+        String namedPath = "pg.lobbies.lobby" + lobbyId;
+        String path = config.contains(numericPath) ? numericPath : namedPath;
         if (!config.contains(path)) {
             // Create default settings if not found
             plugin.getLogger().info("Creating default settings for lobby " + lobbyId);
             config.createSection(path);
         }
+
+        ConfigurationSection lobbySection = config.getConfigurationSection(path);
+        ConfigurationSection settingsSection = lobbySection != null
+                ? lobbySection.getConfigurationSection("settings")
+                : null;
+        ConfigurationSection effectiveSection = settingsSection != null ? settingsSection : lobbySection;
+        if (effectiveSection == null) {
+            effectiveSection = config.createSection(path);
+        }
         
         LobbySettings settings = new LobbySettings(
             lobbyId,
-            config.getConfigurationSection(path)
+            effectiveSection
         );
         
         if (!settings.isValid()) {
@@ -174,14 +188,24 @@ public class YamlConfigLoader {
         if (!config.contains("pg.lobbies")) {
             return new int[0];
         }
-        
-        return config.getConfigurationSection("pg.lobbies")
-            .getKeys(false)
-            .stream()
-            .filter(key -> key.startsWith("lobby"))
-            .map(key -> Integer.parseInt(key.substring(5)))
-            .mapToInt(Integer::intValue)
-            .toArray();
+
+        ConfigurationSection lobbiesSection = config.getConfigurationSection("pg.lobbies");
+        if (lobbiesSection == null) {
+            return new int[0];
+        }
+
+        List<Integer> lobbyIds = new ArrayList<>();
+        for (String key : lobbiesSection.getKeys(false)) {
+            try {
+                if (key.startsWith("lobby")) {
+                    lobbyIds.add(Integer.parseInt(key.substring(5)));
+                } else {
+                    lobbyIds.add(Integer.parseInt(key));
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return lobbyIds.stream().mapToInt(Integer::intValue).toArray();
     }
     
     /**
@@ -200,7 +224,10 @@ public class YamlConfigLoader {
      */
     public void set(String path, Object value) {
         config.set(path, value);
-        cache.remove("*:" + path); // Clear related cache entries
+        cache.remove("int:" + path);
+        cache.remove("string:" + path);
+        cache.remove("bool:" + path);
+        cache.remove("double:" + path);
         save();
     }
     

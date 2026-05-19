@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.entity.Player;
 
 /**
@@ -31,38 +32,30 @@ public class AddSpawnCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (plugin.isLobbySystem()) {
-            // Multi-lobby system: /pg addspawn <lobbynumber> <arenaname>
-            if (args.length < 3) {
-                player.sendMessage("§cUsage: /pg addspawn <lobbynumber> <arenaname>");
-                return false;
-            }
-            
-            String lobbyId = args[1];
+        // Multi-lobby system: /pg addspawn <lobbynumber> <arenaname>
+        if (args.length < 3) {
+            player.sendMessage("§cUsage: /pg addspawn <lobbynumber> <arenaname>");
+            return false;
+        }
+        
+        try {
+            int lobbyId = Integer.parseInt(args[1]);
             String arenaName = args[2];
-            // Add spawn logic would go here
-            player.sendMessage("§aSpawn added to arena §b" + arenaName + "§a (Lobby: §b" + lobbyId + "§a).");
-            return true;
-        } else {
-            // Single-lobby system: /pg addspawn <arenaname>
-            if (args.length < 2) {
-                player.sendMessage("§cUsage: /pg addspawn <arenaname>");
+            Lobby lobby = plugin.getLobbyById(lobbyId);
+            if (lobby == null) {
+                player.sendMessage("§cThis lobby does not exists!");
                 return false;
             }
-            
-            String arenaName = args[1];
-            // Add spawn logic would go here
-            player.sendMessage("§aSpawn added to arena §b" + arenaName + "§a.");
+            plugin.setupHandler.addSpawn(player, arenaName, lobbyId);
             return true;
+        } catch (NumberFormatException ex) {
+            player.sendMessage("§cUsage: /pg addspawn <lobbynumber> <arenaname>");
+            return false;
         }
     }
     
     @Override
     public String getUsage() {
-        if (plugin.isLobbySystem()) {
-            return "/pg addspawn <lobbynumber> <arenaname>";
-        } else {
-            return "/pg addspawn <arenaname>";
-        }
+        return "/pg addspawn <lobbynumber> <arenaname>";
     }
 }

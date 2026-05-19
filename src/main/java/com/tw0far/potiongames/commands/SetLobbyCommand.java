@@ -30,32 +30,21 @@ public class SetLobbyCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (plugin.isLobbySystem()) {
-            // Multi-lobby system
-            if (args.length < 2) {
-                player.sendMessage("§cUsage: /pg setlobby <lobbynumber>");
-                return false;
-            }
-            
-            String lobbyId = args[1];
-            // Create/set lobby logic would go here
-            player.sendMessage("§aLobby §b" + lobbyId + "§a set successfully.");
-            return true;
-        } else {
-            // Single-lobby system
-            // Set lobby logic would go here
-            player.sendMessage("§aDefault lobby set successfully.");
-            return true;
+        // Multi-lobby system
+        if (args.length < 2) {
+            player.sendMessage("§cUsage: /pg setlobby <lobbynumber>");
+            return false;
         }
+        
+        String lobbyId = args[1];
+        // Create/set lobby logic would go here
+        player.sendMessage("§aLobby §b" + lobbyId + "§a set successfully.");
+        return true;
     }
     
     @Override
     public String getUsage() {
-        if (plugin.isLobbySystem()) {
-            return "/pg setlobby <lobbynumber>";
-        } else {
-            return "/pg setlobby";
-        }
+        return "/pg setlobby <lobbynumber>";
     }
 }
 

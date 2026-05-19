@@ -2,32 +2,33 @@ package com.tw0far.potiongames.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scoreboard.Scoreboard;
 
+import com.tw0far.potiongames.main.PotionGames;
+
 public class Game {
     private ArrayList<Lobby> lobbies = new ArrayList<>();
-    
-    // Player tracking (migrated from PotionGames)
-    private ArrayList<Player> activePlayers = new ArrayList<>();      // pgPlayers
-    private ArrayList<Player> spectatorPlayers = new ArrayList<>();   // specPlayers
-    private ArrayList<Player> setupPlayers = new ArrayList<>();       // setupPlayer
     
     // Player lobby tracking (GAME-LEVEL ONLY)
     // Player team/kit are stored in Participant objects within their Lobby
     // But we keep these for backwards-compatibility with existing code
     // DEPRECATED: New code should use Lobby.getParticipant(player).getTeam()
+    private ArrayList<Player> setupPlayers = new ArrayList<>();
     private HashMap<Player, String> playerTeams = new HashMap<>();    // teamplayernames (deprecated - use Participant)
     private HashMap<Player, String> playerKits = new HashMap<>();     // kitplayernames (deprecated - use Participant)
     private HashMap<Player, String> playerVotes = new HashMap<>();    // voteplayernames (deprecated - use Participant)
     private HashMap<Player, String> playerChannels = new HashMap<>(); // playerChannel (chat)
-    private HashMap<Player, String> playerLobbies = new HashMap<>();  // playerLobby (multi-lobby)
-    private HashMap<Player, String> specLobbies = new HashMap<>();    // specLobby (multi-lobby)
-    
     // ===== PHASE 7.1: Global Shop & Loot State =====
     // Shop items (single-arena mode)
     private ArrayList<String> shopitem = new ArrayList<>();
@@ -70,13 +71,174 @@ public class Game {
     private HashMap<String, GameMode> gm = new HashMap<>();           // player name -> game mode
 
     public void load() {
+        lobbies.clear();
+        Set<Integer> lobbyIds = new HashSet<>();
+
         if (Settings.arenadata.contains("pg.lobbies")) {
             for (String key : Settings.arenadata.getConfigurationSection("pg.lobbies").getKeys(false)) {
-                int lobbyId = Integer.parseInt(key);
-                Lobby lobby = new Lobby(lobbyId);
-                lobby.load();
-                lobbies.add(lobby);
+                try {
+                    lobbyIds.add(Integer.parseInt(key));
+                } catch (NumberFormatException ignored) {
+                }
             }
+        }
+
+        if (PotionGames.getInstance() != null) {
+            ConfigurationSection lobbySection = PotionGames.getInstance().getConfig().getConfigurationSection("pg.lobbies");
+            if (lobbySection != null) {
+                for (String key : lobbySection.getKeys(false)) {
+                    try {
+                        lobbyIds.add(Integer.parseInt(key));
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+            }
+        }
+
+        for (Integer lobbyId : lobbyIds) {
+            LobbyConfig lobbyConfig = new LobbyConfig(
+                lobbyId,
+                Settings.arenadata,
+                Settings.countdown,
+                Settings.maxPlayers,
+                Settings.minPlayers,
+                Settings.teamSize,
+                Settings.roundTime,
+                Settings.activateTeams,
+                Settings.activateKits,
+                Settings.activateShop,
+                Settings.activateAirdrops
+            );
+
+            Lobby lobby = new Lobby(lobbyId, lobbyConfig);
+            lobby.load();
+            lobbies.add(lobby);
+        }
+
+        if (lobbies.isEmpty()) {
+            Bukkit.getConsoleSender().sendMessage("PotionGames: No lobbies configured.");
+        }
+    }
+
+    public void registerPlayer(Player player, Lobby lobby) {
+        if (player == null || lobby == null) {
+            return;
+        }
+
+        unregisterPlayer(player);
+        lobby.addActivePlayer(player);
+    }
+
+    public void unregisterPlayer(Player player) {
+        if (player == null) {
+            return;
+        }
+
+        Lobby currentLobby = getLobbyByPlayer(player);
+        if (currentLobby != null) {
+            currentLobby.removeActivePlayer(player);
+            currentLobby.removeSpectatorPlayer(player);
+        }
+    }
+
+    public void startGame(Lobby lobby) {
+        if (lobby == null) {
+            return;
+        }
+
+        if (lobby.getCurrentArena() == null) {
+            lobby.selectArena(lobby.getRandomArena());
+        }
+        lobby.startCountdown();
+    }
+
+    public void endGame(Lobby lobby) {
+        if (lobby == null) {
+            return;
+        }
+
+        lobby.endRound();
+    }
+
+    public void processDeath(Player deadPlayer, Player killer) {
+        Lobby lobby = getLobbyByPlayer(deadPlayer);
+        if (lobby == null) {
+            return;
+        }
+
+        lobby.addDeath(deadPlayer);
+        lobby.removeActivePlayer(deadPlayer);
+        lobby.addSpectatorPlayer(deadPlayer);
+
+        if (killer != null && !killer.equals(deadPlayer)) {
+            addKill(killer);
+        }
+
+        checkWinCondition(lobby);
+    }
+
+    public void addKill(Player player) {
+        Lobby lobby = getLobbyByPlayer(player);
+        if (lobby != null) {
+            lobby.addKill(player);
+        }
+    }
+
+    public Map<String, Integer> getPlayerStats(Player player) {
+        Map<String, Integer> stats = new HashMap<>();
+        Lobby lobby = getLobbyByPlayer(player);
+        if (lobby == null) {
+            stats.put("kills", 0);
+            stats.put("deaths", 0);
+            return stats;
+        }
+        stats.put("kills", lobby.getKills(player));
+        stats.put("deaths", lobby.getDeaths(player));
+        return stats;
+    }
+
+    public boolean checkWinCondition(Lobby lobby) {
+        if (lobby == null) {
+            return false;
+        }
+
+        int alive = lobby.getActivePlayers().size();
+        if (alive <= 1) {
+            announceWinner(lobby);
+            endGame(lobby);
+            return true;
+        }
+
+        if (alive == 2 && Settings.activateDeathmatch && !lobby.isDeathmatch()) {
+            activateDeathmatch(lobby);
+        }
+
+        return false;
+    }
+
+    public void activateDeathmatch(Lobby lobby) {
+        if (lobby == null || lobby.getCurrentArena() == null) {
+            return;
+        }
+        lobby.setDeathmatch(true);
+        for (Player player : new ArrayList<>(lobby.getActivePlayers())) {
+            Location spawn = lobby.getCurrentArena().getRandomDeathmatchSpawn();
+            if (spawn != null) {
+                player.teleport(spawn);
+            }
+        }
+    }
+
+    public void announceWinner(Lobby lobby) {
+        if (lobby == null || lobby.getActivePlayers().isEmpty()) {
+            return;
+        }
+
+        Player winner = lobby.getActivePlayers().get(0);
+        String winnerName = winner == null ? "Unknown" : winner.getName();
+
+        for (Participant participant : lobby.getParticipants()) {
+            participant.sendMessage(Messages.WinnerHasWonTheGame(winnerName));
         }
     }
 
@@ -91,10 +253,8 @@ public class Game {
 
     public Lobby getLobbyByPlayer(Player p) {
         for (Lobby lobby : lobbies) {
-            for (Participant part : lobby.getParticipants()) {
-                if (part.getPlayer().equals(p)) {
-                    return lobby;
-                }
+            if (lobby.containsPlayer(p)) {
+                return lobby;
             }
         }
         return null;
@@ -131,22 +291,31 @@ public class Game {
      * Get list of active game players
      */
     public ArrayList<Player> getActivePlayers() {
-        return activePlayers;
+        ArrayList<Player> players = new ArrayList<>();
+        for (Lobby lobby : lobbies) {
+            players.addAll(lobby.getActivePlayers());
+        }
+        return players;
     }
     
     /**
      * Get list of spectator players
      */
     public ArrayList<Player> getSpectatorPlayers() {
-        return spectatorPlayers;
+        ArrayList<Player> players = new ArrayList<>();
+        for (Lobby lobby : lobbies) {
+            players.addAll(lobby.getSpectatorPlayers());
+        }
+        return players;
     }
     
     /**
      * Add a player to the active players list
      */
     public void addActivePlayer(Player player) {
-        if (!activePlayers.contains(player)) {
-            activePlayers.add(player);
+        Lobby lobby = getLobbyByPlayer(player);
+        if (lobby != null) {
+            lobby.addActivePlayer(player);
         }
     }
     
@@ -154,8 +323,9 @@ public class Game {
      * Add a player to the spectator list
      */
     public void addSpectatorPlayer(Player player) {
-        if (!spectatorPlayers.contains(player)) {
-            spectatorPlayers.add(player);
+        Lobby lobby = getLobbyByPlayer(player);
+        if (lobby != null) {
+            lobby.addSpectatorPlayer(player);
         }
     }
     
@@ -163,56 +333,81 @@ public class Game {
      * Remove a player from active players
      */
     public void removeActivePlayer(Player player) {
-        activePlayers.remove(player);
+        Lobby lobby = getLobbyByPlayer(player);
+        if (lobby != null) {
+            lobby.removeActivePlayer(player);
+        }
     }
     
     /**
      * Remove a player from spectators
      */
     public void removeSpectatorPlayer(Player player) {
-        spectatorPlayers.remove(player);
+        Lobby lobby = getLobbyByPlayer(player);
+        if (lobby != null) {
+            lobby.removeSpectatorPlayer(player);
+        }
     }
     
     /**
      * Get count of active players
      */
     public int getActivePlayerCount() {
-        return activePlayers.size();
+        int count = 0;
+        for (Lobby lobby : lobbies) {
+            count += lobby.getActivePlayers().size();
+        }
+        return count;
     }
     
     /**
      * Get count of spectator players
      */
     public int getSpectatorPlayerCount() {
-        return spectatorPlayers.size();
+        int count = 0;
+        for (Lobby lobby : lobbies) {
+            count += lobby.getSpectatorPlayers().size();
+        }
+        return count;
     }
     
     /**
      * Check if player is active
      */
     public boolean isActivePlayer(Player player) {
-        return activePlayers.contains(player);
+        for (Lobby lobby : lobbies) {
+            if (lobby.isActivePlayer(player)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
      * Check if player is spectator
      */
     public boolean isSpectatorPlayer(Player player) {
-        return spectatorPlayers.contains(player);
+        for (Lobby lobby : lobbies) {
+            if (lobby.isSpectatorPlayer(player)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     /**
      * Clear all players (useful for game reset)
      */
     public void clearAllPlayers() {
-        activePlayers.clear();
-        spectatorPlayers.clear();
+        for (Lobby lobby : lobbies) {
+            lobby.getActivePlayers().clear();
+            lobby.getSpectatorPlayers().clear();
+        }
+        setupPlayers.clear();
         playerTeams.clear();
         playerKits.clear();
         playerVotes.clear();
         playerChannels.clear();
-        playerLobbies.clear();
-        specLobbies.clear();
     }
     
     // ===== Team Management =====
@@ -341,28 +536,43 @@ public class Game {
      * Set player's lobby (multi-lobby mode)
      */
     public void setPlayerLobby(Player player, String lobbyId) {
-        playerLobbies.put(player, lobbyId);
+        for (Lobby lobby : lobbies) {
+            lobby.removeActivePlayer(player);
+            lobby.removeSpectatorPlayer(player);
+        }
+        Lobby lobby = getLobby(Integer.parseInt(lobbyId));
+        if (lobby != null) {
+            lobby.addActivePlayer(player);
+        }
     }
     
     /**
      * Get player's lobby (multi-lobby mode)
      */
     public String getPlayerLobby(Player player) {
-        return playerLobbies.get(player);
+        for (Lobby lobby : lobbies) {
+            if (lobby.isActivePlayer(player) || lobby.isSpectatorPlayer(player)) {
+                return Integer.toString(lobby.getId());
+            }
+        }
+        return null;
     }
     
     /**
      * Remove player from lobby
      */
     public void removePlayerLobby(Player player) {
-        playerLobbies.remove(player);
+        for (Lobby lobby : lobbies) {
+            lobby.removeActivePlayer(player);
+            lobby.removeSpectatorPlayer(player);
+        }
     }
     
     /**
      * Check if player is in a lobby
      */
     public boolean isInLobby(Player player) {
-        return playerLobbies.containsKey(player);
+        return getPlayerLobby(player) != null;
     }
     
     /**
@@ -370,10 +580,9 @@ public class Game {
      */
     public ArrayList<Player> getPlayersInLobby(String lobbyId) {
         ArrayList<Player> lobbyPlayers = new ArrayList<>();
-        for (Player p : playerLobbies.keySet()) {
-            if (playerLobbies.get(p).equals(lobbyId)) {
-                lobbyPlayers.add(p);
-            }
+        Lobby lobby = getLobby(Integer.parseInt(lobbyId));
+        if (lobby != null) {
+            lobbyPlayers.addAll(lobby.getActivePlayers());
         }
         return lobbyPlayers;
     }
@@ -384,35 +593,49 @@ public class Game {
      * Set spectator's lobby (multi-lobby mode)
      */
     public void setSpectatorLobby(Player player, String lobbyId) {
-        specLobbies.put(player, lobbyId);
+        for (Lobby lobby : lobbies) {
+            lobby.removeActivePlayer(player);
+            lobby.removeSpectatorPlayer(player);
+        }
+        Lobby lobby = getLobby(Integer.parseInt(lobbyId));
+        if (lobby != null) {
+            lobby.addSpectatorPlayer(player);
+        }
     }
     
     /**
      * Get spectator's lobby (multi-lobby mode)
      */
     public String getSpectatorLobby(Player player) {
-        return specLobbies.get(player);
+        for (Lobby lobby : lobbies) {
+            if (lobby.isSpectatorPlayer(player)) {
+                return Integer.toString(lobby.getId());
+            }
+        }
+        return null;
     }
     
     /**
      * Remove spectator from lobby
      */
     public void removeSpectatorLobby(Player player) {
-        specLobbies.remove(player);
+        for (Lobby lobby : lobbies) {
+            lobby.removeSpectatorPlayer(player);
+        }
     }
     
     /**
      * Check if player is spectating in a lobby
      */
     public boolean isSpectatingInLobby(Player player) {
-        return specLobbies.containsKey(player);
+        return getSpectatorLobby(player) != null;
     }
     
     /**
      * Check if player is in spec lobby (alias for isSpectatingInLobby)
      */
     public boolean isInSpecLobby(Player player) {
-        return specLobbies.containsKey(player);
+        return isSpectatingInLobby(player);
     }
     
     /**
@@ -420,10 +643,9 @@ public class Game {
      */
     public ArrayList<Player> getSpectatorsInLobby(String lobbyId) {
         ArrayList<Player> lobbySpecs = new ArrayList<>();
-        for (Player p : specLobbies.keySet()) {
-            if (specLobbies.get(p).equals(lobbyId)) {
-                lobbySpecs.add(p);
-            }
+        Lobby lobby = getLobby(Integer.parseInt(lobbyId));
+        if (lobby != null) {
+            lobbySpecs.addAll(lobby.getSpectatorPlayers());
         }
         return lobbySpecs;
     }
@@ -755,9 +977,7 @@ public class Game {
     }
     
     // ===== PHASE 7.1: Team/Kit/Vote Accessors =====
-    
-    /**
-    
+
     // ===== PHASE 7.1: Chest Accessors =====
     
     /**

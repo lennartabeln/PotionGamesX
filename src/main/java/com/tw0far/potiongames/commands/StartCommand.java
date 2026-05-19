@@ -31,43 +31,25 @@ public class StartCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (plugin.isLobbySystem()) {
-            // Multi-lobby mode
-            String lobbyId = plugin.game.getPlayerLobby(player);
-            if (lobbyId == null) {
-                lobbyId = plugin.game.getSpectatorLobby(player);
-            }
-            
-            if (lobbyId != null) {
-                if (plugin.getLobbyAmount(lobbyId) >= plugin.getLobbyMinPlayers(lobbyId)) {
-                    if (plugin.getLobbyCountdown(lobbyId) >= 10) {
-                        plugin.setLobbyCountdown(lobbyId, 10);
-                        // Broadcast to all players in this lobby
-                        for (Player all : plugin.game.getPlayersInLobby(lobbyId)) {
-                            all.sendMessage(Messages.GameStarted());
-                        }
-                    } else {
-                        player.sendMessage(Messages.GameAlreadyStarted());
+        // Multi-lobby mode
+        String lobbyId = plugin.game.getPlayerLobby(player);
+        if (lobbyId == null) {
+            lobbyId = plugin.game.getSpectatorLobby(player);
+        }
+        
+        if (lobbyId != null) {
+            if (plugin.getLobbyAmount(lobbyId) >= plugin.getLobbyMinPlayers(lobbyId)) {
+                if (plugin.getLobbyCountdown(lobbyId) >= 10) {
+                    plugin.setLobbyCountdown(lobbyId, 10);
+                    // Broadcast to all players in this lobby
+                    for (Player all : plugin.game.getPlayersInLobby(lobbyId)) {
+                        all.sendMessage(Messages.GameStarted());
                     }
                 } else {
-                    player.sendMessage(Messages.GameNotEnoughPlayers());
+                    player.sendMessage(Messages.GameAlreadyStarted());
                 }
-            }
-        } else {
-            // Single-lobby mode
-            if (plugin.game.isActivePlayer(player) || plugin.game.isSpectatorPlayer(player)) {
-                if (plugin.game.getActivePlayers().size() >= plugin.getMinPlayers()) {
-                    if (plugin.getCountdown() >= 10) {
-                        plugin.setCountdown(10);
-                        for (Player all : plugin.game.getActivePlayers()) {
-                            all.sendMessage(Messages.GameStarted());
-                        }
-                    } else {
-                        player.sendMessage(Messages.GameAlreadyStarted());
-                    }
-                } else {
-                    player.sendMessage(Messages.GameNotEnoughPlayers());
-                }
+            } else {
+                player.sendMessage(Messages.GameNotEnoughPlayers());
             }
         }
         return true;

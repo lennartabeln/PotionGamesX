@@ -38,7 +38,7 @@ public class CombatEventListener implements Listener {
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         if (plugin.isGameServer()) {
-            if (plugin.worlds.contains(e.getDamager().getWorld().getName())) {
+            if (plugin.getWorlds().contains(e.getDamager().getWorld().getName())) {
                 e.setCancelled(e.getDamager() instanceof LightningStrike || e.getDamager() instanceof Firework);
                 if (e.getEntity() instanceof Player p && e.getDamager() instanceof TNTPrimed) {
                     if (p.getHealth() - 4 <= 0) {
@@ -71,12 +71,7 @@ public class CombatEventListener implements Listener {
     public void onDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
         if (plugin.isGameServer()) {
-            // Get lobby ID using Game class
             String s = plugin.game.getPlayerLobby(p);
-            if (s == null && plugin.game.isActivePlayer(p)) {
-                s = "0"; // Single-lobby mode
-            }
-            
             if (s != null) {
                 if (!plugin.isLobbyBuildAllowed(s)) {
                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
@@ -88,13 +83,13 @@ public class CombatEventListener implements Listener {
                                 EconomyResponse r = PotionGames.getEconomy().depositPlayer(p.getKiller(), plugin.getKillReward());
                                 if (r.transactionSuccess()) {
                                     Component comp = Settings.prefix
-                                        .append(Component.text(plugin.chatmessages.get(91)).color(NamedTextColor.AQUA))
-                                        .append(Component.text(": ")).append(Component.text(plugin.chatmessages.get(94)).color(NamedTextColor.GREEN))
+                                        .append(Component.text(plugin.getChatmessages().get(91)).color(NamedTextColor.AQUA))
+                                        .append(Component.text(": ")).append(Component.text(plugin.getChatmessages().get(94)).color(NamedTextColor.GREEN))
                                         .append(Component.text(" ")).append(Component.text(PotionGames.getEconomy().format(r.amount)).color(NamedTextColor.LIGHT_PURPLE));
                                     p.getKiller().sendMessage(comp);
                                 } else {
                                     Component comp = Settings.prefix
-                                        .append(Component.text(plugin.chatmessages.get(92)).color(NamedTextColor.RED))
+                                        .append(Component.text(plugin.getChatmessages().get(92)).color(NamedTextColor.RED))
                                         .append(Component.text(": ")).append(Component.text(r.errorMessage));
                                     p.getKiller().sendMessage(comp);
                                 }
@@ -124,7 +119,7 @@ public class CombatEventListener implements Listener {
                                     // Invalid team ID
                                 }
                             }
-                            plugin.teamed.remove(p.getName());
+                            plugin.getTeamed().remove(p.getName());
                         }
                         int amountPlayers = plugin.getLobbyAmount(s);
                         int player = 0;
@@ -149,7 +144,7 @@ public class CombatEventListener implements Listener {
                             for (Player all : plugin.game.getPlayersInLobby(s)) {
                                 all.sendMessage(Settings.prefix
                                     .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
-                                    .append(Component.text(" " + plugin.chatmessages.get(9) + " ").color(NamedTextColor.GRAY))
+                                    .append(Component.text(" " + plugin.getChatmessages().get(9) + " ").color(NamedTextColor.GRAY))
                                     .append(Component.text(killer.getName()).color(NamedTextColor.DARK_GREEN))
                                     .append(Component.text(" [").color(NamedTextColor.GRAY))
                                     .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
@@ -160,7 +155,7 @@ public class CombatEventListener implements Listener {
                             for (Player all : plugin.game.getSpectatorsInLobby(s)) {
                                 all.sendMessage(Settings.prefix
                                     .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
-                                    .append(Component.text(" " + plugin.chatmessages.get(9) + " ").color(NamedTextColor.GRAY))
+                                    .append(Component.text(" " + plugin.getChatmessages().get(9) + " ").color(NamedTextColor.GRAY))
                                     .append(Component.text(killer.getName()).color(NamedTextColor.DARK_GREEN))
                                     .append(Component.text(" [").color(NamedTextColor.GRAY))
                                     .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
@@ -173,7 +168,7 @@ public class CombatEventListener implements Listener {
                             for (Player all : plugin.game.getPlayersInLobby(s)) {
                                 all.sendMessage(Settings.prefix
                                     .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
-                                    .append(Component.text(" " + plugin.chatmessages.get(10) + " ").color(NamedTextColor.GRAY))
+                                    .append(Component.text(" " + plugin.getChatmessages().get(10) + " ").color(NamedTextColor.GRAY))
                                     .append(Component.text(" [").color(NamedTextColor.GRAY))
                                     .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
                                     .append(Component.text("/").color(NamedTextColor.GRAY))
@@ -183,7 +178,7 @@ public class CombatEventListener implements Listener {
                             for (Player all : plugin.game.getSpectatorsInLobby(s)) {
                                 all.sendMessage(Settings.prefix
                                     .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
-                                    .append(Component.text(" " + plugin.chatmessages.get(10) + " ").color(NamedTextColor.GRAY))
+                                    .append(Component.text(" " + plugin.getChatmessages().get(10) + " ").color(NamedTextColor.GRAY))
                                     .append(Component.text(" [").color(NamedTextColor.GRAY))
                                     .append(Component.text(String.valueOf(player)).color(NamedTextColor.AQUA))
                                     .append(Component.text("/").color(NamedTextColor.GRAY))

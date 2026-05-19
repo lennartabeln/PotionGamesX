@@ -2,7 +2,10 @@ package com.tw0far.potiongames.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,6 +23,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public class Lobby {
     private int id;
     private Location spawn;
+    private final LobbyConfig lobbyConfig;
 
     private boolean enabled = false;
     private boolean activateTeams = true;
@@ -34,6 +38,10 @@ public class Lobby {
     
     private int playerCount = 0;
     private ArrayList<Participant> participants = new ArrayList<>();
+    private ArrayList<Player> activePlayers = new ArrayList<>();
+    private ArrayList<Player> spectatorPlayers = new ArrayList<>();
+    private HashMap<Player, Integer> playerKills = new HashMap<>();
+    private HashMap<Player, Integer> playerDeaths = new HashMap<>();
     private ArrayList<Arena> arenas = new ArrayList<>();
     private Arena currentArena = null;
     private GameStates state = GameStates.WAITING;
@@ -89,6 +97,30 @@ public class Lobby {
 
     public Lobby(int id) {
         this.id = id;
+        this.lobbyConfig = null;
+    }
+    
+    /**
+     * Create a Lobby with configuration management via LobbyConfig.
+     * This constructor enables per-lobby setting overrides with global defaults.
+     * 
+     * @param id The lobby ID
+     * @param lobbyConfig The configuration for this lobby (with inheritance from global defaults)
+     */
+    public Lobby(int id, LobbyConfig lobbyConfig) {
+        this.id = id;
+        this.lobbyConfig = lobbyConfig;
+        // Sync legacy fields with lobbyConfig for backward compatibility
+        this.countdown = lobbyConfig.getCountdown();
+        this.maxPlayers = lobbyConfig.getMaxPlayers();
+        this.minPlayers = lobbyConfig.getMinPlayers();
+        this.teamSize = lobbyConfig.getTeamSize();
+        this.roundTime = lobbyConfig.getRoundTime();
+        this.activateTeams = lobbyConfig.isActivateTeams();
+        this.activateKits = lobbyConfig.isActivateKits();
+        this.activateShop = lobbyConfig.isActivateShop();
+        this.activateAirdrops = lobbyConfig.isActivateAirdrops();
+        this.teamAmount = maxPlayers / teamSize;
     }
 
     public Arena getArena(String name) {
@@ -113,22 +145,40 @@ public class Lobby {
     }
 
     public void load() {
+        arenas.clear();
+        
+        // Load configuration from LobbyConfig if available
+        if (lobbyConfig != null) {
+            // Configuration is already loaded in the constructor
+            activateTeams = lobbyConfig.isActivateTeams();
+            activateKits = lobbyConfig.isActivateKits();
+            activateShop = lobbyConfig.isActivateShop();
+            activateAirdrops = lobbyConfig.isActivateAirdrops();
+            roundTime = lobbyConfig.getRoundTime();
+            maxPlayers = lobbyConfig.getMaxPlayers();
+            minPlayers = lobbyConfig.getMinPlayers();
+            teamSize = lobbyConfig.getTeamSize();
+            countdown = lobbyConfig.getCountdown();
+        } else {
+            // Legacy loading from arena-data.yml (for backward compatibility)
+            activateTeams = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateTeams");
+            activateKits = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateKits");
+            activateShop = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateShop");
+            activateAirdrops = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateAirdrops");
+            roundTime = Settings.arenadata.getInt("pg.lobbies." + id + ".roundTime");
+            maxPlayers = Settings.arenadata.getInt("pg.lobbies." + id + ".maxPlayers");
+            minPlayers = Settings.arenadata.getInt("pg.lobbies." + id + ".minPlayers");
+            teamSize = Settings.arenadata.getInt("pg.lobbies." + id + ".teamSize");
+        }
+        
         enabled = Settings.arenadata.getBoolean("pg.lobbies." + id + ".enabled");
         spawn = Settings.arenadata.getLocation("pg.lobbies." + id + ".spawn");
-        activateTeams = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateTeams");
-        activateKits = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateKits");
-        activateShop = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateShop");
-        activateAirdrops = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateAirdrops");
-        roundTime = Settings.arenadata.getInt("pg.lobbies." + id + ".roundTime");
-        maxPlayers = Settings.arenadata.getInt("pg.lobbies." + id + ".maxPlayers");
-        minPlayers = Settings.arenadata.getInt("pg.lobbies." + id + ".minPlayers");
-        teamSize = Settings.arenadata.getInt("pg.lobbies." + id + ".teamSize");
         joinSign = Settings.arenadata.contains("pg.lobbies." + id + ".joinSign") ? (Sign) Settings.arenadata.getLocation("pg.lobbies." + id + ".joinSign").getBlock().getState() : null;
         updateJoinSign();
 
         if (Settings.arenadata.contains("pg.lobbies." + id + ".arenas")) {
             for (String key : Settings.arenadata.getConfigurationSection("pg.lobbies." + id + ".arenas").getKeys(false)) {
-                Arena arena = new Arena(key, id);
+                Arena arena = new Arena(key, id, lobbyConfig);
                 arena.load();
                 arenas.add(arena);
             }
@@ -225,14 +275,102 @@ public class Lobby {
             part.teleportToOriginalLocation();
         }
         participants.clear();
+        activePlayers.clear();
+        spectatorPlayers.clear();
+        playerKills.clear();
+        playerDeaths.clear();
         setPlayerCount(0);
     }
 
+    public boolean containsPlayer(Player player) {
+        return isActivePlayer(player) || isSpectatorPlayer(player) || getParticipant(player) != null;
+    }
+
+    public ArrayList<Player> getActivePlayers() {
+        return activePlayers;
+    }
+
+    public ArrayList<Player> getSpectatorPlayers() {
+        return spectatorPlayers;
+    }
+
+    public void addActivePlayer(Player player) {
+        if (player == null) {
+            return;
+        }
+        spectatorPlayers.remove(player);
+        if (!activePlayers.contains(player)) {
+            activePlayers.add(player);
+        }
+        if (getParticipant(player) == null) {
+            addParticipant(player);
+        }
+    }
+
+    public void removeActivePlayer(Player player) {
+        if (player == null) {
+            return;
+        }
+        activePlayers.remove(player);
+        removeParticipant(player);
+    }
+
+    public void addSpectatorPlayer(Player player) {
+        if (player == null) {
+            return;
+        }
+        activePlayers.remove(player);
+        if (!spectatorPlayers.contains(player)) {
+            spectatorPlayers.add(player);
+        }
+        removeParticipant(player);
+    }
+
+    public void removeSpectatorPlayer(Player player) {
+        if (player == null) {
+            return;
+        }
+        spectatorPlayers.remove(player);
+    }
+
+    public boolean isActivePlayer(Player player) {
+        return player != null && activePlayers.contains(player);
+    }
+
+    public boolean isSpectatorPlayer(Player player) {
+        return player != null && spectatorPlayers.contains(player);
+    }
+
+    public void addKill(Player player) {
+        if (player != null) {
+            playerKills.put(player, playerKills.getOrDefault(player, 0) + 1);
+        }
+    }
+
+    public void addDeath(Player player) {
+        if (player != null) {
+            playerDeaths.put(player, playerDeaths.getOrDefault(player, 0) + 1);
+        }
+    }
+
+    public int getKills(Player player) {
+        return player == null ? 0 : playerKills.getOrDefault(player, 0);
+    }
+
+    public int getDeaths(Player player) {
+        return player == null ? 0 : playerDeaths.getOrDefault(player, 0);
+    }
+
     public void join(Player p) {
+        if (!activePlayers.contains(p)) {
+            activePlayers.add(p);
+        }
         addParticipant(p);
     }
 
     public void leave(Player p) {
+        activePlayers.remove(p);
+        spectatorPlayers.remove(p);
         removeParticipant(p);
     }
 
@@ -294,80 +432,240 @@ public class Lobby {
 
     public void startTick() {
         tickTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(PotionGames.getInstance(), () -> {
-            switch(state) {
-                case WAITING:
-                    for (Participant participant : participants) {
-                        participant.sendActionBar(Messages.GameWaiting(playerCount, minPlayers));
-                    }
-                    if (playerCount >= minPlayers) {
-                        setState(GameStates.PREPARING);
-                        prepareTimer = 10; // for testing
-                    }
-                    break;
-                case PREPARING:
-                    for (Participant participant : participants) {
-                        participant.sendActionBar(Messages.GameStartsIn(prepareTimer));
-                    }
-                    if (prepareTimer <= 0) {
-                        setState(GameStates.INGAME);
-                        gameTimer = roundTime * 1; // for testing
-                        currentArena.teleport(participants);
-                    } else if (prepareTimer == 10) {
+            runGameTick();
+        }, 0L, 20L);
+    }
+
+    public void startCountdown() {
+        if (state == GameStates.WAITING) {
+            prepareTimer = Math.max(1, countdown);
+            setState(GameStates.PREPARING);
+            if (tickTaskId == -1) {
+                startTick();
+            }
+        }
+    }
+
+    public void cancelCountdown() {
+        if (state == GameStates.PREPARING) {
+            prepareTimer = Math.max(1, countdown);
+            setState(GameStates.WAITING);
+        }
+    }
+
+    public void pauseGame() {
+        pause = true;
+    }
+
+    public void resumeGame() {
+        pause = false;
+    }
+
+    public void selectArena(Arena arena) {
+        if (arena != null && arenas.contains(arena)) {
+            setCurrentArena(arena);
+            lobbyVotedArena = arena.getName();
+        }
+    }
+
+    public void recordVote(Player player, String arenaName) {
+        if (player == null || arenaName == null || arenaName.isBlank()) {
+            return;
+        }
+
+        String oldVote = lobbyvoteplayernames.get(player);
+        if (oldVote != null) {
+            int oldVotes = lobbyvotes.getOrDefault(oldVote, 0);
+            if (oldVotes > 0) {
+                lobbyvotes.put(oldVote, oldVotes - 1);
+            }
+        }
+
+        lobbyvoteplayernames.put(player, arenaName);
+        lobbyVoted.put(player, "true");
+        lobbyvotes.put(arenaName, lobbyvotes.getOrDefault(arenaName, 0) + 1);
+
+        Participant participant = getParticipant(player);
+        Arena arena = getArena(arenaName);
+        if (arena != null) {
+            arena.recordVote(player);
+            if (participant != null) {
+                participant.setVotedArena(arena);
+            }
+        } else if (participant != null) {
+            participant.setVotedArena(null);
+        }
+    }
+
+    public void recordTeamAssignment(Player player, String teamName) {
+        if (player == null || teamName == null || teamName.isBlank()) {
+            return;
+        }
+
+        String previousTeam = lobbyteamplayernames.get(player);
+        if (previousTeam != null) {
+            try {
+                decrementTeamCount(Integer.parseInt(previousTeam));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        lobbyteamplayernames.put(player, teamName);
+        lobbyTeamed.put(player, "true");
+
+        try {
+            incrementTeamCount(Integer.parseInt(teamName));
+        } catch (NumberFormatException ignored) {
+        }
+    }
+
+    public void activateTeam(Player player, String teamName) {
+        recordTeamAssignment(player, teamName);
+    }
+
+    public List<Player> getTeamMembers(String teamName) {
+        if (teamName == null) {
+            return Collections.emptyList();
+        }
+        List<Player> members = new ArrayList<>();
+        for (Map.Entry<Player, String> entry : lobbyteamplayernames.entrySet()) {
+            if (teamName.equals(entry.getValue())) {
+                members.add(entry.getKey());
+            }
+        }
+        return members;
+    }
+
+    public void distributeTeams() {
+        if (!activateTeams || activePlayers.isEmpty()) {
+            return;
+        }
+
+        clearTeams();
+        int computedTeamSize = Math.max(1, teamSize);
+        int computedTeamAmount = Math.max(1, (int) Math.ceil((double) activePlayers.size() / computedTeamSize));
+        lobbyteamSize = computedTeamSize;
+        lobbyteamAmount = computedTeamAmount;
+
+        for (int i = 1; i <= lobbyteamAmount; i++) {
+            lobbyteams.put(i, 0);
+        }
+
+        int teamId = 1;
+        for (Player player : new ArrayList<>(activePlayers)) {
+            while (lobbyteams.getOrDefault(teamId, 0) >= lobbyteamSize) {
+                teamId++;
+                if (teamId > lobbyteamAmount) {
+                    teamId = 1;
+                }
+            }
+            recordTeamAssignment(player, Integer.toString(teamId));
+            teamId++;
+            if (teamId > lobbyteamAmount) {
+                teamId = 1;
+            }
+        }
+    }
+
+    public void endRound() {
+        setState(GameStates.ENDING);
+        endingTimer = Math.max(1, reset);
+    }
+
+    public void runGameTick() {
+        if (pause) {
+            return;
+        }
+
+        switch (state) {
+            case WAITING:
+                for (Participant participant : participants) {
+                    participant.sendActionBar(Messages.GameWaiting(playerCount, minPlayers));
+                }
+                if (playerCount >= minPlayers) {
+                    prepareTimer = Math.max(1, countdown);
+                    setState(GameStates.PREPARING);
+                }
+                break;
+            case PREPARING:
+                for (Participant participant : participants) {
+                    participant.sendActionBar(Messages.GameStartsIn(prepareTimer));
+                }
+                if (prepareTimer <= 0) {
+                    if (currentArena == null) {
                         setCurrentArena(getVotedArena());
+                    }
+                    if (currentArena != null) {
+                        currentArena.teleport(participants);
+                    }
+                    gameTimer = Math.max(1, roundTime);
+                    setState(GameStates.INGAME);
+                } else if (prepareTimer == countdown) {
+                    if (currentArena == null) {
+                        setCurrentArena(getVotedArena());
+                    }
+                    if (currentArena != null) {
                         for (Participant participant : participants) {
                             participant.sendMessage(Messages.WillBePlayed(currentArena.getName()));
                         }
                     }
-                    if (playerCount < minPlayers) {
-                        setState(GameStates.WAITING);
-                    }
-                    prepareTimer--;
+                }
+                if (playerCount < minPlayers) {
+                    cancelCountdown();
                     break;
-                case INGAME:
-                    if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
-                        for (Participant participant : participants) {
-                            if (gameTimer <= 0) {
-                                // participant.sendMessage(Messages.RoundEnded());
-                            } else if (gameTimer <= 60) {
-                                participant.sendMessage(Messages.RoundSecondsRemaining(gameTimer));
-                            } else {
-                                participant.sendMessage(Messages.RoundMinutesRemaining(gameTimer / 60));
-                            }
-                        }
-                    } else if (gameTimer < 0) {
-                        setState(GameStates.ENDING);
-                        endingTimer = 10;
-                    }
-                    gameTimer--;
-                    break;
-                case ENDING:
+                }
+                prepareTimer--;
+                break;
+            case INGAME:
+                if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
                     for (Participant participant : participants) {
-                        participant.sendActionBar(Messages.TeleportToLobbyIn(endingTimer));
-                    }
-                    if (endingTimer <= 0) {
-                        setState(GameStates.RESET);
-                        for (Participant participant : participants) {
-                            participant.teleportToLobby();
+                        if (gameTimer <= 60) {
+                            participant.sendMessage(Messages.RoundSecondsRemaining(gameTimer));
+                        } else {
+                            participant.sendMessage(Messages.RoundMinutesRemaining(gameTimer / 60));
                         }
                     }
-                    endingTimer--;
-                    break;
-                case RESET:
-                    // Handle reset state logic here
-                    setCurrentArena(null);
-                    setState(GameStates.WAITING);
-                    if (playerCount == 0) {
-                        Bukkit.getScheduler().cancelTask(tickTaskId);
-                        tickTaskId = -1;
+                } else if (gameTimer < 0) {
+                    setState(GameStates.ENDING);
+                    endingTimer = Math.max(1, reset);
+                }
+                gameTimer--;
+                break;
+            case ENDING:
+                for (Participant participant : participants) {
+                    participant.sendActionBar(Messages.TeleportToLobbyIn(endingTimer));
+                }
+                if (endingTimer <= 0) {
+                    setState(GameStates.RESET);
+                    for (Participant participant : participants) {
+                        participant.teleportToLobby();
                     }
-                    break;
-                default:
-                    break;
-            }
-            if (playerCount == 0 && state != GameStates.WAITING) {
-                setState(GameStates.RESET);
-            }
-        }, 0L, 20L);
+                }
+                endingTimer--;
+                break;
+            case RESET:
+                setCurrentArena(null);
+                clearVoting();
+                clearArenaVotes();
+                setState(GameStates.WAITING);
+                if (playerCount == 0 && tickTaskId != -1) {
+                    Bukkit.getScheduler().cancelTask(tickTaskId);
+                    tickTaskId = -1;
+                }
+                break;
+            default:
+                break;
+        }
+
+        if (playerCount == 0 && state != GameStates.WAITING) {
+            setState(GameStates.RESET);
+        }
+    }
+
+    public void addPlacedBlock(Location location, Object material) {
+        if (location != null && material != null) {
+            placedBlocks.put(location, material);
+        }
     }
 
     public int getId() {
@@ -433,6 +731,7 @@ public class Lobby {
      */
     public void setCountdown(int countdown) {
         this.countdown = countdown;
+        this.prepareTimer = countdown;
     }
     
     /**
@@ -447,6 +746,31 @@ public class Lobby {
      */
     public void setReset(int reset) {
         this.reset = reset;
+        this.endingTimer = reset;
+    }
+
+    public int getPrepareTimer() {
+        return prepareTimer;
+    }
+
+    public void setPrepareTimer(int prepareTimer) {
+        this.prepareTimer = prepareTimer;
+    }
+
+    public int getGameTimer() {
+        return gameTimer;
+    }
+
+    public void setGameTimer(int gameTimer) {
+        this.gameTimer = gameTimer;
+    }
+
+    public int getEndingTimer() {
+        return endingTimer;
+    }
+
+    public void setEndingTimer(int endingTimer) {
+        this.endingTimer = endingTimer;
     }
     
     /**
@@ -725,6 +1049,7 @@ public class Lobby {
      * Set team size
      */
     public void setTeamSize(int size) {
+        this.teamSize = size;
         this.lobbyteamSize = size;
     }
     
@@ -739,6 +1064,7 @@ public class Lobby {
      * Set team amount
      */
     public void setTeamAmount(int amount) {
+        this.teamAmount = amount;
         this.lobbyteamAmount = amount;
     }
     
@@ -794,6 +1120,58 @@ public class Lobby {
             } else {
                 lobbyteams.put(teamId, count);
             }
+        }
+    }
+    
+    // ===== PHASE 8.6: Arena Accessors =====
+    
+    /**
+     * Get all arenas in this lobby.
+     * 
+     * @return A list of all arenas (may be empty)
+     */
+    public ArrayList<Arena> getArenas() {
+        return new ArrayList<>(arenas);
+    }
+    
+    /**
+     * Get a random arena from available arenas.
+     * 
+     * @return A random arena, or null if no arenas exist
+     */
+    public Arena getRandomArena() {
+        if (arenas.isEmpty()) {
+            return null;
+        }
+        return arenas.get((int)(Math.random() * arenas.size()));
+    }
+    
+    /**
+     * Get the number of arenas in this lobby.
+     * 
+     * @return The arena count
+     */
+    public int getArenaCount() {
+        return arenas.size();
+    }
+    
+    /**
+     * Check if an arena exists by name.
+     * 
+     * @param name The arena name
+     * @return true if the arena exists
+     */
+    public boolean hasArena(String name) {
+        return getArena(name) != null;
+    }
+    
+    /**
+     * Clear all votes for all arenas.
+     * Call this at the start of a voting phase.
+     */
+    public void clearArenaVotes() {
+        for (Arena arena : arenas) {
+            arena.resetVotes();
         }
     }
 }

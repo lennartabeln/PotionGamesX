@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.entity.Player;
 
 /**
@@ -31,38 +32,30 @@ public class DelSpawnCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (plugin.isLobbySystem()) {
-            // Multi-lobby system: /pg delspawn <lobbynumber> <arenaname>
-            if (args.length < 3) {
-                player.sendMessage("§cUsage: /pg delspawn <lobbynumber> <arenaname>");
-                return false;
-            }
-            
-            String lobbyId = args[1];
+        // Multi-lobby system: /pg delspawn <lobbynumber> <arenaname>
+        if (args.length < 3) {
+            player.sendMessage("§cUsage: /pg delspawn <lobbynumber> <arenaname>");
+            return false;
+        }
+        
+        try {
+            int lobbyId = Integer.parseInt(args[1]);
             String arenaName = args[2];
-            // Delete spawn logic would go here
-            player.sendMessage("§aSpawn deleted from arena §b" + arenaName + "§a (Lobby: §b" + lobbyId + "§a).");
-            return true;
-        } else {
-            // Single-lobby system: /pg delspawn <arenaname>
-            if (args.length < 2) {
-                player.sendMessage("§cUsage: /pg delspawn <arenaname>");
+            Lobby lobby = plugin.getLobbyById(lobbyId);
+            if (lobby == null) {
+                player.sendMessage("§cThis lobby does not exists!");
                 return false;
             }
-            
-            String arenaName = args[1];
-            // Delete spawn logic would go here
-            player.sendMessage("§aSpawn deleted from arena §b" + arenaName + "§a.");
+            plugin.setupHandler.removeSpawn(player, arenaName, lobbyId);
             return true;
+        } catch (NumberFormatException ex) {
+            player.sendMessage("§cUsage: /pg delspawn <lobbynumber> <arenaname>");
+            return false;
         }
     }
     
     @Override
     public String getUsage() {
-        if (plugin.isLobbySystem()) {
-            return "/pg delspawn <lobbynumber> <arenaname>";
-        } else {
-            return "/pg delspawn <arenaname>";
-        }
+        return "/pg delspawn <lobbynumber> <arenaname>";
     }
 }

@@ -114,28 +114,19 @@
 **Conditional removals**:
 
 ```java
-// REMOVE ALL:
-if (!lobbySystem) { /* single-game specific */ }
-else { /* multi-lobby specific */ }
-
-// KEEP:
-if (lobbySystem) { /* multi-lobby logic */ }
-
-// REMOVE:
-- startOnJoin mode (single-game feature)
-- Single-game global channel (use lobbies only)
-- Single-game state management
+// Use lobby-based flow only:
+// - route through lobby IDs
+// - keep lobby-owned state
+// - remove legacy global state
 ```
 
 **Methods/fields to remove**:
 
 ```
 REMOVE:
-- private boolean startOnJoin;
-- private boolean lobbySystem (default true, remove conditional)
-- Single-game specific logic in onJoin(), onLeave()
-- Single-game lobby management code
-- All "if (!lobbySystem)" branches
+- single-game specific logic in onJoin(), onLeave()
+- legacy global lobby management code
+- all mode-based branches
 
 KEEP:
 - Multi-lobby system (all logic)

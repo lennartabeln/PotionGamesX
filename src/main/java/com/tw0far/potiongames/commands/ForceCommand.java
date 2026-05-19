@@ -40,59 +40,33 @@ public class ForceCommand implements ICommand {
         
         String arena = args[0];
         
-        if (plugin.isLobbySystem()) {
-            // Multi-lobby mode
-            String lobbyId = plugin.game.getPlayerLobby(player);
-            if (lobbyId == null) {
-                lobbyId = plugin.game.getSpectatorLobby(player);
-            }
-            
-            if (lobbyId != null) {
-                try {
-                    plugin.setLobbyForcearena(lobbyId, true);
-                    int i = 1;
-                    boolean votetedarena = false;
-                    while (!votetedarena) {
-                        if (arena.matches(Objects.requireNonNull(Settings.arenadata.getString("pg.arenas." + i + ".name")))) {
-                            String arenaNumber = Integer.toString(i);
-                            plugin.setLobbyVotedArena(lobbyId, arena);
-                            plugin.setLobbyCurrentVote(lobbyId, arenaNumber);
-                            votetedarena = true;
-                        } else {
-                            i++;
-                        }
+        // Multi-lobby mode
+        String lobbyId = plugin.game.getPlayerLobby(player);
+        if (lobbyId == null) {
+            lobbyId = plugin.game.getSpectatorLobby(player);
+        }
+        
+        if (lobbyId != null) {
+            try {
+                plugin.setLobbyForcearena(lobbyId, true);
+                int i = 1;
+                boolean votetedarena = false;
+                while (!votetedarena) {
+                    if (arena.matches(Objects.requireNonNull(Settings.arenadata.getString("pg.arenas." + i + ".name")))) {
+                        String arenaNumber = Integer.toString(i);
+                        plugin.setLobbyVotedArena(lobbyId, arena);
+                        plugin.setLobbyCurrentVote(lobbyId, arenaNumber);
+                        votetedarena = true;
+                    } else {
+                        i++;
                     }
-                    // Broadcast to all players in this lobby
-                    for (Player all : plugin.game.getPlayersInLobby(lobbyId)) {
-                        all.sendMessage(Messages.ArenaForced(arena));
-                    }
-                } catch (Exception ex) {
-                    player.sendMessage(Messages.ArenaNotArena(arena));
                 }
-            }
-        } else {
-            // Single-lobby mode
-            if (plugin.game.isActivePlayer(player) || plugin.game.isSpectatorPlayer(player)) {
-                try {
-                    plugin.setForcearena(true);
-                    int i = 1;
-                    boolean votetedarena = false;
-                    while (!votetedarena) {
-                        if (arena.matches(Objects.requireNonNull(Settings.arenadata.getString("pg.arenas." + i + ".name")))) {
-                            String arenaNumber = Integer.toString(i);
-                            plugin.setVotedArena(arena);
-                            plugin.setVote(arenaNumber);
-                            votetedarena = true;
-                        } else {
-                            i++;
-                        }
-                    }
-                    for (Player all : plugin.game.getActivePlayers()) {
-                        all.sendMessage(Messages.ArenaForced(arena));
-                    }
-                } catch (Exception ex) {
-                    player.sendMessage(Messages.ArenaNotArena(arena));
+                // Broadcast to all players in this lobby
+                for (Player all : plugin.game.getPlayersInLobby(lobbyId)) {
+                    all.sendMessage(Messages.ArenaForced(arena));
                 }
+            } catch (Exception ex) {
+                player.sendMessage(Messages.ArenaNotArena(arena));
             }
         }
         return true;

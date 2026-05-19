@@ -68,7 +68,6 @@ public interface IConfigurationManager extends IManager {
     boolean isStartOnJoin();
     boolean isTickStarted();
     boolean isMySQL();
-    boolean isLobbySystem();
     boolean isGameServer();
     boolean isAddlobby();
     boolean isAddarena();
@@ -98,7 +97,6 @@ public interface IConfigurationManager extends IManager {
     void setStartOnJoin(boolean startOnJoin);
     void setTickStarted(boolean tickStarted);
     void setMySQL(boolean mysql);
-    void setLobbySystem(boolean lobbySystem);
     void setGameServer(boolean gameServer);
     void setAddlobby(boolean addlobby);
     void setAddarena(boolean addarena);

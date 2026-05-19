@@ -67,7 +67,7 @@ public class DamageEventListener implements Listener {
         }
         
         // Check friendly fire (same team)
-        if (plugin.isLobbySystem() && plugin.isActivateTeams()) {
+        if (plugin.isActivateTeams()) {
             String victimLobby = plugin.game.getPlayerLobby(victim);
             String attackerLobby = plugin.game.getPlayerLobby(attacker);
             
@@ -78,22 +78,11 @@ public class DamageEventListener implements Listener {
             }
             
             // Check if same team
-            if (plugin.isActivateTeams()) {
-                String victimTeam = plugin.game.getPlayerTeam(victim);
-                String attackerTeam = plugin.game.getPlayerTeam(attacker);
-                
-                if (victimTeam != null && victimTeam.equals(attackerTeam)) {
-                    // Friendly fire - by default allow it, could add config option
-                    e.setCancelled(false);
-                    return;
-                }
-            }
-        } else if (!plugin.isLobbySystem() && plugin.isActivateTeams()) {
-            // Single-lobby teams
             String victimTeam = plugin.game.getPlayerTeam(victim);
             String attackerTeam = plugin.game.getPlayerTeam(attacker);
             
             if (victimTeam != null && victimTeam.equals(attackerTeam)) {
+                // Friendly fire - by default allow it, could add config option
                 e.setCancelled(false);
                 return;
             }

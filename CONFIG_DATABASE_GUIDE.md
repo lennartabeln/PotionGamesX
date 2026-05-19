@@ -337,7 +337,6 @@ pg:
   activateScoreboard: true
   
   # System
-  lobbySystem: false
   language: "en_US"
   
   # Per-Lobby Overrides

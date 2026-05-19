@@ -28,60 +28,35 @@ public class ChatEventListener implements Listener {
             return;
         }
         
-        if (plugin.isLobbySystem()) {
-            // Multi-lobby mode: get lobby ID and filter chat per lobby
-            String lobbyId = null;
-            if (isActive) {
-                lobbyId = plugin.game.getPlayerLobby(p);
-            } else if (isSpectator) {
-                lobbyId = plugin.game.getSpectatorLobby(p);
-            }
-            
-            if (lobbyId != null) {
-                // Filter recipients: only players in the same lobby
-                e.getRecipients().clear();
-                
-                // Add active players in same lobby
-                for (Player active : plugin.game.getPlayersInLobby(lobbyId)) {
-                    e.getRecipients().add(active);
-                }
-                
-                // Add spectators in same lobby
-                for (Player spec : plugin.game.getSpectatorsInLobby(lobbyId)) {
-                    e.getRecipients().add(spec);
-                }
-                
-                // Add colored name prefix based on team
-                if (plugin.isLobbyActivateTeams(lobbyId)) {
-                    String teamName = plugin.game.getPlayerTeam(p);
-                    if (teamName != null) {
-                        String prefix = "§e[" + teamName + "] §r";
-                        e.setMessage(prefix + e.getMessage());
-                    }
-                }
-            }
-        } else {
-            // Single-lobby mode: simple active vs spectator filtering
+        // Multi-lobby mode: get lobby ID and filter chat per lobby
+        String lobbyId = null;
+        if (isActive) {
+            lobbyId = plugin.game.getPlayerLobby(p);
+        } else if (isSpectator) {
+            lobbyId = plugin.game.getSpectatorLobby(p);
+        }
+        
+        if (lobbyId != null) {
+            // Filter recipients: only players in the same lobby
             e.getRecipients().clear();
             
-            if (isActive) {
-                // Active players talk to active players and spectators
-                e.getRecipients().addAll(plugin.game.getActivePlayers());
-                e.getRecipients().addAll(plugin.game.getSpectatorPlayers());
-                
-                // Add team prefix if enabled
-                if (plugin.isActivateTeams()) {
-                    String teamName = plugin.game.getPlayerTeam(p);
-                    if (teamName != null) {
-                        String prefix = "§e[" + teamName + "] §r";
-                        e.setMessage(prefix + e.getMessage());
-                    }
+            // Add active players in same lobby
+            for (Player active : plugin.game.getPlayersInLobby(lobbyId)) {
+                e.getRecipients().add(active);
+            }
+            
+            // Add spectators in same lobby
+            for (Player spec : plugin.game.getSpectatorsInLobby(lobbyId)) {
+                e.getRecipients().add(spec);
+            }
+            
+            // Add colored name prefix based on team
+            if (plugin.isLobbyActivateTeams(lobbyId)) {
+                String teamName = plugin.game.getPlayerTeam(p);
+                if (teamName != null) {
+                    String prefix = "§e[" + teamName + "] §r";
+                    e.setMessage(prefix + e.getMessage());
                 }
-            } else {
-                // Spectators only talk to spectators
-                e.getRecipients().addAll(plugin.game.getSpectatorPlayers());
-                String prefix = "§8[SPECTATOR] §r";
-                e.setMessage(prefix + e.getMessage());
             }
         }
     }

@@ -30,14 +30,9 @@ public class ListCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (plugin.isLobbySystem()) {
-            // Open GUI with all lobbies
-            player.sendMessage("§aOpening lobbies GUI...");
-            return true;
-        } else {
-            player.sendMessage("§cThis command is only available in multi-lobby mode.");
-            return false;
-        }
+        // Open GUI with all lobbies
+        player.sendMessage("§aOpening lobbies GUI...");
+        return true;
     }
     
     @Override

@@ -85,7 +85,6 @@ com\tw0far\potiongames\database\DatabaseQueryBuilder$CachedQuery.class
 com\tw0far\potiongames\managers\SetupStateManager.class
 com\tw0far\potiongames\models\Game.class
 com\tw0far\potiongames\commands\SignP1Command.class
-com\tw0far\potiongames\main\PotionGames$1.class
 com\tw0far\potiongames\listeners\FoodLevelEventListener.class
 com\tw0far\potiongames\managers\ILobbyStateManager.class
 com\tw0far\potiongames\managers\GameManager.class

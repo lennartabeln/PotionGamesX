@@ -211,9 +211,6 @@ public class JoinCommand implements ICommand {
         
         // Get lobby
         String lobbyId = args[0];
-        if (!pg.lobbySystem) {
-            lobbyId = "1";  // Default lobby
-        }
         pg.playerLobby.put(player, lobbyId);
         
         // Teleport
@@ -237,9 +234,6 @@ public class JoinCommand implements ICommand {
         
         // Get lobby
         String lobbyId = args[0];
-        if (!PotionGames.getInstance().isLobbySystem()) {
-            lobbyId = "1";  // Default lobby
-        }
         Lobby lobby = game.getLobbyById(Integer.parseInt(lobbyId));
         if (lobby == null) {
             player.sendMessage("Lobby not found!");

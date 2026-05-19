@@ -46,7 +46,6 @@ public class ConfigurationManager implements IConfigurationManager {
     private boolean allowOutsideChat = false;
     private boolean changeGamerules = true;
     private boolean gameServer = true;
-    private boolean lobbySystem = false;
     private boolean mysql = false;
     private boolean deathmatch = false;
     private boolean joinable = true;
@@ -126,7 +125,6 @@ public class ConfigurationManager implements IConfigurationManager {
         allowOutsideChat = config.getBoolean("allowOutsideChat", false);
         changeGamerules = config.getBoolean("changeGamerules", true);
         gameServer = config.getBoolean("gameServer", true);
-        lobbySystem = config.getBoolean("lobbySystem", false);
         mysql = config.getBoolean("mysql", false);
         deathmatch = config.getBoolean("deathmatch", false);
         joinable = config.getBoolean("joinable", true);
@@ -331,9 +329,6 @@ public class ConfigurationManager implements IConfigurationManager {
     public boolean isMySQL() { return mysql; }
     
     @Override
-    public boolean isLobbySystem() { return lobbySystem; }
-    
-    @Override
     public boolean isGameServer() { return gameServer; }
     
     @Override
@@ -414,9 +409,6 @@ public class ConfigurationManager implements IConfigurationManager {
     
     @Override
     public void setMySQL(boolean mysql) { this.mysql = mysql; }
-    
-    @Override
-    public void setLobbySystem(boolean lobbySystem) { this.lobbySystem = lobbySystem; }
     
     @Override
     public void setGameServer(boolean gameServer) { this.gameServer = gameServer; }

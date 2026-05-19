@@ -30,11 +30,6 @@ public class DelLobbyCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (!plugin.isLobbySystem()) {
-            player.sendMessage("§cThis command is only available in multi-lobby mode.");
-            return false;
-        }
-        
         if (args.length < 2) {
             player.sendMessage("§cUsage: /pg dellobby <lobbynumber>");
             return false;

@@ -13,6 +13,15 @@ public interface ISetupStateManager extends IManager {
     void removeSetupPlayer(Player player);
     boolean isSetupPlayer(Player player);
     void clearAllSetupPlayers();
+
+    // Selected lobby/arena context for setup flows
+    void setSelectedLobby(Player player, Integer lobbyId);
+    Integer getSelectedLobby(Player player);
+    void removeSelectedLobby(Player player);
+    void setSelectedArena(Player player, String arenaName);
+    String getSelectedArena(Player player);
+    void removeSelectedArena(Player player);
+    void clearSelection(Player player);
     
     // Inventory backup (for /pg setup command)
     void savePlayerInventory(Player player, org.bukkit.inventory.ItemStack[] inventory);

@@ -1,7 +1,9 @@
 package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Arena;
 import com.tw0far.potiongames.models.GameStates;
+import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import com.tw0far.potiongames.util.SafeMapAccess;
@@ -32,6 +34,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -58,10 +61,6 @@ public class InventoryEventListener implements Listener {
             if (s == null) {
                 s = plugin.game.getSpectatorLobby(p);
             }
-            if (s == null && plugin.game.isActivePlayer(p)) {
-                s = "0"; // Single-lobby mode
-            }
-            
             if (s != null) {
                 GameStates lobbyState = plugin.getLobbyGameState(s);
                 boolean canBuild = plugin.isLobbyBuildAllowed(s);
@@ -73,6 +72,103 @@ public class InventoryEventListener implements Listener {
             }
             handleLobbySelection(e, p);
         }
+    }
+
+    private boolean isNamedItem(Player player, Material material, Component displayName) {
+        ItemStack item = player.getInventory().getItemInMainHand();
+        if (item == null || item.getType() != material || !item.hasItemMeta()) {
+            return false;
+        }
+        ItemMeta meta = item.getItemMeta();
+        return meta.hasDisplayName() && Objects.equals(meta.displayName(), displayName);
+    }
+
+    private Lobby resolveSetupLobby(Player player) {
+        Integer selectedLobby = plugin.getSetupStateManager().getSelectedLobby(player);
+        if (selectedLobby != null) {
+            return plugin.getLobbyById(selectedLobby);
+        }
+
+        String activeLobbyId = plugin.game.getPlayerLobby(player);
+        if (activeLobbyId != null) {
+            try {
+                return plugin.getLobbyById(Integer.parseInt(activeLobbyId));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        return null;
+    }
+
+    private Arena resolveSetupArena(Player player, Lobby lobby) {
+        if (lobby == null) {
+            return null;
+        }
+
+        String selectedArena = plugin.getSetupStateManager().getSelectedArena(player);
+        if (selectedArena != null) {
+            Arena arena = lobby.getArena(selectedArena);
+            if (arena != null) {
+                return arena;
+            }
+        }
+
+        return lobby.getCurrentArena();
+    }
+
+    private void openChooseArenaInventory(Player player, Lobby lobby) {
+        if (lobby == null) {
+            player.sendMessage(Settings.prefix.append(Component.text("Choose a lobby first!").color(NamedTextColor.YELLOW)));
+            return;
+        }
+
+        List<Arena> arenas = lobby.getArenas();
+        Inventory inv = Bukkit.createInventory(null, 9 * 3,
+                Settings.prefix.append(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA)));
+
+        int slot = 0;
+        for (Arena arena : arenas) {
+            if (slot >= inv.getSize()) {
+                break;
+            }
+            ItemStack item = new ItemStack(Material.MAP);
+            ItemMeta meta = item.getItemMeta();
+            assert meta != null;
+            meta.displayName(Component.text(arena.getName()).color(NamedTextColor.AQUA));
+            item.setItemMeta(meta);
+            inv.setItem(slot++, item);
+        }
+
+        player.openInventory(inv);
+    }
+
+    private boolean handleSetupSpawnAction(Player player, boolean addSpawn) {
+        if (!player.hasPermission("pg.setup")) {
+            player.sendMessage(Settings.prefix.append(Component.text("You don't have permission to use this!").color(NamedTextColor.RED)));
+            return true;
+        }
+
+        Lobby lobby = resolveSetupLobby(player);
+        Arena arena = resolveSetupArena(player, lobby);
+        if (lobby == null) {
+            player.sendMessage(Settings.prefix.append(Component.text("Choose a lobby first!").color(NamedTextColor.YELLOW)));
+            return true;
+        }
+        if (arena == null) {
+            player.sendMessage(Settings.prefix.append(Component.text("Choose an arena first!").color(NamedTextColor.YELLOW)));
+            return true;
+        }
+
+        if (addSpawn) {
+            plugin.setupHandler.addSpawn(player, arena.getName(), lobby.getId());
+        } else {
+            if (arena.getSpawns().isEmpty()) {
+                player.sendMessage(Settings.prefix.append(Component.text("No spawns to remove!").color(NamedTextColor.YELLOW)));
+                return true;
+            }
+            plugin.setupHandler.removeSpawn(player, arena.getName(), lobby.getId());
+        }
+        return true;
     }
     
     private void handleArenaVoting(InventoryClickEvent e, Player p, String s) {
@@ -100,8 +196,8 @@ public class InventoryEventListener implements Listener {
                     
                     // Send feedback messages
                     p.sendMessage(Messages.ArenaSelector());
-                    p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(16) + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
-                    p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(15) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyVoteCount(s, displayname))).color(NamedTextColor.AQUA)));
+                    p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(16) + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
+                    p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(15) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyVoteCount(s, displayname))).color(NamedTextColor.AQUA)));
                     p.sendMessage(Messages.ArenaSelector());
                 }
             }
@@ -110,7 +206,7 @@ public class InventoryEventListener implements Listener {
     
     private void handleTeamSelection(InventoryClickEvent e, Player p, String s) {
         if (plugin.isActivateTeams(s)) {
-            if (e.getView().title().equals(Settings.prefix.append(Component.text(plugin.chatmessages.get(43)).color(NamedTextColor.DARK_AQUA)))) {
+            if (e.getView().title().equals(Settings.prefix.append(Component.text(plugin.getChatmessages().get(43)).color(NamedTextColor.DARK_AQUA)))) {
                 if (e.getCurrentItem() != null) {
                     if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
                         String displayname = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName());
@@ -154,10 +250,10 @@ public class InventoryEventListener implements Listener {
                 plugin.recordPlayerTeamInLobby(s, p, Integer.toString(rndTeam));
                 
                 // Send feedback
-                p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
-                p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(45) + ": ").color(NamedTextColor.GREEN)).append(Component.text(rndTeam).color(NamedTextColor.LIGHT_PURPLE)));
-                p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(44) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyTeamPlayerCount(s, rndTeam))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
-                p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
+                p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.getChatmessages().get(43) + "--------------").color(NamedTextColor.GRAY)));
+                p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(45) + ": ").color(NamedTextColor.GREEN)).append(Component.text(rndTeam).color(NamedTextColor.LIGHT_PURPLE)));
+                p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(44) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyTeamPlayerCount(s, rndTeam))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
+                p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.getChatmessages().get(43) + "--------------").color(NamedTextColor.GRAY)));
                 
                 if (plugin.isActivateScoreboard()) {
                     Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(Integer.toString(rndTeam)).color(NamedTextColor.DARK_AQUA));
@@ -176,19 +272,19 @@ public class InventoryEventListener implements Listener {
             plugin.recordPlayerTeamInLobby(s, p, displayname);
             
             // Send feedback
-            p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
-            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(45) + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
-            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(44) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyTeamPlayerCount(s, teamId))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
-            p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
+            p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.getChatmessages().get(43) + "--------------").color(NamedTextColor.GRAY)));
+            p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(45) + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
+            p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(44) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyTeamPlayerCount(s, teamId))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
+            p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.getChatmessages().get(43) + "--------------").color(NamedTextColor.GRAY)));
             
             if (plugin.isActivateScoreboard()) {
                 Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(displayname).color(NamedTextColor.DARK_AQUA));
             }
         } else {
             p.closeInventory();
-            p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
-            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(47)).color(NamedTextColor.RED)));
-            p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.chatmessages.get(43) + "--------------").color(NamedTextColor.GRAY)));
+            p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.getChatmessages().get(43) + "--------------").color(NamedTextColor.GRAY)));
+            p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(47)).color(NamedTextColor.RED)));
+            p.sendMessage(Settings.prefix.append(Component.text("--------------" + plugin.getChatmessages().get(43) + "--------------").color(NamedTextColor.GRAY)));
         }
     }
     
@@ -211,7 +307,7 @@ public class InventoryEventListener implements Listener {
     }
     
     private void handleShop(InventoryClickEvent e, Player p, String s) {
-        if (e.getView().title().equals(Settings.prefix.append(Component.text(plugin.chatmessages.get(49)).color(NamedTextColor.DARK_AQUA)))) {
+        if (e.getView().title().equals(Settings.prefix.append(Component.text(plugin.getChatmessages().get(49)).color(NamedTextColor.DARK_AQUA)))) {
             if (e.getCurrentItem() != null) {
                 amount = (int) (p.getTotalExperience() * 10);
                 bottle = 0;
@@ -229,7 +325,7 @@ public class InventoryEventListener implements Listener {
                 
                 for (int i = 0; i < shopItems.size(); i++) {
                     int coinamount;
-                    if (plugin.kitplayernames.containsKey(p) && plugin.kitplayernames.containsValue(shopKits.get(shopitem - 1))) {
+                    if (plugin.hasPlayerKit(p) && plugin.getPlayerKit(p) != null && plugin.getPlayerKit(p).equals(shopKits.get(shopitem - 1))) {
                         coinamount = shopSales.get(shopitem - 1);
                     } else {
                         coinamount = shopCosts.get(shopitem - 1);
@@ -239,10 +335,10 @@ public class InventoryEventListener implements Listener {
                             if (amount >= coinamount) {
                                 amount = amount - coinamount;
                                 bottle = bottle - 1;
-                                ItemStack randombarrier = new ItemStack(plugin.shoppotiontype.get(shopitem - 1));
+                                        ItemStack randombarrier = new ItemStack(plugin.getShoppotiontype().get(shopitem - 1));
                                 PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                randombarriermeta.addCustomEffect(new PotionEffect(plugin.shoppotion.get(shopitem - 1).getType(), plugin.shoppotion.get(shopitem - 1).getDuration(), plugin.shoppotion.get(shopitem - 1).getAmplifier()), true);
+                                        randombarriermeta.addCustomEffect(new PotionEffect(plugin.getShoppotion().get(shopitem - 1).getType(), plugin.getShoppotion().get(shopitem - 1).getDuration(), plugin.getShoppotion().get(shopitem - 1).getAmplifier()), true);
                                 randombarriermeta.displayName(Component.text(shopItems.get(shopitem - 1)));
                                 randombarrier.setItemMeta(randombarriermeta);
                                 p.getInventory().addItem(randombarrier);
@@ -253,10 +349,10 @@ public class InventoryEventListener implements Listener {
                                     p.getInventory().removeItem(plugin.getBottle());
                                 }
                             } else {
-                                p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(53)).color(NamedTextColor.RED)));
+                    p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(53)).color(NamedTextColor.RED)));
                             }
                         } else {
-                            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(54)).color(NamedTextColor.RED)));
+                    p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(54)).color(NamedTextColor.RED)));
                         }
                     }
                     shopitem++;
@@ -277,16 +373,40 @@ public class InventoryEventListener implements Listener {
         if (e.getView().title().equals(Settings.prefix.append(Component.text("Choose Lobby").color(NamedTextColor.DARK_AQUA)))) {
             if (e.getCurrentItem() != null) {
                 p.closeInventory();
-                Component lobby = Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName();
-                p.sendMessage(Settings.prefix.append(lobby.color(NamedTextColor.AQUA)).append(Component.text(" successfully chosen!").color(NamedTextColor.GREEN)));
+                String lobbyName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName());
+                try {
+                    int lobbyId = Integer.parseInt(lobbyName);
+                    Lobby lobby = plugin.getLobbyById(lobbyId);
+                    if (lobby != null) {
+                        plugin.getSetupStateManager().setSelectedLobby(p, lobbyId);
+                        plugin.getSetupStateManager().removeSelectedArena(p);
+                        p.sendMessage(Settings.prefix.append(Component.text("Lobby " + lobbyId + " selected!").color(NamedTextColor.GREEN)));
+                        openChooseArenaInventory(p, lobby);
+                    } else {
+                        p.sendMessage(Settings.prefix.append(Component.text("This lobby does not exists!").color(NamedTextColor.RED)));
+                    }
+                } catch (NumberFormatException ex) {
+                    p.sendMessage(Settings.prefix.append(Component.text("Invalid lobby selection!").color(NamedTextColor.RED)));
+                }
             }
             e.setCancelled(true);
         }
         if (e.getView().title().equals(Settings.prefix.append(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA)))) {
             if (e.getCurrentItem() != null) {
                 p.closeInventory();
-                Component arena = Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName();
-                p.sendMessage(Settings.prefix.append(arena.color(NamedTextColor.AQUA)).append(Component.text(" successfully chosen!").color(NamedTextColor.GREEN)));
+                String arenaName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName());
+                Lobby lobby = resolveSetupLobby(p);
+                if (lobby == null) {
+                    p.sendMessage(Settings.prefix.append(Component.text("Choose a lobby first!").color(NamedTextColor.YELLOW)));
+                } else {
+                    Arena arena = lobby.getArena(arenaName);
+                    if (arena != null) {
+                        plugin.getSetupStateManager().setSelectedArena(p, arenaName);
+                        p.sendMessage(Settings.prefix.append(Component.text("Arena " + arenaName + " selected!").color(NamedTextColor.GREEN)));
+                    } else {
+                        p.sendMessage(Settings.prefix.append(Component.text("This arena does not exists!").color(NamedTextColor.RED)));
+                    }
+                }
             }
             e.setCancelled(true);
         }
@@ -303,7 +423,7 @@ public class InventoryEventListener implements Listener {
                 if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                     if (e.getHand() == EquipmentSlot.HAND) {
                         if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(Settings.chestdata.get("pg.chestblocks.normal")).toString())) {
-                            if (plugin.isLobbySystem()) {
+                            
                                 String s = plugin.game.getPlayerLobby(p);
                                 if (s != null && plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                     if (!plugin.hasLobbyChest(s, e.getClickedBlock().getLocation())) {
@@ -381,98 +501,19 @@ public class InventoryEventListener implements Listener {
                                         int tries = effect.nextInt(diff + 1);
                                         while (tries != 0) {
                                             tries--;
-                                            int potion = effect.nextInt(plugin.potions.size());
-                                            p.addPotionEffect(plugin.potions.get(potion));
+                                            int potion = effect.nextInt(plugin.getPotions().size());
+                                            p.addPotionEffect(plugin.getPotions().get(potion));
                                         }
                                     }
                                 }
-                            } else {
-                                if (plugin.getGamestate() == GameStates.INGAME) {
-                                    if (!plugin.chests.containsKey(e.getClickedBlock().getLocation())) {
-                                        Inventory inv;
-                                        inv = Bukkit.createInventory(p, 27, Settings.prefix);
-                                        plugin.chestData();
-                                        Random rnd = new Random();
-                                        int max = 6;
-                                        int min = 2;
-                                        int diff = max - min;
-                                        int tries = rnd.nextInt(diff + 1);
-                                        tries += min;
-                                        while (tries != 0) {
-                                            tries--;
-                                            int slot = rnd.nextInt(27);
-                                            int roll = rnd.nextInt(100);
-                                            if (roll < 20) {
-                                                if (plugin.isActivateShop()) {
-                                                    ArrayList<ItemStack> potions1 = new ArrayList<>();
-                                                    potions1.add(new ItemStack(Material.GLASS_BOTTLE, 1));
-                                                    ArrayList<ItemStack> potions2 = new ArrayList<>();
-                                                    potions2.add(plugin.getCoin());
-                                                    int item = rnd.nextInt(5);
-                                                    if (item < 3) {
-                                                        int item1 = rnd.nextInt(plugin.getFoodTier1().size());
-                                                        inv.setItem(slot, plugin.getFoodTier1().get(item1));
-                                                    } else if (item < 4) {
-                                                        int item1 = 0;
-                                                        inv.setItem(slot, potions1.get(item1));
-                                                    } else {
-                                                        int item1 = 0;
-                                                        inv.setItem(slot, potions2.get(item1));
-                                                    }
-                                                } else {
-                                                    int item1 = rnd.nextInt(plugin.getFoodTier1().size());
-                                                    inv.setItem(slot, plugin.getFoodTier1().get(item1));
-                                                }
-                                            } else if (roll < 30) {
-                                                int item2 = rnd.nextInt(plugin.getFoodTier2().size());
-                                                inv.setItem(slot, plugin.getFoodTier2().get(item2));
-                                            } else if (roll < 45) {
-                                                int item3 = rnd.nextInt(plugin.getArmourTier1().size());
-                                                inv.setItem(slot, plugin.getArmourTier1().get(item3));
-                                            } else if (roll < 60) {
-                                                int item4 = rnd.nextInt(plugin.getArmourTier2().size());
-                                                inv.setItem(slot, plugin.getArmourTier2().get(item4));
-                                            } else if (roll < 67) {
-                                                int item5 = rnd.nextInt(plugin.getArmourTier3().size());
-                                                inv.setItem(slot, plugin.getArmourTier3().get(item5));
-                                            } else if (roll < 72) {
-                                                int item6 = rnd.nextInt(plugin.getArmourTier4().size());
-                                                inv.setItem(slot, plugin.getArmourTier4().get(item6));
-                                            } else if (roll < 75) {
-                                                int item7 = rnd.nextInt(plugin.getArmourTier5().size());
-                                                inv.setItem(slot, plugin.getArmourTier5().get(item7));
-                                            } else if (roll < 95) {
-                                                int item8 = rnd.nextInt(plugin.getWeaponsTier1().size());
-                                                inv.setItem(slot, plugin.getWeaponsTier1().get(item8));
-                                            } else {
-                                                int item9 = rnd.nextInt(plugin.getWeaponsTier2().size());
-                                                inv.setItem(slot, plugin.getWeaponsTier2().get(item9));
-                                            }
-                                        }
-                                        plugin.chests.put(e.getClickedBlock().getLocation(), inv);
-                                    }
-                                    p.openInventory(plugin.chests.get(e.getClickedBlock().getLocation()));
-                                    if (p.getActivePotionEffects().isEmpty()) {
-                                        Random effect = new Random();
-                                        int max = 3;
-                                        int min = 0;
-                                        int diff = max - min;
-                                        int tries = effect.nextInt(diff + 1);
-                                        while (tries != 0) {
-                                            tries--;
-                                            int potion = effect.nextInt(plugin.potions.size());
-                                            p.addPotionEffect(plugin.potions.get(potion));
-                                        }
-                                    }
-                                }
-                            }
+                            
                         }
                         int chestnumber = 1;
                         int chestitem = 1;
                         while (Settings.chestdata.contains("pg.customchests." + chestnumber)) {
                             if (e.getClickedBlock().getType().toString().equals(Objects.requireNonNull(Settings.chestdata.get("pg.customchests." + chestnumber + ".chesttype")).toString())) {
                                 if (Settings.chestdata.getBoolean("pg.customchests." + chestnumber + ".activate")) {
-                                    if (plugin.isLobbySystem()) {
+                                    
                                         String s = null;
                                         for (int ii = 1; ii <= 27; ii++) {
                                             if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -496,28 +537,13 @@ public class InventoryEventListener implements Listener {
                                                 }
                                             }
                                         }
-                                    } else {
-                                        if (plugin.getGamestate() == GameStates.INGAME) {
-                                            if (!plugin.chests.containsKey(e.getClickedBlock().getLocation())) {
-                                                Inventory inv;
-                                                inv = Bukkit.createInventory(p, Settings.chestdata.getInt("pg.customchests." + chestnumber + "." + ".chestsize"), Settings.prefix);
-                                                plugin.chests.put(e.getClickedBlock().getLocation(), inv);
-                                                p.openInventory(plugin.chests.get(e.getClickedBlock().getLocation()));
-                                                while (Settings.chestdata.contains("pg.customchests." + chestnumber + "." + chestitem)) {
-                                                    inv.setItem(Settings.chestdata.getInt("pg.customchests." + chestnumber + "." + chestitem + ".slot") - 1, Settings.chestdata.getItemStack("pg.customchests." + chestnumber + "." + chestitem + ".item"));
-                                                    chestitem++;
-                                                }
-                                            } else {
-                                                p.openInventory(plugin.chests.get(e.getClickedBlock().getLocation()));
-                                            }
-                                        }
-                                    }
+                                    
                                 }
                             }
                             chestnumber++;
                         }
                         if ((e.getClickedBlock()).getType().toString().equals(Objects.requireNonNull(Settings.chestdata.get("pg.chestblocks.shop")).toString())) {
-                            if (plugin.isLobbySystem()) {
+                            
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
                                     if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -537,23 +563,23 @@ public class InventoryEventListener implements Listener {
                                             }
                                         }
                                         Inventory inv;
-                                        inv = Bukkit.createInventory(p, 9 * 3, Settings.prefix.append(Component.text(plugin.chatmessages.get(49))).color(NamedTextColor.DARK_AQUA));
+                                        inv = Bukkit.createInventory(p, 9 * 3, Settings.prefix.append(Component.text(plugin.getChatmessages().get(49))).color(NamedTextColor.DARK_AQUA));
                                         plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
                                         int shopitem = 1;
                                         for (int i = 0; i < plugin.getActivePotions(); i++) {
                                             int coinamount;
-                                            if (plugin.kitplayernames.containsKey(p) && plugin.kitplayernames.containsValue(plugin.shopkit.get(shopitem - 1))) {
-                                                coinamount = plugin.shopsale.get(shopitem - 1);
-                                            } else {
-                                                coinamount = plugin.shopcost.get(shopitem - 1);
-                                            }
-                                            ItemStack randombarrier = new ItemStack(plugin.shoppotiontype.get(shopitem - 1));
+                                                if (plugin.hasPlayerKit(p) && plugin.getPlayerKit(p) != null && plugin.getPlayerKit(p).equals(plugin.getShopkit().get(shopitem - 1))) {
+                                                    coinamount = plugin.getShopsale().get(shopitem - 1);
+                                                } else {
+                                                    coinamount = plugin.getShopcost().get(shopitem - 1);
+                                                }
+                                                ItemStack randombarrier = new ItemStack(plugin.getShoppotiontype().get(shopitem - 1));
                                             ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                             assert randombarriermeta != null;
-                                            randombarriermeta.displayName(Component.text(plugin.shop.get(shopitem - 1)));
+                                                randombarriermeta.displayName(Component.text(plugin.getShop().get(shopitem - 1)));
                                             ArrayList<Component> lore = new ArrayList<>();
-                                            lore.add(Component.text(plugin.chatmessages.get(50) + ": " + plugin.shoppotion.get(shopitem - 1).getDuration() / 20));
-                                            lore.add(Component.text(plugin.chatmessages.get(51) + ": " + coinamount + " " + plugin.chatmessages.get(52)));
+                                            lore.add(Component.text(plugin.getChatmessages().get(50) + ": " + plugin.getShoppotion().get(shopitem - 1).getDuration() / 20));
+                                            lore.add(Component.text(plugin.getChatmessages().get(51) + ": " + coinamount + " " + plugin.getChatmessages().get(52)));
                                             randombarriermeta.lore(lore);
                                             randombarrier.setItemMeta(randombarriermeta);
                                             inv.setItem(shopitem - 1, randombarrier);
@@ -565,48 +591,9 @@ public class InventoryEventListener implements Listener {
                                         p.openInventory(chestInv);
                                     }
                                 }
-                            } else {
-                                if (plugin.isActivateShop()) {
-                                    if (plugin.getGamestate() == GameStates.INGAME) {
-                                        for (ItemStack item : p.getInventory().getContents()) {
-                                            if (item != null) {
-                                                if (item.getType() == plugin.getCoin().getType()) {
-                                                    amount = item.getAmount();
-                                                }
-                                                if (item.getType() == Material.GLASS_BOTTLE) {
-                                                    bottle = item.getAmount();
-                                                }
-                                            }
-                                        }
-                                        Inventory inv;
-                                        inv = Bukkit.createInventory(p, 9 * 3, Settings.prefix.append(Component.text(plugin.chatmessages.get(49))).color(NamedTextColor.DARK_AQUA));
-                                        plugin.chests.put(e.getClickedBlock().getLocation(), inv);
-                                        int shopitem = 1;
-                                        for (int i = 0; i < plugin.getActivePotions(); i++) {
-                                            int coinamount;
-                                            if (plugin.kitplayernames.containsKey(p) && plugin.kitplayernames.containsValue(plugin.shopkit.get(shopitem - 1))) {
-                                                coinamount = plugin.shopsale.get(shopitem - 1);
-                                            } else {
-                                                coinamount = plugin.shopcost.get(shopitem - 1);
-                                            }
-                                            ItemStack randombarrier = new ItemStack(plugin.shoppotiontype.get(shopitem - 1));
-                                            ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                            assert randombarriermeta != null;
-                                            randombarriermeta.displayName(Component.text(plugin.shop.get(shopitem - 1)));
-                                            ArrayList<Component> lore = new ArrayList<>();
-                                            lore.add(Component.text(plugin.chatmessages.get(50) + ": " + plugin.shoppotion.get(shopitem - 1).getDuration() / 20));
-                                            lore.add(Component.text(plugin.chatmessages.get(51) + ": " + coinamount + " " + plugin.chatmessages.get(52)));
-                                            randombarriermeta.lore(lore);
-                                            randombarrier.setItemMeta(randombarriermeta);
-                                            inv.setItem(shopitem - 1, randombarrier);
-                                            shopitem++;
-                                        }
-                                    }
-                                    p.openInventory(plugin.chests.get(e.getClickedBlock().getLocation()));
-                                }
-                            }
+                            
                         }
-                        if (plugin.isLobbySystem()) {
+                        
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
                                 if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -614,20 +601,15 @@ public class InventoryEventListener implements Listener {
                                 }
                             }
                             if (e.getClickedBlock().getBlockData() instanceof Waterlogged) {
-                                plugin.lobbyWaterBlocksData.put(e.getClickedBlock().getLocation(), e.getClickedBlock().getBlockData());
-                                plugin.lobbyWaterBlocks.put(s, plugin.lobbyWaterBlocksData);
+                                plugin.trackLobbyWaterBlock(s, e.getClickedBlock().getLocation(), e.getClickedBlock().getBlockData());
                             }
-                        } else {
-                            if (e.getClickedBlock().getBlockData() instanceof Waterlogged) {
-                                plugin.waterBlocks.put(e.getClickedBlock().getLocation(), e.getClickedBlock().getBlockData());
-                            }
-                        }
+                        
                     }
                 }
                 if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
                     if (e.getHand() == EquipmentSlot.HAND) {
                         if (p.getInventory().getItemInMainHand().getType() == Material.MUSHROOM_STEW || p.getInventory().getItemInMainHand().getType() == Material.RABBIT_STEW || p.getInventory().getItemInMainHand().getType() == Material.BEETROOT_SOUP) {
-                            if (plugin.isLobbySystem()) {
+                            
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
                                     if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -653,94 +635,45 @@ public class InventoryEventListener implements Listener {
                                         }
                                     }
                                 }
-                            } else {
-                                if (plugin.getGamestate() == GameStates.INGAME) {
-                                    double health = p.getHealth();
-                                    int foodlvl = p.getFoodLevel();
-                                    if (health == 20 && foodlvl >= 13) {
-                                        p.setFoodLevel(20);
-                                        p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
-                                    } else if (foodlvl < 13) {
-                                        p.setFoodLevel(foodlvl + 7);
-                                        p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
-                                    } else {
-                                        if (health < 20 && health >= 13) {
-                                            p.setHealth(20);
-                                            p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
-                                        } else if (health < 13) {
-                                            p.setHealth(health + 7);
-                                            p.getInventory().setItemInMainHand(new ItemStack(Material.BOWL));
-                                        }
-                                    }
-                                }
-                            }
+                            
                         }
                         if (p.getInventory().getItemInMainHand().getType() == Material.REDSTONE_TORCH) {
-                            if (plugin.isLobbySystem()) {
+                            
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
                                     if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.lobbyActivateAirdrops.get(s)) {
+                                if (plugin.isLobbyActivateAirdrops(s)) {
                                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                         boolean blocked = false;
                                         Location loc = p.getEyeLocation().add(0, 1, 0);
                                         while (loc.getY() <= 320) {
                                             if (loc.getBlock().getType() != Material.AIR) {
-                                                p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(96)).color(NamedTextColor.RED)));
+                                                p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(96)).color(NamedTextColor.RED)));
                                                 blocked = true;
                                                 break;
                                             }
                                             loc.add(0, 1, 0);
                                         }
                                         if (!blocked) {
-                                            for (Player all : plugin.playerLobby.keySet()) {
-                                                if (plugin.playerLobby.get(all).equals(s)) {
-                                                    all.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(98) + ": ").color(NamedTextColor.GREEN)).append(Component.text(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()).color(NamedTextColor.AQUA)));
-                                                }
+                                            for (Player all : plugin.getPlayersInLobby(s)) {
+                                                all.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(98) + ": ").color(NamedTextColor.GREEN)).append(Component.text(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()).color(NamedTextColor.AQUA)));
                                             }
-                                            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(97)).color(NamedTextColor.GREEN)));
+                                            p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(97)).color(NamedTextColor.GREEN)));
                                             BlockData b = Material.DRIED_KELP_BLOCK.createBlockData();
                                             Location spawnLoc = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() + 100, p.getLocation().getZ());
                                             p.getWorld().spawn(spawnLoc, FallingBlock.class, fallingBlock -> fallingBlock.setBlockData(b));
-                                            plugin.lobbyPlacedBlocksData.put(p.getLocation(), b.getMaterial());
-                                            plugin.lobbyPlacedBlocks.put(s, plugin.lobbyPlacedBlocksData);
+                                            plugin.addLobbyPlacedBlock(s, p.getLocation(), b.getMaterial());
                                             p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
                                         }
                                     }
                                 }
-                            } else {
-                                if (plugin.isActivateAirdrops()) {
-                                    if (plugin.getGamestate() == GameStates.INGAME) {
-                                        boolean blocked = false;
-                                        Location loc = p.getEyeLocation().add(0, 1, 0);
-                                        while (loc.getY() < 256) {
-                                            if (loc.getBlock().getType() != Material.AIR) {
-                                                p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(96)).color(NamedTextColor.RED)));
-                                                blocked = true;
-                                                break;
-                                            }
-                                            loc.add(0, 1, 0);
-                                        }
-                                        if (!blocked) {
-                                            for (Player all : plugin.pgPlayers) {
-                                                all.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(98) + ": ").color(NamedTextColor.GREEN)).append(Component.text(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()).color(NamedTextColor.AQUA)));
-                                            }
-                                            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(97)).color(NamedTextColor.GREEN)));
-                                            BlockData b = Material.DRIED_KELP_BLOCK.createBlockData();
-                                            Location spawnLoc = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() + 100, p.getLocation().getZ());
-                                            p.getWorld().spawn(spawnLoc, FallingBlock.class, fallingBlock -> fallingBlock.setBlockData(b));
-                                            plugin.placedBlocks.put(p.getLocation(), b.getMaterial());
-                                            p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
-                                        }
-                                    }
-                                }
-                            }
+                            
                         }
                         if (p.getInventory().getItemInMainHand().getType() == Material.MILK_BUCKET) {
-                            if (plugin.isLobbySystem()) {
+                            
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
                                     if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -751,15 +684,10 @@ public class InventoryEventListener implements Listener {
                                     plugin.clearEffects(p);
                                     p.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
                                 }
-                            } else {
-                                if (plugin.getGamestate() == GameStates.INGAME) {
-                                    plugin.clearEffects(p);
-                                    p.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
-                                }
-                            }
+                            
                         }
                         if (p.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
-                            if (plugin.isLobbySystem()) {
+                            
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
                                     if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -770,7 +698,7 @@ public class InventoryEventListener implements Listener {
                                     Player result = null;
                                     double lastDistance = Double.MAX_VALUE;
                                     for (Player cp : p.getWorld().getPlayers()) {
-                                        if (plugin.playerLobby.containsKey(cp) && !Objects.equals(SafeMapAccess.get(plugin.lobbyteamplayernames, s, p, null), SafeMapAccess.get(plugin.lobbyteamplayernames, s, cp, null))) {
+                                        if (plugin.game.getPlayerLobby(cp) != null && Objects.equals(plugin.getPlayerTeam(s, p), plugin.getPlayerTeam(s, cp))) {
                                             if (p == cp) {
                                                 continue;
                                             }
@@ -784,40 +712,16 @@ public class InventoryEventListener implements Listener {
                                         }
                                     }
                                     if (result != null) {
-                                        p.sendActionBar(Settings.prefix.append(Component.text(plugin.chatmessages.get(12) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf((int) lastDistance)).color(NamedTextColor.AQUA)));
+                                        p.sendActionBar(Settings.prefix.append(Component.text(plugin.getChatmessages().get(12) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf((int) lastDistance)).color(NamedTextColor.AQUA)));
                                     } else {
-                                        p.sendActionBar(Settings.prefix.append(Component.text(plugin.chatmessages.get(13)).color(NamedTextColor.RED))); 
+                                        p.sendActionBar(Settings.prefix.append(Component.text(plugin.getChatmessages().get(13)).color(NamedTextColor.RED))); 
                                     }
                                 }
-                            } else {
-                                if (plugin.getGamestate() == GameStates.INGAME) {
-                                    Player result = null;
-                                    double lastDistance = Double.MAX_VALUE;
-                                    for (Player cp : p.getWorld().getPlayers()) {
-                                        if (plugin.pgPlayers.contains(cp) && !Objects.equals(plugin.teamplayernames.get(p), plugin.teamplayernames.get(cp))) {
-                                            if (p == cp) {
-                                                continue;
-                                            }
-                                            double distance = p.getLocation().distance(cp.getLocation());
-                                            if (distance < lastDistance) {
-                                                lastDistance = distance;
-                                                result = cp;
-                                            }
-                                        } else {
-                                            result = null;
-                                        }
-                                    }
-                                    if (result != null) {
-                                        p.sendActionBar(Settings.prefix.append(Component.text(plugin.chatmessages.get(12) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf((int) lastDistance)).color(NamedTextColor.AQUA)));
-                                    } else {
-                                        p.sendActionBar(Settings.prefix.append(Component.text(plugin.chatmessages.get(13)).color(NamedTextColor.RED)));
-                                    }
-                                }
-                            }
+                            
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.PAPER) {
-                        if (plugin.isLobbySystem()) {
+                        
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
                                 if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -830,16 +734,16 @@ public class InventoryEventListener implements Listener {
                                 assert randombarriermeta != null;
                                 randombarriermeta.displayName(Messages.RandomLabel());
                                 ArrayList<Component> randomlore = new ArrayList<>();
-                                randomlore.add(0, Component.text(plugin.chatmessages.get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.lobbyvotes, s, "Random", 0))).color(NamedTextColor.AQUA)));
+                                randomlore.add(0, Component.text(plugin.getChatmessages().get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, "Random", 0))).color(NamedTextColor.AQUA)));
                                 randombarriermeta.lore(randomlore);
                                 randombarrier.setItemMeta(randombarriermeta);
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ArenaSelectorTitle());
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
-                                for (String all : plugin.lobbyvotes.get(s).keySet()) {
+                                for (String all : plugin.getLobbyvotes().get(s).keySet()) {
                                     if (!all.matches("Random")) {
                                         ArrayList<Component> arenalore = new ArrayList<>();
-                                        arenalore.add(0, Component.text(plugin.chatmessages.get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.lobbyvotes, s, all, 0))).color(NamedTextColor.AQUA)));
+                                        arenalore.add(0, Component.text(plugin.getChatmessages().get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, all, 0))).color(NamedTextColor.AQUA)));
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
@@ -852,39 +756,10 @@ public class InventoryEventListener implements Listener {
                                 }
                                 p.openInventory(inv);
                             }
-                        } else {
-                            if (plugin.getGamestate() == GameStates.WAITING || plugin.getGamestate() == GameStates.PREPARING) {
-                                ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
-                                ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                assert randombarriermeta != null;
-                                randombarriermeta.displayName(Messages.RandomLabel());
-                                ArrayList<Component> randomlore = new ArrayList<>();
-                                randomlore.add(0, Component.text(plugin.chatmessages.get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(plugin.votes.get("Random"))).color(NamedTextColor.AQUA)));
-                                randombarriermeta.lore(randomlore);
-                                randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ArenaSelectorTitle());
-                                inv.setItem(0, randombarrier);
-                                int slot = 1;
-                                for (String all : plugin.arenas) {
-                                    if (!all.matches("Random")) {
-                                        ArrayList<Component> arenalore = new ArrayList<>();
-                                        arenalore.add(0, Component.text(plugin.chatmessages.get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(plugin.votes.get(all))).color(NamedTextColor.AQUA)));
-                                        ItemStack arenamap = new ItemStack(Material.MAP);
-                                        ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        assert arenamapmeta != null;
-                                        arenamapmeta.displayName(Component.text(all).color(NamedTextColor.AQUA));
-                                        arenamapmeta.lore(arenalore);
-                                        arenamap.setItemMeta(arenamapmeta);
-                                        inv.setItem(slot, arenamap);
-                                        slot++;
-                                    }
-                                }
-                                p.openInventory(inv);
-                            }
-                        }
+                        
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
-                        if (plugin.isLobbySystem()) {
+                        
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
                                 if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -897,18 +772,18 @@ public class InventoryEventListener implements Listener {
                                 assert randombarriermeta != null;
                                 randombarriermeta.displayName(Messages.RandomLabel());
                                 randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.chatmessages.get(43)).color(NamedTextColor.DARK_AQUA)));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.getChatmessages().get(43)).color(NamedTextColor.DARK_AQUA)));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
-                                for (Integer all : plugin.lobbyteams.get(s).keySet()) {
+                                for (Integer all : plugin.getLobbiesTeamsMap(s).keySet()) {
                                     ArrayList<Component> arenalore = new ArrayList<>();
-                                    arenalore.add(0, Component.text(plugin.chatmessages.get(44) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.lobbyteams, s, all, 0))).color(NamedTextColor.AQUA)));
+                                    arenalore.add(0, Component.text(plugin.getChatmessages().get(44) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbiesTeamsMap(s), all, 0))).color(NamedTextColor.AQUA)));
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
                                     arenamapmeta.displayName(Component.text(Integer.toString(all)).color(NamedTextColor.AQUA));
-                                    for (Player temp : plugin.lobbyteamplayernames.get(s).keySet()) {
-                                        if (SafeMapAccess.get(plugin.lobbyteamplayernames, s, temp, "").equals(Integer.toString(all)) && temp != null) {
+                                    for (Player temp : plugin.getLobbiesTeamPlayerNamesMap(s).keySet()) {
+                                        if (SafeMapAccess.get(plugin.getLobbiesTeamPlayerNamesMap(s), temp, "").equals(Integer.toString(all)) && temp != null) {
                                             arenalore.add(Component.text(temp.getName()).color(NamedTextColor.GRAY));
                                         }
                                     }
@@ -919,39 +794,10 @@ public class InventoryEventListener implements Listener {
                                 }
                                 p.openInventory(inv);
                             }
-                        } else {
-                            if (plugin.getGamestate() == GameStates.WAITING || plugin.getGamestate() == GameStates.PREPARING) {
-                                ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
-                                ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                assert randombarriermeta != null;
-                                randombarriermeta.displayName(Messages.RandomLabel());
-                                randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.chatmessages.get(43)).color(NamedTextColor.DARK_AQUA)));
-                                inv.setItem(0, randombarrier);
-                                int slot = 1;
-                                for (String all : plugin.teams) {
-                                    ArrayList<Component> arenalore = new ArrayList<>();
-                                    arenalore.add(0, Component.text(plugin.chatmessages.get(44) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(plugin.teamplayers.get(all))).color(NamedTextColor.AQUA)));
-                                    ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
-                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                    assert arenamapmeta != null;
-                                    arenamapmeta.displayName(Component.text(all).color(NamedTextColor.AQUA));
-                                    for (Player temp : plugin.teamplayernames.keySet()) {
-                                        if (plugin.teamplayernames.get(temp).equals(all) && temp != null) {
-                                            arenalore.add(Component.text(temp.getName()).color(NamedTextColor.GRAY));
-                                        }
-                                    }
-                                    arenamapmeta.lore(arenalore);
-                                    arenamap.setItemMeta(arenamapmeta);
-                                    inv.setItem(slot, arenamap);
-                                    slot++;
-                                }
-                                p.openInventory(inv);
-                            }
-                        }
+                        
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.ENDER_CHEST) {
-                        if (plugin.isLobbySystem()) {
+                        
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
                                 if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -964,7 +810,7 @@ public class InventoryEventListener implements Listener {
                                 assert randombarriermeta != null;
                                 randombarriermeta.displayName(Messages.RandomLabel());
                                 randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.chatmessages.get(62)).color(NamedTextColor.DARK_AQUA)));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.getChatmessages().get(62)).color(NamedTextColor.DARK_AQUA)));
                                 inv.setItem(0, randombarrier);
                                 for (int i = 1; i <= plugin.getActiveKits(); i++) {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
@@ -976,30 +822,11 @@ public class InventoryEventListener implements Listener {
                                 }
                                 p.openInventory(inv);
                             }
-                        } else {
-                            if (plugin.getGamestate() == GameStates.WAITING || plugin.getGamestate() == GameStates.PREPARING) {
-                                ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
-                                ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                assert randombarriermeta != null;
-                                randombarriermeta.displayName(Messages.RandomLabel());
-                                randombarrier.setItemMeta(randombarriermeta);
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.chatmessages.get(62)).color(NamedTextColor.DARK_AQUA)));
-                                inv.setItem(0, randombarrier);
-                                for (int i = 1; i <= plugin.getActiveKits(); i++) {
-                                    ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
-                                    ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                    assert arenamapmeta != null;
-                                    arenamapmeta.displayName(Component.text(Settings.kitdata.getString("pg.kits." + i + ".name")));
-                                    arenamap.setItemMeta(arenamapmeta);
-                                    inv.setItem(i, arenamap);
-                                }
-                                p.openInventory(inv);
-                            }
-                        }
+                        
                     }
                 }
                 if (p.getInventory().getItemInMainHand().getType() == Material.MAGMA_CREAM) {
-                    if (plugin.isLobbySystem()) {
+                    
                         String s = null;
                         for (int ii = 1; ii <= 27; ii++) {
                             if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -1009,11 +836,7 @@ public class InventoryEventListener implements Listener {
                         if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
                             plugin.onLeaveLobby(p, s);
                         }
-                    } else {
-                        if (plugin.getGamestate() == GameStates.WAITING || plugin.getGamestate() == GameStates.PREPARING) {
-                            plugin.onLeave(p);
-                        }
-                    }
+                    
                 }
                 if (p.getInventory().getItemInMainHand().getType() == Material.EMERALD) {
                     if (p.hasPermission("pg.stats")) {
@@ -1037,37 +860,34 @@ public class InventoryEventListener implements Listener {
             if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
                 if (e.getHand() == EquipmentSlot.HAND) {
                     if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Component.text("Add(Left)/Del(Right) Lobby").color(NamedTextColor.DARK_AQUA))) {
+                        if (isNamedItem(p, Material.STICK, Component.text("Add(Left)/Del(Right) Lobby").color(NamedTextColor.DARK_AQUA))) {
                             if (p.hasPermission("pg.setup")) {
-                                if (!plugin.isLobbySystem()) {
-                                    plugin.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
-                                    plugin.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
-                                    plugin.saveConfig();
-                                    p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(24)).color(NamedTextColor.GREEN)));
-                                }
+                                plugin.getConfig().set("pg.Lobby.world", Objects.requireNonNull(p.getLocation().getWorld()).getName());
+                                plugin.getConfig().set("pg.Lobby.coords", Objects.requireNonNull(p.getLocation()));
+                                plugin.saveConfig();
+                                p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(24)).color(NamedTextColor.GREEN)));
                             }
                             if (p.hasPermission("pg.setup")) {
-                                if (plugin.isLobbySystem()) {
+                                
                                     p.getInventory().clear();
                                     plugin.setAddlobby(true);
                                     e.setCancelled(true);
-                                    p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(69)).color(NamedTextColor.GREEN)));
-                                }
+                                    p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(69)).color(NamedTextColor.GREEN)));
+                                
                             }
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().displayName().equals(Component.text("Add(Left)/Del(Right) Arena").color(NamedTextColor.DARK_AQUA))) {
+                        } else if (isNamedItem(p, Material.STICK, Component.text("Add(Left)/Del(Right) Arena").color(NamedTextColor.DARK_AQUA))) {
                             p.getInventory().clear();
                             plugin.setAddarena(true);
-                            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(70)).color(NamedTextColor.GREEN)));
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().displayName().equals(Component.text("Add(Left)/Del(Right) Spawn").color(NamedTextColor.DARK_AQUA))) {
-                            if (p.hasPermission("pg.setup")) {
-                                // TODO: Implement spawn setup logic - requires arena and lobby context
-                                p.sendMessage(Settings.prefix.append(Component.text("Spawn setup not yet implemented").color(NamedTextColor.YELLOW)));
+                            p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(70)).color(NamedTextColor.GREEN)));
+                        } else if (isNamedItem(p, Material.STICK, Component.text("Add(Left)/Del(Right) Spawn").color(NamedTextColor.DARK_AQUA))) {
+                            if (handleSetupSpawnAction(p, true)) {
+                                e.setCancelled(true);
                             }
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Component.text("Choose Lobby").color(NamedTextColor.DARK_AQUA))) {
-                            if (plugin.isLobbySystem()) {
+                        if (isNamedItem(p, Material.CLOCK, Component.text("Choose Lobby").color(NamedTextColor.DARK_AQUA))) {
+                            
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text("Choose Lobby").color(NamedTextColor.DARK_AQUA)));
                                 for (int slot = 1; slot <= 27; slot++) {
                                     if (Settings.arenadata.contains("pg.lobbies." + slot)) {
@@ -1082,13 +902,12 @@ public class InventoryEventListener implements Listener {
                                     }
                                 }
                                 p.openInventory(inv);
-                            }
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().displayName().equals(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA))) {
-                            // TODO: Choose Arena functionality (LEFT_CLICK) - requires 'lobby' variable from context
-                            // This section needs refactoring to properly obtain the lobby ID from player state
+                            
+                        } else if (isNamedItem(p, Material.CLOCK, Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA))) {
+                            openChooseArenaInventory(p, resolveSetupLobby(p));
                             /*
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA)));
-                            if (plugin.isLobbySystem()) {
+                            
                                 for (int slot = 1; slot < 27; slot++) {
                                     if (Settings.arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<Component> arenalore = new ArrayList<>();
@@ -1101,20 +920,7 @@ public class InventoryEventListener implements Listener {
                                         inv.setItem(slot - 1, arenamap);
                                     }
                                 }
-                            } else {
-                                for (int slot = 1; slot < 27; slot++) {
-                                    if (Settings.arenadata.contains("pg.arenas." + slot)) {
-                                        ArrayList<Component> arenalore = new ArrayList<>();
-                                        ItemStack arenamap = new ItemStack(Material.MAP);
-                                        ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        assert arenamapmeta != null;
-                                        arenamapmeta.displayName(Component.text(Settings.arenadata.getString("pg.arenas." + slot + ".name")));
-                                        arenamapmeta.lore(arenalore);
-                                        arenamap.setItemMeta(arenamapmeta);
-                                        inv.setItem(slot - 1, arenamap);
-                                    }
-                                }
-                            }
+                            
                             p.openInventory(inv);
                             */
                         }
@@ -1123,46 +929,29 @@ public class InventoryEventListener implements Listener {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Component.text("Set Join-Sign").color(NamedTextColor.DARK_AQUA))) {
                             if (p.getTargetBlock(null, 5).getState() instanceof org.bukkit.block.Sign) {
                                 if (p.hasPermission("pg.setup")) {
-                                    if (!plugin.isLobbySystem()) {
-                                        plugin.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                                        plugin.saveConfig();
-                                        p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(35)).color(NamedTextColor.GREEN)));
-                                    }
+                                plugin.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                                plugin.saveConfig();
+                                p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(35)).color(NamedTextColor.GREEN)));
                                 }
-                                // TODO: Set Join-Sign for lobby system - requires 'lobby' variable from context
-                                // This section needs refactoring to properly obtain the lobby ID from player state
-                                /*
-                                if (p.hasPermission("pg.setup")) {
-                                    if (plugin.isLobbySystem()) {
-                                        Settings.arenadata.set("pg.lobbies." + lobby + ".sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
-                                        try {
-                                            Settings.arenadata.save(Settings.arenadatafile);
-                                        } catch (IOException ex) {
-                                            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + plugin.chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                                        }
-                                        p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(35)).color(NamedTextColor.GREEN)).append(Component.text(" (Lobby: ")).append(lobby).append(Component.text(")")).color(NamedTextColor.GRAY));
-                                    }
-                                }
-                                */
                             }
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.BARRIER) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Component.text("Leave Setup-Mode").color(NamedTextColor.DARK_AQUA))) {
                             p.getInventory().getItemInMainHand().setAmount(0);
-                            p.getInventory().setContents(plugin.inv.get(p.getName()));
-                            p.getInventory().setArmorContents(plugin.armor.get(p.getName()));
-                            p.teleport(plugin.loc.get(p.getName()));
-                            p.setLevel(plugin.lvl.get(p.getName()));
-                            p.setExp(plugin.exp.get(p.getName()));
-                            p.setGameMode(plugin.gm.get(p.getName()));
-                            plugin.inv.remove(p.getName());
-                            plugin.armor.remove(p.getName());
-                            plugin.loc.remove(p.getName());
-                            plugin.lvl.remove(p.getName());
-                            plugin.exp.remove(p.getName());
-                            plugin.gm.remove(p.getName());
-                            plugin.setupPlayer.remove(p);
+                            p.getInventory().setContents(plugin.getSetupStateManager().getPlayerInventory(p));
+                            p.getInventory().setArmorContents(plugin.getSetupStateManager().getPlayerArmor(p));
+                            p.teleport(plugin.getSetupStateManager().getPlayerLocation(p));
+                            p.setLevel(plugin.getSetupStateManager().getPlayerLevel(p));
+                            p.setExp(plugin.getSetupStateManager().getPlayerExp(p));
+                            p.setGameMode(plugin.getSetupStateManager().getPlayerGameMode(p));
+                            plugin.getSetupStateManager().removeSavedInventory(p);
+                            plugin.getSetupStateManager().removeSavedArmor(p);
+                            plugin.getSetupStateManager().removeSavedLocation(p);
+                            plugin.getSetupStateManager().removeSavedLevel(p);
+                            plugin.getSetupStateManager().removeSavedExp(p);
+                            plugin.getSetupStateManager().removeSavedGameMode(p);
+                            plugin.getSetupStateManager().removeSetupPlayer(p);
                         }
                     }
                 }
@@ -1170,82 +959,53 @@ public class InventoryEventListener implements Listener {
             if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
                 if (e.getHand() == EquipmentSlot.HAND) {
                     if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Component.text("Add(Left)/Del(Right) Lobby").color(NamedTextColor.DARK_AQUA))) {
-                            if (plugin.isLobbySystem()) {
+                        if (isNamedItem(p, Material.STICK, Component.text("Add(Left)/Del(Right) Lobby").color(NamedTextColor.DARK_AQUA))) {
+                            
                                 p.getInventory().clear();
                                 plugin.setDellobby(true);
-                                p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(71)).color(NamedTextColor.GREEN)));
-                            }
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().displayName().equals(Component.text("Add(Left)/Del(Right) Arena").color(NamedTextColor.DARK_AQUA))) {
+                                p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(71)).color(NamedTextColor.GREEN)));
+                            
+                        } else if (isNamedItem(p, Material.STICK, Component.text("Add(Left)/Del(Right) Arena").color(NamedTextColor.DARK_AQUA))) {
                             p.getInventory().clear();
                             plugin.setDelarena(true);
-                            p.sendMessage(Settings.prefix.append(Component.text(plugin.chatmessages.get(72)).color(NamedTextColor.GREEN)));
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().displayName().equals(Component.text("Add(Left)/Del(Right) Spawn").color(NamedTextColor.DARK_AQUA))) {
-                            // TODO: Add/Delete Spawn functionality - requires 'lobby' and 'arena' variables from context
-                            // This section needs refactoring to properly obtain the lobby ID and arena from player state
+                            p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(72)).color(NamedTextColor.GREEN)));
+                        } else if (isNamedItem(p, Material.STICK, Component.text("Add(Left)/Del(Right) Spawn").color(NamedTextColor.DARK_AQUA))) {
+                            if (handleSetupSpawnAction(p, false)) {
+                                e.setCancelled(true);
+                            }
                             /*
                             if (p.hasPermission("pg.setup")) {
-                                if (!plugin.isLobbySystem()) {
-                                    int arenaNumber = 1;
-                                    int spawnNumber = 1;
-                                    try {
-                                        int i = 1;
-                                        boolean arenaName = false;
-                                        while (!arenaName) {
-                                            if (arena.toString().matches(Objects.requireNonNull(Settings.arenadata.getString("pg.arenas." + i + ".name")))) {
-                                                arenaNumber = i;
-                                                arenaName = true;
-                                            } else {
-                                                i++;
-                                            }
+                                int arenaNumber = 1;
+                                int spawnNumber = 1;
+                                try {
+                                    int i = 1;
+                                    boolean arenaName = false;
+                                    while (!arenaName) {
+                                        if (arena.toString().matches(Objects.requireNonNull(Settings.arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                            arenaNumber = i;
+                                            arenaName = true;
+                                        } else {
+                                            i++;
                                         }
-                                        int max = 1;
-                                        while (Settings.arenadata.contains("pg.arenas." + arenaNumber + ".spawns." + max)) {
-                                            spawnNumber = max;
-                                            max++;
-                                        }
-                                        Settings.arenadata.set("pg.arenas." + arenaNumber + ".spawns." + spawnNumber, null);
-                                        Settings.arenadata.save(Settings.arenadatafile);
-                                        p.sendMessage(Settings.prefix.append(Component.text(String.valueOf(spawnNumber)).color(NamedTextColor.AQUA)).append(Component.text(" " + plugin.chatmessages.get(28)).color(NamedTextColor.GREEN)));
-                                    } catch (Exception ex) {
-                                        p.sendMessage(Settings.prefix.append(arena.color(NamedTextColor.AQUA)).append(Component.text(" " + plugin.chatmessages.get(31)).color(NamedTextColor.RED)));
                                     }
-                                }
-                            }
-                            if (p.hasPermission("pg.setup")) {
-                                if (plugin.isLobbySystem()) {
-                                    int arenaNumber = 1;
-                                    int spawnNumber = 1;
-                                    try {
-                                        int i = 1;
-                                        boolean arenaName = false;
-                                        while (!arenaName) {
-                                            if (arena.toString().matches(Objects.requireNonNull(Settings.arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
-                                                arenaNumber = i;
-                                                arenaName = true;
-                                            } else {
-                                                i++;
-                                            }
-                                        }
-                                        int max = 1;
-                                        while (Settings.arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + max)) {
-                                            spawnNumber = max;
-                                            max++;
-                                        }
-                                        Settings.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
-                                        Settings.arenadata.save(Settings.arenadatafile);
-                                        p.sendMessage(Settings.prefix.append(Component.text(String.valueOf(spawnNumber)).color(NamedTextColor.AQUA)).append(Component.text(" " + plugin.chatmessages.get(28)).color(NamedTextColor.GREEN)).append(Component.text(" (Lobby: " + lobby + ")").color(NamedTextColor.GRAY)));
-                                    } catch (Exception ex) {
-                                        p.sendMessage(Settings.prefix.append(arena.color(NamedTextColor.AQUA)).append(Component.text(" " + plugin.chatmessages.get(31)).color(NamedTextColor.RED)).append(Component.text(" (Lobby: " + lobby + ")").color(NamedTextColor.GRAY)));
+                                    int max = 1;
+                                    while (Settings.arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + max)) {
+                                        spawnNumber = max;
+                                        max++;
                                     }
+                                    Settings.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
+                                    Settings.arenadata.save(Settings.arenadatafile);
+                                    p.sendMessage(Settings.prefix.append(Component.text(String.valueOf(spawnNumber)).color(NamedTextColor.AQUA)).append(Component.text(" " + plugin.getChatmessages().get(28)).color(NamedTextColor.GREEN)).append(Component.text(" (Lobby: " + lobby + ")").color(NamedTextColor.GRAY)));
+                                } catch (Exception ex) {
+                                    p.sendMessage(Settings.prefix.append(arena.color(NamedTextColor.AQUA)).append(Component.text(" " + plugin.getChatmessages().get(31)).color(NamedTextColor.RED)).append(Component.text(" (Lobby: " + lobby + ")").color(NamedTextColor.GRAY)));
                                 }
                             }
                             */
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Component.text("Choose Lobby").color(NamedTextColor.DARK_AQUA))) {
-                            if (plugin.isLobbySystem()) {
+                        if (isNamedItem(p, Material.CLOCK, Component.text("Choose Lobby").color(NamedTextColor.DARK_AQUA))) {
+                            
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text("Choose Lobby").color(NamedTextColor.DARK_AQUA)));
                                 for (int slot = 1; slot <= 27; slot++) {
                                     if (Settings.arenadata.contains("pg.lobbies." + slot)) {
@@ -1260,13 +1020,12 @@ public class InventoryEventListener implements Listener {
                                     }
                                 }
                                 p.openInventory(inv);
-                            }
-                        } else if (p.getInventory().getItemInMainHand().getItemMeta().displayName().equals(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA))) {
-                            // TODO: Choose Arena functionality (RIGHT_CLICK) - requires 'lobby' variable from context
-                            // This section needs refactoring to properly obtain the lobby ID from player state
+                            
+                        } else if (isNamedItem(p, Material.CLOCK, Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA))) {
+                            openChooseArenaInventory(p, resolveSetupLobby(p));
                             /*
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA)));
-                            if (plugin.isLobbySystem()) {
+                            
                                 for (int slot = 1; slot < 27; slot++) {
                                     if (Settings.arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<Component> arenalore = new ArrayList<>();
@@ -1279,20 +1038,7 @@ public class InventoryEventListener implements Listener {
                                         inv.setItem(slot - 1, arenamap);
                                     }
                                 }
-                            } else {
-                                for (int slot = 1; slot < 27; slot++) {
-                                    if (Settings.arenadata.contains("pg.arenas." + slot)) {
-                                        ArrayList<Component> arenalore = new ArrayList<>();
-                                        ItemStack arenamap = new ItemStack(Material.MAP);
-                                        ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        assert arenamapmeta != null;
-                                        arenamapmeta.displayName(Component.text(Settings.arenadata.getString("pg.arenas." + slot + ".name")));
-                                        arenamapmeta.lore(arenalore);
-                                        arenamap.setItemMeta(arenamapmeta);
-                                        inv.setItem(slot - 1, arenamap);
-                                    }
-                                }
-                            }
+                            
                             p.openInventory(inv);
                             */
                         }
@@ -1300,19 +1046,19 @@ public class InventoryEventListener implements Listener {
                     if (p.getInventory().getItemInMainHand().getType() == Material.BARRIER) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Component.text("Leave Setup-Mode").color(NamedTextColor.DARK_AQUA))) {
                             p.getInventory().getItemInMainHand().setAmount(0);
-                            p.getInventory().setContents(plugin.inv.get(p.getName()));
-                            p.getInventory().setArmorContents(plugin.armor.get(p.getName()));
-                            p.teleport(plugin.loc.get(p.getName()));
-                            p.setLevel(plugin.lvl.get(p.getName()));
-                            p.setExp(plugin.exp.get(p.getName()));
-                            p.setGameMode(plugin.gm.get(p.getName()));
-                            plugin.inv.remove(p.getName());
-                            plugin.armor.remove(p.getName());
-                            plugin.loc.remove(p.getName());
-                            plugin.lvl.remove(p.getName());
-                            plugin.exp.remove(p.getName());
-                            plugin.gm.remove(p.getName());
-                            plugin.setupPlayer.remove(p);
+                            p.getInventory().setContents(plugin.getSetupStateManager().getPlayerInventory(p));
+                            p.getInventory().setArmorContents(plugin.getSetupStateManager().getPlayerArmor(p));
+                            p.teleport(plugin.getSetupStateManager().getPlayerLocation(p));
+                            p.setLevel(plugin.getSetupStateManager().getPlayerLevel(p));
+                            p.setExp(plugin.getSetupStateManager().getPlayerExp(p));
+                            p.setGameMode(plugin.getSetupStateManager().getPlayerGameMode(p));
+                            plugin.getSetupStateManager().removeSavedInventory(p);
+                            plugin.getSetupStateManager().removeSavedArmor(p);
+                            plugin.getSetupStateManager().removeSavedLocation(p);
+                            plugin.getSetupStateManager().removeSavedLevel(p);
+                            plugin.getSetupStateManager().removeSavedExp(p);
+                            plugin.getSetupStateManager().removeSavedGameMode(p);
+                            plugin.getSetupStateManager().removeSetupPlayer(p);
                         }
                     }
                 }
@@ -1324,21 +1070,14 @@ public class InventoryEventListener implements Listener {
                         String line1 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(0));
                         String line2 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(1));
                         String line3 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(2));
-                        if (plugin.isLobbySystem()) {
+                        
                             if (e.getClickedBlock().getLocation().equals(Settings.arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
-                                if (!plugin.playerLobby.containsKey(p) && !plugin.specLobby.containsKey(p)) {
+                                if (plugin.game.getPlayerLobby(p) == null && plugin.game.getSpectatorLobby(p) == null) {
                                     e.setCancelled(true);
                                     plugin.onJoinLobby(p, line1);
                                 }
                             }
-                        } else {
-                            if (e.getClickedBlock().getLocation().equals(plugin.getConfig().getLocation("pg.Lobby.sign"))) {
-                                if (!plugin.pgPlayers.contains(p) && !plugin.specPlayers.contains(p)) {
-                                    e.setCancelled(true);
-                                    plugin.onJoin(p);
-                                }
-                            }
-                        }
+                        
                         if (line2.matches("PotionGames") && line3.matches("Stats")) {
                             int wins = plugin.getWins(p.getUniqueId().toString());
                             int losses = plugin.getLosses(p.getUniqueId().toString());
@@ -1386,8 +1125,8 @@ public class InventoryEventListener implements Listener {
     public void onDropItem(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.pgPlayers.contains(p) || plugin.playerLobby.containsKey(p)) {
-                if (plugin.isLobbySystem()) {
+            if (plugin.game.getActivePlayers().contains(p) || plugin.game.getPlayerLobby(p) != null) {
+                
                     String s = null;
                     for (int ii = 1; ii <= 27; ii++) {
                         if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
@@ -1395,13 +1134,13 @@ public class InventoryEventListener implements Listener {
                         }
                     }
                     GameStates state = plugin.getLobbyGameState(s); e.setCancelled(state != GameStates.INGAME && !Objects.equals(plugin.game.getPlayerLobby(p), s));
-                } else {
-                    e.setCancelled(plugin.getGamestate() != GameStates.INGAME && plugin.pgPlayers.contains(p));
-                }
+                
             }
         }
     }
 }
+
+
 
 
 

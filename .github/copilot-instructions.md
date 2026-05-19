@@ -59,13 +59,11 @@ Automated tests use JUnit 4 + Mockito. See TEST_README.md for comprehensive test
    - Provides methods to query lobbies by ID or by player
    - Loads/persists lobbies from config
 
-### Dual Lobby Mode
+### Lobby-Based Mode
 
-The plugin supports two distinct configurations:
-- **Multi-Lobby System** (`lobbySystem: true`): Players join numbered lobbies; each lobby has multiple named arenas
-- **Single-Lobby System** (`lobbySystem: false`): One global lobby with multiple arenas; simpler for smaller servers
-
-Command paths diverge based on `pg.isLobbySystem()` in many places.
+The plugin uses a single lobby-based configuration:
+- Players join numbered lobbies; each lobby has multiple named arenas
+- Command paths route through lobby IDs and lobby-owned state
 
 ## State Management
 

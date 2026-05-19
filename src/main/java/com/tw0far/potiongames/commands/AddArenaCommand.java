@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.entity.Player;
 
 /**
@@ -31,38 +32,34 @@ public class AddArenaCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (plugin.isLobbySystem()) {
-            // Multi-lobby system: /pg addarena <lobbynumber> <arenaname>
-            if (args.length < 3) {
-                player.sendMessage("§cUsage: /pg addarena <lobbynumber> <arenaname>");
-                return false;
-            }
-            
-            String lobbyId = args[1];
+        // Multi-lobby system: /pg addarena <lobbynumber> <arenaname>
+        if (args.length < 3) {
+            player.sendMessage("§cUsage: /pg addarena <lobbynumber> <arenaname>");
+            return false;
+        }
+        
+        try {
+            int lobbyId = Integer.parseInt(args[1]);
             String arenaName = args[2];
-            // Add arena logic would go here
-            player.sendMessage("§aArena §b" + arenaName + "§a added to lobby §b" + lobbyId + "§a.");
-            return true;
-        } else {
-            // Single-lobby system: /pg addarena <arenaname>
-            if (args.length < 2) {
-                player.sendMessage("§cUsage: /pg addarena <arenaname>");
+            Lobby lobby = plugin.getLobbyById(lobbyId);
+            if (lobby == null) {
+                player.sendMessage("§cThis lobby does not exists!");
                 return false;
             }
-            
-            String arenaName = args[1];
-            // Add arena logic would go here
-            player.sendMessage("§aArena §b" + arenaName + "§a added successfully.");
-            return true;
+            if (lobby.addArena(arenaName)) {
+                player.sendMessage("§aArena §b" + arenaName + "§a added to lobby §b" + lobbyId + "§a.");
+                return true;
+            }
+            player.sendMessage("§cCould not add arena!");
+            return false;
+        } catch (NumberFormatException ex) {
+            player.sendMessage("§cUsage: /pg addarena <lobbynumber> <arenaname>");
+            return false;
         }
     }
     
     @Override
     public String getUsage() {
-        if (plugin.isLobbySystem()) {
-            return "/pg addarena <lobbynumber> <arenaname>";
-        } else {
-            return "/pg addarena <arenaname>";
-        }
+        return "/pg addarena <lobbynumber> <arenaname>";
     }
 }

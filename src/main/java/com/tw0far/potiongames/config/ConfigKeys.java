@@ -51,7 +51,6 @@ public enum ConfigKeys {
     BROADCAST_STARTING("pg.broadcastStarting", "Behavior", false),
     
     // System
-    LOBBY_SYSTEM("pg.lobbySystem", "System", false),
     GAME_SERVER("pg.gameServer", "System", true),
     LANGUAGE("pg.language", "System", "en_US"),
     

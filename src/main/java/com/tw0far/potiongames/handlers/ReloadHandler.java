@@ -124,9 +124,9 @@ public class ReloadHandler {
             for (Player player : allPlayers) {
                 try {
                     // Check if we have stored inventory data
-                    if (plugin.inv.containsKey(player.getName())) {
-                        ItemStack[] inventory = plugin.inv.get(player.getName());
-                        ItemStack[] armor = plugin.armor.get(player.getName());
+                    if (plugin.getSetupStateManager().getPlayerInventory(player) != null) {
+                        ItemStack[] inventory = plugin.getSetupStateManager().getPlayerInventory(player);
+                        ItemStack[] armor = plugin.getSetupStateManager().getPlayerArmor(player);
                         
                         if (inventory != null) {
                             player.getInventory().setContents(inventory);
@@ -135,13 +135,13 @@ public class ReloadHandler {
                             player.getInventory().setArmorContents(armor);
                         }
                         
-                        plugin.inv.remove(player.getName());
-                        plugin.armor.remove(player.getName());
+                        plugin.getSetupStateManager().removeSavedInventory(player);
+                        plugin.getSetupStateManager().removeSavedArmor(player);
                     }
                     
                     // Clear scoreboards
-                    if (plugin.info.containsKey(player)) {
-                        plugin.info.remove(player);
+                    if (plugin.getGame().getScoreboards().containsKey(player)) {
+                        plugin.getGame().getScoreboards().remove(player);
                     }
                     
                 } catch (Exception e) {
@@ -189,43 +189,9 @@ public class ReloadHandler {
             plugin.getArenaStateManager().clearAll();
             plugin.getItemStateManager().clearAll();
             plugin.getBlockStateManager().clearAll();
-            
-            // Clear legacy collections still in PotionGames (that aren't managed yet)
-            // These should be eliminated in Phase 5.1+ cleanup
-            
-            // Arena data
-            plugin.arenas.clear();
-            plugin.voted.clear();
-            plugin.teams.clear();
-            plugin.teamed.clear();
-            plugin.kits.clear();
-            plugin.kited.clear();
-            
-            // Rank data
-            plugin.rankhead.clear();
-            plugin.ranksign.clear();
-            plugin.rank.clear();
-            
-            // Chat messages can be rebuilt on demand
-            plugin.chatmessages.clear();
-            
-            // Mapping data
-            plugin.votes.clear();
-            plugin.voteplayernames.clear();
-            plugin.teamplayers.clear();
-            plugin.teamplayernames.clear();
-            plugin.kitplayers.clear();
-            plugin.kitplayernames.clear();
-            
-            // Chest and scoreboard data
-            plugin.chests.clear();
-            plugin.lobbychests.clear();
-            plugin.lobbychestsdata.clear();
-            plugin.info.clear();
-            
-            // Channel data
-            plugin.channels.clear();
-            plugin.playerChannel.clear();
+
+            // Delegate remaining legacy cleanup behind PotionGames' compatibility API.
+            plugin.clearLegacyCollectionsForReload();
             
             plugin.getLogger().info("All collections cleared");
             

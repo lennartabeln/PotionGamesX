@@ -37,33 +37,23 @@ public class JoinCommand implements ICommand {
             return true;
         }
         
-        if (plugin.isLobbySystem()) {
-            // Multi-lobby system: args should contain lobby ID
-            if (args.length > 0) {
-                try {
-                    int lobbyId = Integer.parseInt(args[0]);
-                    if (Settings.arenadata.contains("pg.lobbies." + lobbyId)) {
-                        if (plugin.getGame().getLobbies().size() > 0) {
-                            Lobby lobby = plugin.getGame().getLobby(lobbyId);
-                            lobby.join(player);
-                        }
-                    } else {
-                        player.sendMessage(Messages.LobbyDoesNotExist());
+        // Multi-lobby system: args should contain lobby ID
+        if (args.length > 0) {
+            try {
+                int lobbyId = Integer.parseInt(args[0]);
+                if (Settings.arenadata.contains("pg.lobbies." + lobbyId)) {
+                    if (plugin.getGame().getLobbies().size() > 0) {
+                        Lobby lobby = plugin.getGame().getLobby(lobbyId);
+                        lobby.join(player);
                     }
-                } catch (NumberFormatException e) {
-                    player.sendMessage(Messages.HelpUsePgHelp());
+                } else {
+                    player.sendMessage(Messages.LobbyDoesNotExist());
                 }
-            } else {
-                player.sendMessage(Settings.prefix.append(net.kyori.adventure.text.Component.text("/pg join # - Join a game").color(net.kyori.adventure.text.format.NamedTextColor.GRAY)));
+            } catch (NumberFormatException e) {
+                player.sendMessage(Messages.HelpUsePgHelp());
             }
         } else {
-            // Single lobby system: no args needed
-            if (plugin.getGame().getLobbies().size() > 0) {
-                Lobby lobby = plugin.getGame().getLobby(1);
-                lobby.join(player);
-            } else {
-                player.sendMessage(Messages.LobbyDoesNotExist());
-            }
+            player.sendMessage(Settings.prefix.append(net.kyori.adventure.text.Component.text("/pg join # - Join a game").color(net.kyori.adventure.text.format.NamedTextColor.GRAY)));
         }
         
         return true;
@@ -71,10 +61,6 @@ public class JoinCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        if (plugin.isLobbySystem()) {
-            return "/pg join <lobby_number> - Join a specific lobby";
-        } else {
-            return "/pg join - Join the game";
-        }
+        return "/pg join <lobby_number> - Join a specific lobby";
     }
 }

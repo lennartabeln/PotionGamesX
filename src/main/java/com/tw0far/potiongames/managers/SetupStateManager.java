@@ -26,6 +26,8 @@ public class SetupStateManager implements ISetupStateManager {
     private HashMap<String, Float> exp = new HashMap<>();               // player name -> exp
     private HashMap<String, Location> loc = new HashMap<>();            // player name -> location
     private HashMap<String, GameMode> gm = new HashMap<>();             // player name -> game mode
+    private HashMap<String, Integer> selectedLobby = new HashMap<>();   // player name -> lobby id
+    private HashMap<String, String> selectedArena = new HashMap<>();    // player name -> arena name
     
     @Override
     public void onEnable() {
@@ -52,6 +54,8 @@ public class SetupStateManager implements ISetupStateManager {
         exp.clear();
         loc.clear();
         gm.clear();
+        selectedLobby.clear();
+        selectedArena.clear();
     }
     
     // ===== Setup Player Tracking =====
@@ -66,6 +70,7 @@ public class SetupStateManager implements ISetupStateManager {
     @Override
     public void removeSetupPlayer(Player player) {
         setupPlayers.remove(player);
+        clearSelection(player);
     }
     
     @Override
@@ -82,6 +87,62 @@ public class SetupStateManager implements ISetupStateManager {
         exp.clear();
         loc.clear();
         gm.clear();
+        selectedLobby.clear();
+        selectedArena.clear();
+    }
+
+    @Override
+    public void setSelectedLobby(Player player, Integer lobbyId) {
+        if (player == null) {
+            return;
+        }
+        if (lobbyId == null) {
+            selectedLobby.remove(player.getName());
+        } else {
+            selectedLobby.put(player.getName(), lobbyId);
+        }
+    }
+
+    @Override
+    public Integer getSelectedLobby(Player player) {
+        return player == null ? null : selectedLobby.get(player.getName());
+    }
+
+    @Override
+    public void removeSelectedLobby(Player player) {
+        if (player != null) {
+            selectedLobby.remove(player.getName());
+        }
+    }
+
+    @Override
+    public void setSelectedArena(Player player, String arenaName) {
+        if (player == null) {
+            return;
+        }
+        if (arenaName == null || arenaName.isBlank()) {
+            selectedArena.remove(player.getName());
+        } else {
+            selectedArena.put(player.getName(), arenaName);
+        }
+    }
+
+    @Override
+    public String getSelectedArena(Player player) {
+        return player == null ? null : selectedArena.get(player.getName());
+    }
+
+    @Override
+    public void removeSelectedArena(Player player) {
+        if (player != null) {
+            selectedArena.remove(player.getName());
+        }
+    }
+
+    @Override
+    public void clearSelection(Player player) {
+        removeSelectedLobby(player);
+        removeSelectedArena(player);
     }
     
     // ===== Inventory Backup =====

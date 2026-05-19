@@ -31,7 +31,6 @@ public final class Settings {
     public static boolean activateKits = true;
     public static boolean activateShop = true;
     public static boolean activateAirdrops = true;
-    public static boolean lobbySystem = false;
     public static boolean gameServer = true;
     public static boolean activateScoreboard = true;
     public static boolean friendlyFire = false;
@@ -131,13 +130,6 @@ public final class Settings {
             pg.saveConfig();
         } else {
             activateAirdrops = cfg.getBoolean("pg.activateAirdrops");
-        }
-        if (cfg.get("pg.lobbySystem") == null) {
-            cfg.addDefault("pg.lobbySystem", lobbySystem);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            lobbySystem = cfg.getBoolean("pg.lobbySystem");
         }
         if (cfg.get("pg.gameServer") == null) {
             cfg.addDefault("pg.gameServer", gameServer);

@@ -29,10 +29,6 @@ public class PlayerEventListener implements Listener {
         Player p = e.getPlayer();
         plugin.createPlayer(p.getUniqueId().toString());
         plugin.joinChannel(p.getPlayer(), "Global");
-        if (plugin.isGameServer() && plugin.isStartOnJoin() && !plugin.isLobbySystem()) {
-            plugin.onJoin(p);
-            e.joinMessage(null);
-        }
         if (p.hasPermission("pg.update")) {
             new UpdateChecker(plugin, 87633).getVersion(version -> {
                 if (!plugin.getPluginMeta().getVersion().equalsIgnoreCase(version)) {
@@ -46,27 +42,14 @@ public class PlayerEventListener implements Listener {
     public void onMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.isLobbySystem()) {
-                String lobbyId = plugin.game.getPlayerLobby(p);
-                if (lobbyId != null) {
-                    if (!plugin.isLobbyMoveAllowed(lobbyId)) {
-                        if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
-                            Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
-                            loc.setYaw(e.getTo().getYaw());
-                            loc.setPitch(e.getTo().getPitch());
-                            p.teleport(loc);
-                        }
-                    }
-                }
-            } else {
-                if (plugin.game.isActivePlayer(p)) {
-                    if (!plugin.isMove()) {
-                        if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
-                            Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
-                            loc.setYaw(e.getTo().getYaw());
-                            loc.setPitch(e.getTo().getPitch());
-                            p.teleport(loc);
-                        }
+            String lobbyId = plugin.game.getPlayerLobby(p);
+            if (lobbyId != null) {
+                if (!plugin.isLobbyMoveAllowed(lobbyId)) {
+                    if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
+                        Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
+                        loc.setYaw(e.getTo().getYaw());
+                        loc.setPitch(e.getTo().getPitch());
+                        p.teleport(loc);
                     }
                 }
             }
@@ -77,22 +60,15 @@ public class PlayerEventListener implements Listener {
     public void onQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.isLobbySystem()) {
-                String lobbyId = null;
-                if (plugin.game.isInLobby(p)) {
-                    lobbyId = plugin.game.getPlayerLobby(p);
-                } else if (plugin.game.isInSpecLobby(p)) {
-                    lobbyId = plugin.game.getSpectatorLobby(p);
-                }
-                if (lobbyId != null) {
-                    plugin.onLeaveLobby(p, lobbyId);
-                    e.quitMessage(null);
-                }
-            } else {
-                if (plugin.game.isActivePlayer(p) || plugin.game.isSpectatorPlayer(p)) {
-                    plugin.onLeave(p);
-                    e.quitMessage(null);
-                }
+            String lobbyId = null;
+            if (plugin.game.isInLobby(p)) {
+                lobbyId = plugin.game.getPlayerLobby(p);
+            } else if (plugin.game.isInSpecLobby(p)) {
+                lobbyId = plugin.game.getSpectatorLobby(p);
+            }
+            if (lobbyId != null) {
+                plugin.onLeaveLobby(p, lobbyId);
+                e.quitMessage(null);
             }
         }
     }
