@@ -50,8 +50,8 @@ public class CombatEventListener implements Listener {
                 if (!plugin.isFriendlyFire()) {
                     if (e.getEntity() instanceof Player p && e.getDamager() instanceof Player d) {
                         // Get lobby ID for both players
-                        String pLobby = plugin.game.getPlayerLobby(p);
-                        String dLobby = plugin.game.getPlayerLobby(d);
+                        String pLobby = plugin.getGame().getPlayerLobby(p);
+                        String dLobby = plugin.getGame().getPlayerLobby(d);
                         
                         // Both must be in same lobby for friendly fire check
                         if (pLobby != null && pLobby.equals(dLobby)) {
@@ -71,7 +71,7 @@ public class CombatEventListener implements Listener {
     public void onDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
         if (plugin.isGameServer()) {
-            String s = plugin.game.getPlayerLobby(p);
+            String s = plugin.getGame().getPlayerLobby(p);
             if (s != null) {
                 if (!plugin.isLobbyBuildAllowed(s)) {
                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
@@ -106,7 +106,7 @@ public class CombatEventListener implements Listener {
                             plugin.getDatabaseManager().addLosses(p.getUniqueId().toString(), 1);
                         }
                         // Move player from active to spectator
-                        plugin.game.removePlayerLobby(p);
+                        plugin.getGame().removePlayerLobby(p);
                         plugin.setSpectatorLobby(p, s);
                         if (plugin.isLobbyActivateTeams(s)) {
                             String teamname = plugin.getPlayerTeam(s, p);
@@ -123,7 +123,7 @@ public class CombatEventListener implements Listener {
                         }
                         int amountPlayers = plugin.getLobbyAmount(s);
                         int player = 0;
-                        for (Player all : plugin.game.getPlayersInLobby(s)) {
+                        for (Player all : plugin.getGame().getPlayersInLobby(s)) {
                             player++;
                         }
                         try {
@@ -141,7 +141,7 @@ public class CombatEventListener implements Listener {
                                     killer.getInventory().addItem(plugin.getCoin());
                                 }
                             }
-                            for (Player all : plugin.game.getPlayersInLobby(s)) {
+                            for (Player all : plugin.getGame().getPlayersInLobby(s)) {
                                 all.sendMessage(Settings.prefix
                                     .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
                                     .append(Component.text(" " + plugin.getChatmessages().get(9) + " ").color(NamedTextColor.GRAY))
@@ -152,7 +152,7 @@ public class CombatEventListener implements Listener {
                                     .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
                                     .append(Component.text("]").color(NamedTextColor.GRAY)));
                             }
-                            for (Player all : plugin.game.getSpectatorsInLobby(s)) {
+                            for (Player all : plugin.getGame().getSpectatorsInLobby(s)) {
                                 all.sendMessage(Settings.prefix
                                     .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
                                     .append(Component.text(" " + plugin.getChatmessages().get(9) + " ").color(NamedTextColor.GRAY))
@@ -165,7 +165,7 @@ public class CombatEventListener implements Listener {
                             }
                             e.deathMessage(null);
                         } catch (Exception ex) {
-                            for (Player all : plugin.game.getPlayersInLobby(s)) {
+                            for (Player all : plugin.getGame().getPlayersInLobby(s)) {
                                 all.sendMessage(Settings.prefix
                                     .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
                                     .append(Component.text(" " + plugin.getChatmessages().get(10) + " ").color(NamedTextColor.GRAY))
@@ -175,7 +175,7 @@ public class CombatEventListener implements Listener {
                                     .append(Component.text(String.valueOf(amountPlayers)).color(NamedTextColor.AQUA))
                                     .append(Component.text("]").color(NamedTextColor.GRAY)));
                             }
-                            for (Player all : plugin.game.getSpectatorsInLobby(s)) {
+                            for (Player all : plugin.getGame().getSpectatorsInLobby(s)) {
                                 all.sendMessage(Settings.prefix
                                     .append(Component.text(p.getName()).color(NamedTextColor.DARK_RED))
                                     .append(Component.text(" " + plugin.getChatmessages().get(10) + " ").color(NamedTextColor.GRAY))

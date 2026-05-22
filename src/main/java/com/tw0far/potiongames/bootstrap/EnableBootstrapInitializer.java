@@ -45,7 +45,7 @@ public final class EnableBootstrapInitializer {
         context.activateKits = readBoolean(config, "pg.activateKits", context.activateKits);
         context.activateShop = readBoolean(config, "pg.activateShop", context.activateShop);
         context.activateAirdrops = readBoolean(config, "pg.activateAirdrops", context.activateAirdrops);
-        context.gameServer = readBoolean(config, "pg.gameServer", context.gameServer);
+        context.gameServer = readBoolean(config, "pg.getGame()Server", context.gameServer);
         context.maxPlayers = readInt(config, "pg.maxPlayers", context.maxPlayers);
         context.minPlayers = readInt(config, "pg.minPlayers", context.minPlayers);
         context.teamSize = readInt(config, "pg.teamSize", context.teamSize);

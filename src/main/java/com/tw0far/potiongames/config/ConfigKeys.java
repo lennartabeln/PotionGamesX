@@ -51,7 +51,7 @@ public enum ConfigKeys {
     BROADCAST_STARTING("pg.broadcastStarting", "Behavior", false),
     
     // System
-    GAME_SERVER("pg.gameServer", "System", true),
+    GAME_SERVER("pg.getGame()Server", "System", true),
     LANGUAGE("pg.language", "System", "en_US"),
     
     // Economy

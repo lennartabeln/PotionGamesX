@@ -21,8 +21,8 @@ public class ChatEventListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent e) {
         Player p = e.getPlayer();
         
-        boolean isActive = plugin.game.isActivePlayer(p);
-        boolean isSpectator = plugin.game.isSpectatorPlayer(p);
+        boolean isActive = plugin.getGame().isActivePlayer(p);
+        boolean isSpectator = plugin.getGame().isSpectatorPlayer(p);
         
         if (!isActive && !isSpectator) {
             return;
@@ -31,9 +31,9 @@ public class ChatEventListener implements Listener {
         // Multi-lobby mode: get lobby ID and filter chat per lobby
         String lobbyId = null;
         if (isActive) {
-            lobbyId = plugin.game.getPlayerLobby(p);
+            lobbyId = plugin.getGame().getPlayerLobby(p);
         } else if (isSpectator) {
-            lobbyId = plugin.game.getSpectatorLobby(p);
+            lobbyId = plugin.getGame().getSpectatorLobby(p);
         }
         
         if (lobbyId != null) {
@@ -41,18 +41,18 @@ public class ChatEventListener implements Listener {
             e.getRecipients().clear();
             
             // Add active players in same lobby
-            for (Player active : plugin.game.getPlayersInLobby(lobbyId)) {
+            for (Player active : plugin.getGame().getPlayersInLobby(lobbyId)) {
                 e.getRecipients().add(active);
             }
             
             // Add spectators in same lobby
-            for (Player spec : plugin.game.getSpectatorsInLobby(lobbyId)) {
+            for (Player spec : plugin.getGame().getSpectatorsInLobby(lobbyId)) {
                 e.getRecipients().add(spec);
             }
             
             // Add colored name prefix based on team
             if (plugin.isLobbyActivateTeams(lobbyId)) {
-                String teamName = plugin.game.getPlayerTeam(p);
+                String teamName = plugin.getGame().getPlayerTeam(p);
                 if (teamName != null) {
                     String prefix = "§e[" + teamName + "] §r";
                     e.setMessage(prefix + e.getMessage());

@@ -41,9 +41,9 @@ public class ForceCommand implements ICommand {
         String arena = args[0];
         
         // Multi-lobby mode
-        String lobbyId = plugin.game.getPlayerLobby(player);
+        String lobbyId = plugin.getGame().getPlayerLobby(player);
         if (lobbyId == null) {
-            lobbyId = plugin.game.getSpectatorLobby(player);
+            lobbyId = plugin.getGame().getSpectatorLobby(player);
         }
         
         if (lobbyId != null) {
@@ -62,7 +62,7 @@ public class ForceCommand implements ICommand {
                     }
                 }
                 // Broadcast to all players in this lobby
-                for (Player all : plugin.game.getPlayersInLobby(lobbyId)) {
+                for (Player all : plugin.getGame().getPlayersInLobby(lobbyId)) {
                     all.sendMessage(Messages.ArenaForced(arena));
                 }
             } catch (Exception ex) {

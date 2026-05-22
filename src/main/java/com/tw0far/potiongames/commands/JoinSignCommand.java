@@ -37,7 +37,7 @@ public class JoinSignCommand implements ICommand {
         }
         try {
             int lobbyId = Integer.parseInt(args[1]);
-            plugin.setupHandler.setJoinSign(player, lobbyId);
+            plugin.getSetupHandler().setJoinSign(player, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
             player.sendMessage("§cUsage: /pg joinsign <lobbynumber>");

@@ -32,7 +32,7 @@ public class SetupCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         try {
-            plugin.setupHandler.setup(player);
+            plugin.getSetupHandler().setup(player);
         } catch (Exception ex) {
             player.sendMessage(Messages.ErrorGeneric());
         }

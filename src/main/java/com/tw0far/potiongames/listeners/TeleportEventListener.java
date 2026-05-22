@@ -21,8 +21,8 @@ public class TeleportEventListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         Player p = e.getPlayer();
         
-        boolean isActive = plugin.game.isActivePlayer(p);
-        boolean isSpectator = plugin.game.isSpectatorPlayer(p);
+        boolean isActive = plugin.getGame().isActivePlayer(p);
+        boolean isSpectator = plugin.getGame().isSpectatorPlayer(p);
         
         if (!isActive && !isSpectator) {
             return;

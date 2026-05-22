@@ -36,7 +36,7 @@ public class SetLobbyCommand implements ICommand {
         }
         try {
             int lobbyId = Integer.parseInt(args[1]);
-            plugin.setupHandler.addLobby(player, lobbyId);
+            plugin.getSetupHandler().addLobby(player, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
             player.sendMessage("§cUsage: /pg setlobby <lobbynumber>");

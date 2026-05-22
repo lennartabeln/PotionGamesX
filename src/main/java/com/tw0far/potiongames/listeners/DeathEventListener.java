@@ -21,14 +21,14 @@ public class DeathEventListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
         
-        if (!plugin.game.isActivePlayer(p) && !plugin.game.isInLobby(p)) {
+        if (!plugin.getGame().isActivePlayer(p) && !plugin.getGame().isInLobby(p)) {
             return;
         }
         
         // Death logic: move to spectators, increment deaths, etc.
-        if (plugin.game.isActivePlayer(p)) {
-            plugin.game.removeActivePlayer(p);
-            plugin.game.addSpectatorPlayer(p);
+        if (plugin.getGame().isActivePlayer(p)) {
+            plugin.getGame().removeActivePlayer(p);
+            plugin.getGame().addSpectatorPlayer(p);
         }
         
     }

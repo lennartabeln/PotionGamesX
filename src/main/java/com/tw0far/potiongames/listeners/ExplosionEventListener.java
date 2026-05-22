@@ -23,7 +23,7 @@ public class ExplosionEventListener implements Listener {
         }
         
         // Check if there's an active game
-        boolean gameActive = plugin.game.getActivePlayerCount() > 0;
+        boolean gameActive = plugin.getGame().getActivePlayerCount() > 0;
         
         if (!gameActive) {
             return;

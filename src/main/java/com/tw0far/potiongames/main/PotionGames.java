@@ -68,7 +68,7 @@ public class PotionGames extends JavaPlugin {
 
     //New
     private static PotionGames instance;
-    public final Game game = new Game();
+    private final Game game = new Game();
     private IConfigurationManager configManager;
     private ILobbyStateManager lobbyStateManager;
     private IPlayerStateManager playerStateManager;
@@ -87,7 +87,8 @@ public class PotionGames extends JavaPlugin {
     public IBlockStateManager getBlockStateManager() { return blockStateManager; }
     public ISetupStateManager getSetupStateManager() { return setupStateManager; }
     public IDatabaseManager getDatabaseManager() { return databaseManager; }
-    public ISetupHandler setupHandler = new SetupHandler(this);
+    public ISetupHandler getSetupHandler() { return setupHandler; }
+    private ISetupHandler setupHandler = new SetupHandler(this);
     private final JoinLobbyHandler joinLobbyHandler = new JoinLobbyHandler(this);
     
     // ===== Delegation Methods for Player Lists =====

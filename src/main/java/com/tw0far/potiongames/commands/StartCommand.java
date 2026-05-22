@@ -32,9 +32,9 @@ public class StartCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         // Multi-lobby mode
-        String lobbyId = plugin.game.getPlayerLobby(player);
+        String lobbyId = plugin.getGame().getPlayerLobby(player);
         if (lobbyId == null) {
-            lobbyId = plugin.game.getSpectatorLobby(player);
+            lobbyId = plugin.getGame().getSpectatorLobby(player);
         }
         
         if (lobbyId != null) {
@@ -42,7 +42,7 @@ public class StartCommand implements ICommand {
                 if (plugin.getLobbyCountdown(lobbyId) >= 10) {
                     plugin.setLobbyCountdown(lobbyId, 10);
                     // Broadcast to all players in this lobby
-                    for (Player all : plugin.game.getPlayersInLobby(lobbyId)) {
+                    for (Player all : plugin.getGame().getPlayersInLobby(lobbyId)) {
                         all.sendMessage(Messages.GameStarted());
                     }
                 } else {

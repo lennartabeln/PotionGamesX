@@ -42,7 +42,7 @@ public class PlayerEventListener implements Listener {
     public void onMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
-            String lobbyId = plugin.game.getPlayerLobby(p);
+            String lobbyId = plugin.getGame().getPlayerLobby(p);
             if (lobbyId != null) {
                 if (!plugin.isLobbyMoveAllowed(lobbyId)) {
                     if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
@@ -61,10 +61,10 @@ public class PlayerEventListener implements Listener {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
             String lobbyId = null;
-            if (plugin.game.isInLobby(p)) {
-                lobbyId = plugin.game.getPlayerLobby(p);
-            } else if (plugin.game.isInSpecLobby(p)) {
-                lobbyId = plugin.game.getSpectatorLobby(p);
+            if (plugin.getGame().isInLobby(p)) {
+                lobbyId = plugin.getGame().getPlayerLobby(p);
+            } else if (plugin.getGame().isInSpecLobby(p)) {
+                lobbyId = plugin.getGame().getSpectatorLobby(p);
             }
             if (lobbyId != null) {
                 plugin.onLeaveLobby(p, lobbyId);

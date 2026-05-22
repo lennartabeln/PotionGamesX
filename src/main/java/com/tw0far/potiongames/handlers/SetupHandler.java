@@ -114,7 +114,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void enableLobby(Player p, int lobbyId) {
-        Lobby lobby = pg.game.getLobby(lobbyId);
+        Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
@@ -142,7 +142,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void addLobby(Player p, int lobbyId) {
-        boolean success = pg.game.addLobby(lobbyId, p.getLocation());
+        boolean success = pg.getGame().addLobby(lobbyId, p.getLocation());
         if (success) {
             p.sendMessage(Messages.LobbyAdded(lobbyId));
         } else {
@@ -157,7 +157,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void removeLobby(Player p, int lobbyId) {
-        boolean success = pg.game.removeLobby(lobbyId);
+        boolean success = pg.getGame().removeLobby(lobbyId);
         if (success) {
             p.sendMessage(Messages.LobbyRemoved(lobbyId));
         } else {
@@ -172,7 +172,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void setJoinSign(Player p, int lobbyId) {
-        Lobby lobby = pg.game.getLobby(lobbyId);
+        Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
@@ -192,7 +192,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void addArena(Player p, String arenaName, int lobbyId) {
-        Lobby lobby = pg.game.getLobby(lobbyId);
+        Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
@@ -212,7 +212,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void removeArena(Player p, String arenaName, int lobbyId) {
-        Lobby lobby = pg.game.getLobby(lobbyId);
+        Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
@@ -232,7 +232,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void addSpawn(Player p, String arenaName, int lobbyId) {
-        Lobby lobby = pg.game.getLobby(lobbyId);
+        Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
@@ -258,7 +258,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void removeSpawn(Player p, String arenaName, int lobbyId) {
-        Lobby lobby = pg.game.getLobby(lobbyId);
+        Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
@@ -288,7 +288,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void addDeathmatchSpawn(Player p, String arenaName, int lobbyId) {
-        Lobby lobby = pg.game.getLobby(lobbyId);
+        Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
@@ -314,7 +314,7 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void removeDeathmatchSpawn(Player p, String arenaName, int lobbyId) {
-        Lobby lobby = pg.game.getLobby(lobbyId);
+        Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;

@@ -21,18 +21,18 @@ public class ItemDropEventListener implements Listener {
     public void onItemDrop(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.game.isActivePlayer(p) && !plugin.game.isInLobby(p)) {
+        if (!plugin.getGame().isActivePlayer(p) && !plugin.getGame().isInLobby(p)) {
             return;
         }
         
         // During lobby phase, prevent dropping items
-        if (plugin.game.isInLobby(p) && !plugin.game.isActivePlayer(p)) {
+        if (plugin.getGame().isInLobby(p) && !plugin.getGame().isActivePlayer(p)) {
             e.setCancelled(true);
             return;
         }
         
         // During active games, allow item dropping (for PvP purposes)
-        if (plugin.game.isActivePlayer(p)) {
+        if (plugin.getGame().isActivePlayer(p)) {
             return;
         }
     }

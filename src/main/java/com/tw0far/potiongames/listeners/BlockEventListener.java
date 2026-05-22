@@ -31,7 +31,7 @@ public class BlockEventListener implements Listener {
     public void onBlockBreak(BlockBreakEvent e) {
         var p = e.getPlayer();
         if (plugin.isGameServer()) {
-            String s = plugin.game.getPlayerLobby(p);
+            String s = plugin.getGame().getPlayerLobby(p);
             if (s != null) {
                 if (!plugin.isLobbyBuildAllowed(s)) {
                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
@@ -51,7 +51,7 @@ public class BlockEventListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent e) {
         var p = e.getPlayer();
         if (plugin.isGameServer()) {
-            String s = plugin.game.getPlayerLobby(p);
+            String s = plugin.getGame().getPlayerLobby(p);
             if (s != null) {
                 if (!plugin.isLobbyBuildAllowed(s)) {
                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
@@ -108,7 +108,7 @@ public class BlockEventListener implements Listener {
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
         var p = e.getPlayer();
         if (plugin.isGameServer()) {
-            String s = plugin.game.getPlayerLobby(p);
+            String s = plugin.getGame().getPlayerLobby(p);
             if (s != null) {
                 if (!plugin.isLobbyBuildAllowed(s)) {
                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {

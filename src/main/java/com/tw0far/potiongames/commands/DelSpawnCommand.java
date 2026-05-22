@@ -46,7 +46,7 @@ public class DelSpawnCommand implements ICommand {
                 player.sendMessage("§cThis lobby does not exists!");
                 return false;
             }
-            plugin.setupHandler.removeSpawn(player, arenaName, lobbyId);
+            plugin.getSetupHandler().removeSpawn(player, arenaName, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
             player.sendMessage("§cUsage: /pg delspawn <lobbynumber> <arenaname>");

@@ -23,7 +23,7 @@ public class CreatureSpawnEventListener implements Listener {
         }
         
         // Prevent mob spawning during active games
-        if (plugin.game.getActivePlayerCount() > 0) {
+        if (plugin.getGame().getActivePlayerCount() > 0) {
             e.setCancelled(true);
         }
     }

@@ -131,12 +131,12 @@ public final class Settings {
         } else {
             activateAirdrops = cfg.getBoolean("pg.activateAirdrops");
         }
-        if (cfg.get("pg.gameServer") == null) {
-            cfg.addDefault("pg.gameServer", gameServer);
+        if (cfg.get("pg.getGame()Server") == null) {
+            cfg.addDefault("pg.getGame()Server", gameServer);
             cfg.options().copyDefaults(true);
             pg.saveConfig();
         } else {
-            gameServer = cfg.getBoolean("pg.gameServer");
+            gameServer = cfg.getBoolean("pg.getGame()Server");
         }
         if (cfg.get("pg.maxPlayers") == null) {
             cfg.addDefault("pg.maxPlayers", maxPlayers);

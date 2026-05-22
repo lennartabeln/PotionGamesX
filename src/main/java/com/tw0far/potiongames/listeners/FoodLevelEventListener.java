@@ -25,7 +25,7 @@ public class FoodLevelEventListener implements Listener {
         
         Player p = (Player) e.getEntity();
         
-        if (!plugin.game.isActivePlayer(p)) {
+        if (!plugin.getGame().isActivePlayer(p)) {
             return;
         }
         

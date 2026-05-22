@@ -46,7 +46,7 @@ public class AddSpawnCommand implements ICommand {
                 player.sendMessage("§cThis lobby does not exists!");
                 return false;
             }
-            plugin.setupHandler.addSpawn(player, arenaName, lobbyId);
+            plugin.getSetupHandler().addSpawn(player, arenaName, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
             player.sendMessage("§cUsage: /pg addspawn <lobbynumber> <arenaname>");

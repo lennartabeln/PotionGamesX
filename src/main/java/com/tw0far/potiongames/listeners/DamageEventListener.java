@@ -26,8 +26,8 @@ public class DamageEventListener implements Listener {
         
         Player p = (Player) e.getEntity();
         
-        boolean isActive = plugin.game.isActivePlayer(p);
-        boolean isSpectator = plugin.game.isSpectatorPlayer(p);
+        boolean isActive = plugin.getGame().isActivePlayer(p);
+        boolean isSpectator = plugin.getGame().isSpectatorPlayer(p);
         
         if (!isActive && !isSpectator) {
             return;
@@ -57,8 +57,8 @@ public class DamageEventListener implements Listener {
         
         Player attacker = (Player) e.getDamager();
         
-        boolean victimActive = plugin.game.isActivePlayer(victim);
-        boolean attackerActive = plugin.game.isActivePlayer(attacker);
+        boolean victimActive = plugin.getGame().isActivePlayer(victim);
+        boolean attackerActive = plugin.getGame().isActivePlayer(attacker);
         
         // Both must be active players to fight
         if (!victimActive || !attackerActive) {
@@ -68,8 +68,8 @@ public class DamageEventListener implements Listener {
         
         // Check friendly fire (same team)
         if (plugin.isActivateTeams()) {
-            String victimLobby = plugin.game.getPlayerLobby(victim);
-            String attackerLobby = plugin.game.getPlayerLobby(attacker);
+            String victimLobby = plugin.getGame().getPlayerLobby(victim);
+            String attackerLobby = plugin.getGame().getPlayerLobby(attacker);
             
             // Must be in same lobby
             if (victimLobby == null || !victimLobby.equals(attackerLobby)) {
@@ -78,8 +78,8 @@ public class DamageEventListener implements Listener {
             }
             
             // Check if same team
-            String victimTeam = plugin.game.getPlayerTeam(victim);
-            String attackerTeam = plugin.game.getPlayerTeam(attacker);
+            String victimTeam = plugin.getGame().getPlayerTeam(victim);
+            String attackerTeam = plugin.getGame().getPlayerTeam(attacker);
             
             if (victimTeam != null && victimTeam.equals(attackerTeam)) {
                 // Friendly fire - by default allow it, could add config option

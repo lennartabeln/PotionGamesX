@@ -21,12 +21,12 @@ public class BucketEventListener implements Listener {
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.game.isActivePlayer(p)) {
+        if (!plugin.getGame().isActivePlayer(p)) {
             return;
         }
         
         // Get the player's lobby
-        String lobbyId = plugin.game.getPlayerLobby(p);
+        String lobbyId = plugin.getGame().getPlayerLobby(p);
         
         if (lobbyId == null) {
             return;

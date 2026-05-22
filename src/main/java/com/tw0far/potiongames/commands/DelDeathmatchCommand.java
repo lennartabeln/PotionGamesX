@@ -38,7 +38,7 @@ public class DelDeathmatchCommand implements ICommand {
         try {
             int lobbyId = Integer.parseInt(args[1]);
             String arenaName = args[2];
-            plugin.setupHandler.removeDeathmatchSpawn(player, arenaName, lobbyId);
+            plugin.getSetupHandler().removeDeathmatchSpawn(player, arenaName, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
             player.sendMessage("§cUsage: /pg deldeathmatch <lobbynumber> <arenaname>");

@@ -23,7 +23,7 @@ public class ItemConsumeEventListener implements Listener {
     public void onItemConsume(PlayerItemConsumeEvent e) {
         Player p = e.getPlayer();
         
-        if (!plugin.game.isActivePlayer(p) && !plugin.game.isInLobby(p)) {
+        if (!plugin.getGame().isActivePlayer(p) && !plugin.getGame().isInLobby(p)) {
             return;
         }
         

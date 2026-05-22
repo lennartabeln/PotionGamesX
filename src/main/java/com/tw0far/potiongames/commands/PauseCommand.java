@@ -32,9 +32,9 @@ public class PauseCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         // Multi-lobby mode: get player's lobby and toggle pause for that lobby
-        String lobbyId = plugin.game.getPlayerLobby(player);
+        String lobbyId = plugin.getGame().getPlayerLobby(player);
         if (lobbyId == null) {
-            lobbyId = plugin.game.getSpectatorLobby(player);
+            lobbyId = plugin.getGame().getSpectatorLobby(player);
         }
 
         if (lobbyId != null) {
@@ -42,10 +42,10 @@ public class PauseCommand implements ICommand {
             plugin.setLobbyPaused(lobbyId, !currentPause);
 
             boolean paused = plugin.isLobbyPaused(lobbyId);
-            for (Player p : plugin.game.getPlayersInLobby(lobbyId)) {
+            for (Player p : plugin.getGame().getPlayersInLobby(lobbyId)) {
                 p.sendMessage(Messages.PauseToggle(paused));
             }
-            for (Player p : plugin.game.getSpectatorsInLobby(lobbyId)) {
+            for (Player p : plugin.getGame().getSpectatorsInLobby(lobbyId)) {
                 p.sendMessage(Messages.PauseToggle(paused));
             }
         }

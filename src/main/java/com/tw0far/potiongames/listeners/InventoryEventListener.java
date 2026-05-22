@@ -57,9 +57,9 @@ public class InventoryEventListener implements Listener {
         Player p = (Player) e.getWhoClicked();
         if (plugin.isGameServer()) {
             // Get lobby ID using Game class methods
-            String s = plugin.game.getPlayerLobby(p);
+            String s = plugin.getGame().getPlayerLobby(p);
             if (s == null) {
-                s = plugin.game.getSpectatorLobby(p);
+                s = plugin.getGame().getSpectatorLobby(p);
             }
             if (s != null) {
                 GameStates lobbyState = plugin.getLobbyGameState(s);
@@ -89,7 +89,7 @@ public class InventoryEventListener implements Listener {
             return plugin.getLobbyById(selectedLobby);
         }
 
-        String activeLobbyId = plugin.game.getPlayerLobby(player);
+        String activeLobbyId = plugin.getGame().getPlayerLobby(player);
         if (activeLobbyId != null) {
             try {
                 return plugin.getLobbyById(Integer.parseInt(activeLobbyId));
@@ -160,13 +160,13 @@ public class InventoryEventListener implements Listener {
         }
 
         if (addSpawn) {
-            plugin.setupHandler.addSpawn(player, arena.getName(), lobby.getId());
+            plugin.getSetupHandler().addSpawn(player, arena.getName(), lobby.getId());
         } else {
             if (arena.getSpawns().isEmpty()) {
                 player.sendMessage(Settings.prefix.append(Component.text("No spawns to remove!").color(NamedTextColor.YELLOW)));
                 return true;
             }
-            plugin.setupHandler.removeSpawn(player, arena.getName(), lobby.getId());
+            plugin.getSetupHandler().removeSpawn(player, arena.getName(), lobby.getId());
         }
         return true;
     }
@@ -415,7 +415,7 @@ public class InventoryEventListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.game.isActivePlayer(p) || plugin.game.isInLobby(p)) {
+            if (plugin.getGame().isActivePlayer(p) || plugin.getGame().isInLobby(p)) {
                 if (e.getAction() == Action.PHYSICAL && Objects.requireNonNull(e.getClickedBlock()).getType() == Material.FARMLAND) {
                     e.setCancelled(true);
                 }
@@ -423,7 +423,7 @@ public class InventoryEventListener implements Listener {
                     if (e.getHand() == EquipmentSlot.HAND) {
                         if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(Settings.chestdata.get("pg.chestblocks.normal")).toString())) {
                             
-                                String s = plugin.game.getPlayerLobby(p);
+                                String s = plugin.getGame().getPlayerLobby(p);
                                 if (s != null && plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                     if (!plugin.hasLobbyChest(s, e.getClickedBlock().getLocation())) {
                                         Inventory inv;
@@ -526,7 +526,7 @@ public class InventoryEventListener implements Listener {
                                     
                                         String s = null;
                                         for (int ii = 1; ii <= 27; ii++) {
-                                            if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                            if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                                 s = Integer.toString(ii);
                                             }
                                         }
@@ -556,7 +556,7 @@ public class InventoryEventListener implements Listener {
                             
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
@@ -609,7 +609,7 @@ public class InventoryEventListener implements Listener {
                         
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
-                                if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
                             }
@@ -625,7 +625,7 @@ public class InventoryEventListener implements Listener {
                             
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
@@ -654,7 +654,7 @@ public class InventoryEventListener implements Listener {
                             
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
@@ -689,7 +689,7 @@ public class InventoryEventListener implements Listener {
                             
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
@@ -703,7 +703,7 @@ public class InventoryEventListener implements Listener {
                             
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
-                                    if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                    if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                         s = Integer.toString(ii);
                                     }
                                 }
@@ -711,7 +711,7 @@ public class InventoryEventListener implements Listener {
                                     Player result = null;
                                     double lastDistance = Double.MAX_VALUE;
                                     for (Player cp : p.getWorld().getPlayers()) {
-                                        if (plugin.game.getPlayerLobby(cp) != null && Objects.equals(plugin.getPlayerTeam(s, p), plugin.getPlayerTeam(s, cp))) {
+                                        if (plugin.getGame().getPlayerLobby(cp) != null && Objects.equals(plugin.getPlayerTeam(s, p), plugin.getPlayerTeam(s, cp))) {
                                             if (p == cp) {
                                                 continue;
                                             }
@@ -737,7 +737,7 @@ public class InventoryEventListener implements Listener {
                         
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
-                                if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
                             }
@@ -775,7 +775,7 @@ public class InventoryEventListener implements Listener {
                         
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
-                                if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
                             }
@@ -813,7 +813,7 @@ public class InventoryEventListener implements Listener {
                         
                             String s = null;
                             for (int ii = 1; ii <= 27; ii++) {
-                                if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                                if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                     s = Integer.toString(ii);
                                 }
                             }
@@ -842,7 +842,7 @@ public class InventoryEventListener implements Listener {
                     
                         String s = null;
                         for (int ii = 1; ii <= 27; ii++) {
-                            if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                            if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                                 s = Integer.toString(ii);
                             }
                         }
@@ -1085,7 +1085,7 @@ public class InventoryEventListener implements Listener {
                         String line3 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(2));
                         
                             if (e.getClickedBlock().getLocation().equals(Settings.arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
-                                if (plugin.game.getPlayerLobby(p) == null && plugin.game.getSpectatorLobby(p) == null) {
+                                if (plugin.getGame().getPlayerLobby(p) == null && plugin.getGame().getSpectatorLobby(p) == null) {
                                     e.setCancelled(true);
                                     plugin.onJoinLobby(p, line1);
                                 }
@@ -1138,15 +1138,15 @@ public class InventoryEventListener implements Listener {
     public void onDropItem(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
         if (plugin.isGameServer()) {
-            if (plugin.game.getActivePlayers().contains(p) || plugin.game.getPlayerLobby(p) != null) {
+            if (plugin.getGame().getActivePlayers().contains(p) || plugin.getGame().getPlayerLobby(p) != null) {
                 
                     String s = null;
                     for (int ii = 1; ii <= 27; ii++) {
-                        if (Objects.equals(plugin.game.getPlayerLobby(p), Integer.toString(ii))) {
+                        if (Objects.equals(plugin.getGame().getPlayerLobby(p), Integer.toString(ii))) {
                             s = Integer.toString(ii);
                         }
                     }
-                    GameStates state = plugin.getLobbyGameState(s); e.setCancelled(state != GameStates.INGAME && !Objects.equals(plugin.game.getPlayerLobby(p), s));
+                    GameStates state = plugin.getLobbyGameState(s); e.setCancelled(state != GameStates.INGAME && !Objects.equals(plugin.getGame().getPlayerLobby(p), s));
                 
             }
         }

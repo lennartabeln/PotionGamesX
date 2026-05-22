@@ -24,8 +24,8 @@ public class InteractEventListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
         
-        boolean isActive = plugin.game.isActivePlayer(p);
-        boolean isInLobby = plugin.game.isInLobby(p);
+        boolean isActive = plugin.getGame().isActivePlayer(p);
+        boolean isInLobby = plugin.getGame().isInLobby(p);
         
         if (!isActive && !isInLobby) {
             return;

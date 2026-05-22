@@ -15,7 +15,7 @@ public class JoinLobbyHandler {
         try {
             Lobby lobby = plugin.getLobbyById(Integer.parseInt(lobbyId));
             if (lobby != null) {
-                plugin.game.setPlayerLobby(player, lobbyId);
+                plugin.getGame().setPlayerLobby(player, lobbyId);
                 lobby.join(player);
             }
         } catch (NumberFormatException ignored) {
