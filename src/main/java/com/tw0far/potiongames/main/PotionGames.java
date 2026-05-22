@@ -1003,15 +1003,15 @@ public class PotionGames extends JavaPlugin {
 
     private EnableBootstrapContext createEnableBootstrapContext() {
         return new EnableBootstrapContext(
-                chatmessages, shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, kits,
-                kitplayers, lobbyCheckArenas, lobbyActivateTeams, lobbyActivateKits, lobbyActivateShop,
-                lobbyActivateAirdrops, lobbyJoinable, lobbyForcearena, lobbyDeathmatch, lobbyMove,
-                lobbyVoteallowed, lobbyTeamallowed, lobbyKitallowed, lobbyAmount, lobbyStates, lobbyTickstarted, lobbyBuild,
-                lobbyPause, lobbyVote, lobbyVotedarena, lobbyteamSize, lobbymaxPlayers, lobbyminPlayers,
-                lobbyteamAmount, lobbyroundTime, lobbyroundTimeSeconds, lobbyteams, lobbyteamplayernamesdata,
-                lobbyteamplayernames, lobbyvotes, lobbyvoteplayernamesdata, lobbyvoteplayernames, lobbyLiquidPlaced,
-                lobbyPlacedBlocks, lobbyBreakedBlocks, lobbyWaterBlocks, lobbyLiquidPlacedData, lobbyPlacedBlocksData,
-                lobbyBreakedBlocksData, lobbyWaterBlocksData, coin, activateMysql, countdown, startOnJoin,
+                new ArrayList<>(chatmessages), new ArrayList<>(shop), new ArrayList<>(shoppotion), new ArrayList<>(shoppotiontype), new ArrayList<>(shopkit), new ArrayList<>(shopcost), new ArrayList<>(shopsale), new ArrayList<>(kits),
+                new HashMap<>(kitplayers), new HashMap<>(lobbyCheckArenas), new HashMap<>(lobbyActivateTeams), new HashMap<>(lobbyActivateKits), new HashMap<>(lobbyActivateShop),
+                new HashMap<>(lobbyActivateAirdrops), new HashMap<>(lobbyJoinable), new HashMap<>(lobbyForcearena), new HashMap<>(lobbyDeathmatch), new HashMap<>(lobbyMove),
+                new HashMap<>(lobbyVoteallowed), new HashMap<>(lobbyTeamallowed), new HashMap<>(lobbyKitallowed), new HashMap<>(lobbyAmount), new HashMap<>(lobbyStates), new HashMap<>(lobbyTickstarted), new HashMap<>(lobbyBuild),
+                new HashMap<>(lobbyPause), new HashMap<>(lobbyVote), new HashMap<>(lobbyVotedarena), new HashMap<>(lobbyteamSize), new HashMap<>(lobbymaxPlayers), new HashMap<>(lobbyminPlayers),
+                new HashMap<>(lobbyteamAmount), new HashMap<>(lobbyroundTime), new HashMap<>(lobbyroundTimeSeconds), new HashMap<>(lobbyteams), new HashMap<>(lobbyteamplayernamesdata),
+                new HashMap<>(lobbyteamplayernames), new HashMap<>(lobbyvotes), new HashMap<>(lobbyvoteplayernamesdata), new HashMap<>(lobbyvoteplayernames), new HashMap<>(lobbyLiquidPlaced),
+                new HashMap<>(lobbyPlacedBlocks), new HashMap<>(lobbyBreakedBlocks), new HashMap<>(lobbyWaterBlocks), new HashMap<>(lobbyLiquidPlacedData), new HashMap<>(lobbyPlacedBlocksData),
+                new HashMap<>(lobbyBreakedBlocksData), new HashMap<>(lobbyWaterBlocksData), coin == null ? null : coin.clone(), activateMysql, countdown, startOnJoin,
                 compassOnSpawn, allowOutsideChat, changeGamerules, activateTeams, activateKits, activateShop,
                 activateAirdrops, gameServer, maxPlayers, minPlayers, teamSize, teamAmount, roundTime,
                 roundTimeSeconds, activePotions, activeKits, activateScoreboard, friendlyFire, joinStarted,
@@ -1021,39 +1021,39 @@ public class PotionGames extends JavaPlugin {
     }
 
     private void applyEnableBootstrapContext(EnableBootstrapContext context) {
-        activateMysql = context.activateMysql;
-        countdown = context.countdown;
-        startOnJoin = context.startOnJoin;
-        compassOnSpawn = context.compassOnSpawn;
-        allowOutsideChat = context.allowOutsideChat;
-        changeGamerules = context.changeGamerules;
-        activateTeams = context.activateTeams;
-        activateKits = context.activateKits;
-        activateShop = context.activateShop;
-        activateAirdrops = context.activateAirdrops;
-        gameServer = context.gameServer;
-        maxPlayers = context.maxPlayers;
-        minPlayers = context.minPlayers;
-        teamSize = context.teamSize;
-        teamAmount = context.teamAmount;
-        roundTime = context.roundTime;
-        roundTimeSeconds = context.roundTimeSeconds;
-        activePotions = context.activePotions;
-        activeKits = context.activeKits;
-        activateScoreboard = context.activateScoreboard;
-        friendlyFire = context.friendlyFire;
-        joinStarted = context.joinStarted;
-        activateDeathmatch = context.activateDeathmatch;
-        enableRewards = context.enableRewards;
-        broadcastStarting = context.broadcastStarting;
-        winningReward = context.winningReward;
-        killReward = context.killReward;
-        language = context.language;
-        host = context.host;
-        port = context.port;
-        database = context.database;
-        user = context.user;
-        password = context.password;
+        activateMysql = context.isActivateMysql();
+        countdown = context.getCountdown();
+        startOnJoin = context.isStartOnJoin();
+        compassOnSpawn = context.isCompassOnSpawn();
+        allowOutsideChat = context.isAllowOutsideChat();
+        changeGamerules = context.isChangeGamerules();
+        activateTeams = context.isActivateTeams();
+        activateKits = context.isActivateKits();
+        activateShop = context.isActivateShop();
+        activateAirdrops = context.isActivateAirdrops();
+        gameServer = context.isGameServer();
+        maxPlayers = context.getMaxPlayers();
+        minPlayers = context.getMinPlayers();
+        teamSize = context.getTeamSize();
+        teamAmount = context.getTeamAmount();
+        roundTime = context.getRoundTime();
+        roundTimeSeconds = context.getRoundTimeSeconds();
+        activePotions = context.getActivePotions();
+        activeKits = context.getActiveKits();
+        activateScoreboard = context.isActivateScoreboard();
+        friendlyFire = context.isFriendlyFire();
+        joinStarted = context.isJoinStarted();
+        activateDeathmatch = context.isActivateDeathmatch();
+        enableRewards = context.isEnableRewards();
+        broadcastStarting = context.isBroadcastStarting();
+        winningReward = context.getWinningReward();
+        killReward = context.getKillReward();
+        language = context.getLanguage();
+        host = context.getHost();
+        port = context.getPort();
+        database = context.getDatabase();
+        user = context.getUser();
+        password = context.getPassword();
     }
 
     // onReload() deleted - moved to ReloadHandler/ConfigurationManager
