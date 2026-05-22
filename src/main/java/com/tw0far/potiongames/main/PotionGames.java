@@ -107,15 +107,15 @@ public class PotionGames extends JavaPlugin {
         return worlds;
     }
 
-    public ArrayList<String> getTeamed() { return teamed; }
-    public ArrayList<String> getKits() { return kits; }
-    public ArrayList<String> getChatmessages() { return chatmessages; }
-    public ArrayList<String> getShop() { return shop; }
+    public java.util.List<String> getTeamed() { return java.util.Collections.unmodifiableList(teamed); }
+    public java.util.List<String> getKits() { return java.util.Collections.unmodifiableList(kits); }
+    public java.util.List<String> getChatmessages() { return java.util.Collections.unmodifiableList(chatmessages); }
+    public java.util.List<String> getShop() { return java.util.Collections.unmodifiableList(shop); }
     public ArrayList<PotionEffect> getShoppotion() { return shoppotion; }
     public ArrayList<ItemStack> getShoppotiontype() { return shoppotiontype; }
-    public ArrayList<String> getShopkit() { return shopkit; }
-    public ArrayList<Integer> getShopcost() { return shopcost; }
-    public ArrayList<Integer> getShopsale() { return shopsale; }
+    public java.util.List<String> getShopkit() { return java.util.Collections.unmodifiableList(shopkit); }
+    public java.util.List<Integer> getShopcost() { return java.util.Collections.unmodifiableList(shopcost); }
+    public java.util.List<Integer> getShopsale() { return java.util.Collections.unmodifiableList(shopsale); }
     public ArrayList<Location> getRankhead() { return rankhead; }
     public ArrayList<Location> getRanksign() { return ranksign; }
     public ArrayList<ItemStack> getFood1() { return food1; }
@@ -130,8 +130,8 @@ public class PotionGames extends JavaPlugin {
 
     public HashMap<Integer, String> getRank() { return rank; }
 
-    public HashMap<String, Integer> getKitplayers() { return kitplayers; }
-    public HashMap<String, HashMap<String, Integer>> getLobbyvotes() { return lobbyvotes; }
+    public java.util.Map<String, Integer> getKitplayers() { return java.util.Collections.unmodifiableMap(kitplayers); }
+    public java.util.Map<String, java.util.Map<String, Integer>> getLobbyvotes() { return java.util.Collections.unmodifiableMap(lobbyvotes); }
     /**
      * Get spectator players from Game.
      */
