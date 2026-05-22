@@ -32,7 +32,13 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
 
+import com.tw0far.potiongames.bootstrap.BootstrapInitializer;
+import com.tw0far.potiongames.bootstrap.ChestLootInitializer;
+import com.tw0far.potiongames.bootstrap.RankWallUpdater;
+import com.tw0far.potiongames.bootstrap.EnableBootstrapContext;
+import com.tw0far.potiongames.bootstrap.EnableBootstrapInitializer;
 import com.tw0far.potiongames.commands.CommandDispatcher;
+import com.tw0far.potiongames.handlers.JoinLobbyHandler;
 import com.tw0far.potiongames.handlers.ISetupHandler;
 import com.tw0far.potiongames.handlers.SetupHandler;
 import com.tw0far.potiongames.listeners.*;
@@ -46,11 +52,8 @@ import com.tw0far.potiongames.updatechecker.UpdateChecker;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -73,7 +76,7 @@ public class PotionGames extends JavaPlugin {
     private IItemStateManager itemStateManager;
     private IBlockStateManager blockStateManager;
     private ISetupStateManager setupStateManager;
-    private IManager databaseManager;
+    private IDatabaseManager databaseManager;
     public static PotionGames getInstance() { return instance; }
     public Game getGame() { return game; }
     public IConfigurationManager getConfigManager() { return configManager; }
@@ -83,16 +86,14 @@ public class PotionGames extends JavaPlugin {
     public IItemStateManager getItemStateManager() { return itemStateManager; }
     public IBlockStateManager getBlockStateManager() { return blockStateManager; }
     public ISetupStateManager getSetupStateManager() { return setupStateManager; }
-    public IManager getDatabaseManager() { return databaseManager; }
+    public IDatabaseManager getDatabaseManager() { return databaseManager; }
     public ISetupHandler setupHandler = new SetupHandler(this);
+    private final JoinLobbyHandler joinLobbyHandler = new JoinLobbyHandler(this);
     
-    // ===== Delegation Methods for Player Lists (Phase 3.4 Migration) =====
-    // These methods provide backwards-compatible access to Game's player tracking
-    // Callers can use plugin.pgPlayers or plugin.getActivePlayers() interchangeably
+    // ===== Delegation Methods for Player Lists =====
     
     /**
-     * Get active players (delegates to Game class)
-     * Use this instead of pgPlayers for new code
+     * Get active players from Game.
      */
     public ArrayList<Player> getActivePlayers() {
         return game.getActivePlayers();
@@ -105,12 +106,8 @@ public class PotionGames extends JavaPlugin {
         return worlds;
     }
 
-    public ArrayList<String> getArenas() { return arenas; }
-    public ArrayList<String> getVoted() { return voted; }
-    public ArrayList<String> getTeams() { return teams; }
     public ArrayList<String> getTeamed() { return teamed; }
     public ArrayList<String> getKits() { return kits; }
-    public ArrayList<String> getKited() { return kited; }
     public ArrayList<String> getChatmessages() { return chatmessages; }
     public ArrayList<String> getShop() { return shop; }
     public ArrayList<PotionEffect> getShoppotion() { return shoppotion; }
@@ -129,101 +126,13 @@ public class PotionGames extends JavaPlugin {
     public ArrayList<ItemStack> getArmour5() { return armour5; }
     public ArrayList<ItemStack> getWeapons1() { return weapons1; }
     public ArrayList<ItemStack> getWeapons2() { return weapons2; }
-    public ArrayList<PotionEffect> getPotions() { return potions; }
+
     public HashMap<Integer, String> getRank() { return rank; }
-    public HashMap<String, Integer> getVotes() { return votes; }
-    public HashMap<Player, String> getVoteplayernames() { return voteplayernames; }
-    public HashMap<String, Integer> getTeamplayers() { return teamplayers; }
-    public HashMap<Player, String> getTeamplayernames() { return teamplayernames; }
+
     public HashMap<String, Integer> getKitplayers() { return kitplayers; }
-    public HashMap<Player, String> getKitplayernames() { return kitplayernames; }
-    public HashMap<String, ItemStack[]> getInv() { return inv; }
-    public HashMap<String, ItemStack[]> getArmor() { return armor; }
-    public HashMap<String, Integer> getLvl() { return lvl; }
-    public HashMap<String, Float> getExp() { return exp; }
-    public HashMap<String, Location> getLoc() { return loc; }
-    public HashMap<String, GameMode> getGm() { return gm; }
-    public HashMap<String, ArrayList<Player>> getChannels() { return channels; }
-    public HashMap<Player, String> getPlayerChannelMap() { return playerChannel; }
-    public HashMap<String, Integer> getLobbyAmountMap() { return lobbyAmount; }
-    public HashMap<String, GameStates> getLobbyStates() { return lobbyStates; }
-    public HashMap<String, Boolean> getLobbyDeathmatch() { return lobbyDeathmatch; }
-    public HashMap<String, Boolean> getLobbyMove() { return lobbyMove; }
-    public HashMap<String, Boolean> getLobbyJoinable() { return lobbyJoinable; }
-    public HashMap<String, Boolean> getLobbyForcearena() { return lobbyForcearena; }
-    public HashMap<String, Boolean> getLobbyVoteallowed() { return lobbyVoteallowed; }
-    public HashMap<String, Boolean> getLobbyTeamallowed() { return lobbyTeamallowed; }
-    public HashMap<String, Boolean> getLobbyKitallowed() { return lobbyKitallowed; }
-    public HashMap<String, Boolean> getLobbyTickstarted() { return lobbyTickstarted; }
-    public HashMap<String, Boolean> getLobbyBuild() { return lobbyBuild; }
-    public HashMap<String, Boolean> getLobbyPause() { return lobbyPause; }
-    public HashMap<String, Boolean> getLobbyActivateTeamsMap() { return lobbyActivateTeams; }
-    public HashMap<String, Boolean> getLobbyActivateKitsMap() { return lobbyActivateKits; }
-    public HashMap<String, Boolean> getLobbyActivateShopMap() { return lobbyActivateShop; }
-    public HashMap<String, Boolean> getLobbyActivateAirdropsMap() { return lobbyActivateAirdrops; }
-    public HashMap<String, Boolean> getLobbyCheckArenas() { return lobbyCheckArenas; }
-    public HashMap<String, String> getLobbyVoteMap() { return lobbyVote; }
-    public HashMap<String, String> getLobbyVotedarenaMap() { return lobbyVotedarena; }
-    public HashMap<String, HashMap<Integer, Integer>> getLobbyteams() { return lobbyteams; }
-    public HashMap<Player, String> getLobbyteamplayernamesdata() { return lobbyteamplayernamesdata; }
-    public HashMap<String, HashMap<Player, String>> getLobbyteamplayernames() { return lobbyteamplayernames; }
     public HashMap<String, HashMap<String, Integer>> getLobbyvotes() { return lobbyvotes; }
-    public HashMap<Player, String> getLobbyvoteplayernamesdata() { return lobbyvoteplayernamesdata; }
-    public HashMap<String, HashMap<Player, String>> getLobbyvoteplayernames() { return lobbyvoteplayernames; }
-    public HashMap<String, Integer> getLobbyteamSize() { return lobbyteamSize; }
-    public HashMap<String, Integer> getLobbymaxPlayers() { return lobbymaxPlayers; }
-    public HashMap<String, Integer> getLobbyminPlayers() { return lobbyminPlayers; }
-    public HashMap<String, Integer> getLobbyteamAmount() { return lobbyteamAmount; }
-    public HashMap<String, Integer> getLobbyroundTime() { return lobbyroundTime; }
-    public HashMap<String, Integer> getLobbyroundTimeSeconds() { return lobbyroundTimeSeconds; }
-    public HashMap<String, HashMap<Location, Block>> getLobbyLiquidPlaced() { return lobbyLiquidPlaced; }
-    public HashMap<String, HashMap<Location, Material>> getLobbyPlacedBlocks() { return lobbyPlacedBlocks; }
-    public HashMap<String, HashMap<Location, Material>> getLobbyBreakedBlocks() { return lobbyBreakedBlocks; }
-    public HashMap<String, HashMap<Location, BlockData>> getLobbyWaterBlocks() { return lobbyWaterBlocks; }
-    public HashMap<Location, Block> getLobbyLiquidPlacedData() { return lobbyLiquidPlacedData; }
-    public HashMap<Location, Material> getLobbyPlacedBlocksData() { return lobbyPlacedBlocksData; }
-    public HashMap<Location, Material> getLobbyBreakedBlocksData() { return lobbyBreakedBlocksData; }
-    public HashMap<Location, BlockData> getLobbyWaterBlocksData() { return lobbyWaterBlocksData; }
     /**
-     * Clear legacy collections that are still owned by PotionGames for reload compatibility.
-     * New manager-backed state should be cleared through the dedicated managers instead.
-     */
-    public void clearLegacyCollectionsForReload() {
-        game.clearAllPlayers();
-        game.clearShopItems();
-        game.clearRankData();
-        game.clearAllLoot();
-        game.clearChests();
-        game.clearScoreboards();
-        game.clearChannels();
-        setupPlayer.clear();
-        inv.clear();
-        armor.clear();
-        lvl.clear();
-        exp.clear();
-        loc.clear();
-        gm.clear();
-
-        arenas.clear();
-        voted.clear();
-        teams.clear();
-        teamed.clear();
-        kits.clear();
-        kited.clear();
-        chatmessages.clear();
-
-        votes.clear();
-        voteplayernames.clear();
-        teamplayers.clear();
-        teamplayernames.clear();
-        kitplayers.clear();
-        kitplayernames.clear();
-
-    }
-
-    /**
-     * Get spectator players (delegates to Game class)
-     * Use this instead of specPlayers for new code
+     * Get spectator players from Game.
      */
     public ArrayList<Player> getSpectatorPlayers() {
         return game.getSpectatorPlayers();
@@ -619,22 +528,34 @@ public class PotionGames extends JavaPlugin {
     }
 
     // ===== Delegation Methods for Game Shop/Kit/Loot (Phase 7.5) =====
-    // These delegate to Game class for global shop/loot items
+    // These delegate to the item state manager for global shop/loot items
     
     public ArrayList<String> getGameShopItems() {
-        return game.getShopItems();
+        return new ArrayList<>(itemStateManager.getShopItems());
     }
     
     public ArrayList<String> getGameShopKits() {
-        return game.getShopKits();
+        ArrayList<String> kits = new ArrayList<>();
+        for (int i = 0; i < itemStateManager.getShopItemCount(); i++) {
+            kits.add(itemStateManager.getShopKit(i));
+        }
+        return kits;
     }
     
     public ArrayList<Integer> getGameShopCosts() {
-        return game.getShopCosts();
+        ArrayList<Integer> costs = new ArrayList<>();
+        for (int i = 0; i < itemStateManager.getShopItemCount(); i++) {
+            costs.add(itemStateManager.getShopCost(i));
+        }
+        return costs;
     }
     
     public ArrayList<Integer> getGameShopSales() {
-        return game.getShopSales();
+        ArrayList<Integer> sales = new ArrayList<>();
+        for (int i = 0; i < itemStateManager.getShopItemCount(); i++) {
+            sales.add(itemStateManager.getShopSale(i));
+        }
+        return sales;
     }
     
     // ===== Delegation Methods for Accessing Lobbies (Phase 7.5) =====
@@ -713,42 +634,42 @@ public class PotionGames extends JavaPlugin {
 
     
     // ===== Delegation Methods for Game Loot Data (Phase 7.5) =====
-    // These delegate to Game class for global loot tables
+    // These delegate to the item state manager for global loot tables
     
     public ArrayList<ItemStack> getFoodTier1() {
-        return game.getFoodTier1();
+        return new ArrayList<>(itemStateManager.getFoods(1));
     }
     
     public ArrayList<ItemStack> getFoodTier2() {
-        return game.getFoodTier2();
+        return new ArrayList<>(itemStateManager.getFoods(2));
     }
     
     public ArrayList<ItemStack> getArmourTier1() {
-        return game.getArmourTier1();
+        return new ArrayList<>(itemStateManager.getArmors(1));
     }
     
     public ArrayList<ItemStack> getArmourTier2() {
-        return game.getArmourTier2();
+        return new ArrayList<>(itemStateManager.getArmors(2));
     }
     
     public ArrayList<ItemStack> getArmourTier3() {
-        return game.getArmourTier3();
+        return new ArrayList<>(itemStateManager.getArmors(3));
     }
     
     public ArrayList<ItemStack> getArmourTier4() {
-        return game.getArmourTier4();
+        return new ArrayList<>(itemStateManager.getArmors(4));
     }
     
     public ArrayList<ItemStack> getArmourTier5() {
-        return game.getArmourTier5();
+        return new ArrayList<>(itemStateManager.getArmors(5));
     }
     
     public ArrayList<ItemStack> getWeaponsTier1() {
-        return game.getWeaponsTier1();
+        return new ArrayList<>(itemStateManager.getWeapons(1));
     }
     
     public ArrayList<ItemStack> getWeaponsTier2() {
-        return game.getWeaponsTier2();
+        return new ArrayList<>(itemStateManager.getWeapons(2));
     }
     
     // ===== PHASE 7.5: Team Delegation Methods =====
@@ -902,7 +823,6 @@ public class PotionGames extends JavaPlugin {
     private final HashMap<Location, BlockData> lobbyWaterBlocksData = new HashMap<>();
     private final ItemStack coin = new ItemStack(Material.GOLD_NUGGET);
     private final ItemStack bottle = new ItemStack(Material.GLASS_BOTTLE);
-    private int tick;
     private int countdown = 60;
     private int teamSize = 2;
     private int maxPlayers = 24;
@@ -931,7 +851,6 @@ public class PotionGames extends JavaPlugin {
     private boolean activateShop = true;
     private boolean activateAirdrops = true;
     private boolean activateMysql = false;
-    private boolean mysql = false;
     private boolean gameServer = true;
     private boolean addlobby = false;
     private boolean addarena = false;
@@ -947,9 +866,6 @@ public class PotionGames extends JavaPlugin {
     private boolean activateDeathmatch = true;
     private boolean enableRewards = false;
     private boolean broadcastStarting = false;
-    private Connection con;
-    private Statement st;
-
     public static Economy getEconomy() {
         return econ;
     }
@@ -1019,740 +935,13 @@ public class PotionGames extends JavaPlugin {
         // Register new command dispatcher (refactored from monolithic Commands.java)
         Objects.requireNonNull(getCommand("pg")).setExecutor(new CommandDispatcher(this));
 
-        //New
-        Settings.arenadatafile = new File(getDataFolder() + File.separator + "arenadata.yml");
-        Settings.chestdatafile = new File(getDataFolder() + File.separator + "chestdata.yml");
-        Settings.kitdatafile = new File(getDataFolder() + File.separator + "kitdata.yml");
-        Settings.messagesfile = new File(getDataFolder() + File.separator + "messages.yml");
-        Settings.shopdatafile = new File(getDataFolder() + File.separator + "shopdata.yml");
-        // Ensure default messages.yml is available on first run
-        if (!Settings.messagesfile.exists()) {
-            saveResource("messages.yml", false);
-        }
-        Settings.loadConfigurations();
-        Settings.loadSettings(this);
-        game.load();
-        //New
+        new BootstrapInitializer(this).initialize();
+        new ChestLootInitializer(this).seed();
 
-        chatmessages.add("Waiting for players!");
-        chatmessages.add("The game starts in");
-        chatmessages.add("Player-Finder");
-        chatmessages.add("The game starts now!");
-        chatmessages.add("has won the game!");
-        chatmessages.add("Teleporting to lobby in");
-        chatmessages.add("Teleporting to lobby now!");
-        chatmessages.add("will be played!");
-        chatmessages.add("Dead");
-        chatmessages.add("was killed by");
-        chatmessages.add("died");
-        chatmessages.add("I'm on fire!");
-        chatmessages.add("Blocks away from next player");
-        chatmessages.add("No player found!");
-        chatmessages.add("Arena-Selector");
-        chatmessages.add("Votes");
-        chatmessages.add("You have voted for");
-        chatmessages.add("in spectator mode");
-        chatmessages.add("could not be teleported to the lobby!");
-        chatmessages.add("The game has already started!");
-        chatmessages.add("The game has been started!");
-        chatmessages.add("Not enough players to start the game!");
-        chatmessages.add("Pause");
-        chatmessages.add("Build");
-        chatmessages.add("Lobby successfully set!");
-        chatmessages.add("Server stopped!");
-        chatmessages.add("has been forced as arena!");
-        chatmessages.add("is not an arena!");
-        chatmessages.add("successfully removed!");
-        chatmessages.add("successfully set!");
-        chatmessages.add("Successfully joined lobby");
-        chatmessages.add("is not a valid spawn!");
-        chatmessages.add("Successfully left lobby");
-        chatmessages.add("Place");
-        chatmessages.add("Head successfully set!");
-        chatmessages.add("Sign successfully set!");
-        chatmessages.add("Connection to database established!");
-        chatmessages.add("Connection to database failed! For more information see console.");
-        chatmessages.add("Connection to database closed!");
-        chatmessages.add("Failed to close connection to database! For more information see console.");
-        chatmessages.add("Plugin started successfully!");
-        chatmessages.add("Plugin stopped successfully!");
-        chatmessages.add("Random");
-        chatmessages.add("Team-Selector");
-        chatmessages.add("Players");
-        chatmessages.add("You are now in team");
-        chatmessages.add("You now have the kit");
-        chatmessages.add("This team is already full!");
-        chatmessages.add("Update-Checker-Error");
-        chatmessages.add("Shop");
-        chatmessages.add("Duration");
-        chatmessages.add("Price");
-        chatmessages.add("Coins");
-        chatmessages.add("You not have enough Coins!");
-        chatmessages.add("You not have an empty bottle!");
-        chatmessages.add("Coin");
-        chatmessages.add("Stats");
-        chatmessages.add("Won");
-        chatmessages.add("Lost");
-        chatmessages.add("Kills");
-        chatmessages.add("Deaths");
-        chatmessages.add("K/D");
-        chatmessages.add("Kit-Selector");
-        chatmessages.add("File loading / saving fail! For more information see console.");
-        chatmessages.add("Commands");
-        chatmessages.add("Rounds");
-        chatmessages.add("Lobby successfully removed!");
-        chatmessages.add("seconds remaining to end this round!");
-        chatmessages.add("Nobody won this round!");
-        chatmessages.add("Type lobby number in chat to add it!");
-        chatmessages.add("Type arena name in chat to add it!");
-        chatmessages.add("Type lobby number in chat to remove it!");
-        chatmessages.add("Type arena name in chat to remove it!");
-        chatmessages.add("could not be teleported to a spawn!");
-        chatmessages.add("This lobby does not exists!");
-        chatmessages.add("Use /pg help for help!");
-        chatmessages.add("There is not a new update available.");
-        chatmessages.add("There is a new update available.");
-        chatmessages.add("Plugin successfully reloaded!");
-        chatmessages.add("Extremely explosive TNT");
-        chatmessages.add("Leave");
-        chatmessages.add("Teleporting to deathmatch arena in");
-        chatmessages.add("Teleporting to deathmatch arena now!");
-        chatmessages.add("Deathmatch is starting in");
-        chatmessages.add("Deathmatch started!");
-        chatmessages.add("Could not update Rank-Wall!");
-        chatmessages.add("Please inform an admin!");
-        chatmessages.add("Could not join lobby!");
-        chatmessages.add("Could not teleport to arena!");
-        chatmessages.add("Could not teleport to deathmatch arena!");
-        chatmessages.add("Could not load an arena!");
-        chatmessages.add("Reward");
-        chatmessages.add("An error occurred");
-        chatmessages.add("For winning the round you get");
-        chatmessages.add("For killing a player you get");
-        chatmessages.add("Lobby%s is starting! Join with /pg join%s");
-        chatmessages.add("You have a block above you!");
-        chatmessages.add("Airdrop is falling at your location!");
-        chatmessages.add("Airdrop is falling at");
-        chatmessages.add("This arena does not exists!");
-        chatmessages.add("Lobby enabled!");
-        chatmessages.add("Lobby disabled!");
-        shop.add("JUMP_BOOST");
-        shoppotion.add(new PotionEffect(PotionEffectType.JUMP_BOOST, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Looter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("RESISTANCE");
-        shoppotion.add(new PotionEffect(PotionEffectType.RESISTANCE, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Tank");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("SPEED");
-        shoppotion.add(new PotionEffect(PotionEffectType.SPEED, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Looter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("ABSORPTION");
-        shoppotion.add(new PotionEffect(PotionEffectType.ABSORPTION, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Tank");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("FIRE_RESISTANCE");
-        shoppotion.add(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Tank");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("INSTANT_HEALTH");
-        shoppotion.add(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Healer");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("HEALTH_BOOST");
-        shoppotion.add(new PotionEffect(PotionEffectType.HEALTH_BOOST, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Healer");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("INVISIBILITY");
-        shoppotion.add(new PotionEffect(PotionEffectType.INVISIBILITY, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Ghost");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("REGENERATION");
-        shoppotion.add(new PotionEffect(PotionEffectType.REGENERATION, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Healer");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("SATURATION");
-        shoppotion.add(new PotionEffect(PotionEffectType.SATURATION, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Looter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("STRENGTH");
-        shoppotion.add(new PotionEffect(PotionEffectType.STRENGTH, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("DOLPHINS_GRACE");
-        shoppotion.add(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Looter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("NIGHT_VISION");
-        shoppotion.add(new PotionEffect(PotionEffectType.NIGHT_VISION, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Ghost");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("WATER_BREATHING");
-        shoppotion.add(new PotionEffect(PotionEffectType.WATER_BREATHING, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.POTION));
-        shopkit.add("Ghost");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("WEAKNESS");
-        shoppotion.add(new PotionEffect(PotionEffectType.WEAKNESS, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("WITHER");
-        shoppotion.add(new PotionEffect(PotionEffectType.WITHER, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("GLOWING");
-        shoppotion.add(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("BLINDNESS");
-        shoppotion.add(new PotionEffect(PotionEffectType.BLINDNESS, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("NAUSEA");
-        shoppotion.add(new PotionEffect(PotionEffectType.NAUSEA, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("BAD_OMEN");
-        shoppotion.add(new PotionEffect(PotionEffectType.BAD_OMEN, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("BAD_OMEN2");
-        shoppotion.add(new PotionEffect(PotionEffectType.BAD_OMEN, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("BAD_OMEN3");
-        shoppotion.add(new PotionEffect(PotionEffectType.BAD_OMEN, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("BAD_OMEN4");
-        shoppotion.add(new PotionEffect(PotionEffectType.BAD_OMEN, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("BAD_OMEN5");
-        shoppotion.add(new PotionEffect(PotionEffectType.BAD_OMEN, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("BAD_OMEN6");
-        shoppotion.add(new PotionEffect(PotionEffectType.BAD_OMEN, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("BAD_OMEN7");
-        shoppotion.add(new PotionEffect(PotionEffectType.BAD_OMEN, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        shop.add("BAD_OMEN8");
-        shoppotion.add(new PotionEffect(PotionEffectType.BAD_OMEN, 30 * 20, 1));
-        shoppotiontype.add(new ItemStack(Material.SPLASH_POTION));
-        shopkit.add("Fighter");
-        shopcost.add(4);
-        shopsale.add(2);
-        if (getConfig().get("pg.activateMySQL") == null) {
-            getConfig().addDefault("pg.activateMySQL", activateMysql);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            activateMysql = getConfig().getBoolean("pg.activateMySQL");
-        }
-        if (getConfig().get("pg.countdown") == null) {
-            getConfig().addDefault("pg.countdown", countdown);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            countdown = getConfig().getInt("pg.countdown");
-        }
-        if (getConfig().get("pg.startOnJoin") == null) {
-            getConfig().addDefault("pg.startOnJoin", startOnJoin);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            startOnJoin = getConfig().getBoolean("pg.startOnJoin");
-        }
-        if (getConfig().get("pg.compassOnSpawn") == null) {
-            getConfig().addDefault("pg.compassOnSpawn", compassOnSpawn);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            compassOnSpawn = getConfig().getBoolean("pg.compassOnSpawn");
-        }
-        if (getConfig().get("pg.allowOutsideChat") == null) {
-            getConfig().addDefault("pg.allowOutsideChat", allowOutsideChat);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            allowOutsideChat = getConfig().getBoolean("pg.allowOutsideChat");
-        }
-        if (getConfig().get("pg.changeGamerules") == null) {
-            getConfig().addDefault("pg.changeGamerules", changeGamerules);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            changeGamerules = getConfig().getBoolean("pg.changeGamerules");
-        }
-        if (getConfig().get("pg.activateTeams") == null) {
-            getConfig().addDefault("pg.activateTeams", activateTeams);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            activateTeams = getConfig().getBoolean("pg.activateTeams");
-        }
-        if (getConfig().get("pg.activateKits") == null) {
-            getConfig().addDefault("pg.activateKits", activateKits);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            activateKits = getConfig().getBoolean("pg.activateKits");
-        }
-        if (getConfig().get("pg.activateShop") == null) {
-            getConfig().addDefault("pg.activateShop", activateShop);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            activateShop = getConfig().getBoolean("pg.activateShop");
-        }
-        if (getConfig().get("pg.activateAirdrops") == null) {
-            getConfig().addDefault("pg.activateAirdrops", activateAirdrops);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            activateAirdrops = getConfig().getBoolean("pg.activateAirdrops");
-        }
-        if (getConfig().get("pg.gameServer") == null) {
-            getConfig().addDefault("pg.gameServer", gameServer);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            gameServer = getConfig().getBoolean("pg.gameServer");
-        }
-        if (getConfig().get("pg.maxPlayers") == null) {
-            getConfig().addDefault("pg.maxPlayers", maxPlayers);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            maxPlayers = getConfig().getInt("pg.maxPlayers");
-        }
-        if (getConfig().get("pg.minPlayers") == null) {
-            getConfig().addDefault("pg.minPlayers", minPlayers);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            minPlayers = getConfig().getInt("pg.minPlayers");
-        }
-        if (getConfig().get("pg.teamSize") == null) {
-            getConfig().addDefault("pg.teamSize", teamSize);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            teamSize = getConfig().getInt("pg.teamSize");
-            teamAmount = maxPlayers / teamSize;
-        }
-        if (getConfig().get("pg.roundTime") == null) {
-            getConfig().addDefault("pg.roundTime", roundTime);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            roundTime = getConfig().getInt("pg.roundTime");
-            roundTimeSeconds = roundTime * 60;
-        }
-        if (getConfig().get("pg.activePotions") == null) {
-            getConfig().addDefault("pg.activePotions", activePotions);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            activePotions = getConfig().getInt("pg.activePotions");
-        }
-        if (getConfig().get("pg.activeKits") == null) {
-            getConfig().addDefault("pg.activeKits", activeKits);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            activeKits = getConfig().getInt("pg.activeKits");
-        }
-        if (getConfig().get("pg.activateScoreboard") == null) {
-            getConfig().addDefault("pg.activateScoreboard", activateScoreboard);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            activateScoreboard = getConfig().getBoolean("pg.activateScoreboard");
-        }
-        if (getConfig().get("pg.friendlyFire") == null) {
-            getConfig().addDefault("pg.friendlyFire", friendlyFire);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            friendlyFire = getConfig().getBoolean("pg.friendlyFire");
-        }
-        if (getConfig().get("pg.joinStarted") == null) {
-            getConfig().addDefault("pg.joinStarted", joinStarted);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            joinStarted = getConfig().getBoolean("pg.joinStarted");
-        }
-        if (getConfig().get("pg.activateDeathmatch") == null) {
-            getConfig().addDefault("pg.activateDeathmatch", activateDeathmatch);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            activateDeathmatch = getConfig().getBoolean("pg.activateDeathmatch");
-        }
-        if (getConfig().get("pg.enableRewards") == null) {
-            getConfig().addDefault("pg.enableRewards", enableRewards);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            enableRewards = getConfig().getBoolean("pg.enableRewards");
-        }
-        if (getConfig().get("pg.broadcastStarting") == null) {
-            getConfig().addDefault("pg.broadcastStarting", broadcastStarting);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            broadcastStarting = getConfig().getBoolean("pg.broadcastStarting");
-        }
-        if (getConfig().get("pg.winningReward") == null) {
-            getConfig().addDefault("pg.winningReward", winningReward);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            winningReward = getConfig().getInt("pg.winningReward");
-        }
-        if (getConfig().get("pg.killReward") == null) {
-            getConfig().addDefault("pg.killReward", killReward);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            killReward = getConfig().getInt("pg.killReward");
-        }
-        if (getConfig().get("pg.language") == null) {
-            getConfig().addDefault("pg.language", language);
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            language = getConfig().getString("pg.language");
-        }
-        int message = 1;
-        for (int i = 0; i < chatmessages.size(); i++) {
-            if (Settings.messages.get("pg.messages." + language + "." + message) == null) {
-                Settings.messages.addDefault("pg.messages." + language + "." + message, chatmessages.get(message - 1));
-                Settings.messages.options().copyDefaults(true);
-            } else {
-                String text = Settings.messages.getString("pg.messages." + language + "." + message);
-                chatmessages.set(message - 1, text);
-            }
-            message++;
-        }
-        try {
-            Settings.messages.save(Settings.messagesfile);
-        } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-        }
-        int shopitem = 1;
-        for (int i = 0; i < shop.size(); i++) {
-            if (Settings.shopdata.get("pg.potions." + shopitem) == null) {
-                Settings.shopdata.addDefault("pg.potions." + shopitem, shop.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".name", shop.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + "." + "shoppotion", shoppotion.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + "." + "shoppotiontype", shoppotiontype.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".kit", shopkit.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".cost", shopcost.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".sale", shopsale.get(shopitem - 1));
-                Settings.shopdata.options().copyDefaults(true);
-            } else {
-                String name = Settings.shopdata.getString("pg.potions." + shopitem + ".name");
-                shop.set(shopitem - 1, name);
-                PotionEffect potion = (PotionEffect) Settings.shopdata.get("pg.potions." + shopitem + "." + "shoppotion");
-                shoppotion.set(shopitem - 1, potion);
-                ItemStack potiontype = (ItemStack) Settings.shopdata.get("pg.potions." + shopitem + "." + "shoppotiontype");
-                shoppotiontype.set(shopitem - 1, potiontype);
-                String kitname = Settings.shopdata.getString("pg.potions." + shopitem + ".kit");
-                shopkit.set(shopitem - 1, kitname);
-                Integer cost = (Integer) Settings.shopdata.get("pg.potions." + shopitem + ".cost");
-                shopcost.set(shopitem - 1, cost);
-                Integer sale = (Integer) Settings.shopdata.get("pg.potions." + shopitem + ".sale");
-                shopsale.set(shopitem - 1, sale);
-            }
-            shopitem++;
-        }
-        try {
-            Settings.shopdata.save(Settings.shopdatafile);
-        } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-        }
-        try {
-            Settings.arenadata.save(Settings.arenadatafile);
-        } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-        }
-        kits.add("Rich Kid");
-        kits.add("Fighter");
-        kits.add("Healer");
-        kits.add("Looter");
-        kits.add("Ghost");
-        kits.add("Tank");
-        for (int i = 7; i < 27; i++) {
-            kits.add("kit" + i);
-        }
-        kitplayers.put(chatmessages.get(42), 0);
-        for (String all : kits) {
-            kitplayers.put(all, 0);
-        }
-        int kititem = 1;
-        for (int i = 0; i < kits.size(); i++) {
-            if (Settings.kitdata.get("pg.kits." + kititem) == null) {
-                Settings.kitdata.addDefault("pg.kits." + kititem, kits.get(kititem - 1));
-                Settings.kitdata.addDefault("pg.kits." + kititem + ".name", kits.get(kititem - 1));
-                Settings.kitdata.options().copyDefaults(true);
-            } else {
-                String name = Settings.kitdata.getString("pg.kits." + kititem + ".name");
-                kits.set(kititem - 1, name);
-            }
-            kititem++;
-        }
-        try {
-            Settings.kitdata.save(Settings.kitdatafile);
-        } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-        }
-        chestData();
-        if (getConfig().get("pg.mysql") == null) {
-            getConfig().addDefault("pg.mysql.host", "localhost");
-            getConfig().addDefault("pg.mysql.port", "3306");
-            getConfig().addDefault("pg.mysql.database", "potiongames");
-            getConfig().addDefault("pg.mysql.user", "root");
-            getConfig().addDefault("pg.mysql.password", "");
-            getConfig().options().copyDefaults(true);
-            saveConfig();
-        } else {
-            host = getConfig().getString("pg.mysql.host");
-            port = getConfig().getString("pg.mysql.port");
-            database = getConfig().getString("pg.mysql.database");
-            user = getConfig().getString("pg.mysql.user");
-            password = getConfig().getString("pg.mysql.password");
-        }
-        connect();
-        ConnectMySQL();
-    ItemMeta coinmeta = coin.getItemMeta();
-    assert coinmeta != null;
-    // use Adventure component for item display name
-    coinmeta.displayName(Component.text(chatmessages.get(55)).color(NamedTextColor.DARK_AQUA));
-    coin.setItemMeta(coinmeta);
-        if (gameServer) {
-                for (int lobby = 1; lobby <= 27; lobby++) {
-                    if (Settings.arenadata.contains("pg.lobbies." + lobby)) {
-                        String s = Integer.toString(lobby);
-                        lobbyCheckArenas.put(s, false);
-                        lobbyActivateTeams.put(s, true);
-                        lobbyActivateKits.put(s, true);
-                        lobbyActivateShop.put(s, true);
-                        lobbyActivateAirdrops.put(s, true);
-                        lobbyJoinable.put(s, true);
-                        lobbyForcearena.put(s, false);
-                        lobbyDeathmatch.put(s, false);
-                        lobbyMove.put(s, true);
-                        lobbyVoteallowed.put(s, false);
-                        lobbyTeamallowed.put(s, false);
-                        lobbyKitallowed.put(s, false);
-                        lobbyAmount.put(s, 0);
-                        lobbyTickstarted.put(s, true);
-                        lobbyBuild.put(s, false);
-                        lobbyPause.put(s, false);
-                        lobbyVote.put(s, null);
-                        lobbyVotedarena.put(s, null);
-                        lobbyteamSize.put(s, 2);
-                        lobbymaxPlayers.put(s, 24);
-                        int minPlayersNumber = lobbymaxPlayers.get(s) / 2;
-                        lobbyminPlayers.put(s, minPlayersNumber);
-                        int teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
-                        lobbyteamAmount.put(s, teamAmountNumber);
-                        lobbyroundTime.put(s, 30);
-                        int roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
-                        lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
-                        if (Settings.arenadata.get("pg.lobbies." + s + ".activateTeams") == null) {
-                            Settings.arenadata.addDefault("pg.lobbies." + s + ".activateTeams", activateTeams);
-                            Settings.arenadata.options().copyDefaults(true);
-                            try {
-                                Settings.arenadata.save(Settings.arenadatafile);
-                            } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                            }
-                        } else {
-                            lobbyActivateTeams.replace(s, Settings.arenadata.getBoolean("pg.lobbies." + s + ".activateTeams"));
-                        }
-                        if (Settings.arenadata.get("pg.lobbies." + s + ".activateKits") == null) {
-                            Settings.arenadata.addDefault("pg.lobbies." + s + ".activateKits", activateKits);
-                            Settings.arenadata.options().copyDefaults(true);
-                            try {
-                                Settings.arenadata.save(Settings.arenadatafile);
-                            } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                            }
-                        } else {
-                            lobbyActivateKits.replace(s, Settings.arenadata.getBoolean("pg.lobbies." + s + ".activateKits"));
-                        }
-                        if (Settings.arenadata.get("pg.lobbies." + s + ".activateShop") == null) {
-                            Settings.arenadata.addDefault("pg.lobbies." + s + ".activateShop", activateShop);
-                            Settings.arenadata.options().copyDefaults(true);
-                            try {
-                                Settings.arenadata.save(Settings.arenadatafile);
-                            } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                            }
-                        } else {
-                            lobbyActivateShop.replace(s, Settings.arenadata.getBoolean("pg.lobbies." + s + ".activateShop"));
-                        }
-                        if (Settings.arenadata.get("pg.lobbies." + s + ".activateAirdrops") == null) {
-                            Settings.arenadata.addDefault("pg.lobbies." + s + ".activateAirdrops", activateAirdrops);
-                            Settings.arenadata.options().copyDefaults(true);
-                            try {
-                                Settings.arenadata.save(Settings.arenadatafile);
-                            } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                            }
-                        } else {
-                            lobbyActivateAirdrops.replace(s, Settings.arenadata.getBoolean("pg.lobbies." + s + ".activateAirdrops"));
-                        }
-                        if (Settings.arenadata.get("pg.lobbies." + s + ".teamSize") == null) {
-                            Settings.arenadata.addDefault("pg.lobbies." + s + ".teamSize", teamSize);
-                            Settings.arenadata.options().copyDefaults(true);
-                            try {
-                                Settings.arenadata.save(Settings.arenadatafile);
-                            } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                            }
-                        } else {
-                            lobbyteamSize.replace(s, Settings.arenadata.getInt("pg.lobbies." + s + ".teamSize"));
-                        }
-                        if (Settings.arenadata.get("pg.lobbies." + s + ".maxPlayers") == null) {
-                            Settings.arenadata.addDefault("pg.lobbies." + s + ".maxPlayers", maxPlayers);
-                            Settings.arenadata.options().copyDefaults(true);
-                            try {
-                                Settings.arenadata.save(Settings.arenadatafile);
-                            } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                            }
-                        } else {
-                            lobbymaxPlayers.replace(s, Settings.arenadata.getInt("pg.lobbies." + s + ".maxPlayers"));
-                        }
-                        if (Settings.arenadata.get("pg.lobbies." + s + ".minPlayers") == null) {
-                            Settings.arenadata.addDefault("pg.lobbies." + s + ".minPlayers", minPlayers);
-                            Settings.arenadata.options().copyDefaults(true);
-                            try {
-                                Settings.arenadata.save(Settings.arenadatafile);
-                            } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                            }
-                        } else {
-                            lobbyminPlayers.replace(s, Settings.arenadata.getInt("pg.lobbies." + s + ".minPlayers"));
-                        }
-                        if (Settings.arenadata.get("pg.lobbies." + s + ".roundTime") == null) {
-                            Settings.arenadata.addDefault("pg.lobbies." + s + ".roundTime", roundTime);
-                            Settings.arenadata.options().copyDefaults(true);
-                            try {
-                                Settings.arenadata.save(Settings.arenadatafile);
-                            } catch (IOException ex) {
-                                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                            }
-                        } else {
-                            lobbyroundTime.replace(s, Settings.arenadata.getInt("pg.lobbies." + s + ".roundTime"));
-                        }
-                        roundTimeSecondsNumber = lobbyroundTime.get(s) * 60;
-                        lobbyroundTimeSeconds.put(s, roundTimeSecondsNumber);
-                        teamAmountNumber = lobbymaxPlayers.get(s) / lobbyteamSize.get(s);
-                        lobbyteamAmount.put(s, teamAmountNumber);
-                        if (!lobbyVoteallowed.get(s)) {
-                            lobbyVoteallowed.replace(s, true);
-                            HashMap<String, Integer> temp = new HashMap<>();
-                            temp.put(chatmessages.get(42), 0);
-                            for (int max = 1; max < 27; max++) {
-                                if (Settings.arenadata.contains("pg.lobbies." + s + "." + max + ".name")) {
-                                    temp.put(Settings.arenadata.getString("pg.lobbies." + s + "." + max + ".name"), 0);
-                                    lobbyvoteplayernamesdata.put(null, Settings.arenadata.getString("pg.lobbies." + s + "." + max + ".name"));
-                                }
-                            }
-                            lobbyvotes.put(s, temp);
-                            lobbyvoteplayernames.put(s, lobbyvoteplayernamesdata);
-                        }
-                        if (!lobbyTeamallowed.get(s)) {
-                            lobbyTeamallowed.replace(s, true);
-                            HashMap<Integer, Integer> temp = new HashMap<>();
-                            for (int max = 1; max <= lobbyteamAmount.get(s); max++) {
-                                temp.put(max, 0);
-                                lobbyteamplayernamesdata.put(null, Integer.toString(max));
-                            }
-                            lobbyteams.put(s, temp);
-                            lobbyteamplayernames.put(s, lobbyteamplayernamesdata);
-                        }
-                        if (!lobbyKitallowed.get(s)) {
-                            lobbyKitallowed.replace(s, true);
-                            kitplayers.put(chatmessages.get(42), 0);
-                            for (String all : kits) {
-                                kitplayers.put(all, 0);
-                            }
-                        }
-                        lobbyLiquidPlaced.put(s, lobbyLiquidPlacedData);
-                        lobbyPlacedBlocks.put(s, lobbyPlacedBlocksData);
-                        lobbyBreakedBlocks.put(s, lobbyBreakedBlocksData);
-                        lobbyWaterBlocks.put(s, lobbyWaterBlocksData);
-                        lobbyStates.put(s, GameStates.WAITING);
-                        tickLobby(s);
-                    }
-                }
-        } else {
-            hubStats();
-        }
-        if (activateMysql && !mysql) {
+        EnableBootstrapContext bootstrapContext = createEnableBootstrapContext();
+        new EnableBootstrapInitializer(this).initialize(bootstrapContext);
+        applyEnableBootstrapContext(bootstrapContext);
+        if (activateMysql && !databaseManager.isConnected()) {
             Bukkit.getPluginManager().disablePlugin(this);
         } else {
             Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(chatmessages.get(40)).color(NamedTextColor.GREEN)));
@@ -1772,7 +961,7 @@ public class PotionGames extends JavaPlugin {
             }
         }
         if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-            try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+            try (ResultSet rs = databaseManager.query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
                 int ii = 0;
                 while (rs.next()) {
                     ii++;
@@ -1809,6 +998,61 @@ public class PotionGames extends JavaPlugin {
         }
     }
 
+    private EnableBootstrapContext createEnableBootstrapContext() {
+        return new EnableBootstrapContext(
+                chatmessages, shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, kits,
+                kitplayers, lobbyCheckArenas, lobbyActivateTeams, lobbyActivateKits, lobbyActivateShop,
+                lobbyActivateAirdrops, lobbyJoinable, lobbyForcearena, lobbyDeathmatch, lobbyMove,
+                lobbyVoteallowed, lobbyTeamallowed, lobbyKitallowed, lobbyAmount, lobbyStates, lobbyTickstarted, lobbyBuild,
+                lobbyPause, lobbyVote, lobbyVotedarena, lobbyteamSize, lobbymaxPlayers, lobbyminPlayers,
+                lobbyteamAmount, lobbyroundTime, lobbyroundTimeSeconds, lobbyteams, lobbyteamplayernamesdata,
+                lobbyteamplayernames, lobbyvotes, lobbyvoteplayernamesdata, lobbyvoteplayernames, lobbyLiquidPlaced,
+                lobbyPlacedBlocks, lobbyBreakedBlocks, lobbyWaterBlocks, lobbyLiquidPlacedData, lobbyPlacedBlocksData,
+                lobbyBreakedBlocksData, lobbyWaterBlocksData, coin, activateMysql, countdown, startOnJoin,
+                compassOnSpawn, allowOutsideChat, changeGamerules, activateTeams, activateKits, activateShop,
+                activateAirdrops, gameServer, maxPlayers, minPlayers, teamSize, teamAmount, roundTime,
+                roundTimeSeconds, activePotions, activeKits, activateScoreboard, friendlyFire, joinStarted,
+                activateDeathmatch, enableRewards, broadcastStarting, winningReward, killReward, language,
+                host, port, database, user, password
+        );
+    }
+
+    private void applyEnableBootstrapContext(EnableBootstrapContext context) {
+        activateMysql = context.activateMysql;
+        countdown = context.countdown;
+        startOnJoin = context.startOnJoin;
+        compassOnSpawn = context.compassOnSpawn;
+        allowOutsideChat = context.allowOutsideChat;
+        changeGamerules = context.changeGamerules;
+        activateTeams = context.activateTeams;
+        activateKits = context.activateKits;
+        activateShop = context.activateShop;
+        activateAirdrops = context.activateAirdrops;
+        gameServer = context.gameServer;
+        maxPlayers = context.maxPlayers;
+        minPlayers = context.minPlayers;
+        teamSize = context.teamSize;
+        teamAmount = context.teamAmount;
+        roundTime = context.roundTime;
+        roundTimeSeconds = context.roundTimeSeconds;
+        activePotions = context.activePotions;
+        activeKits = context.activeKits;
+        activateScoreboard = context.activateScoreboard;
+        friendlyFire = context.friendlyFire;
+        joinStarted = context.joinStarted;
+        activateDeathmatch = context.activateDeathmatch;
+        enableRewards = context.enableRewards;
+        broadcastStarting = context.broadcastStarting;
+        winningReward = context.winningReward;
+        killReward = context.killReward;
+        language = context.language;
+        host = context.host;
+        port = context.port;
+        database = context.database;
+        user = context.user;
+        password = context.password;
+    }
+
     // onReload() deleted - moved to ReloadHandler/ConfigurationManager
 
     @Override
@@ -1823,8 +1067,7 @@ public class PotionGames extends JavaPlugin {
         if (itemStateManager != null) itemStateManager.onDisable();
         if (blockStateManager != null) blockStateManager.onDisable();
         if (databaseManager != null) databaseManager.onDisable();
-        
-        close();
+
         if (gameServer && startOnJoin) {
             for (Player all : Bukkit.getOnlinePlayers()) {
                 all.kick(Settings.prefix.append(Component.text(chatmessages.get(25)).color(NamedTextColor.RED)));
@@ -1869,102 +1112,9 @@ public class PotionGames extends JavaPlugin {
 
     // joinChannel() deleted - moved to GameManager
 
-    public void leaveChannel(Player player, String channelName) {
-        ArrayList<Player> players = channels.get(channelName);
-        players.remove(player);
-        channels.put(channelName, players);
-        playerChannel.remove(player);
-    }
-
     // spawnFirework() deleted - moved to GameManager
 
-    public void hubStats() {
-        tick = Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
-            if (getConfig().contains("pg.RankWall.headp1") && getConfig().contains("pg.RankWall.headp2") && getConfig().contains("pg.RankWall.headp3") && getConfig().contains("pg.RankWall.signp1") && getConfig().contains("pg.RankWall.signp2") && getConfig().contains("pg.RankWall.signp3")) {
-                try (ResultSet rs = query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
-                    int ii = 0;
-                    while (rs.next()) {
-                        ii++;
-                        rank.put(ii, rs.getString("UUID"));
-                    }
-                    rankhead.add(getConfig().getLocation("pg.RankWall.headp1"));
-                    rankhead.add(getConfig().getLocation("pg.RankWall.headp2"));
-                    rankhead.add(getConfig().getLocation("pg.RankWall.headp3"));
-                    ranksign.add(getConfig().getLocation("pg.RankWall.signp1"));
-                    ranksign.add(getConfig().getLocation("pg.RankWall.signp2"));
-                    ranksign.add(getConfig().getLocation("pg.RankWall.signp3"));
-                    for (int iii = 0; iii < rank.size(); iii++) {
-                        int id = iii + 1;
-                        Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
-                        UUID uuid = UUID.fromString(rank.get(id));
-                        OfflinePlayer name = Bukkit.getOfflinePlayer(uuid);
-                        skull.setOwningPlayer(name);
-                        skull.update();
-                    }
-                    for (int iii = 0; iii < rank.size(); iii++) {
-                        int id = iii + 1;
-                        BlockState b = ranksign.get(iii).getBlock().getState();
-                        OfflinePlayer name = Bukkit.getOfflinePlayer(UUID.fromString(rank.get(id)));
-                        Sign sign = (Sign) b;
-                        sign.getSide(Side.FRONT).line(0, Messages.SignPlace(id));
-                        sign.getSide(Side.FRONT).line(1, Component.text(name.getName()));
-                        sign.getSide(Side.FRONT).line(2, Messages.SignWins(getWins(rank.get(id))));
-                        sign.getSide(Side.FRONT).line(3, Messages.SignKD(getKD(rank.get(id))));
-                        sign.update();
-                    }
-                } catch (SQLException ex) {
-                    Bukkit.getConsoleSender().sendMessage(Messages.RankwallCouldNotUpdate());
-                }
-            }
-        }, 0, 1200);
-    }
-
     // chestData() deleted - moved to initialization
-
-    public void setup(Player p) {
-        ItemStack addlobby = new ItemStack(Material.STICK);
-    ItemMeta addlobbymeta = addlobby.getItemMeta();
-    assert addlobbymeta != null;
-    addlobbymeta.displayName(Component.text("Add(Left)/Del(Right) Lobby").color(NamedTextColor.DARK_AQUA));
-        addlobby.setItemMeta(addlobbymeta);
-        p.getInventory().setItem(1, addlobby);
-        ItemStack chooselobby = new ItemStack(Material.CLOCK);
-        ItemMeta chooselobbymeta = chooselobby.getItemMeta();
-        assert chooselobbymeta != null;
-        chooselobbymeta.displayName(Component.text("Choose Lobby").color(NamedTextColor.DARK_AQUA));
-        chooselobby.setItemMeta(chooselobbymeta);
-        p.getInventory().setItem(2, chooselobby);
-        ItemStack addarena = new ItemStack(Material.STICK);
-    ItemMeta addarenameta = addarena.getItemMeta();
-    assert addarenameta != null;
-    addarenameta.displayName(Component.text("Add(Left)/Del(Right) Arena").color(NamedTextColor.DARK_AQUA));
-        addarena.setItemMeta(addarenameta);
-        p.getInventory().setItem(3, addarena);
-        ItemStack choosearena = new ItemStack(Material.CLOCK);
-    ItemMeta choosearenameta = choosearena.getItemMeta();
-    assert choosearenameta != null;
-    choosearenameta.displayName(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA));
-        choosearena.setItemMeta(choosearenameta);
-        p.getInventory().setItem(4, choosearena);
-        ItemStack addspawn = new ItemStack(Material.STICK);
-    ItemMeta addspawnmeta = addspawn.getItemMeta();
-    assert addspawnmeta != null;
-    addspawnmeta.displayName(Component.text("Add(Left)/Del(Right) Spawn").color(NamedTextColor.DARK_AQUA));
-        addspawn.setItemMeta(addspawnmeta);
-        p.getInventory().setItem(5, addspawn);
-        ItemStack signsetup = new ItemStack(Material.OAK_SIGN);
-    ItemMeta signsetupmeta = signsetup.getItemMeta();
-    assert signsetupmeta != null;
-    signsetupmeta.displayName(Component.text("Set Join-Sign").color(NamedTextColor.DARK_AQUA));
-        signsetup.setItemMeta(signsetupmeta);
-        p.getInventory().setItem(6, signsetup);
-        ItemStack leavesetup = new ItemStack(Material.BARRIER);
-    ItemMeta leavesetupmeta = leavesetup.getItemMeta();
-    assert leavesetupmeta != null;
-    leavesetupmeta.displayName(Component.text("Leave Setup-Mode").color(NamedTextColor.DARK_AQUA));
-        leavesetup.setItemMeta(leavesetupmeta);
-        p.getInventory().setItem(7, leavesetup);
-    }
 
     // clearEffects() deleted - moved to GameManager
 
@@ -1975,352 +1125,76 @@ public class PotionGames extends JavaPlugin {
         game.removeSpectatorPlayer(p);
     }
 
-    public void tickLobby(String lobbyId) {
-        try {
-            Lobby lobby = getLobbyById(Integer.parseInt(lobbyId));
-            if (lobby != null) {
-                lobby.startTick();
-            }
-        } catch (NumberFormatException ignored) {
-        }
-    }
-
-    public void connect() {
-        if (activateMysql) {
-            try {
-                con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?autoReconnect=true", user, password);
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(chatmessages.get(36)).color(NamedTextColor.GREEN)));
-                mysql = true;
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                mysql = false;
-            }
-        } else {
-            con = null;
-            try {
-                File dbFile = new File(getDataFolder(), "stats.db");
-                String url = "jdbc:sqlite:" + dbFile.getPath();
-                con = DriverManager.getConnection(url);
-                st = con.createStatement();
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(chatmessages.get(36)).color(NamedTextColor.GREEN)));
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-            }
-        }
-    }
-
-    public void close() {
-        try {
-            if (con != null) {
-                con.close();
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(chatmessages.get(38)).color(NamedTextColor.GREEN)));
-            }
-        } catch (SQLException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(39) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-        }
-    }
-
-    public void update(String qry) {
-        if (activateMysql) {
-            if (con != null) {
-                try {
-                    st = con.createStatement();
-                    st.executeUpdate(qry);
-                    st.close();
-                } catch (SQLException ex) {
-                    Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                    connect();
-                }
-            }
-        } else {
-            try {
-                st.execute(qry);
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-            }
-        }
-    }
-
-    public ResultSet query(String qry) {
-        if (activateMysql) {
-            if (con != null) {
-                ResultSet rs = null;
-                try {
-                    st = con.createStatement();
-                    rs = st.executeQuery(qry);
-                } catch (SQLException ex) {
-                    Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-                    connect();
-                }
-                return rs;
-            }
-        } else {
-            try {
-                return st.executeQuery(qry);
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-            }
-        }
-        return null;
-    }
-
-    public void ConnectMySQL() {
-        if (con != null) {
-            try {
-                update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSSES int, KILLS int, DEATHS int, KD double);");
-            } catch (Exception ex) {
-                update("CREATE TABLE IF NOT EXISTS Stats(UUID varchar(64), ROUNDS int, WINS int, LOSTS int, KILLS int, DEATHS int, KD double);");
-            }
-        }
-    }
-
     public boolean playerExists(String uuid) {
-        try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-            if (rs.next()) {
-                return rs.getString("UUID") != null;
-            }
-            return false;
-        } catch (SQLException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-        }
-        return false;
+        return databaseManager.playerExists(uuid);
     }
 
     public void createPlayer(String uuid) {
-        if (!playerExists(uuid)) {
-            try {
-                update("INSERT INTO Stats(UUID, ROUNDS, WINS, LOSSES, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0', '0');");
-            } catch (Exception ex) {
-                update("INSERT INTO Stats(UUID, ROUNDS, WINS, LOSTS, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0', '0');");
-            }
-        }
+        databaseManager.createPlayer(uuid);
     }
 
     public int getKills(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if ((rs.next())) {
-                    rs.getInt("KILLS");
-                }
-                i = rs.getInt("KILLS");
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-            }
-        } else {
-            createPlayer(uuid);
-            getKills(uuid);
-        }
-        return i;
+        return databaseManager.getKills(uuid);
     }
 
     public int getDeaths(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if ((rs.next())) {
-                    rs.getInt("DEATHS");
-                }
-                i = rs.getInt("DEATHS");
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-            }
-        } else {
-            createPlayer(uuid);
-            getDeaths(uuid);
-        }
-        return i;
+        return databaseManager.getDeaths(uuid);
     }
 
     public double getKD(String uuid) {
-        double i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if ((rs.next())) {
-                    rs.getDouble("KD");
-                }
-                i = rs.getDouble("KD");
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-            }
-        } else {
-            createPlayer(uuid);
-            getKD(uuid);
-        }
-        return i;
+        return databaseManager.getKD(uuid);
     }
 
     public int getWins(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if ((rs.next())) {
-                    rs.getInt("WINS");
-                }
-                i = rs.getInt("WINS");
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-            }
-        } else {
-            createPlayer(uuid);
-            getWins(uuid);
-        }
-        return i;
+        return databaseManager.getWins(uuid);
     }
 
     public int getLosses(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if ((rs.next())) {
-                    try {
-                        rs.getInt("LOSSES");
-                    } catch (SQLException ex) {
-                        rs.getInt("LOSTS");
-                    }
-                }
-                try {
-                    i = rs.getInt("LOSSES");
-                } catch (SQLException ex) {
-                    i = rs.getInt("LOSTS");
-                }
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-            }
-        } else {
-            createPlayer(uuid);
-            getLosses(uuid);
-        }
-        return i;
+        return databaseManager.getLosses(uuid);
     }
 
     public int getRounds(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if ((rs.next())) {
-                    rs.getInt("ROUNDS");
-                }
-                i = rs.getInt("ROUNDS");
-            } catch (SQLException ex) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(37) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
-            }
-        } else {
-            createPlayer(uuid);
-            getRounds(uuid);
-        }
-        return i;
+        return databaseManager.getRounds(uuid);
     }
 
     public void setKills(String uuid, int kills) {
-        if (playerExists(uuid)) {
-            update("UPDATE Stats SET KILLS= '" + kills + "' WHERE UUID= '" + uuid + "';");
-        } else {
-            createPlayer(uuid);
-            setKills(uuid, kills);
-        }
+        databaseManager.setKills(uuid, kills);
     }
 
     public void setDeaths(String uuid, int deaths) {
-        if (playerExists(uuid)) {
-            update("UPDATE Stats SET DEATHS= '" + deaths + "' WHERE UUID= '" + uuid + "';");
-        } else {
-            createPlayer(uuid);
-            setDeaths(uuid, deaths);
-        }
+        databaseManager.setDeaths(uuid, deaths);
     }
 
     public void setKD(String uuid, double kd) {
-        if (playerExists(uuid)) {
-            int kills = getKills(uuid);
-            int deaths = getDeaths(uuid);
-            if (deaths != 0) {
-                kd = ((double) kills) / ((double) deaths);
-            } else {
-                kd = kills;
-            }
-            kd = kd * 1000;
-            kd = Math.round(kd);
-            kd = kd / 1000;
-            update("UPDATE Stats SET KD= '" + kd + "' WHERE UUID= '" + uuid + "';");
-        } else {
-            createPlayer(uuid);
-            setKD(uuid, kd);
-        }
+        databaseManager.setKD(uuid, kd);
     }
 
     public void setWins(String uuid, int wins) {
-        if (playerExists(uuid)) {
-            update("UPDATE Stats SET WINS= '" + wins + "' WHERE UUID= '" + uuid + "';");
-        } else {
-            createPlayer(uuid);
-            setWins(uuid, wins);
-        }
+        databaseManager.setWins(uuid, wins);
     }
 
     public void setLosses(String uuid, int losses) {
-        if (playerExists(uuid)) {
-            try {
-                update("UPDATE Stats SET LOSSES= '" + losses + "' WHERE UUID= '" + uuid + "';");
-            } catch (Exception ex) {
-                update("UPDATE Stats SET LOSTS= '" + losses + "' WHERE UUID= '" + uuid + "';");
-            }
-        } else {
-            createPlayer(uuid);
-            setLosses(uuid, losses);
-        }
+        databaseManager.setLosses(uuid, losses);
     }
 
     public void setRounds(String uuid, int rounds) {
-        if (playerExists(uuid)) {
-            int wins = getWins(uuid);
-            int losses = getLosses(uuid);
-            rounds = wins + losses;
-            update("UPDATE Stats SET ROUNDS= '" + rounds + "' WHERE UUID= '" + uuid + "';");
-        } else {
-            createPlayer(uuid);
-            setRounds(uuid, rounds);
-        }
+        databaseManager.setRounds(uuid, rounds);
     }
 
     public void addKills(String uuid, int kills) {
-        if (playerExists(uuid)) {
-            setKills(uuid, (getKills(uuid) + kills));
-            setKD(uuid, 0);
-        } else {
-            createPlayer(uuid);
-            addKills(uuid, kills);
-        }
+        databaseManager.addKills(uuid, kills);
     }
 
     public void addDeaths(String uuid, int deaths) {
-        if (playerExists(uuid)) {
-            setDeaths(uuid, (getDeaths(uuid) + deaths));
-            setKD(uuid, 0);
-        } else {
-            createPlayer(uuid);
-            addDeaths(uuid, deaths);
-        }
+        databaseManager.addDeaths(uuid, deaths);
     }
 
     public void addWins(String uuid, int wins) {
-        if (playerExists(uuid)) {
-            setWins(uuid, (getWins(uuid) + wins));
-            setRounds(uuid, 0);
-        } else {
-            createPlayer(uuid);
-            addWins(uuid, wins);
-        }
+        databaseManager.addWins(uuid, wins);
     }
 
     public void addLosses(String uuid, int losses) {
-        if (playerExists(uuid)) {
-            setLosses(uuid, (getLosses(uuid) + losses));
-            setRounds(uuid, 0);
-        } else {
-            createPlayer(uuid);
-            addLosses(uuid, losses);
-        }
+        databaseManager.addLosses(uuid, losses);
     }
 
     // ===== RESTORED STUB METHODS (Delegated or Simple Implementations) =====
@@ -2332,7 +1206,12 @@ public class PotionGames extends JavaPlugin {
     public void joinChannel(Player player, String channelName) {
         if (playerChannel.get(player) != null) {
             String prevChannel = playerChannel.get(player);
-            leaveChannel(player, prevChannel);
+            ArrayList<Player> previousPlayers = channels.get(prevChannel);
+            if (previousPlayers != null) {
+                previousPlayers.remove(player);
+                channels.put(prevChannel, previousPlayers);
+            }
+            playerChannel.remove(player);
         }
         ArrayList<Player> players = channels.get(channelName);
         if (players == null) {
@@ -2348,59 +1227,7 @@ public class PotionGames extends JavaPlugin {
      * Called during onEnable() to populate loot tables.
      */
     public void chestData() {
-        // Food tier 1
-        food1.add(new ItemStack(Material.CAKE, 1));
-        food1.add(new ItemStack(Material.BREAD, 3));
-        food1.add(new ItemStack(Material.PUMPKIN_PIE, 3));
-        food1.add(new ItemStack(Material.COOKIE, 3));
-        food1.add(new ItemStack(Material.BAKED_POTATO, 3));
-        
-        // Food tier 2
-        food2.add(new ItemStack(Material.RABBIT_STEW, 1));
-        food2.add(new ItemStack(Material.MUSHROOM_STEW, 1));
-        food2.add(new ItemStack(Material.BEETROOT_SOUP, 1));
-        food2.add(new ItemStack(Material.GOLDEN_CARROT, 1));
-        food2.add(new ItemStack(Material.MILK_BUCKET, 1));
-        
-        // Armor tier 1
-        armour1.add(new ItemStack(Material.LEATHER_HELMET, 1));
-        armour1.add(new ItemStack(Material.LEATHER_CHESTPLATE, 1));
-        armour1.add(new ItemStack(Material.LEATHER_LEGGINGS, 1));
-        armour1.add(new ItemStack(Material.LEATHER_BOOTS, 1));
-        
-        // Armor tier 2
-        armour2.add(new ItemStack(Material.CHAINMAIL_HELMET, 1));
-        armour2.add(new ItemStack(Material.CHAINMAIL_CHESTPLATE, 1));
-        armour2.add(new ItemStack(Material.CHAINMAIL_LEGGINGS, 1));
-        armour2.add(new ItemStack(Material.CHAINMAIL_BOOTS, 1));
-        
-        // Armor tier 3
-        armour3.add(new ItemStack(Material.GOLDEN_HELMET, 1));
-        armour3.add(new ItemStack(Material.GOLDEN_CHESTPLATE, 1));
-        armour3.add(new ItemStack(Material.GOLDEN_LEGGINGS, 1));
-        armour3.add(new ItemStack(Material.GOLDEN_BOOTS, 1));
-        
-        // Armor tier 4 (Iron)
-        armour4.add(new ItemStack(Material.IRON_HELMET, 1));
-        armour4.add(new ItemStack(Material.IRON_CHESTPLATE, 1));
-        armour4.add(new ItemStack(Material.IRON_LEGGINGS, 1));
-        armour4.add(new ItemStack(Material.IRON_BOOTS, 1));
-        
-        // Armor tier 5 (Diamond)
-        armour5.add(new ItemStack(Material.DIAMOND_HELMET, 1));
-        armour5.add(new ItemStack(Material.DIAMOND_CHESTPLATE, 1));
-        armour5.add(new ItemStack(Material.DIAMOND_LEGGINGS, 1));
-        armour5.add(new ItemStack(Material.DIAMOND_BOOTS, 1));
-        
-        // Weapons tier 1
-        weapons1.add(new ItemStack(Material.WOODEN_SWORD, 1));
-        weapons1.add(new ItemStack(Material.STONE_SWORD, 1));
-        weapons1.add(new ItemStack(Material.WOODEN_AXE, 1));
-        
-        // Weapons tier 2
-        weapons2.add(new ItemStack(Material.IRON_SWORD, 1));
-        weapons2.add(new ItemStack(Material.DIAMOND_SWORD, 1));
-        weapons2.add(new ItemStack(Material.IRON_AXE, 1));
+        new ChestLootInitializer(this).seed();
     }
 
     /**
@@ -2442,15 +1269,7 @@ public class PotionGames extends JavaPlugin {
      * Sets up player state: inventory, effects, scoreboard, and teleports to lobby.
      */
     public void onJoinLobby(Player p, String s) {
-        try {
-            Lobby lobby = getLobbyById(Integer.parseInt(s));
-            if (lobby != null) {
-                game.setPlayerLobby(p, s);
-                lobby.join(p);
-            }
-        } catch (NumberFormatException ignored) {
-            // invalid lobby id
-        }
+        joinLobbyHandler.onJoinLobby(p, s);
     }
 
     /**
@@ -2468,11 +1287,6 @@ public class PotionGames extends JavaPlugin {
         }
         game.removePlayerLobby(p);
         game.removeSpectatorLobby(p);
-    }
-
-    public ArrayList<Player> getChannel(Player player) {
-        String channelName = playerChannel.get(player);
-        return channels.get(channelName);
     }
 
     public ItemStack getCoin() {
@@ -2575,32 +1389,16 @@ public class PotionGames extends JavaPlugin {
         return configManager.isBuild();
     }
 
-    public boolean isAddlobby() {
-        return addlobby;
-    }
-
     public void setAddlobby(boolean addlobby) {
         this.addlobby = addlobby;
-    }
-
-    public boolean isAddarena() {
-        return addarena;
     }
 
     public void setAddarena(boolean addarena) {
         this.addarena = addarena;
     }
 
-    public boolean isDellobby() {
-        return dellobby;
-    }
-
     public void setDellobby(boolean dellobby) {
         this.dellobby = dellobby;
-    }
-
-    public boolean isDelarena() {
-        return delarena;
     }
 
     public void setDelarena(boolean delarena) {

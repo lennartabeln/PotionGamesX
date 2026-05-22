@@ -34,12 +34,12 @@ public class StatsCommand implements ICommand {
     public boolean execute(Player player, String[] args) {
         if (args.length == 0) {
             // Show stats for command sender
-            int wins = plugin.getWins(player.getUniqueId().toString());
-            int losses = plugin.getLosses(player.getUniqueId().toString());
-            int rounds = plugin.getRounds(player.getUniqueId().toString());
-            int kills = plugin.getKills(player.getUniqueId().toString());
-            int deaths = plugin.getDeaths(player.getUniqueId().toString());
-            double kd = plugin.getKD(player.getUniqueId().toString());
+            int wins = plugin.getDatabaseManager().getWins(player.getUniqueId().toString());
+            int losses = plugin.getDatabaseManager().getLosses(player.getUniqueId().toString());
+            int rounds = plugin.getDatabaseManager().getRounds(player.getUniqueId().toString());
+            int kills = plugin.getDatabaseManager().getKills(player.getUniqueId().toString());
+            int deaths = plugin.getDatabaseManager().getDeaths(player.getUniqueId().toString());
+            double kd = plugin.getDatabaseManager().getKD(player.getUniqueId().toString());
             
             player.sendMessage(Messages.StatsLabel());
             player.sendMessage(Messages.RoundsLabel(rounds));
@@ -54,12 +54,12 @@ public class StatsCommand implements ICommand {
             Player target = Bukkit.getPlayer(args[0]);
             player.sendMessage(Messages.StatsLabel());
             if (target != null) {
-                int wins = plugin.getWins(target.getUniqueId().toString());
-                int losses = plugin.getLosses(target.getUniqueId().toString());
-                int rounds = plugin.getRounds(target.getUniqueId().toString());
-                int kills = plugin.getKills(target.getUniqueId().toString());
-                int deaths = plugin.getDeaths(target.getUniqueId().toString());
-                double kd = plugin.getKD(target.getUniqueId().toString());
+                int wins = plugin.getDatabaseManager().getWins(target.getUniqueId().toString());
+                int losses = plugin.getDatabaseManager().getLosses(target.getUniqueId().toString());
+                int rounds = plugin.getDatabaseManager().getRounds(target.getUniqueId().toString());
+                int kills = plugin.getDatabaseManager().getKills(target.getUniqueId().toString());
+                int deaths = plugin.getDatabaseManager().getDeaths(target.getUniqueId().toString());
+                double kd = plugin.getDatabaseManager().getKD(target.getUniqueId().toString());
                 
                 player.sendMessage(Messages.RoundsLabel(rounds));
                 player.sendMessage(Messages.WinsLabel(wins));

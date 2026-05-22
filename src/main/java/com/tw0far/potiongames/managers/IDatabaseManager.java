@@ -17,6 +17,18 @@ public interface IDatabaseManager extends IManager {
      */
     void connect();
     
+    /**
+     * Check if database connection is active.
+     * 
+     * @return true if connected, false otherwise
+     */
+    boolean isConnected();
+    
+    /**
+     * Close database connection.
+     */
+    void closeConnection();
+    
     // ===== Raw Database Operations =====
     /**
      * Execute an update query (INSERT, UPDATE, DELETE, CREATE TABLE, etc.)

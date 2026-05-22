@@ -31,17 +31,19 @@ public class AddDeathmatchCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        // Multi-lobby system: /pg adddeathmatch <lobbynumber> <arenaname>
         if (args.length < 3) {
             player.sendMessage("§cUsage: /pg adddeathmatch <lobbynumber> <arenaname>");
             return false;
         }
-        
-        String lobbyId = args[1];
-        String arenaName = args[2];
-        // Add deathmatch spawn logic would go here
-        player.sendMessage("§aDeathmatch spawn added to arena §b" + arenaName + "§a (Lobby: §b" + lobbyId + "§a).");
-        return true;
+        try {
+            int lobbyId = Integer.parseInt(args[1]);
+            String arenaName = args[2];
+            plugin.setupHandler.addDeathmatchSpawn(player, arenaName, lobbyId);
+            return true;
+        } catch (NumberFormatException ex) {
+            player.sendMessage("§cUsage: /pg adddeathmatch <lobbynumber> <arenaname>");
+            return false;
+        }
     }
     
     @Override

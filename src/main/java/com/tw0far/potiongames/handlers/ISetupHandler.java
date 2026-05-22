@@ -3,6 +3,7 @@ package com.tw0far.potiongames.handlers;
 import org.bukkit.entity.Player;
 
 public interface ISetupHandler {
+    void setup(Player p);
     void enableLobby(Player p);
     void enableLobby(Player p, int lobbyId);
     void addLobby(Player p);

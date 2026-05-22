@@ -76,9 +76,9 @@ public class CombatEventListener implements Listener {
                 if (!plugin.isLobbyBuildAllowed(s)) {
                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
                         if (p.getKiller() != null) {
-                            plugin.addDeaths(p.getUniqueId().toString(), 1);
-                            plugin.addLosses(p.getUniqueId().toString(), 1);
-                            plugin.addKills(p.getKiller().getUniqueId().toString(), 1);
+                            plugin.getDatabaseManager().addDeaths(p.getUniqueId().toString(), 1);
+                            plugin.getDatabaseManager().addLosses(p.getUniqueId().toString(), 1);
+                            plugin.getDatabaseManager().addKills(p.getKiller().getUniqueId().toString(), 1);
                             if (plugin.isEnableRewards()) {
                                 EconomyResponse r = PotionGames.getEconomy().depositPlayer(p.getKiller(), plugin.getKillReward());
                                 if (r.transactionSuccess()) {
@@ -102,8 +102,8 @@ public class CombatEventListener implements Listener {
                                 killsTeam.prefix(Component.text(String.valueOf(tempInt)).color(NamedTextColor.DARK_AQUA));
                             }
                         } else {
-                            plugin.addDeaths(p.getUniqueId().toString(), 1);
-                            plugin.addLosses(p.getUniqueId().toString(), 1);
+                            plugin.getDatabaseManager().addDeaths(p.getUniqueId().toString(), 1);
+                            plugin.getDatabaseManager().addLosses(p.getUniqueId().toString(), 1);
                         }
                         // Move player from active to spectator
                         plugin.game.removePlayerLobby(p);

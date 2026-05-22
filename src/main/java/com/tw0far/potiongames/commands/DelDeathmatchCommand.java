@@ -31,17 +31,19 @@ public class DelDeathmatchCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        // Multi-lobby system: /pg deldeathmatch <lobbynumber> <arenaname>
         if (args.length < 3) {
             player.sendMessage("§cUsage: /pg deldeathmatch <lobbynumber> <arenaname>");
             return false;
         }
-        
-        String lobbyId = args[1];
-        String arenaName = args[2];
-        // Delete deathmatch spawn logic would go here
-        player.sendMessage("§aDeathmatch spawn deleted from arena §b" + arenaName + "§a (Lobby: §b" + lobbyId + "§a).");
-        return true;
+        try {
+            int lobbyId = Integer.parseInt(args[1]);
+            String arenaName = args[2];
+            plugin.setupHandler.removeDeathmatchSpawn(player, arenaName, lobbyId);
+            return true;
+        } catch (NumberFormatException ex) {
+            player.sendMessage("§cUsage: /pg deldeathmatch <lobbynumber> <arenaname>");
+            return false;
+        }
     }
     
     @Override

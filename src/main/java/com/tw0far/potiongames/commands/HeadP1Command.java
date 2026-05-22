@@ -30,8 +30,12 @@ public class HeadP1Command implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        // Look at the head of the 1st player on the podium and use this command
-        // Set player head logic would go here
+        if (player.getTargetBlock(null, 5) == null) {
+            player.sendMessage("§cLook at a block to set the 1st place head.");
+            return false;
+        }
+        plugin.getConfig().set("pg.RankWall.headp1", player.getTargetBlock(null, 5).getLocation());
+        plugin.saveConfig();
         player.sendMessage("§a1st place head set.");
         return true;
     }

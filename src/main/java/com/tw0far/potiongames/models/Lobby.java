@@ -110,7 +110,7 @@ public class Lobby {
     public Lobby(int id, LobbyConfig lobbyConfig) {
         this.id = id;
         this.lobbyConfig = lobbyConfig;
-        // Sync legacy fields with lobbyConfig for backward compatibility
+        // Sync runtime fields from LobbyConfig for existing lobby accessors.
         this.countdown = lobbyConfig.getCountdown();
         this.maxPlayers = lobbyConfig.getMaxPlayers();
         this.minPlayers = lobbyConfig.getMinPlayers();
@@ -160,7 +160,7 @@ public class Lobby {
             teamSize = lobbyConfig.getTeamSize();
             countdown = lobbyConfig.getCountdown();
         } else {
-            // Legacy loading from arena-data.yml (for backward compatibility)
+            // Fallback loading directly from arena-data.yml when no LobbyConfig is provided.
             activateTeams = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateTeams");
             activateKits = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateKits");
             activateShop = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateShop");

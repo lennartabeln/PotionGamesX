@@ -27,7 +27,7 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
-        plugin.createPlayer(p.getUniqueId().toString());
+        plugin.getDatabaseManager().createPlayer(p.getUniqueId().toString());
         plugin.joinChannel(p.getPlayer(), "Global");
         if (p.hasPermission("pg.update")) {
             new UpdateChecker(plugin, 87633).getVersion(version -> {

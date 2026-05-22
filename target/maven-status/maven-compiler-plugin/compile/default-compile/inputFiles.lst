@@ -1,3 +1,8 @@
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\bootstrap\BootstrapInitializer.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\bootstrap\ChestLootInitializer.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\bootstrap\EnableBootstrapContext.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\bootstrap\EnableBootstrapInitializer.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\bootstrap\RankWallUpdater.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\AddArenaCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\AddDeathmatchCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\AddSpawnCommand.java
@@ -36,12 +41,8 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\database\Databas
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\error\ErrorContext.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\error\ErrorHandler.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\error\PotionGamesError.java
-E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\examples\CommandErrorHandlingExample.java
-E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\examples\ConfigurationIntegrationExample.java
-E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\examples\ManagerErrorHandlingExample.java
-E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\IQueryHandler.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\ISetupHandler.java
-E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\QueryHandler.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\JoinLobbyHandler.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\ReloadHandler.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\SetupHandler.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\BlockEventListener.java

@@ -30,16 +30,18 @@ public class SetLobbyCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        // Multi-lobby system
         if (args.length < 2) {
             player.sendMessage("§cUsage: /pg setlobby <lobbynumber>");
             return false;
         }
-        
-        String lobbyId = args[1];
-        // Create/set lobby logic would go here
-        player.sendMessage("§aLobby §b" + lobbyId + "§a set successfully.");
-        return true;
+        try {
+            int lobbyId = Integer.parseInt(args[1]);
+            plugin.setupHandler.addLobby(player, lobbyId);
+            return true;
+        } catch (NumberFormatException ex) {
+            player.sendMessage("§cUsage: /pg setlobby <lobbynumber>");
+            return false;
+        }
     }
     
     @Override

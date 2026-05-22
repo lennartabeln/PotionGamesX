@@ -31,6 +31,5 @@ public class DeathEventListener implements Listener {
             plugin.game.addSpectatorPlayer(p);
         }
         
-        // Death tracking and rewards would go here
     }
 }

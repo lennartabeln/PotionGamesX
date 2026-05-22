@@ -31,16 +31,18 @@ public class JoinSignCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        // Multi-lobby system: /pg joinsign <lobbynumber>
         if (args.length < 2) {
             player.sendMessage("§cUsage: /pg joinsign <lobbynumber>");
             return false;
         }
-        
-        String lobbyId = args[1];
-        // Create join sign logic would go here
-        player.sendMessage("§aJoin sign created for lobby §b" + lobbyId + "§a.");
-        return true;
+        try {
+            int lobbyId = Integer.parseInt(args[1]);
+            plugin.setupHandler.setJoinSign(player, lobbyId);
+            return true;
+        } catch (NumberFormatException ex) {
+            player.sendMessage("§cUsage: /pg joinsign <lobbynumber>");
+            return false;
+        }
     }
     
     @Override

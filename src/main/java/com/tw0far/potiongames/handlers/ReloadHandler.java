@@ -171,7 +171,7 @@ public class ReloadHandler {
      */
     private void closeDatabase() {
         try {
-            plugin.close();
+            plugin.getDatabaseManager().closeConnection();
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error closing database", e);
         }
@@ -189,9 +189,14 @@ public class ReloadHandler {
             plugin.getArenaStateManager().clearAll();
             plugin.getItemStateManager().clearAll();
             plugin.getBlockStateManager().clearAll();
-
-            // Delegate remaining legacy cleanup behind PotionGames' compatibility API.
-            plugin.clearLegacyCollectionsForReload();
+            plugin.getGame().clearAllPlayers();
+            plugin.getGame().clearShopItems();
+            plugin.getGame().clearRankData();
+            plugin.getGame().clearAllLoot();
+            plugin.getGame().clearChests();
+            plugin.getGame().clearScoreboards();
+            plugin.getGame().clearChannels();
+            plugin.getSetupStateManager().clearAllSetupPlayers();
             
             plugin.getLogger().info("All collections cleared");
             
@@ -217,7 +222,7 @@ public class ReloadHandler {
      */
     private void reconnectDatabase() {
         try {
-            plugin.connect();
+            plugin.getDatabaseManager().connect();
             plugin.getLogger().info("Database reconnected");
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error reconnecting database", e);

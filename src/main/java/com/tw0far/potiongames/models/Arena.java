@@ -240,7 +240,7 @@ public class Arena {
     }
     
     /**
-     * Add a spawn location with explicit spawn ID (for backwards compatibility).
+     * Add a spawn location with an explicit spawn ID.
      * 
      * @param spawnId The ID for this spawn
      * @param spawn The spawn location to add
@@ -337,7 +337,7 @@ public class Arena {
     }
     
     /**
-     * Add a deathmatch spawn location with explicit spawn ID (for backwards compatibility).
+     * Add a deathmatch spawn location with an explicit spawn ID.
      * 
      * @param spawnId The ID for this spawn
      * @param spawn The deathmatch spawn location to add
@@ -585,6 +585,9 @@ public class Arena {
      * @param participants The list of participants to teleport
      */
     public void teleport(ArrayList<Participant> participants) {
+        if (spawns.isEmpty()) {
+            return;
+        }
         for (int i = 0; i < participants.size(); i++) {
             Participant participant = participants.get(i);
             Location spawnLocation = spawns.get(i % spawns.size());

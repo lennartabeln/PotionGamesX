@@ -30,8 +30,12 @@ public class SignP3Command implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        // Look at the sign of the 3rd player on the podium and use this command
-        // Set sign logic would go here
+        if (player.getTargetBlock(null, 5) == null || !(player.getTargetBlock(null, 5).getState() instanceof org.bukkit.block.Sign)) {
+            player.sendMessage("§cLook at a sign to set the 3rd place sign.");
+            return false;
+        }
+        plugin.getConfig().set("pg.RankWall.signp3", player.getTargetBlock(null, 5).getLocation());
+        plugin.saveConfig();
         player.sendMessage("§a3rd place sign set.");
         return true;
     }

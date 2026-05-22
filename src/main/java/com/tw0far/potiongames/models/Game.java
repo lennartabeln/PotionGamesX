@@ -21,13 +21,11 @@ public class Game {
     private ArrayList<Lobby> lobbies = new ArrayList<>();
     
     // Player lobby tracking (GAME-LEVEL ONLY)
-    // Player team/kit are stored in Participant objects within their Lobby
-    // But we keep these for backwards-compatibility with existing code
-    // DEPRECATED: New code should use Lobby.getParticipant(player).getTeam()
+    // Team/kit/vote/channel assignments are tracked here for game-wide systems.
     private ArrayList<Player> setupPlayers = new ArrayList<>();
-    private HashMap<Player, String> playerTeams = new HashMap<>();    // teamplayernames (deprecated - use Participant)
-    private HashMap<Player, String> playerKits = new HashMap<>();     // kitplayernames (deprecated - use Participant)
-    private HashMap<Player, String> playerVotes = new HashMap<>();    // voteplayernames (deprecated - use Participant)
+    private HashMap<Player, String> playerTeams = new HashMap<>();
+    private HashMap<Player, String> playerKits = new HashMap<>();
+    private HashMap<Player, String> playerVotes = new HashMap<>();
     private HashMap<Player, String> playerChannels = new HashMap<>(); // playerChannel (chat)
     // ===== PHASE 7.1: Global Shop & Loot State =====
     // Shop items (single-arena mode)
@@ -182,19 +180,6 @@ public class Game {
         if (lobby != null) {
             lobby.addKill(player);
         }
-    }
-
-    public Map<String, Integer> getPlayerStats(Player player) {
-        Map<String, Integer> stats = new HashMap<>();
-        Lobby lobby = getLobbyByPlayer(player);
-        if (lobby == null) {
-            stats.put("kills", 0);
-            stats.put("deaths", 0);
-            return stats;
-        }
-        stats.put("kills", lobby.getKills(player));
-        stats.put("deaths", lobby.getDeaths(player));
-        return stats;
     }
 
     public boolean checkWinCondition(Lobby lobby) {
@@ -363,14 +348,6 @@ public class Game {
     /**
      * Get count of spectator players
      */
-    public int getSpectatorPlayerCount() {
-        int count = 0;
-        for (Lobby lobby : lobbies) {
-            count += lobby.getSpectatorPlayers().size();
-        }
-        return count;
-    }
-    
     /**
      * Check if player is active
      */
@@ -816,36 +793,6 @@ public class Game {
         gm.remove(player.getName());
     }
     
-    // ===== PHASE 7.1: Shop Accessors =====
-    
-    /**
-     * Get shop items list
-     */
-    public ArrayList<String> getShopItems() {
-        return shopitem;
-    }
-    
-    /**
-     * Get shop kits list
-     */
-    public ArrayList<String> getShopKits() {
-        return shopkit;
-    }
-    
-    /**
-     * Get shop costs list
-     */
-    public ArrayList<Integer> getShopCosts() {
-        return shopcost;
-    }
-    
-    /**
-     * Get shop sale prices list
-     */
-    public ArrayList<Integer> getShopSales() {
-        return shopsale;
-    }
-    
     /**
      * Clear all shop items
      */
@@ -861,24 +808,6 @@ public class Game {
     /**
      * Get rank map (rank position -> player name)
      */
-    public HashMap<Integer, String> getRankMap() {
-        return rank;
-    }
-    
-    /**
-     * Get rank head locations
-     */
-    public ArrayList<Location> getRankHeads() {
-        return rankhead;
-    }
-    
-    /**
-     * Get rank sign locations
-     */
-    public ArrayList<Location> getRankSigns() {
-        return ranksign;
-    }
-    
     /**
      * Clear all rank data
      */
@@ -891,24 +820,10 @@ public class Game {
     // ===== PHASE 7.1: Loot Accessors =====
     
     /**
-     * Get food tier 1
-     */
-    public ArrayList<ItemStack> getFoodTier1() {
-        return food1;
-    }
-    
-    /**
      * Get food tier 2
      */
     public ArrayList<ItemStack> getFoodTier2() {
         return food2;
-    }
-    
-    /**
-     * Get armor tier 1
-     */
-    public ArrayList<ItemStack> getArmourTier1() {
-        return armour1;
     }
     
     /**
@@ -937,13 +852,6 @@ public class Game {
      */
     public ArrayList<ItemStack> getArmourTier5() {
         return armour5;
-    }
-    
-    /**
-     * Get weapons tier 1
-     */
-    public ArrayList<ItemStack> getWeaponsTier1() {
-        return weapons1;
     }
     
     /**
@@ -983,10 +891,6 @@ public class Game {
     /**
      * Get global chests map
      */
-    public HashMap<Location, ItemStack[]> getChests() {
-        return chests;
-    }
-    
     /**
      * Clear all chests
      */

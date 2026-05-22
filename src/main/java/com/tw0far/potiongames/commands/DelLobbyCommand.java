@@ -34,11 +34,14 @@ public class DelLobbyCommand implements ICommand {
             player.sendMessage("§cUsage: /pg dellobby <lobbynumber>");
             return false;
         }
-        
-        String lobbyId = args[1];
-        // Delete lobby logic would go here
-        player.sendMessage("§aLobby §b" + lobbyId + "§a deleted successfully.");
-        return true;
+        try {
+            int lobbyId = Integer.parseInt(args[1]);
+            plugin.setupHandler.removeLobby(player, lobbyId);
+            return true;
+        } catch (NumberFormatException ex) {
+            player.sendMessage("§cUsage: /pg dellobby <lobbynumber>");
+            return false;
+        }
     }
     
     @Override

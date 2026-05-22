@@ -20,7 +20,5 @@ public class ShopItem {
         this.price = price;
         this.kitPrice = kitPrice;
         this.kit = kit;
-        // new ItemStack(Material.POTION, 1);
-        // new PotionEffect(PotionEffectType.HEALTH_BOOST, 60, 2);
     }
 }

@@ -317,28 +317,27 @@ public class InventoryEventListener implements Listener {
                     }
                 }
                 int shopitem = 1;
-                // Get shop data from Game via delegation
-                ArrayList<String> shopItems = plugin.getGameShopItems();
-                ArrayList<String> shopKits = plugin.getGameShopKits();
-                ArrayList<Integer> shopCosts = plugin.getGameShopCosts();
-                ArrayList<Integer> shopSales = plugin.getGameShopSales();
+                // Get shop data from ItemStateManager
+                var itemStateManager = plugin.getItemStateManager();
+                ArrayList<String> shopItems = new ArrayList<>(itemStateManager.getShopItems());
                 
                 for (int i = 0; i < shopItems.size(); i++) {
                     int coinamount;
-                    if (plugin.hasPlayerKit(p) && plugin.getPlayerKit(p) != null && plugin.getPlayerKit(p).equals(shopKits.get(shopitem - 1))) {
-                        coinamount = shopSales.get(shopitem - 1);
+                    if (plugin.hasPlayerKit(p) && plugin.getPlayerKit(p) != null && plugin.getPlayerKit(p).equals(itemStateManager.getShopKit(shopitem - 1))) {
+                        coinamount = itemStateManager.getShopSale(shopitem - 1);
                     } else {
-                        coinamount = shopCosts.get(shopitem - 1);
+                        coinamount = itemStateManager.getShopCost(shopitem - 1);
                     }
                     if (Objects.requireNonNull(PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName())).matches(shopItems.get(shopitem - 1))) {
                         if (bottle >= 1) {
                             if (amount >= coinamount) {
                                 amount = amount - coinamount;
                                 bottle = bottle - 1;
-                                        ItemStack randombarrier = new ItemStack(plugin.getShoppotiontype().get(shopitem - 1));
+                                        ItemStack randombarrier = new ItemStack(Objects.requireNonNull(itemStateManager.getShopPotionType(shopitem - 1)));
                                 PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
                                 assert randombarriermeta != null;
-                                        randombarriermeta.addCustomEffect(new PotionEffect(plugin.getShoppotion().get(shopitem - 1).getType(), plugin.getShoppotion().get(shopitem - 1).getDuration(), plugin.getShoppotion().get(shopitem - 1).getAmplifier()), true);
+                                        PotionEffect shopPotion = Objects.requireNonNull(itemStateManager.getShopPotion(shopitem - 1));
+                                        randombarriermeta.addCustomEffect(new PotionEffect(shopPotion.getType(), shopPotion.getDuration(), shopPotion.getAmplifier()), true);
                                 randombarriermeta.displayName(Component.text(shopItems.get(shopitem - 1)));
                                 randombarrier.setItemMeta(randombarriermeta);
                                 p.getInventory().addItem(randombarrier);
@@ -431,6 +430,16 @@ public class InventoryEventListener implements Listener {
                                         inv = Bukkit.createInventory(p, 27, Settings.prefix);
                                         plugin.chestData();
                                         Random rnd = new Random();
+                                        var itemStateManager = plugin.getItemStateManager();
+                                        ArrayList<ItemStack> foodTier1 = new ArrayList<>(itemStateManager.getFoods(1));
+                                        ArrayList<ItemStack> foodTier2 = new ArrayList<>(itemStateManager.getFoods(2));
+                                        ArrayList<ItemStack> armourTier1 = new ArrayList<>(itemStateManager.getArmors(1));
+                                        ArrayList<ItemStack> armourTier2 = new ArrayList<>(itemStateManager.getArmors(2));
+                                        ArrayList<ItemStack> armourTier3 = new ArrayList<>(itemStateManager.getArmors(3));
+                                        ArrayList<ItemStack> armourTier4 = new ArrayList<>(itemStateManager.getArmors(4));
+                                        ArrayList<ItemStack> armourTier5 = new ArrayList<>(itemStateManager.getArmors(5));
+                                        ArrayList<ItemStack> weaponsTier1 = new ArrayList<>(itemStateManager.getWeapons(1));
+                                        ArrayList<ItemStack> weaponsTier2 = new ArrayList<>(itemStateManager.getWeapons(2));
                                         int max = 6;
                                         int min = 2;
                                         int diff = max - min;
@@ -448,8 +457,8 @@ public class InventoryEventListener implements Listener {
                                                     potions2.add(plugin.getCoin());
                                                     int item = rnd.nextInt(5);
                                                     if (item < 3) {
-                                                        int item1 = rnd.nextInt(plugin.getFoodTier1().size());
-                                                        inv.setItem(slot, plugin.getFoodTier1().get(item1));
+                                                        int item1 = rnd.nextInt(foodTier1.size());
+                                                        inv.setItem(slot, foodTier1.get(item1));
                                                     } else if (item < 4) {
                                                         int item1 = 0;
                                                         inv.setItem(slot, potions1.get(item1));
@@ -458,33 +467,33 @@ public class InventoryEventListener implements Listener {
                                                         inv.setItem(slot, potions2.get(item1));
                                                     }
                                                 } else {
-                                                    int item1 = rnd.nextInt(plugin.getFoodTier1().size());
-                                                    inv.setItem(slot, plugin.getFoodTier1().get(item1));
+                                                    int item1 = rnd.nextInt(foodTier1.size());
+                                                    inv.setItem(slot, foodTier1.get(item1));
                                                 }
                                             } else if (roll < 30) {
-                                                int item2 = rnd.nextInt(plugin.getFoodTier2().size());
-                                                inv.setItem(slot, plugin.getFoodTier2().get(item2));
+                                                int item2 = rnd.nextInt(foodTier2.size());
+                                                inv.setItem(slot, foodTier2.get(item2));
                                             } else if (roll < 45) {
-                                                int item3 = rnd.nextInt(plugin.getArmourTier1().size());
-                                                inv.setItem(slot, plugin.getArmourTier1().get(item3));
+                                                int item3 = rnd.nextInt(armourTier1.size());
+                                                inv.setItem(slot, armourTier1.get(item3));
                                             } else if (roll < 60) {
-                                                int item4 = rnd.nextInt(plugin.getArmourTier2().size());
-                                                inv.setItem(slot, plugin.getArmourTier2().get(item4));
+                                                int item4 = rnd.nextInt(armourTier2.size());
+                                                inv.setItem(slot, armourTier2.get(item4));
                                             } else if (roll < 67) {
-                                                int item5 = rnd.nextInt(plugin.getArmourTier3().size());
-                                                inv.setItem(slot, plugin.getArmourTier3().get(item5));
+                                                int item5 = rnd.nextInt(armourTier3.size());
+                                                inv.setItem(slot, armourTier3.get(item5));
                                             } else if (roll < 72) {
-                                                int item6 = rnd.nextInt(plugin.getArmourTier4().size());
-                                                inv.setItem(slot, plugin.getArmourTier4().get(item6));
+                                                int item6 = rnd.nextInt(armourTier4.size());
+                                                inv.setItem(slot, armourTier4.get(item6));
                                             } else if (roll < 75) {
-                                                int item7 = rnd.nextInt(plugin.getArmourTier5().size());
-                                                inv.setItem(slot, plugin.getArmourTier5().get(item7));
+                                                int item7 = rnd.nextInt(armourTier5.size());
+                                                inv.setItem(slot, armourTier5.get(item7));
                                             } else if (roll < 95) {
-                                                int item8 = rnd.nextInt(plugin.getWeaponsTier1().size());
-                                                inv.setItem(slot, plugin.getWeaponsTier1().get(item8));
+                                                int item8 = rnd.nextInt(weaponsTier1.size());
+                                                inv.setItem(slot, weaponsTier1.get(item8));
                                             } else {
-                                                int item9 = rnd.nextInt(plugin.getWeaponsTier2().size());
-                                                inv.setItem(slot, plugin.getWeaponsTier2().get(item9));
+                                                int item9 = rnd.nextInt(weaponsTier2.size());
+                                                inv.setItem(slot, weaponsTier2.get(item9));
                                             }
                                         }
                                         plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
@@ -499,10 +508,11 @@ public class InventoryEventListener implements Listener {
                                         int min = 0;
                                         int diff = max - min;
                                         int tries = effect.nextInt(diff + 1);
+                                        ArrayList<PotionEffect> potions = new ArrayList<>(plugin.getItemStateManager().getPotions());
                                         while (tries != 0) {
                                             tries--;
-                                            int potion = effect.nextInt(plugin.getPotions().size());
-                                            p.addPotionEffect(plugin.getPotions().get(potion));
+                                            int potion = effect.nextInt(potions.size());
+                                            p.addPotionEffect(potions.get(potion));
                                         }
                                     }
                                 }
@@ -565,20 +575,23 @@ public class InventoryEventListener implements Listener {
                                         Inventory inv;
                                         inv = Bukkit.createInventory(p, 9 * 3, Settings.prefix.append(Component.text(plugin.getChatmessages().get(49))).color(NamedTextColor.DARK_AQUA));
                                         plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
+                                        var itemStateManager = plugin.getItemStateManager();
+                                        ArrayList<String> shopItems = new ArrayList<>(itemStateManager.getShopItems());
                                         int shopitem = 1;
                                         for (int i = 0; i < plugin.getActivePotions(); i++) {
                                             int coinamount;
-                                                if (plugin.hasPlayerKit(p) && plugin.getPlayerKit(p) != null && plugin.getPlayerKit(p).equals(plugin.getShopkit().get(shopitem - 1))) {
-                                                    coinamount = plugin.getShopsale().get(shopitem - 1);
+                                                if (plugin.hasPlayerKit(p) && plugin.getPlayerKit(p) != null && plugin.getPlayerKit(p).equals(itemStateManager.getShopKit(shopitem - 1))) {
+                                                    coinamount = itemStateManager.getShopSale(shopitem - 1);
                                                 } else {
-                                                    coinamount = plugin.getShopcost().get(shopitem - 1);
+                                                    coinamount = itemStateManager.getShopCost(shopitem - 1);
                                                 }
-                                                ItemStack randombarrier = new ItemStack(plugin.getShoppotiontype().get(shopitem - 1));
+                                                ItemStack randombarrier = new ItemStack(Objects.requireNonNull(itemStateManager.getShopPotionType(shopitem - 1)));
                                             ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                             assert randombarriermeta != null;
-                                                randombarriermeta.displayName(Component.text(plugin.getShop().get(shopitem - 1)));
+                                                randombarriermeta.displayName(Component.text(shopItems.get(shopitem - 1)));
                                             ArrayList<Component> lore = new ArrayList<>();
-                                            lore.add(Component.text(plugin.getChatmessages().get(50) + ": " + plugin.getShoppotion().get(shopitem - 1).getDuration() / 20));
+                                            PotionEffect shopPotion = Objects.requireNonNull(itemStateManager.getShopPotion(shopitem - 1));
+                                            lore.add(Component.text(plugin.getChatmessages().get(50) + ": " + shopPotion.getDuration() / 20));
                                             lore.add(Component.text(plugin.getChatmessages().get(51) + ": " + coinamount + " " + plugin.getChatmessages().get(52)));
                                             randombarriermeta.lore(lore);
                                             randombarrier.setItemMeta(randombarriermeta);
@@ -840,12 +853,12 @@ public class InventoryEventListener implements Listener {
                 }
                 if (p.getInventory().getItemInMainHand().getType() == Material.EMERALD) {
                     if (p.hasPermission("pg.stats")) {
-                        int wins = plugin.getWins(p.getUniqueId().toString());
-                        int losses = plugin.getLosses(p.getUniqueId().toString());
-                        int rounds = plugin.getRounds(p.getUniqueId().toString());
-                        int kills = plugin.getKills(p.getUniqueId().toString());
-                        int deaths = plugin.getDeaths(p.getUniqueId().toString());
-                        double kd = plugin.getKD(p.getUniqueId().toString());
+                        int wins = plugin.getDatabaseManager().getWins(p.getUniqueId().toString());
+                        int losses = plugin.getDatabaseManager().getLosses(p.getUniqueId().toString());
+                        int rounds = plugin.getDatabaseManager().getRounds(p.getUniqueId().toString());
+                        int kills = plugin.getDatabaseManager().getKills(p.getUniqueId().toString());
+                        int deaths = plugin.getDatabaseManager().getDeaths(p.getUniqueId().toString());
+                        double kd = plugin.getDatabaseManager().getKD(p.getUniqueId().toString());
                         p.sendMessage(Messages.StatsLabel());
                         p.sendMessage(Messages.RoundsLabel(rounds));
                         p.sendMessage(Messages.WinsLabel(wins));
@@ -1079,12 +1092,12 @@ public class InventoryEventListener implements Listener {
                             }
                         
                         if (line2.matches("PotionGames") && line3.matches("Stats")) {
-                            int wins = plugin.getWins(p.getUniqueId().toString());
-                            int losses = plugin.getLosses(p.getUniqueId().toString());
-                            int rounds = plugin.getRounds(p.getUniqueId().toString());
-                            int kills = plugin.getKills(p.getUniqueId().toString());
-                            int deaths = plugin.getDeaths(p.getUniqueId().toString());
-                            double kd = plugin.getKD(p.getUniqueId().toString());
+                            int wins = plugin.getDatabaseManager().getWins(p.getUniqueId().toString());
+                            int losses = plugin.getDatabaseManager().getLosses(p.getUniqueId().toString());
+                            int rounds = plugin.getDatabaseManager().getRounds(p.getUniqueId().toString());
+                            int kills = plugin.getDatabaseManager().getKills(p.getUniqueId().toString());
+                            int deaths = plugin.getDatabaseManager().getDeaths(p.getUniqueId().toString());
+                            double kd = plugin.getDatabaseManager().getKD(p.getUniqueId().toString());
                             p.sendMessage(Messages.StatsLabel());
                             p.sendMessage(Messages.RoundsLabel(rounds));
                             p.sendMessage(Messages.WinsLabel(wins));
@@ -1098,12 +1111,12 @@ public class InventoryEventListener implements Listener {
                             Player pstats = Bukkit.getPlayer(line2.toString());
                             p.sendMessage(Messages.StatsLabel());
                             if (pstats != null) {
-                                int wins = plugin.getWins(pstats.getUniqueId().toString());
-                                int losses = plugin.getLosses(pstats.getUniqueId().toString());
-                                int rounds = plugin.getRounds(pstats.getUniqueId().toString());
-                                int kills = plugin.getKills(pstats.getUniqueId().toString());
-                                int deaths = plugin.getDeaths(pstats.getUniqueId().toString());
-                                double kd = plugin.getKD(pstats.getUniqueId().toString());
+                                int wins = plugin.getDatabaseManager().getWins(pstats.getUniqueId().toString());
+                                int losses = plugin.getDatabaseManager().getLosses(pstats.getUniqueId().toString());
+                                int rounds = plugin.getDatabaseManager().getRounds(pstats.getUniqueId().toString());
+                                int kills = plugin.getDatabaseManager().getKills(pstats.getUniqueId().toString());
+                                int deaths = plugin.getDatabaseManager().getDeaths(pstats.getUniqueId().toString());
+                                double kd = plugin.getDatabaseManager().getKD(pstats.getUniqueId().toString());
                                 p.sendMessage(Messages.RoundsLabel(rounds));
                                 p.sendMessage(Messages.WinsLabel(wins));
                                 p.sendMessage(Messages.LossesLabel(losses));
