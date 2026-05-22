@@ -83,3 +83,9 @@
 - Root directory cleaned up (from 40 md files to 4)
 - Build verified and working
 - No breaking changes to functionality
+
+## Recent Changes
+
+- Privatized two public fields in PotionGames (game, setupHandler), added getSetupHandler(), and updated 52 source files to use accessors instead of direct field access. Commit: 3aa719571cdb4cff2ca2fce34690f2414028741c
+- Re-verified build: mvn -DskipTests clean package → SUCCESS
+

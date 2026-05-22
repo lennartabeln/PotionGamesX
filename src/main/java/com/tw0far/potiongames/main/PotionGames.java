@@ -879,6 +879,8 @@ public class PotionGames extends JavaPlugin {
         // Initialize configuration manager
         configManager = new ConfigurationManager(this);
         configManager.onEnable();
+        // Bind configuration manager to legacy Settings read-through so static accessors can prefer the manager
+        com.tw0far.potiongames.models.Settings.bindConfigManager(configManager);
         
         // Initialize state managers
         lobbyStateManager = new LobbyStateManager(this);
