@@ -35,9 +35,18 @@ public class TeleportEventListener implements Listener {
         
         // Active players can teleport normally during games
         // (Ender pearls, chorus fruit, etc. should work for pvp)
-        if (e.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL 
-            || e.getCause() == PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT) {
+        PlayerTeleportEvent.TeleportCause cause = e.getCause();
+        if (cause == PlayerTeleportEvent.TeleportCause.ENDER_PEARL) {
             return;
+        }
+        // Chorus fruit may not be present in some API versions; check at runtime
+        try {
+            PlayerTeleportEvent.TeleportCause chorus = PlayerTeleportEvent.TeleportCause.valueOf("CHORUS_FRUIT");
+            if (cause == chorus) {
+                return;
+            }
+        } catch (IllegalArgumentException ignored) {
+            // CHORUS_FRUIT not present in this API - ignore and continue checks
         }
         
         // Allow other teleport causes for active players
