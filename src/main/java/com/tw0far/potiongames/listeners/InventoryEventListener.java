@@ -790,13 +790,13 @@ public class InventoryEventListener implements Listener {
                                 int slot = 1;
                                 for (Integer all : plugin.getLobbiesTeamsMap(s).keySet()) {
                                     ArrayList<Component> arenalore = new ArrayList<>();
-                                    arenalore.add(0, Component.text(plugin.getChatmessages().get(44) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbiesTeamsMap(s), all, 0))).color(NamedTextColor.AQUA)));
+                                    arenalore.add(0, Component.text(plugin.getChatmessages().get(44) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.getOrDefault(plugin.getLobbiesTeamsMap(s), all, 0))).color(NamedTextColor.AQUA)));
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     assert arenamapmeta != null;
                                     arenamapmeta.displayName(Component.text(Integer.toString(all)).color(NamedTextColor.AQUA));
                                     for (Player temp : plugin.getLobbiesTeamPlayerNamesMap(s).keySet()) {
-                                        if (SafeMapAccess.get(plugin.getLobbiesTeamPlayerNamesMap(s), temp, "").equals(Integer.toString(all)) && temp != null) {
+                                        if (SafeMapAccess.getOrDefault(plugin.getLobbiesTeamPlayerNamesMap(s), temp, "").equals(Integer.toString(all)) && temp != null) {
                                             arenalore.add(Component.text(temp.getName()).color(NamedTextColor.GRAY));
                                         }
                                     }
