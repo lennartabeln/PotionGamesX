@@ -2,8 +2,8 @@ package com.tw0far.potiongames.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collections;
-/**
+
+/**
  * Safe property accessor for nested map structures with proper generics.
  * Provides typed methods to avoid raw Object casts and ClassCastException at call sites.
  */

@@ -35,10 +35,8 @@ public class SetupHandler implements ISetupHandler {
         pg.savePlayerGameMode(p, p.getGameMode());
 
         inventory.clear();
-        inventory.setHelmet(null);
-        inventory.setChestplate(null);
-        inventory.setLeggings(null);
-        inventory.setBoots(null);
+        // Use setArmorContents to avoid deprecated individual setters
+        inventory.setArmorContents(new ItemStack[] { null, null, null, null });
 
         p.setHealth(20);
         p.setFoodLevel(20);
@@ -177,7 +175,12 @@ public class SetupHandler implements ISetupHandler {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
         }
-        boolean success = lobby.setJoinSign(p.getTargetBlock(null, 5).getLocation());
+        org.bukkit.block.Block target = p.getTargetBlockExact(5);
+        if (target == null) {
+            p.sendMessage(Settings.prefix.append(Component.text("No block in range to set as join sign.").color(NamedTextColor.RED)));
+            return;
+        }
+        boolean success = lobby.setJoinSign(target.getLocation());
         if (success) {
             p.sendMessage(Messages.SignSet());
         } else {

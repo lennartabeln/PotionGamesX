@@ -940,9 +940,10 @@ public class InventoryEventListener implements Listener {
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.OAK_SIGN) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Component.text("Set Join-Sign").color(NamedTextColor.DARK_AQUA))) {
-                            if (p.getTargetBlock(null, 5).getState() instanceof org.bukkit.block.Sign) {
+                            org.bukkit.block.Block target = p.getTargetBlockExact(5);
+                            if (target != null && target.getState() instanceof org.bukkit.block.Sign) {
                                 if (p.hasPermission("pg.setup")) {
-                                plugin.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(p.getTargetBlock(null, 5).getLocation()));
+                                plugin.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(target.getLocation()));
                                 plugin.saveConfig();
                                 p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(35)).color(NamedTextColor.GREEN)));
                                 }

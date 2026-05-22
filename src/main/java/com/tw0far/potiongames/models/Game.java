@@ -246,6 +246,17 @@ public class Game {
     }
 
     public boolean addLobby(int lobbyId, Location location) {
+        // Enforce 1-based lobby IDs. Do not allow lobby 0 or negative IDs.
+        if (lobbyId < 1) {
+            Bukkit.getConsoleSender().sendMessage("PotionGames: Invalid lobby id " + lobbyId + ". Lobby IDs must start at 1.");
+            return false;
+        }
+        // Prevent duplicate lobby IDs
+        if (getLobby(lobbyId) != null) {
+            Bukkit.getConsoleSender().sendMessage("PotionGames: Lobby " + lobbyId + " already exists.");
+            return false;
+        }
+
         Lobby lobby = new Lobby(lobbyId);
         boolean success = lobby.add(location);
         if (success) {

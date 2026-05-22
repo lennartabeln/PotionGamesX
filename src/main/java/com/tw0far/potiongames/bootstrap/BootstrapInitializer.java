@@ -43,8 +43,9 @@ public final class BootstrapInitializer {
     }
 
     private void seedChatMessages() {
-        List<String> chatmessages = plugin.getChatmessages();
-        Collections.addAll(chatmessages,
+        // Build a mutable list of default chat messages, then replace plugin list via API
+        java.util.List<String> mutableChat = new java.util.ArrayList<>(plugin.getChatmessages());
+        Collections.addAll(mutableChat,
                 "Waiting for players!",
                 "The game starts in",
                 "Player-Finder",
@@ -148,6 +149,11 @@ public final class BootstrapInitializer {
                 "Lobby enabled!",
                 "Lobby disabled!");
 
+        // Replace the plugin's internal list with the newly built mutable list (defensive copy)
+        plugin.replaceChatmessages(mutableChat);
+
+        List<String> chatmessages = plugin.getChatmessages();
+
         int message = 1;
         for (int i = 0; i < chatmessages.size(); i++) {
             if (Settings.messages.get("pg.messages." + Settings.language + "." + message) == null) {
@@ -168,12 +174,13 @@ public final class BootstrapInitializer {
     }
 
     private void seedShopData() {
-        List<String> shop = plugin.getShop();
-        List<PotionEffect> shoppotion = plugin.getShoppotion();
-        List<ItemStack> shoppotiontype = plugin.getShoppotiontype();
-        List<String> shopkit = plugin.getShopkit();
-        List<Integer> shopcost = plugin.getShopcost();
-        List<Integer> shopsale = plugin.getShopsale();
+        // Work on mutable copies, then replace plugin's internal collections via API
+        List<String> shop = new java.util.ArrayList<>(plugin.getShop());
+        List<PotionEffect> shoppotion = new java.util.ArrayList<>(plugin.getShoppotion());
+        List<ItemStack> shoppotiontype = new java.util.ArrayList<>(plugin.getShoppotiontype());
+        List<String> shopkit = new java.util.ArrayList<>(plugin.getShopkit());
+        List<Integer> shopcost = new java.util.ArrayList<>(plugin.getShopcost());
+        List<Integer> shopsale = new java.util.ArrayList<>(plugin.getShopsale());
 
         addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "JUMP_BOOST", PotionEffectType.JUMP_BOOST, Material.POTION, "Looter");
         addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "RESISTANCE", PotionEffectType.RESISTANCE, Material.POTION, "Tank");
@@ -231,6 +238,14 @@ public final class BootstrapInitializer {
             shopitem++;
         }
 
+        // Replace plugin internal collections so other code sees final data
+        plugin.replaceShop(shop);
+        plugin.replaceShoppotion(shoppotion);
+        plugin.replaceShoppotiontype(shoppotiontype);
+        plugin.replaceShopkit(shopkit);
+        plugin.replaceShopcost(shopcost);
+        plugin.replaceShopsale(shopsale);
+
         try {
             Settings.shopdata.save(Settings.shopdatafile);
         } catch (IOException ex) {
@@ -256,16 +271,23 @@ public final class BootstrapInitializer {
     }
 
     private void seedKitData() {
-        List<String> kits = plugin.getKits();
+        // Use a mutable copy for kits and replace plugin data after population
+        List<String> kits = new java.util.ArrayList<>(plugin.getKits());
         Collections.addAll(kits, "Rich Kid", "Fighter", "Healer", "Looter", "Ghost", "Tank");
         for (int i = 7; i < 27; i++) {
             kits.add("kit" + i);
         }
 
-        plugin.getKitplayers().put(plugin.getChatmessages().get(42), 0);
+        // Build mutable kitplayers map and replace after population
+        java.util.Map<String, Integer> kitplayers = new java.util.HashMap<>();
+        kitplayers.put(plugin.getChatmessages().get(42), 0);
         for (String all : kits) {
-            plugin.getKitplayers().put(all, 0);
+            kitplayers.put(all, 0);
         }
+
+        // Replace plugin internal collections
+        plugin.replaceKits(kits);
+        plugin.replaceKitplayers(kitplayers);
 
         int kititem = 1;
         for (int i = 0; i < kits.size(); i++) {

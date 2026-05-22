@@ -30,11 +30,12 @@ public class HeadP3Command implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (player.getTargetBlock(null, 5) == null) {
+        org.bukkit.block.Block target = player.getTargetBlockExact(5);
+        if (target == null) {
             player.sendMessage("§cLook at a block to set the 3rd place head.");
             return false;
         }
-        plugin.getConfig().set("pg.RankWall.headp3", player.getTargetBlock(null, 5).getLocation());
+        plugin.getConfig().set("pg.RankWall.headp3", target.getLocation());
         plugin.saveConfig();
         player.sendMessage("§a3rd place head set.");
         return true;

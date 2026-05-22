@@ -152,21 +152,24 @@ public class YamlConfigLoader {
         
         String numericPath = "pg.lobbies." + lobbyId;
         String namedPath = "pg.lobbies.lobby" + lobbyId;
-        String path = config.contains(numericPath) ? numericPath : namedPath;
-        if (!config.contains(path)) {
-            // Create default settings if not found
-            plugin.getLogger().info("Creating default settings for lobby " + lobbyId);
-            config.createSection(path);
+        String path = null;
+        if (config.contains(numericPath)) {
+            path = numericPath;
+        } else if (config.contains(namedPath)) {
+            path = namedPath;
+        } else {
+            // Do not create default sections automatically to avoid creating empty lobbies on first startup.
+            // Return null to indicate no settings available for this lobby.
+            return null;
         }
 
         ConfigurationSection lobbySection = config.getConfigurationSection(path);
-        ConfigurationSection settingsSection = lobbySection != null
-                ? lobbySection.getConfigurationSection("settings")
-                : null;
-        ConfigurationSection effectiveSection = settingsSection != null ? settingsSection : lobbySection;
-        if (effectiveSection == null) {
-            effectiveSection = config.createSection(path);
+        if (lobbySection == null) {
+            // If the section is unexpectedly missing despite contains(), return null safely.
+            return null;
         }
+        ConfigurationSection settingsSection = lobbySection.getConfigurationSection("settings");
+        ConfigurationSection effectiveSection = settingsSection != null ? settingsSection : lobbySection;
         
         LobbySettings settings = new LobbySettings(
             lobbyId,

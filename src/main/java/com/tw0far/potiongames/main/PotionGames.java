@@ -3,38 +3,24 @@ package com.tw0far.potiongames.main;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.*;
-import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Scoreboard;
 
 import com.tw0far.potiongames.bootstrap.BootstrapInitializer;
 import com.tw0far.potiongames.bootstrap.ChestLootInitializer;
-import com.tw0far.potiongames.bootstrap.RankWallUpdater;
 import com.tw0far.potiongames.bootstrap.EnableBootstrapContext;
 import com.tw0far.potiongames.bootstrap.EnableBootstrapInitializer;
 import com.tw0far.potiongames.commands.CommandDispatcher;
@@ -50,17 +36,13 @@ import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import com.tw0far.potiongames.updatechecker.UpdateChecker;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Random;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -109,13 +91,64 @@ public class PotionGames extends JavaPlugin {
 
     public java.util.List<String> getTeamed() { return java.util.Collections.unmodifiableList(teamed); }
     public java.util.List<String> getKits() { return java.util.Collections.unmodifiableList(kits); }
+
+    public void replaceKits(java.util.List<String> list) {
+        kits.clear();
+        if (list != null) kits.addAll(list);
+    }
+
+    public void replaceKitplayers(java.util.Map<String, Integer> map) {
+        kitplayers.clear();
+        if (map != null) kitplayers.putAll(map);
+    }
     public java.util.List<String> getChatmessages() { return java.util.Collections.unmodifiableList(chatmessages); }
+    /**
+     * Replace the plugin's chat messages with the provided list (defensive copy).
+     * Used during initialization to seed default messages without exposing a mutable view.
+     */
+    public void replaceChatmessages(java.util.List<String> messages) {
+        chatmessages.clear();
+        if (messages != null) {
+            chatmessages.addAll(messages);
+        }
+    }
     public java.util.List<String> getShop() { return java.util.Collections.unmodifiableList(shop); }
     public ArrayList<PotionEffect> getShoppotion() { return shoppotion; }
     public ArrayList<ItemStack> getShoppotiontype() { return shoppotiontype; }
     public java.util.List<String> getShopkit() { return java.util.Collections.unmodifiableList(shopkit); }
     public java.util.List<Integer> getShopcost() { return java.util.Collections.unmodifiableList(shopcost); }
     public java.util.List<Integer> getShopsale() { return java.util.Collections.unmodifiableList(shopsale); }
+
+    // Replace methods for shop-related collections (used during bootstrap to populate defaults)
+    public void replaceShop(java.util.List<String> list) {
+        shop.clear();
+        if (list != null) shop.addAll(list);
+    }
+
+    public void replaceShoppotion(java.util.List<PotionEffect> list) {
+        shoppotion.clear();
+        if (list != null) shoppotion.addAll(list);
+    }
+
+    public void replaceShoppotiontype(java.util.List<ItemStack> list) {
+        shoppotiontype.clear();
+        if (list != null) shoppotiontype.addAll(list);
+    }
+
+    public void replaceShopkit(java.util.List<String> list) {
+        shopkit.clear();
+        if (list != null) shopkit.addAll(list);
+    }
+
+    public void replaceShopcost(java.util.List<Integer> list) {
+        shopcost.clear();
+        if (list != null) shopcost.addAll(list);
+    }
+
+    public void replaceShopsale(java.util.List<Integer> list) {
+        shopsale.clear();
+        if (list != null) shopsale.addAll(list);
+    }
     public ArrayList<Location> getRankhead() { return rankhead; }
     public ArrayList<Location> getRanksign() { return ranksign; }
     public ArrayList<ItemStack> getFood1() { return food1; }
