@@ -2,11 +2,12 @@
 REM Build script for PotionGames - suppresses Maven internal warnings
 setlocal enabledelayedexpansion
 
-set MAVEN_OPTS=-XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/sun.misc=ALL-UNNAMED
+set MAVEN_OPTS=--add-opens java.base/sun.misc=ALL-UNNAMED -XX:+IgnoreUnrecognizedVMOptions -Dorg.slf4j.simpleLogger.defaultLogLevel=warn
 
 echo.
 echo [PotionGames Build Script]
 echo Building with clean compilation...
+echo Note: sun.misc.Unsafe warnings are from Maven's Google Guice library (safe to ignore)
 echo.
 
 mvn -DskipTests clean package

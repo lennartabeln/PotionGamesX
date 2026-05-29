@@ -22,7 +22,7 @@ build.bat
 
 ### Linux/Mac
 ```bash
-export MAVEN_OPTS="-XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/sun.misc=ALL-UNNAMED"
+export MAVEN_OPTS="--add-opens java.base/sun.misc=ALL-UNNAMED -XX:+IgnoreUnrecognizedVMOptions"
 mvn -DskipTests clean package
 ```
 
@@ -34,8 +34,9 @@ mvn -DskipTests clean package
 
 ## Known Notes
 
-### JVM/Maven Warnings
-The build may show warnings about `sun.misc.Unsafe` from Google Guice (Maven internal dependency). These are NOT code warnings and do not affect the plugin:
+### JVM/Maven Warnings (Safe to Ignore)
+
+When building, you may see warnings about `sun.misc.Unsafe` from Google Guice (Maven's internal dependency):
 
 ```
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
@@ -43,9 +44,19 @@ WARNING: sun.misc.Unsafe::staticFieldBase has been called by
   com.google.inject.internal.aop.HiddenClassDefiner
 ```
 
-**These warnings are from Maven's internal build tools, not from PotionGames code.**
+**✅ These warnings are SAFE and do NOT affect the plugin:**
+- They come from Maven's internal `guice-5.1.0` library
+- NOT from PotionGames code
+- The plugin compiles with **0 code warnings**
+- The Unsafe methods are used by Google's dependency injection framework
 
-All PotionGames code compiles with **0 warnings**.
+**Suppression:**
+- Use provided build scripts (build.ps1, build.bat) - they automatically suppress these
+- Or set MAVEN_OPTS: `--add-opens java.base/sun.misc=ALL-UNNAMED`
+
+**Future Java Versions:**
+- When Java removes sun.misc.Unsafe (planned for future release), Maven/Guice maintainers will update
+- PotionGames will not be affected as we don't use Unsafe directly
 
 ## Deployment
 

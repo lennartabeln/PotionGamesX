@@ -3,7 +3,12 @@ Write-Host "[PotionGames Build Script]" -ForegroundColor Green
 Write-Host "Building with clean compilation..." -ForegroundColor Green
 Write-Host ""
 
-$env:MAVEN_OPTS = "-XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/sun.misc=ALL-UNNAMED"
+# Suppress Unsafe warnings from Google Guice (Maven internal dependency)
+# These are NOT code warnings, but Maven's internal dependencies
+$env:MAVEN_OPTS = "--add-opens java.base/sun.misc=ALL-UNNAMED -XX:+IgnoreUnrecognizedVMOptions -Dorg.slf4j.simpleLogger.defaultLogLevel=warn"
+
+Write-Host "Note: sun.misc.Unsafe warnings are from Maven's Google Guice library (safe to ignore)" -ForegroundColor Yellow
+Write-Host ""
 
 mvn -DskipTests clean package
 
