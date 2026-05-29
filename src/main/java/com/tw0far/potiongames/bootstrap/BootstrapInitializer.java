@@ -26,19 +26,25 @@ public final class BootstrapInitializer {
     public void initialize() {
         plugin.getDataFolder().mkdirs();
         Settings.arenadatafile = new File(plugin.getDataFolder() + File.separator + "arenadata.yml");
-        Settings.chestdatafile = new File(plugin.getDataFolder() + File.separator + "chestdata.yml");
-        Settings.kitdatafile = new File(plugin.getDataFolder() + File.separator + "kitdata.yml");
+        Settings.chestdatafile = new File(plugin.getDataFolder() + File.separator + "chestloot.yml");
         Settings.messagesfile = new File(plugin.getDataFolder() + File.separator + "messages.yml");
-        Settings.shopdatafile = new File(plugin.getDataFolder() + File.separator + "shopdata.yml");
-
-        // Ensure all data files exist before loading (handles both first and subsequent startups)
+        
+        // Ensure all files exist before loading
         ensureFileExists(Settings.arenadatafile, "arenadata.yml");
-        ensureFileExists(Settings.chestdatafile, "chestdata.yml");
-        ensureFileExists(Settings.kitdatafile, "kitdata.yml");
+        ensureFileExists(Settings.chestdatafile, "chestloot.yml");
         ensureFileExists(Settings.messagesfile, "messages.yml");
-        ensureFileExists(Settings.shopdatafile, "shopdata.yml");
-
+        
+        // Config.yml: Main config with shops, kits, database, global settings
+        // arenadata.yml: Lobbies, arenas, spawns
+        // chestloot.yml: Chest loot definitions
+        // messages.yml: Localized messages
+        
         Settings.loadConfigurations();
+        
+        // Kit and shop data now stored in main config.yml
+        Settings.kitdata = plugin.getConfig();
+        Settings.shopdata = plugin.getConfig();
+        
         Settings.loadSettings(plugin);
         plugin.getGame().load();
 
@@ -46,7 +52,7 @@ public final class BootstrapInitializer {
         seedShopData();
         seedKitData();
     }
-
+    
     private void ensureFileExists(File file, String name) {
         if (!file.exists()) {
             try {
@@ -225,27 +231,27 @@ public final class BootstrapInitializer {
 
         int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
-            if (Settings.shopdata.get("pg.potions." + shopitem) == null) {
-                Settings.shopdata.addDefault("pg.potions." + shopitem, shop.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".name", shop.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".shoppotion", shoppotion.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".shoppotiontype", shoppotiontype.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".kit", shopkit.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".cost", shopcost.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".sale", shopsale.get(shopitem - 1));
-                Settings.shopdata.options().copyDefaults(true);
+            if (plugin.getConfig().get("pg.potions." + shopitem) == null) {
+                plugin.getConfig().addDefault("pg.potions." + shopitem, shop.get(shopitem - 1));
+                plugin.getConfig().addDefault("pg.potions." + shopitem + ".name", shop.get(shopitem - 1));
+                plugin.getConfig().addDefault("pg.potions." + shopitem + ".shoppotion", shoppotion.get(shopitem - 1));
+                plugin.getConfig().addDefault("pg.potions." + shopitem + ".shoppotiontype", shoppotiontype.get(shopitem - 1));
+                plugin.getConfig().addDefault("pg.potions." + shopitem + ".kit", shopkit.get(shopitem - 1));
+                plugin.getConfig().addDefault("pg.potions." + shopitem + ".cost", shopcost.get(shopitem - 1));
+                plugin.getConfig().addDefault("pg.potions." + shopitem + ".sale", shopsale.get(shopitem - 1));
+                plugin.getConfig().options().copyDefaults(true);
             } else {
-                String name = Settings.shopdata.getString("pg.potions." + shopitem + ".name");
+                String name = plugin.getConfig().getString("pg.potions." + shopitem + ".name");
                 shop.set(shopitem - 1, name);
-                PotionEffect potion = (PotionEffect) Settings.shopdata.get("pg.potions." + shopitem + ".shoppotion");
+                PotionEffect potion = (PotionEffect) plugin.getConfig().get("pg.potions." + shopitem + ".shoppotion");
                 shoppotion.set(shopitem - 1, potion);
-                ItemStack potiontype = (ItemStack) Settings.shopdata.get("pg.potions." + shopitem + ".shoppotiontype");
+                ItemStack potiontype = (ItemStack) plugin.getConfig().get("pg.potions." + shopitem + ".shoppotiontype");
                 shoppotiontype.set(shopitem - 1, potiontype);
-                String kitname = Settings.shopdata.getString("pg.potions." + shopitem + ".kit");
+                String kitname = plugin.getConfig().getString("pg.potions." + shopitem + ".kit");
                 shopkit.set(shopitem - 1, kitname);
-                Integer cost = (Integer) Settings.shopdata.get("pg.potions." + shopitem + ".cost");
+                Integer cost = (Integer) plugin.getConfig().get("pg.potions." + shopitem + ".cost");
                 shopcost.set(shopitem - 1, cost);
-                Integer sale = (Integer) Settings.shopdata.get("pg.potions." + shopitem + ".sale");
+                Integer sale = (Integer) plugin.getConfig().get("pg.potions." + shopitem + ".sale");
                 shopsale.set(shopitem - 1, sale);
             }
             shopitem++;
@@ -260,14 +266,8 @@ public final class BootstrapInitializer {
         plugin.replaceShopsale(shopsale);
 
         try {
-            Settings.shopdata.save(Settings.shopdatafile);
-        } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
-        }
-
-        try {
-            Settings.arenadata.save(Settings.arenadatafile);
-        } catch (IOException ex) {
+            plugin.saveConfig();
+        } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
     }

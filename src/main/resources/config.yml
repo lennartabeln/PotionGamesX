@@ -1,45 +1,25 @@
+# PotionGames Configuration File
+# Minecraft Paper 1.26+
+# 
+# Data Organization:
+#   - config.yml (this file): Global settings, shops, kits, loot configuration
+#   - arenadata.yml: Lobbies, arenas, spawns (all locations)
+#   - chestloot.yml: Chest loot item definitions
+#   - messages.yml: Localized text messages
+
 pg:
-  activateMySQL: false
-  # Global countdown timer (seconds) - used by all lobbies unless overridden
-  countdown: 60
-  startOnJoin: false
-  compassOnSpawn: false
-  allowOutsideChat: false
-  changeGamerules: true
-  # Global game rules - these are inherited by all lobbies if not overridden
-  activateTeams: true
-  activateKits: true
-  activateShop: true
-  activateAirdrops: true
-  gameServer: true
-  # Lobby-based configuration only.
-  maxPlayers: 24
-  minPlayers: 2
-  teamSize: 2
-  roundTime: 30  # in minutes
-  # New lobby-first configuration format.
-  # These values are used as global defaults for all lobbies.
-  defaults:
-    countdown: 60
-    maxPlayers: 24
-    minPlayers: 2
-    teamSize: 2
-    roundTime: 30
-    activateTeams: true
-    activateKits: true
-    activateShop: true
-    activateAirdrops: true
-  activePotions: 19
-  activeKits: 6
-  activateScoreboard: true
-  friendlyFire: false
-  joinStarted: false
-  activateDeathmatch: true
-  enableRewards: false
-  broadcastStarting: false
-  winningReward: 100
-  killReward: 10
+  # ════════════════════════════════════════════════════════════════════════════════
+  # CORE SETTINGS
+  # ════════════════════════════════════════════════════════════════════════════════
+  
   language: en_US
+  gameServer: true
+  
+  # ════════════════════════════════════════════════════════════════════════════════
+  # DATABASE CONFIGURATION
+  # ════════════════════════════════════════════════════════════════════════════════
+  
+  activateMySQL: false
   mysql:
     host: localhost
     port: "3306"
@@ -47,12 +27,69 @@ pg:
     user: root
     password: "admin"
   
-  # Chest loot configuration
+  # ════════════════════════════════════════════════════════════════════════════════
+  # DEFAULT GAME SETTINGS (Applied to all lobbies unless overridden)
+  # ════════════════════════════════════════════════════════════════════════════════
+  
+  defaults:
+    # Timing
+    countdown: 60              # Seconds before game starts
+    roundTime: 30              # Minutes per round
+    
+    # Player limits
+    maxPlayers: 24
+    minPlayers: 2
+    teamSize: 2
+    
+    # Feature flags
+    activateTeams: true
+    activateKits: true
+    activateShop: true
+    activateAirdrops: true
+  
+  # ════════════════════════════════════════════════════════════════════════════════
+  # GLOBAL FEATURES
+  # ════════════════════════════════════════════════════════════════════════════════
+  
+  # Gameplay
+  activateScoreboard: true
+  activateDeathmatch: true
+  friendlyFire: false
+  joinStarted: false
+  
+  # Player behavior
+  startOnJoin: false
+  compassOnSpawn: false
+  allowOutsideChat: false
+  changeGamerules: true
+  broadcastStarting: false
+  
+  # Economy (requires Vault plugin)
+  enableRewards: false
+  winningReward: 100           # Coins for winning a round
+  killReward: 10               # Coins per kill
+  
+  # Content limits
+  activePotions: 19            # Number of shop potions
+  activeKits: 6                # Number of player kits
+  
+  # ════════════════════════════════════════════════════════════════════════════════
+  # SHOP ITEMS
+  # ════════════════════════════════════════════════════════════════════════════════
+  # Populated automatically on startup from hardcoded defaults
+  # Structure: pg.potions.<number>.name, .shoppotion, .shoppotiontype, .kit, .cost, .sale
+  
+  potions: {}
+  
+  # ════════════════════════════════════════════════════════════════════════════════
+  # CHEST LOOT CONFIGURATION
+  # ════════════════════════════════════════════════════════════════════════════════
+  # Define custom loot profiles for chest types in this section
+  # factor: 1.0 = default, 0.5 = half density, 2.0 = double density
+  
   chestloot:
+    # Standard chest (End Portal Frame) - default loot profile
     normal:
-      # Default loot profile for normal chests (End Portal Frame)
-      # factor: Overall loot density (1.0 = default, 0.5 = half density, 2.0 = double density)
-      # Weights determine probability distribution within each factor
       loot:
         factor: 1.0
         food1: 20.0
@@ -64,8 +101,7 @@ pg:
         armour5: 3.0
         weapons1: 20.0
         weapons2: 5.0
-      # Item definitions for each loot pool
-      # Format: Material:Amount
+      
       items:
         food1:
           - "CAKE:1"
@@ -73,49 +109,60 @@ pg:
           - "PUMPKIN_PIE:3"
           - "COOKIE:3"
           - "BAKED_POTATO:3"
+        
         food2:
           - "RABBIT_STEW:1"
           - "MUSHROOM_STEW:1"
           - "BEETROOT_SOUP:1"
           - "GOLDEN_CARROT:1"
           - "MILK_BUCKET:1"
+        
         armour1:
           - "LEATHER_HELMET:1"
           - "LEATHER_CHESTPLATE:1"
           - "LEATHER_LEGGINGS:1"
           - "LEATHER_BOOTS:1"
+        
         armour2:
           - "CHAINMAIL_HELMET:1"
           - "CHAINMAIL_CHESTPLATE:1"
           - "CHAINMAIL_LEGGINGS:1"
           - "CHAINMAIL_BOOTS:1"
+        
         armour3:
           - "GOLDEN_HELMET:1"
           - "GOLDEN_CHESTPLATE:1"
           - "GOLDEN_LEGGINGS:1"
           - "GOLDEN_BOOTS:1"
+        
         armour4:
           - "IRON_HELMET:1"
           - "IRON_CHESTPLATE:1"
           - "IRON_LEGGINGS:1"
           - "IRON_BOOTS:1"
+        
         armour5:
           - "DIAMOND_HELMET:1"
           - "DIAMOND_CHESTPLATE:1"
           - "DIAMOND_LEGGINGS:1"
           - "DIAMOND_BOOTS:1"
+        
         weapons1:
           - "WOODEN_SWORD:1"
           - "STONE_SWORD:1"
           - "WOODEN_AXE:1"
+        
         weapons2:
           - "IRON_SWORD:1"
           - "DIAMOND_SWORD:1"
           - "IRON_AXE:1"
-
-  # Per-lobby configuration (optional)
-  # Each lobby can override specific settings under `settings`.
-  # Any missing key inherits from pg.defaults (or legacy pg.* values).
+  
+  # ════════════════════════════════════════════════════════════════════════════════
+  # LOBBY CONFIGURATION
+  # ════════════════════════════════════════════════════════════════════════════════
+  # See arenadata.yml for lobby/arena/spawn definitions
+  # Per-lobby settings override defaults and stored in arenadata.yml
+  
   lobbies:
     0:
       settings: {}

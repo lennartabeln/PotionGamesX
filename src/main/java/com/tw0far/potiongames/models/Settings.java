@@ -117,11 +117,12 @@ public final class Settings {
     public static String getUser() { return configManager != null ? configManager.getUser() : "root"; }
 
     public static void loadConfigurations() {
+        // Arena/lobby/spawn data from arenadata.yml
         Settings.arenadata = YamlConfiguration.loadConfiguration(Settings.arenadatafile);
+        // Chest loot data from chestdata.yml (loot.yml or chestloot.yml)
         Settings.chestdata = YamlConfiguration.loadConfiguration(Settings.chestdatafile);
-        Settings.kitdata = YamlConfiguration.loadConfiguration(Settings.kitdatafile);
+        // Messages from messages.yml
         Settings.messages = YamlConfiguration.loadConfiguration(Settings.messagesfile);
-        Settings.shopdata = YamlConfiguration.loadConfiguration(Settings.shopdatafile);
     }
 
     public static void loadSettings(PotionGames pg) {
