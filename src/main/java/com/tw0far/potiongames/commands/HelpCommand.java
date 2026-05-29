@@ -108,6 +108,19 @@ public class HelpCommand implements ICommand {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.debug", "/pg debug - Toggle debug logging mode")).color(NamedTextColor.GRAY)));
         }
         
+        // New admin commands
+        if (player.hasPermission("pg.admin") || player.hasPermission("pg.broadcast")) {
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.broadcast", "/pg broadcast <message> - Send announcement to all players")).color(NamedTextColor.GRAY)));
+        }
+        
+        if (player.hasPermission("pg.admin") || player.hasPermission("pg.kick")) {
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.kick", "/pg kick <player> - Remove player from lobby")).color(NamedTextColor.GRAY)));
+        }
+        
+        if (player.hasPermission("pg.admin") || player.hasPermission("pg.top")) {
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.top", "/pg top [type] - Show leaderboard (kills/deaths/wins/kd)")).color(NamedTextColor.GRAY)));
+        }
+        
         player.sendMessage(Messages.CommandsLabel());
         return true;
     }

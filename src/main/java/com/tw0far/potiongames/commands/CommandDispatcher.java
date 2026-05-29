@@ -43,6 +43,9 @@ public class CommandDispatcher implements CommandExecutor {
         registerCommand(new ConfigCommand(plugin));
         registerCommand(new StatusCommand(plugin));
         registerCommand(new DebugCommand(plugin));
+        registerCommand(new BroadcastCommand(plugin));
+        registerCommand(new KickCommand(plugin));
+        registerCommand(new TopCommand(plugin));
         
         // Admin commands - Setup
         registerCommand(new SetupCommand(plugin));

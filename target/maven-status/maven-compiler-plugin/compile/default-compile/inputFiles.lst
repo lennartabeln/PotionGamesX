@@ -98,6 +98,7 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\FoodLe
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\ReloadHandler.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\GameStates.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\error\ErrorContext.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\BroadcastCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\PlayerStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\SetupHandler.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\ItemDropEventListener.java
@@ -105,11 +106,14 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\updatechecker\Up
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\PlayerManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\ReloadCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\ItemStateManager.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\KickCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\config\ChestLootBuilder.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\TopCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\config\ConfigKeys.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\ExplosionEventListener.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\DatabaseManager.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\util\ConfigValidator.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\Shop.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\config\YamlConfigLoader.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\util\ItemBuilder.java
