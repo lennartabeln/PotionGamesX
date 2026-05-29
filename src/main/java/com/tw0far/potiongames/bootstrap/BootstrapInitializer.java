@@ -31,6 +31,13 @@ public final class BootstrapInitializer {
         Settings.messagesfile = new File(plugin.getDataFolder() + File.separator + "messages.yml");
         Settings.shopdatafile = new File(plugin.getDataFolder() + File.separator + "shopdata.yml");
 
+        // Ensure all data files exist before loading (handles both first and subsequent startups)
+        ensureFileExists(Settings.arenadatafile, "arenadata.yml");
+        ensureFileExists(Settings.chestdatafile, "chestdata.yml");
+        ensureFileExists(Settings.kitdatafile, "kitdata.yml");
+        ensureFileExists(Settings.messagesfile, "messages.yml");
+        ensureFileExists(Settings.shopdatafile, "shopdata.yml");
+
         Settings.loadConfigurations();
         Settings.loadSettings(plugin);
         plugin.getGame().load();
@@ -38,6 +45,16 @@ public final class BootstrapInitializer {
         seedChatMessages();
         seedShopData();
         seedKitData();
+    }
+
+    private void ensureFileExists(File file, String name) {
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": Could not create " + name + " - " + e.getMessage()).color(NamedTextColor.RED)));
+            }
+        }
     }
 
     private void seedChatMessages() {
