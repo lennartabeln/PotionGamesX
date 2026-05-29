@@ -2,6 +2,8 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Lobby;
+import com.tw0far.potiongames.models.Messages;
+
 import org.bukkit.entity.Player;
 
 /**
@@ -40,6 +42,6 @@ public class LeaveCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg leave - Leave the current game";
+        return Messages.raw("help.leave_usage", "/pg leave - Leave the current game");
     }
 }

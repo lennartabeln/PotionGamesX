@@ -2,6 +2,7 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Lobby;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
 /**
@@ -34,7 +35,7 @@ public class DelArenaCommand implements ICommand {
     public boolean execute(Player player, String[] args) {
         // Multi-lobby system: /pg delarena <lobbynumber> <arenaname>
         if (args.length < 3) {
-            player.sendMessage("§cUsage: /pg delarena <lobbynumber> <arenaname>");
+            player.sendMessage(Messages.raw("command.delarena.usage", "Usage: /pg delarena <lobbynumber> <arenaname>"));
             return false;
         }
         
@@ -43,23 +44,23 @@ public class DelArenaCommand implements ICommand {
             String arenaName = args[2];
             Lobby lobby = plugin.getLobbyById(lobbyId);
             if (lobby == null) {
-                player.sendMessage("§cThis lobby does not exists!");
+                player.sendMessage(Messages.LobbyDoesNotExist());
                 return false;
             }
             if (lobby.removeArena(arenaName)) {
-                player.sendMessage("§aArena §b" + arenaName + "§a deleted from lobby §b" + lobbyId + "§a.");
+                player.sendMessage(Messages.ArenaRemoved(arenaName, lobbyId));
                 return true;
             }
-            player.sendMessage("§cCould not delete arena!");
+            player.sendMessage(Messages.ArenaCouldNotLoad());
             return false;
         } catch (NumberFormatException ex) {
-            player.sendMessage("§cUsage: /pg delarena <lobbynumber> <arenaname>");
+            player.sendMessage(Messages.raw("command.delarena.usage", "Usage: /pg delarena <lobbynumber> <arenaname>"));
             return false;
         }
     }
     
     @Override
     public String getUsage() {
-        return "/pg delarena <lobbynumber> <arenaname>";
+        return Messages.raw("command.delarena.usage", "/pg delarena <lobbynumber> <arenaname>");
     }
 }

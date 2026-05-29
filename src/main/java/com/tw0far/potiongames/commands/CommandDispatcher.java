@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.util.MessageUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -37,6 +38,8 @@ public class CommandDispatcher implements CommandExecutor {
         registerCommand(new HelpCommand(plugin));
         registerCommand(new ReloadCommand(plugin));
         registerCommand(new VersionCommand(plugin));
+        registerCommand(new GameServerCommand(plugin));
+        registerCommand(new DatabaseCommand(plugin));
         
         // Admin commands - Setup
         registerCommand(new SetupCommand(plugin));
@@ -101,7 +104,7 @@ public class CommandDispatcher implements CommandExecutor {
         
         // Check if game server required
         if (command.requiresGameServer() && !plugin.isGameServer()) {
-            player.sendMessage(MessageUtil.createError("This is not a game server!"));
+            player.sendMessage(MessageUtil.createError(Messages.raw("command.not_game_server", "This is not a game server!")));
             return true;
         }
         
@@ -109,7 +112,7 @@ public class CommandDispatcher implements CommandExecutor {
         try {
             return command.execute(player, args);
         } catch (Exception e) {
-            player.sendMessage(MessageUtil.createError("An error occurred while executing this command!"));
+            player.sendMessage(MessageUtil.createError(Messages.raw("command.execution_error", "An error occurred while executing this command!")));
             plugin.getLogger().severe("Error executing command " + subCommand + ": " + e.getMessage());
             e.printStackTrace();
             return true;
@@ -120,7 +123,7 @@ public class CommandDispatcher implements CommandExecutor {
      * Show available commands to player
      */
     public void showCommands(Player player) {
-        player.sendMessage(Component.text("═════════ PotionGames Commands ═════════").color(NamedTextColor.AQUA));
+        player.sendMessage(Component.text(Messages.raw("command.list_header", "═════════ PotionGames Commands ═════════")).color(NamedTextColor.AQUA));
         
         for (ICommand command : commands.values()) {
             if (command.getPermission() == null || player.hasPermission(command.getPermission())) {
@@ -128,6 +131,6 @@ public class CommandDispatcher implements CommandExecutor {
             }
         }
         
-        player.sendMessage(Component.text("═════════════════════════════════════════").color(NamedTextColor.AQUA));
+        player.sendMessage(Component.text(Messages.raw("command.list_footer", "═════════════════════════════════════════")).color(NamedTextColor.AQUA));
     }
 }

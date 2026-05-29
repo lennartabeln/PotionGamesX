@@ -2,6 +2,7 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Lobby;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
 /**
@@ -34,7 +35,7 @@ public class DelSpawnCommand implements ICommand {
     public boolean execute(Player player, String[] args) {
         // Multi-lobby system: /pg delspawn <lobbynumber> <arenaname>
         if (args.length < 3) {
-            player.sendMessage("§cUsage: /pg delspawn <lobbynumber> <arenaname>");
+            player.sendMessage(Messages.raw("command.delspawn.usage", "Usage: /pg delspawn <lobbynumber> <arenaname>"));
             return false;
         }
         
@@ -43,19 +44,19 @@ public class DelSpawnCommand implements ICommand {
             String arenaName = args[2];
             Lobby lobby = plugin.getLobbyById(lobbyId);
             if (lobby == null) {
-                player.sendMessage("§cThis lobby does not exists!");
+                player.sendMessage(Messages.LobbyDoesNotExist());
                 return false;
             }
             plugin.getSetupHandler().removeSpawn(player, arenaName, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage("§cUsage: /pg delspawn <lobbynumber> <arenaname>");
+            player.sendMessage(Messages.raw("command.delspawn.usage", "Usage: /pg delspawn <lobbynumber> <arenaname>"));
             return false;
         }
     }
     
     @Override
     public String getUsage() {
-        return "/pg delspawn <lobbynumber> <arenaname>";
+        return Messages.raw("command.delspawn.usage", "/pg delspawn <lobbynumber> <arenaname>");
     }
 }

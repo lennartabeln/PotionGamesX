@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
 /**
@@ -32,7 +33,7 @@ public class DelDeathmatchCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length < 3) {
-            player.sendMessage("§cUsage: /pg deldeathmatch <lobbynumber> <arenaname>");
+            player.sendMessage(Messages.raw("command.deldeathmatch.usage", "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"));
             return false;
         }
         try {
@@ -41,13 +42,13 @@ public class DelDeathmatchCommand implements ICommand {
             plugin.getSetupHandler().removeDeathmatchSpawn(player, arenaName, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage("§cUsage: /pg deldeathmatch <lobbynumber> <arenaname>");
+            player.sendMessage(Messages.raw("command.deldeathmatch.usage", "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"));
             return false;
         }
     }
     
     @Override
     public String getUsage() {
-        return "/pg deldeathmatch <lobbynumber> <arenaname>";
+        return Messages.raw("command.deldeathmatch.usage", "/pg deldeathmatch <lobbynumber> <arenaname>");
     }
 }

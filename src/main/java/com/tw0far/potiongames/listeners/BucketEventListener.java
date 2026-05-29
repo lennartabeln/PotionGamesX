@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -36,7 +37,7 @@ public class BucketEventListener implements Listener {
         // Water can be used for escape/defensive purposes, which may be too powerful
         if (e.getBucket().toString().contains("WATER")) {
             e.setCancelled(true);
-            p.sendMessage("§cWater buckets are not allowed during games!");
+            p.sendMessage(Messages.raw("bucket.water_not_allowed", "Water buckets are not allowed during games!"));
             return;
         }
         

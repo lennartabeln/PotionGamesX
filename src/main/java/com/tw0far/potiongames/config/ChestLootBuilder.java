@@ -101,7 +101,7 @@ public class ChestLootBuilder {
      */
     public ChestLootBuilder addPotion(String effect, int amplifier, int duration, double weight) {
         try {
-            PotionEffectType effectType = PotionEffectType.getByName(effect);
+            PotionEffectType effectType = resolvePotionEffect(effect);
             if (effectType == null) {
                 throw new IllegalArgumentException("Unknown potion effect: " + effect);
             }
@@ -127,7 +127,7 @@ public class ChestLootBuilder {
      */
     public ChestLootBuilder addSplashPotion(String effect, int amplifier, int duration, double weight) {
         try {
-            PotionEffectType effectType = PotionEffectType.getByName(effect);
+            PotionEffectType effectType = resolvePotionEffect(effect);
             if (effectType == null) {
                 throw new IllegalArgumentException("Unknown potion effect: " + effect);
             }
@@ -169,6 +169,23 @@ public class ChestLootBuilder {
         }
         
         return result.toArray(new ItemStack[0]);
+    }
+
+    @SuppressWarnings("deprecation")
+    private PotionEffectType resolvePotionEffect(String name) {
+        if (name == null) return null;
+        try {
+            // Try namespaced key lookup first (preferred)
+            PotionEffectType byKey = PotionEffectType.getByKey(org.bukkit.NamespacedKey.minecraft(name.toLowerCase()));
+            if (byKey != null) return byKey;
+        } catch (Exception ignored) {
+        }
+        try {
+            // Fallback to deprecated name lookup for compatibility
+            return PotionEffectType.getByName(name);
+        } catch (Throwable t) {
+            return null;
+        }
     }
     
     /**

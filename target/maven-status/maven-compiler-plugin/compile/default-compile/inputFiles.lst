@@ -19,6 +19,7 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\Participa
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\CreatureSpawnEventListener.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IArenaStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\RankWallItem.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\util\SkullUtil.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\AddArenaCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\ICommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\util\LocationUtil.java
@@ -57,6 +58,7 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\ChatEv
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\bootstrap\BootstrapInitializer.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\AddSpawnCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\config\LobbySettings.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\GameServerCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\RankWall.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\DelSpawnCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\handlers\ISetupHandler.java
@@ -113,3 +115,4 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\ForceCo
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\LeaveCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\Settings.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IPlayerStateManager.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\DatabaseCommand.java

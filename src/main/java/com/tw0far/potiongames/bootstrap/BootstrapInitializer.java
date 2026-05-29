@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.bootstrap;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -23,15 +24,12 @@ public final class BootstrapInitializer {
     }
 
     public void initialize() {
+        plugin.getDataFolder().mkdirs();
         Settings.arenadatafile = new File(plugin.getDataFolder() + File.separator + "arenadata.yml");
         Settings.chestdatafile = new File(plugin.getDataFolder() + File.separator + "chestdata.yml");
         Settings.kitdatafile = new File(plugin.getDataFolder() + File.separator + "kitdata.yml");
         Settings.messagesfile = new File(plugin.getDataFolder() + File.separator + "messages.yml");
         Settings.shopdatafile = new File(plugin.getDataFolder() + File.separator + "shopdata.yml");
-
-        if (!Settings.messagesfile.exists()) {
-            plugin.saveResource("messages.yml", false);
-        }
 
         Settings.loadConfigurations();
         Settings.loadSettings(plugin);
@@ -149,27 +147,25 @@ public final class BootstrapInitializer {
                 "Lobby enabled!",
                 "Lobby disabled!");
 
-        // Replace the plugin's internal list with the newly built mutable list (defensive copy)
-        plugin.replaceChatmessages(mutableChat);
-
-        List<String> chatmessages = plugin.getChatmessages();
-
         int message = 1;
-        for (int i = 0; i < chatmessages.size(); i++) {
+        for (String defaultText : new java.util.ArrayList<>(mutableChat)) {
             if (Settings.messages.get("pg.messages." + Settings.language + "." + message) == null) {
-                Settings.messages.addDefault("pg.messages." + Settings.language + "." + message, chatmessages.get(message - 1));
+                Settings.messages.addDefault("pg.messages." + Settings.language + "." + message, defaultText);
                 Settings.messages.options().copyDefaults(true);
             } else {
                 String text = Settings.messages.getString("pg.messages." + Settings.language + "." + message);
-                chatmessages.set(message - 1, text);
+                mutableChat.set(message - 1, text);
             }
             message++;
         }
 
+        // Replace the plugin's internal list with the newly built mutable list (defensive copy)
+        plugin.replaceChatmessages(mutableChat);
+
         try {
             Settings.messages.save(Settings.messagesfile);
         } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + chatmessages.get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
+            Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
     }
 
@@ -249,13 +245,13 @@ public final class BootstrapInitializer {
         try {
             Settings.shopdata.save(Settings.shopdatafile);
         } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + plugin.getChatmessages().get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
+            Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
 
         try {
             Settings.arenadata.save(Settings.arenadatafile);
         } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + plugin.getChatmessages().get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
+            Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
     }
 
@@ -280,7 +276,7 @@ public final class BootstrapInitializer {
 
         // Build mutable kitplayers map and replace after population
         java.util.Map<String, Integer> kitplayers = new java.util.HashMap<>();
-        kitplayers.put(plugin.getChatmessages().get(42), 0);
+        kitplayers.put(Messages.RandomText(), 0);
         for (String all : kits) {
             kitplayers.put(all, 0);
         }
@@ -305,7 +301,7 @@ public final class BootstrapInitializer {
         try {
             Settings.kitdata.save(Settings.kitdatafile);
         } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(" " + plugin.getChatmessages().get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)));
+            Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
     }
 }

@@ -53,7 +53,7 @@ public class JoinCommand implements ICommand {
                 player.sendMessage(Messages.HelpUsePgHelp());
             }
         } else {
-            player.sendMessage(Settings.prefix.append(net.kyori.adventure.text.Component.text("/pg join # - Join a game").color(net.kyori.adventure.text.format.NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(net.kyori.adventure.text.Component.text(Messages.raw("help.join", "/pg join # - Join a game")).color(net.kyori.adventure.text.format.NamedTextColor.GRAY)));
         }
         
         return true;
@@ -61,6 +61,6 @@ public class JoinCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg join <lobby_number> - Join a specific lobby";
+        return Messages.raw("help.join_usage", "/pg join <lobby_number> - Join a specific lobby");
     }
 }

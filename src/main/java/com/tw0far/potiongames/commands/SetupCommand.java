@@ -41,6 +41,6 @@ public class SetupCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg setup - Start setup mode (requires pg.setup)";
+        return Messages.raw("help.setup_usage", "/pg setup - Start setup mode (requires pg.setup)");
     }
 }

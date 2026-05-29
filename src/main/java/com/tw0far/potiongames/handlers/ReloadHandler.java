@@ -3,6 +3,7 @@ package com.tw0far.potiongames.handlers;
 import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.Lobby;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -97,7 +98,7 @@ public class ReloadHandler {
                             lobby.getParticipants().forEach(participant -> {
                                 if (participant != null && participant.getPlayer() != null) {
                                     try {
-                                        participant.getPlayer().kickPlayer("Server reload - rejoining now");
+                                        participant.getPlayer().kick(net.kyori.adventure.text.Component.text(Messages.raw("server.reload_rejoining", "Server reload - rejoining now")));
                                     } catch (Exception e) {
                                         plugin.getLogger().log(Level.WARNING, "Could not kick player", e);
                                     }

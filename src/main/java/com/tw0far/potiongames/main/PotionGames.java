@@ -980,13 +980,13 @@ public class PotionGames extends JavaPlugin {
         if (activateMysql && !databaseManager.isConnected()) {
             Bukkit.getPluginManager().disablePlugin(this);
         } else {
-            Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(chatmessages.get(40)).color(NamedTextColor.GREEN)));
+            Bukkit.getConsoleSender().sendMessage(Messages.PluginStarted());
         }
         new UpdateChecker(this, 87633).getVersion(version -> {
             if (getPluginMeta().getVersion().equalsIgnoreCase(version)) {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(chatmessages.get(76)).color(NamedTextColor.GRAY)).append(Component.text(" " + getPluginMeta().getVersion()).color(NamedTextColor.GRAY)));
+                Bukkit.getConsoleSender().sendMessage(Messages.UpdateNotAvailable().append(Component.text(" " + getPluginMeta().getVersion()).color(NamedTextColor.GRAY)));
             } else {
-                Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(chatmessages.get(77)).color(NamedTextColor.GRAY)).append(Component.text(" " + getPluginMeta().getVersion() + " -> " + version).color(NamedTextColor.GRAY)));
+                Bukkit.getConsoleSender().sendMessage(Messages.UpdateAvailable(getPluginMeta().getVersion(), version));
             }
         });
         if (enableRewards) {
@@ -1014,8 +1014,8 @@ public class PotionGames extends JavaPlugin {
                     Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
                     UUID uuid = UUID.fromString(rank.get(id));
                     OfflinePlayer name = Bukkit.getOfflinePlayer(uuid);
-                    skull.setOwningPlayer(name);
-                    skull.update();
+                    // Use SkullUtil to set owner using modern profile API where available
+                    com.tw0far.potiongames.util.SkullUtil.setSkullOwner(skull, uuid);
                 }
                 for (int iii = 0; iii < rank.size(); iii++) {
                     int id = iii + 1;
@@ -1106,7 +1106,8 @@ public class PotionGames extends JavaPlugin {
 
         if (gameServer && startOnJoin) {
             for (Player all : Bukkit.getOnlinePlayers()) {
-                all.kick(Settings.prefix.append(Component.text(chatmessages.get(25)).color(NamedTextColor.RED)));
+                if (all == null) continue;
+                all.kick(Messages.ServerStopped());
             }
         }
         if (!startOnJoin) {
@@ -1131,18 +1132,18 @@ public class PotionGames extends JavaPlugin {
                 onLeaveLobby(all, spectatorLobbyId);
             }
         }
-        Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(Component.text(chatmessages.get(41)).color(NamedTextColor.RED)));
+        Bukkit.getConsoleSender().sendMessage(Messages.PluginStopped());
     }
 
     private boolean setupEconomy() {
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
             return false;
         }
-        RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
+        var rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             return false;
         }
-        econ = rsp.getProvider();
+        econ = java.util.Objects.requireNonNull(rsp.getProvider(), "Vault provider returned null");
         return true;
     }
 
@@ -1525,7 +1526,6 @@ public class PotionGames extends JavaPlugin {
     }
     
 }
-
 
 
 

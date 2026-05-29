@@ -47,6 +47,72 @@ pg:
     user: root
     password: "admin"
   
+  # Chest loot configuration
+  chestloot:
+    normal:
+      # Default loot profile for normal chests (End Portal Frame)
+      # factor: Overall loot density (1.0 = default, 0.5 = half density, 2.0 = double density)
+      # Weights determine probability distribution within each factor
+      loot:
+        factor: 1.0
+        food1: 20.0
+        food2: 10.0
+        armour1: 15.0
+        armour2: 15.0
+        armour3: 7.0
+        armour4: 5.0
+        armour5: 3.0
+        weapons1: 20.0
+        weapons2: 5.0
+      # Item definitions for each loot pool
+      # Format: Material:Amount
+      items:
+        food1:
+          - "CAKE:1"
+          - "BREAD:3"
+          - "PUMPKIN_PIE:3"
+          - "COOKIE:3"
+          - "BAKED_POTATO:3"
+        food2:
+          - "RABBIT_STEW:1"
+          - "MUSHROOM_STEW:1"
+          - "BEETROOT_SOUP:1"
+          - "GOLDEN_CARROT:1"
+          - "MILK_BUCKET:1"
+        armour1:
+          - "LEATHER_HELMET:1"
+          - "LEATHER_CHESTPLATE:1"
+          - "LEATHER_LEGGINGS:1"
+          - "LEATHER_BOOTS:1"
+        armour2:
+          - "CHAINMAIL_HELMET:1"
+          - "CHAINMAIL_CHESTPLATE:1"
+          - "CHAINMAIL_LEGGINGS:1"
+          - "CHAINMAIL_BOOTS:1"
+        armour3:
+          - "GOLDEN_HELMET:1"
+          - "GOLDEN_CHESTPLATE:1"
+          - "GOLDEN_LEGGINGS:1"
+          - "GOLDEN_BOOTS:1"
+        armour4:
+          - "IRON_HELMET:1"
+          - "IRON_CHESTPLATE:1"
+          - "IRON_LEGGINGS:1"
+          - "IRON_BOOTS:1"
+        armour5:
+          - "DIAMOND_HELMET:1"
+          - "DIAMOND_CHESTPLATE:1"
+          - "DIAMOND_LEGGINGS:1"
+          - "DIAMOND_BOOTS:1"
+        weapons1:
+          - "WOODEN_SWORD:1"
+          - "STONE_SWORD:1"
+          - "WOODEN_AXE:1"
+        weapons2:
+          - "IRON_SWORD:1"
+          - "DIAMOND_SWORD:1"
+          - "IRON_AXE:1"
+
   # Per-lobby configuration (optional)
   # Each lobby can override specific settings under `settings`.
   # Any missing key inherits from pg.defaults (or legacy pg.* values).

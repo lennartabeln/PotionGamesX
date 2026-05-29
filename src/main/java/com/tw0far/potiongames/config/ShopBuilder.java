@@ -1,5 +1,6 @@
 package com.tw0far.potiongames.config;
 
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -48,15 +49,16 @@ public class ShopBuilder {
             if (description != null && !description.isEmpty()) {
                 ItemMeta meta = itemCopy.getItemMeta();
                 if (meta != null) {
-                    List<String> lore = meta.getLore();
-                    if (lore == null) {
-                        lore = new ArrayList<>();
-                    }
-                    lore.add("Cost: " + cost);
+                    // Use component-based lore when available (modern ItemMeta API)
+                    java.util.List<net.kyori.adventure.text.Component> loreComp = new ArrayList<>();
+                    java.util.List<net.kyori.adventure.text.Component> existing = meta.lore();
+                    if (existing != null) loreComp.addAll(existing);
+                    loreComp.add(net.kyori.adventure.text.Component.text(Messages.raw("shop.cost", "Cost: " + cost)));
                     if (description.length() > 0) {
-                        lore.add(description);
+                        loreComp.add(net.kyori.adventure.text.Component.text(description));
                     }
-                    meta.setLore(lore);
+                    // Apply component-based lore if supported
+                    meta.lore(loreComp);
                     itemCopy.setItemMeta(meta);
                 }
             }

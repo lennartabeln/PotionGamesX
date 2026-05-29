@@ -57,6 +57,6 @@ public class StartCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg start - Set lobby countdown to 10 seconds (requires pg.start)";
+        return Messages.raw("help.start_usage", "/pg start - Set lobby countdown to 10 seconds (requires pg.start)");
     }
 }

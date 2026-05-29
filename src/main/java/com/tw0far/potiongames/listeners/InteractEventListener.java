@@ -8,6 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Block;
+import org.bukkit.block.sign.Side;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.Component;
 
 /**
  * Handles player interact events.
@@ -41,8 +44,10 @@ public class InteractEventListener implements Listener {
         if (block.getState() instanceof Sign) {
             Sign sign = (Sign) block.getState();
             
-            // Handle join signs
-            if (sign.getLine(0).contains("PG") || sign.getLine(0).contains("Join")) {
+            // Handle join signs (component-based sign API)
+            Component c = sign.getSide(Side.FRONT).line(0);
+            String line0 = c == null ? "" : PlainTextComponentSerializer.plainText().serialize(c);
+            if (line0.contains("PG") || line0.contains("Join")) {
                 e.setCancelled(true);
                 // Sign interaction would be handled by other listeners
                 return;

@@ -2,6 +2,7 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Lobby;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
 /**
@@ -34,7 +35,7 @@ public class AddArenaCommand implements ICommand {
     public boolean execute(Player player, String[] args) {
         // Multi-lobby system: /pg addarena <lobbynumber> <arenaname>
         if (args.length < 3) {
-            player.sendMessage("§cUsage: /pg addarena <lobbynumber> <arenaname>");
+            player.sendMessage(Messages.raw("command.addarena.usage", "Usage: /pg addarena <lobbynumber> <arenaname>"));
             return false;
         }
         
@@ -43,23 +44,23 @@ public class AddArenaCommand implements ICommand {
             String arenaName = args[2];
             Lobby lobby = plugin.getLobbyById(lobbyId);
             if (lobby == null) {
-                player.sendMessage("§cThis lobby does not exists!");
+                player.sendMessage(Messages.LobbyDoesNotExist());
                 return false;
             }
             if (lobby.addArena(arenaName)) {
-                player.sendMessage("§aArena §b" + arenaName + "§a added to lobby §b" + lobbyId + "§a.");
+                player.sendMessage(Messages.ArenaAdded(arenaName, lobbyId));
                 return true;
             }
-            player.sendMessage("§cCould not add arena!");
+            player.sendMessage(Messages.ArenaCouldNotLoad());
             return false;
         } catch (NumberFormatException ex) {
-            player.sendMessage("§cUsage: /pg addarena <lobbynumber> <arenaname>");
+            player.sendMessage(Messages.raw("command.addarena.usage", "Usage: /pg addarena <lobbynumber> <arenaname>"));
             return false;
         }
     }
     
     @Override
     public String getUsage() {
-        return "/pg addarena <lobbynumber> <arenaname>";
+        return Messages.raw("command.addarena.usage", "/pg addarena <lobbynumber> <arenaname>");
     }
 }

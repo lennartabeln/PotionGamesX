@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
 /**
@@ -32,17 +33,17 @@ public class SignP2Command implements ICommand {
     public boolean execute(Player player, String[] args) {
         org.bukkit.block.Block target = player.getTargetBlockExact(5);
         if (target == null || !(target.getState() instanceof org.bukkit.block.Sign)) {
-            player.sendMessage("§cLook at a sign to set the 2nd place sign.");
+            player.sendMessage(Messages.raw("sign.look_sign_2", "Look at a sign to set the 2nd place sign."));
             return false;
         }
         plugin.getConfig().set("pg.RankWall.signp2", target.getLocation());
         plugin.saveConfig();
-        player.sendMessage("§a2nd place sign set.");
+        player.sendMessage(Messages.raw("sign.set_2", "2nd place sign set."));
         return true;
     }
     
     @Override
     public String getUsage() {
-        return "/pg signp2 (Look at 2nd place sign)";
+        return Messages.raw("help.signp2_usage", "/pg signp2 (Look at 2nd place sign)");
     }
 }

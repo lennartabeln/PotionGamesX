@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.bootstrap;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
@@ -187,7 +188,7 @@ public final class EnableBootstrapInitializer {
     private void configureCoin(ItemStack coin, java.util.List<String> chatmessages) {
         ItemMeta coinmeta = coin.getItemMeta();
         assert coinmeta != null;
-        coinmeta.displayName(Component.text(chatmessages.get(55)).color(NamedTextColor.DARK_AQUA));
+        coinmeta.displayName(Messages.CoinSingle());
         coin.setItemMeta(coinmeta);
     }
 
@@ -305,7 +306,7 @@ public final class EnableBootstrapInitializer {
 
     private void sendError(EnableBootstrapContext context, IOException ex) {
         Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(
-                Component.text(" " + context.getChatmessages().get(63) + ": " + ex.getMessage()).color(NamedTextColor.RED)
+                Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED))
         ));
     }
 }

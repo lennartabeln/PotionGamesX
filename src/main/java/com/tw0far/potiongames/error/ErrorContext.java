@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.error;
 
 import com.tw0far.potiongames.util.MessageUtil;
+import com.tw0far.potiongames.models.Messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -54,7 +55,8 @@ public class ErrorContext {
     public void sendToAdmin(Player player) {
         if (player == null || !player.hasPermission("pg.admin")) return;
         
-        Component message = Component.text("[PG-Admin] ").color(NamedTextColor.GOLD)
+        Component message = Component.text(Messages.raw("admin.prefix", "[PG-Admin]")).color(NamedTextColor.GOLD)
+            .append(Component.text(" ").color(NamedTextColor.GOLD))
             .append(Component.text(adminMessage).color(NamedTextColor.GRAY));
         
         player.sendMessage(message);

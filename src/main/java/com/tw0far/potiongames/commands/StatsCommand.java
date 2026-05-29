@@ -77,6 +77,6 @@ public class StatsCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg stats [player] - Show player statistics";
+        return Messages.raw("help.stats_usage", "/pg stats [player] - Show player statistics");
     }
 }

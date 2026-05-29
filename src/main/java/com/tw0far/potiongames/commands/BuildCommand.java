@@ -56,6 +56,6 @@ public class BuildCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg build - Enable/disable build mode (requires pg.build)";
+        return Messages.raw("help.build_usage", "/pg build - Enable/disable build mode (requires pg.build)");
     }
 }

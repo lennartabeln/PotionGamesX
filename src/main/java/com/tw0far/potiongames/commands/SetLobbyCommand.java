@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
 /**
@@ -31,7 +32,7 @@ public class SetLobbyCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /pg setlobby <lobbynumber>");
+            player.sendMessage(Messages.raw("command.setlobby.usage", "Usage: /pg setlobby <lobbynumber>"));
             return false;
         }
         try {
@@ -39,14 +40,13 @@ public class SetLobbyCommand implements ICommand {
             plugin.getSetupHandler().addLobby(player, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage("§cUsage: /pg setlobby <lobbynumber>");
+            player.sendMessage(Messages.raw("command.setlobby.usage", "Usage: /pg setlobby <lobbynumber>"));
             return false;
         }
     }
     
     @Override
     public String getUsage() {
-        return "/pg setlobby <lobbynumber>";
+        return Messages.raw("command.setlobby.usage", "/pg setlobby <lobbynumber>");
     }
 }
-

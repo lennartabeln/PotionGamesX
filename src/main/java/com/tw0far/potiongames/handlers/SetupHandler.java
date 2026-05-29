@@ -51,7 +51,7 @@ public class SetupHandler implements ISetupHandler {
         ItemStack addlobby = new ItemStack(Material.STICK);
         ItemMeta addlobbymeta = addlobby.getItemMeta();
         if (addlobbymeta != null) {
-            addlobbymeta.displayName(Component.text("Add(Left)/Del(Right) Lobby").color(NamedTextColor.DARK_AQUA));
+            addlobbymeta.displayName(Messages.SetupAddDeleteLobbyLabel());
             addlobby.setItemMeta(addlobbymeta);
             inventory.setItem(1, addlobby);
         }
@@ -59,7 +59,7 @@ public class SetupHandler implements ISetupHandler {
         ItemStack chooselobby = new ItemStack(Material.CLOCK);
         ItemMeta chooselobbymeta = chooselobby.getItemMeta();
         if (chooselobbymeta != null) {
-            chooselobbymeta.displayName(Component.text("Choose Lobby").color(NamedTextColor.DARK_AQUA));
+            chooselobbymeta.displayName(Messages.ChooseLobbyLabel());
             chooselobby.setItemMeta(chooselobbymeta);
             inventory.setItem(2, chooselobby);
         }
@@ -67,7 +67,7 @@ public class SetupHandler implements ISetupHandler {
         ItemStack addarena = new ItemStack(Material.STICK);
         ItemMeta addarenameta = addarena.getItemMeta();
         if (addarenameta != null) {
-            addarenameta.displayName(Component.text("Add(Left)/Del(Right) Arena").color(NamedTextColor.DARK_AQUA));
+            addarenameta.displayName(Messages.SetupAddDeleteArenaLabel());
             addarena.setItemMeta(addarenameta);
             inventory.setItem(3, addarena);
         }
@@ -75,7 +75,7 @@ public class SetupHandler implements ISetupHandler {
         ItemStack choosearena = new ItemStack(Material.CLOCK);
         ItemMeta choosearenameta = choosearena.getItemMeta();
         if (choosearenameta != null) {
-            choosearenameta.displayName(Component.text("Choose Arena").color(NamedTextColor.DARK_AQUA));
+            choosearenameta.displayName(Messages.ChooseArenaLabel());
             choosearena.setItemMeta(choosearenameta);
             inventory.setItem(4, choosearena);
         }
@@ -83,7 +83,7 @@ public class SetupHandler implements ISetupHandler {
         ItemStack addspawn = new ItemStack(Material.STICK);
         ItemMeta addspawnmeta = addspawn.getItemMeta();
         if (addspawnmeta != null) {
-            addspawnmeta.displayName(Component.text("Add(Left)/Del(Right) Spawn").color(NamedTextColor.DARK_AQUA));
+            addspawnmeta.displayName(Messages.SetupAddDeleteSpawnLabel());
             addspawn.setItemMeta(addspawnmeta);
             inventory.setItem(5, addspawn);
         }
@@ -91,7 +91,7 @@ public class SetupHandler implements ISetupHandler {
         ItemStack signsetup = new ItemStack(Material.OAK_SIGN);
         ItemMeta signsetupmeta = signsetup.getItemMeta();
         if (signsetupmeta != null) {
-            signsetupmeta.displayName(Component.text("Set Join-Sign").color(NamedTextColor.DARK_AQUA));
+            signsetupmeta.displayName(Messages.SetupJoinSignLabel());
             signsetup.setItemMeta(signsetupmeta);
             inventory.setItem(6, signsetup);
         }
@@ -99,7 +99,7 @@ public class SetupHandler implements ISetupHandler {
         ItemStack leavesetup = new ItemStack(Material.BARRIER);
         ItemMeta leavesetupmeta = leavesetup.getItemMeta();
         if (leavesetupmeta != null) {
-            leavesetupmeta.displayName(Component.text("Leave Setup-Mode").color(NamedTextColor.DARK_AQUA));
+            leavesetupmeta.displayName(Messages.SetupLeaveModeLabel());
             leavesetup.setItemMeta(leavesetupmeta);
             inventory.setItem(7, leavesetup);
         }
@@ -118,7 +118,7 @@ public class SetupHandler implements ISetupHandler {
             return;
         }
         if (lobby.getArenas().isEmpty() || lobby.getArenas().stream().noneMatch(arena -> !arena.getSpawns().isEmpty())) {
-            p.sendMessage(Settings.prefix.append(Component.text("Lobby setup is incomplete: add at least one arena with one spawn before enabling the lobby.").color(NamedTextColor.RED)));
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.incomplete", "Lobby setup is incomplete: add at least one arena with one spawn before enabling the lobby.")).color(NamedTextColor.RED)));
             return;
         }
         boolean success = lobby.enable();
@@ -177,7 +177,7 @@ public class SetupHandler implements ISetupHandler {
         }
         org.bukkit.block.Block target = p.getTargetBlockExact(5);
         if (target == null) {
-            p.sendMessage(Settings.prefix.append(Component.text("No block in range to set as join sign.").color(NamedTextColor.RED)));
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.no_block_in_range", "No block in range to set as join sign.")).color(NamedTextColor.RED)));
             return;
         }
         boolean success = lobby.setJoinSign(target.getLocation());
@@ -273,7 +273,7 @@ public class SetupHandler implements ISetupHandler {
         }
         int spawnId = arena.getSpawns().size() - 1;
         if (spawnId < 0) {
-            p.sendMessage(Settings.prefix.append(Component.text("No spawns are configured for that arena.").color(NamedTextColor.RED)));
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.no_spawns", "No spawns are configured for that arena.")).color(NamedTextColor.RED)));
             return;
         }
         boolean success = arena.removeSpawn(spawnId);
@@ -329,7 +329,7 @@ public class SetupHandler implements ISetupHandler {
         }
         int spawnId = arena.getDeathmatchSpawns().size() - 1;
         if (spawnId < 0) {
-            p.sendMessage(Settings.prefix.append(Component.text("No deathmatch spawns are configured for that arena.").color(NamedTextColor.RED)));
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.no_deathmatch_spawns", "No deathmatch spawns are configured for that arena.")).color(NamedTextColor.RED)));
             return;
         }
         boolean success = arena.removeDeathmatchSpawn(spawnId);

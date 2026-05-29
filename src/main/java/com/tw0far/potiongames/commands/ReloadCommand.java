@@ -2,6 +2,7 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.handlers.ReloadHandler;
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.util.MessageUtil;
 import org.bukkit.entity.Player;
 
@@ -62,6 +63,6 @@ public class ReloadCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg reload - Reload all configurations and stop all games (requires pg.setup)";
+        return Messages.raw("help.reload_usage", "/pg reload - Reload all configurations and stop all games (requires pg.setup)");
     }
 }

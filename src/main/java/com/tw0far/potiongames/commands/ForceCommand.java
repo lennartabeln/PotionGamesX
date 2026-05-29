@@ -74,6 +74,6 @@ public class ForceCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg force <arena_name> - Force a specific arena (requires pg.force)";
+        return Messages.raw("help.force_usage", "/pg force <arena_name> - Force a specific arena (requires pg.force)");
     }
 }

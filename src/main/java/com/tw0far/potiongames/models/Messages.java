@@ -18,6 +18,10 @@ public class Messages {
         return Settings.prefix.append(message);
     }
 
+    public static String raw(String key, String def) {
+        return get(key, def);
+    }
+
     public static final Component LobbyAdded(int lobbyId) {
         String pattern = get("lobby.added", "Lobby %d added successfully.");
         return prefix(Component.text(String.format(pattern, lobbyId)).color(NamedTextColor.GREEN));
@@ -215,6 +219,10 @@ public class Messages {
         return prefix(Component.text(get("killed.by", "was killed by")).color(NamedTextColor.DARK_RED));
     }
 
+    public static Component Died() {
+        return prefix(Component.text(get("died", "died")).color(NamedTextColor.GRAY));
+    }
+
     public static Component KilledBy(String playerName) {
         return prefix(Component.text(get("killed.by", "was killed by") + " " + playerName).color(NamedTextColor.DARK_RED));
     }
@@ -305,6 +313,86 @@ public class Messages {
         return prefix(Component.text(get("player.finder", "Player-Finder")).color(NamedTextColor.DARK_AQUA));
     }
 
+    public static String PlayerFinderText() {
+        return get("player.finder", "Player-Finder");
+    }
+
+    public static Component ChooseArenaTitle() {
+        return prefix(Component.text(get("choose.arena", "Choose Arena")).color(NamedTextColor.DARK_AQUA));
+    }
+
+    public static Component ChooseArenaLabel() {
+        return Component.text(get("choose.arena", "Choose Arena")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component ChooseLobbyTitle() {
+        return prefix(Component.text(get("choose.lobby", "Choose Lobby")).color(NamedTextColor.DARK_AQUA));
+    }
+
+    public static Component ChooseLobbyLabel() {
+        return Component.text(get("choose.lobby", "Choose Lobby")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component LobbyListTitle() {
+        return prefix(Component.text(get("lobby.list", "Lobby List")).color(NamedTextColor.DARK_AQUA));
+    }
+
+    public static Component ChooseLobbyFirst() {
+        return prefix(Component.text(get("choose.lobby_first", "Choose a lobby first!")).color(NamedTextColor.YELLOW));
+    }
+
+    public static Component ChooseArenaFirst() {
+        return prefix(Component.text(get("choose.arena_first", "Choose an arena first!")).color(NamedTextColor.YELLOW));
+    }
+
+    public static Component PermissionNoUse() {
+        return prefix(Component.text(get("permission.no_use", "You don't have permission to use this!")).color(NamedTextColor.RED));
+    }
+
+    public static Component NoSpawnsToRemove() {
+        return prefix(Component.text(get("spawn.none_to_remove", "No spawns to remove!")).color(NamedTextColor.YELLOW));
+    }
+
+    public static Component SetupAddDeleteLobbyLabel() {
+        return Component.text(get("setup.add_delete_lobby", "Add(Left)/Del(Right) Lobby")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component SetupAddDeleteArenaLabel() {
+        return Component.text(get("setup.add_delete_arena", "Add(Left)/Del(Right) Arena")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component SetupAddDeleteSpawnLabel() {
+        return Component.text(get("setup.add_delete_spawn", "Add(Left)/Del(Right) Spawn")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component SetupJoinSignLabel() {
+        return Component.text(get("setup.join_sign", "Set Join-Sign")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component SetupLeaveModeLabel() {
+        return Component.text(get("setup.leave_mode", "Leave Setup-Mode")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component SignPrefix() {
+        return Component.text(get("sign.prefix", "[PG]")).color(NamedTextColor.GOLD);
+    }
+
+    public static Component BuildLabel() {
+        return prefix(Component.text(get("build.label", "Build")).color(NamedTextColor.GREEN));
+    }
+
+    public static Component LobbySelected(int lobbyId) {
+        return prefix(Component.text(String.format(get("lobby.selected", "Lobby %d selected!"), lobbyId)).color(NamedTextColor.GREEN));
+    }
+
+    public static Component ArenaSelected(String arenaName) {
+        return prefix(Component.text(String.format(get("arena.selected", "Arena %s selected!"), arenaName)).color(NamedTextColor.GREEN));
+    }
+
+    public static Component InvalidLobbySelection() {
+        return prefix(Component.text(get("lobby.invalid_selection", "Invalid lobby selection!")).color(NamedTextColor.RED));
+    }
+
     public static Component PlayersLabel() {
         return prefix(Component.text(get("players.label", "Players")).color(NamedTextColor.GRAY));
     }
@@ -327,6 +415,10 @@ public class Messages {
 
     public static Component RandomLabel() {
         return prefix(Component.text(get("random.label", "Random")).color(NamedTextColor.AQUA));
+    }
+
+    public static String RandomText() {
+        return get("random.label", "Random");
     }
 
     public static Component RankwallCouldNotUpdate() {
@@ -357,12 +449,20 @@ public class Messages {
         return prefix(Component.text(get("selector.team", "Team-Selector")).color(NamedTextColor.AQUA));
     }
 
+    public static String SelectorTeamText() {
+        return get("selector.team", "Team-Selector");
+    }
+
     public static Component ServerStopped() {
         return prefix(Component.text(get("server.stopped", "Server stopped!")).color(NamedTextColor.RED));
     }
 
     public static Component ShopLabel() {
         return prefix(Component.text(get("shop.label", "Shop")).color(NamedTextColor.AQUA));
+    }
+
+    public static String ShopText() {
+        return get("shop.label", "Shop");
     }
 
     public static Component SignSet() {
@@ -435,6 +535,10 @@ public class Messages {
 
     public static Component VoteLabel() {
         return prefix(Component.text(get("vote.label", "Votes")).color(NamedTextColor.AQUA));
+    }
+
+    public static String VoteText() {
+        return get("vote.label", "Votes");
     }
 
     public static Component VoteYouHaveVotedFor(String arena) {

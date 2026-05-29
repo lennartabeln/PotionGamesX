@@ -38,21 +38,20 @@ public class TaskManager {
      */
     public BukkitTask scheduleAsync(Runnable runnable, long delayTicks, long periodTicks) {
         try {
-            // Use new Paper API for async scheduling
-            int taskId = Bukkit.getScheduler().scheduleAsyncRepeatingTask(
+            // Use the newer scheduler API to run async repeating tasks and track them
+            BukkitTask task = Bukkit.getScheduler().runTaskTimerAsynchronously(
                 plugin,
                 runnable,
                 delayTicks,
                 periodTicks
             );
-            
-            if (taskId != -1) {
-                logger.log(Level.FINE, "Scheduled async task: " + taskId);
-                // Note: Task tracking for async tasks requires storing task ID, not BukkitTask
-                // For now, return null since async task scheduling may be deprecated in newer Paper API
+
+            if (task != null) {
+                activeTasks.add(task);
+                logger.log(Level.FINE, "Scheduled async task: " + task.getTaskId());
             }
-            
-            return null;
+
+            return task;
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed to schedule async task", e);
             return null;

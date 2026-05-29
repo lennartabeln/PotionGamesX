@@ -45,6 +45,6 @@ public class VersionCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg version - Check plugin version and updates (requires pg.update)";
+        return Messages.raw("help.version_usage", "/pg version - Check plugin version and updates (requires pg.update)");
     }
 }

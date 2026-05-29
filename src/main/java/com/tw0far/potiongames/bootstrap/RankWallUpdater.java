@@ -10,13 +10,12 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.sign.Side;
-import org.bukkit.entity.Player;
 
 import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.util.SkullUtil;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 
 public class RankWallUpdater {
     private final PotionGames plugin;
@@ -44,9 +43,7 @@ public class RankWallUpdater {
                         int id = iii + 1;
                         Skull skull = (Skull) plugin.getRankhead().get(iii).getBlock().getState();
                         UUID uuid = UUID.fromString(plugin.getRank().get(id));
-                        OfflinePlayer name = Bukkit.getOfflinePlayer(uuid);
-                        skull.setOwningPlayer(name);
-                        skull.update();
+                        SkullUtil.setSkullOwner(skull, uuid);
                     }
                     for (int iii = 0; iii < plugin.getRank().size(); iii++) {
                         int id = iii + 1;

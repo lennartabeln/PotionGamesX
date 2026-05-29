@@ -37,54 +37,54 @@ public class HelpCommand implements ICommand {
         player.sendMessage(Messages.CommandsLabel());
         
         if (player.hasPermission("pg.setup")) {
-            player.sendMessage(Settings.prefix.append(Component.text("/pg setup - Set up plugin").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg addlobby [lobbynumber] - Add a lobby").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg removelobby [lobbynumber] - Remove a lobby").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg addarena [lobbynumber] [arenaname] - Add an arena").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg addspawn [lobbynumber] [arenaname] - Add a spawn").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg adddeathmatch [lobbynumber] [arenaname] - Add a deathmatch spawn").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg removerena [lobbynumber] [arenaname] - Remove an arena").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg removespawn [lobbynumber] [arenaname] - Remove last spawn").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg removedeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg headp1(2;3) - Add Player Head to Stats-Wall").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg signp1(2;3) - Add Player Sign to Stats-Wall").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg joinsign [lobbynumber] - Add Join-Sign").color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text("/pg reload - Reload all configs").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.setup", "/pg setup - Set up plugin")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.addlobby", "/pg addlobby [lobbynumber] - Add a lobby")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.removelobby", "/pg removelobby [lobbynumber] - Remove a lobby")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.addarena", "/pg addarena [lobbynumber] [arenaname] - Add an arena")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.addspawn", "/pg addspawn [lobbynumber] [arenaname] - Add a spawn")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.adddeathmatch", "/pg adddeathmatch [lobbynumber] [arenaname] - Add a deathmatch spawn")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.removerena", "/pg removerena [lobbynumber] [arenaname] - Remove an arena")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.removespawn", "/pg removespawn [lobbynumber] [arenaname] - Remove last spawn")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.removedeathmatch", "/pg removedeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.head", "/pg headp1(2;3) - Add Player Head to Stats-Wall")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.sign", "/pg signp1(2;3) - Add Player Sign to Stats-Wall")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.joinsign", "/pg joinsign [lobbynumber] - Add Join-Sign")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.reload", "/pg reload - Reload all configs")).color(NamedTextColor.GRAY)));
         }
         
         if (player.hasPermission("pg.build")) {
-            player.sendMessage(Settings.prefix.append(Component.text("/pg build - Activate build mode").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.build", "/pg build - Activate build mode")).color(NamedTextColor.GRAY)));
         }
         
         if (player.hasPermission("pg.pause")) {
-            player.sendMessage(Settings.prefix.append(Component.text("/pg pause - Pause timer/countdown").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.pause", "/pg pause - Pause timer/countdown")).color(NamedTextColor.GRAY)));
         }
         
         if (player.hasPermission("pg.force")) {
-            player.sendMessage(Settings.prefix.append(Component.text("/pg force [arenaname] - Force an arena").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.force", "/pg force [arenaname] - Force an arena")).color(NamedTextColor.GRAY)));
         }
         
         if (player.hasPermission("pg.start")) {
-            player.sendMessage(Settings.prefix.append(Component.text("/pg start - Set lobby countdown to 10").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.start", "/pg start - Set lobby countdown to 10")).color(NamedTextColor.GRAY)));
         }
         
         if (player.hasPermission("pg.join")) {
             if (!plugin.isStartOnJoin()) {
-                player.sendMessage(Settings.prefix.append(Component.text("/pg join # - Join a game").color(NamedTextColor.GRAY)));
-                player.sendMessage(Settings.prefix.append(Component.text("/pg list - List of all lobbies").color(NamedTextColor.GRAY)));
+                player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.join", "/pg join # - Join a game")).color(NamedTextColor.GRAY)));
+                player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.list", "/pg list - List of all lobbies")).color(NamedTextColor.GRAY)));
             }
         }
         
         if (!plugin.isStartOnJoin()) {
-            player.sendMessage(Settings.prefix.append(Component.text("/pg leave - Leave the game").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.leave", "/pg leave - Leave the game")).color(NamedTextColor.GRAY)));
         }
         
         if (player.hasPermission("pg.stats")) {
-            player.sendMessage(Settings.prefix.append(Component.text("/pg stats [player] - Show player stats").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.stats", "/pg stats [player] - Show player stats")).color(NamedTextColor.GRAY)));
         }
         
         if (player.hasPermission("pg.update")) {
-            player.sendMessage(Settings.prefix.append(Component.text("/pg version - Show your and latest version of plugin").color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.version", "/pg version - Show your and latest version of plugin")).color(NamedTextColor.GRAY)));
         }
         
         player.sendMessage(Messages.CommandsLabel());
@@ -93,6 +93,6 @@ public class HelpCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg help - Show this help message";
+        return Messages.raw("help.help_usage", "/pg help - Show this help message");
     }
 }

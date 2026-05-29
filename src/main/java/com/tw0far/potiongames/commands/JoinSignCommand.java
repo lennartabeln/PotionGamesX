@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
 /**
@@ -32,7 +33,7 @@ public class JoinSignCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage: /pg joinsign <lobbynumber>");
+            player.sendMessage(Messages.raw("command.joinsign.usage", "Usage: /pg joinsign <lobbynumber>"));
             return false;
         }
         try {
@@ -40,13 +41,13 @@ public class JoinSignCommand implements ICommand {
             plugin.getSetupHandler().setJoinSign(player, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage("§cUsage: /pg joinsign <lobbynumber>");
+            player.sendMessage(Messages.raw("command.joinsign.usage", "Usage: /pg joinsign <lobbynumber>"));
             return false;
         }
     }
     
     @Override
     public String getUsage() {
-        return "/pg joinsign <lobbynumber>";
+        return Messages.raw("command.joinsign.usage", "/pg joinsign <lobbynumber>");
     }
 }

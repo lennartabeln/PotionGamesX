@@ -54,6 +54,6 @@ public class PauseCommand implements ICommand {
     
     @Override
     public String getUsage() {
-        return "/pg pause - Pause/resume the game (requires pg.pause)";
+        return Messages.raw("help.pause_usage", "/pg pause - Pause/resume the game (requires pg.pause)");
     }
 }

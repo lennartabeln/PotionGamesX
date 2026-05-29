@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
 /**
@@ -32,17 +33,17 @@ public class HeadP3Command implements ICommand {
     public boolean execute(Player player, String[] args) {
         org.bukkit.block.Block target = player.getTargetBlockExact(5);
         if (target == null) {
-            player.sendMessage("§cLook at a block to set the 3rd place head.");
+            player.sendMessage(Messages.raw("head.look_block_3", "Look at a block to set the 3rd place head."));
             return false;
         }
         plugin.getConfig().set("pg.RankWall.headp3", target.getLocation());
         plugin.saveConfig();
-        player.sendMessage("§a3rd place head set.");
+        player.sendMessage(Messages.raw("head.set_3", "3rd place head set."));
         return true;
     }
     
     @Override
     public String getUsage() {
-        return "/pg headp3 (Look at 3rd place head)";
+        return Messages.raw("help.headp3_usage", "/pg headp3 (Look at 3rd place head)");
     }
 }
