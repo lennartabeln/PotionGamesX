@@ -12,6 +12,7 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\bootstrap\ChestL
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\BuildCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\IItemStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\DelArenaCommand.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\DebugCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\database\DatabaseQueryBuilder.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\ItemConsumeEventListener.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\HelpCommand.java
@@ -30,6 +31,7 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\BlockF
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\bootstrap\EnableBootstrapInitializer.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\AddDeathmatchCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\DeathEventListener.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\ConfigCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\StatsCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\PlayerState.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\models\ShopItem.java
@@ -55,6 +57,7 @@ E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\BlockF
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\managers\BlockStateManager.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\SetupCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\listeners\ChatEventListener.java
+E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\StatusCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\bootstrap\BootstrapInitializer.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\commands\AddSpawnCommand.java
 E:\Privat\Temp\PotionGames\src\main\java\com\tw0far\potiongames\config\LobbySettings.java

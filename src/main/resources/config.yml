@@ -158,6 +158,52 @@ pg:
           - "IRON_AXE:1"
   
   # ════════════════════════════════════════════════════════════════════════════════
+  # PERFORMANCE & LOGGING
+  # ════════════════════════════════════════════════════════════════════════════════
+  
+  logging:
+    # Log level: INFO (default), DEBUG (verbose), TRACE (very verbose)
+    level: INFO
+    # Save logs to file (true/false)
+    toFile: false
+    # Log file path (relative to plugin folder)
+    filePath: "logs/potiongames.log"
+  
+  performance:
+    # Update frequency for lobbies (in ticks, lower = more frequent, 20 ticks = 1 second)
+    lobbyUpdateRate: 2
+    # Update frequency for scoreboards (in ticks)
+    scoreboardUpdateRate: 5
+    # Maximum simultaneous games to run
+    maxConcurrentGames: 10
+  
+  # ════════════════════════════════════════════════════════════════════════════════
+  # WORLD MANAGEMENT
+  # ════════════════════════════════════════════════════════════════════════════════
+  
+  worldManagement:
+    # Auto-load worlds defined in arenadata.yml on startup
+    autoLoadWorlds: true
+    # Auto-set gamerules for game worlds
+    autoSetGamerules: true
+    # Difficulty level per game (peaceful, easy, normal, hard)
+    difficulty: hard
+    # Auto-unload empty game worlds after specified minutes (0 = disable)
+    autoUnloadEmptyWorlds: 0
+  
+  # ════════════════════════════════════════════════════════════════════════════════
+  # SECURITY & RESTRICTIONS
+  # ════════════════════════════════════════════════════════════════════════════════
+  
+  security:
+    # Maximum players per IP address (0 = unlimited)
+    maxPlayersPerIP: 0
+    # Banned items in games (separated by comma, e.g. LAVA_BUCKET,WATER_BUCKET)
+    bannedItems: ""
+    # Auto-kick players with suspicious patterns (hacks/cheats)
+    antiCheatEnabled: false
+  
+  # ════════════════════════════════════════════════════════════════════════════════
   # LOBBY CONFIGURATION
   # ════════════════════════════════════════════════════════════════════════════════
   # See arenadata.yml for lobby/arena/spawn definitions
