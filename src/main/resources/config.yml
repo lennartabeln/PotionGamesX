@@ -178,20 +178,6 @@ pg:
     maxConcurrentGames: 10
   
   # ════════════════════════════════════════════════════════════════════════════════
-  # WORLD MANAGEMENT
-  # ════════════════════════════════════════════════════════════════════════════════
-  
-  worldManagement:
-    # Auto-load worlds defined in arenadata.yml on startup
-    autoLoadWorlds: true
-    # Auto-set gamerules for game worlds
-    autoSetGamerules: true
-    # Difficulty level per game (peaceful, easy, normal, hard)
-    difficulty: hard
-    # Auto-unload empty game worlds after specified minutes (0 = disable)
-    autoUnloadEmptyWorlds: 0
-  
-  # ════════════════════════════════════════════════════════════════════════════════
   # SECURITY & RESTRICTIONS
   # ════════════════════════════════════════════════════════════════════════════════
   

@@ -87,6 +87,27 @@ public class HelpCommand implements ICommand {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.version", "/pg version - Show your and latest version of plugin")).color(NamedTextColor.GRAY)));
         }
         
+        // Admin commands
+        if (player.hasPermission("pg.admin") || player.hasPermission("pg.gameserver")) {
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.gameserver", "/pg gameserver - Toggle gameserver mode (online/offline)")).color(NamedTextColor.GRAY)));
+        }
+        
+        if (player.hasPermission("pg.admin") || player.hasPermission("pg.database")) {
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.database", "/pg database - Toggle database mode (MySQL/SQLite)")).color(NamedTextColor.GRAY)));
+        }
+        
+        if (player.hasPermission("pg.admin") || player.hasPermission("pg.config")) {
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.config", "/pg config - View current configuration")).color(NamedTextColor.GRAY)));
+        }
+        
+        if (player.hasPermission("pg.admin") || player.hasPermission("pg.status")) {
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.status", "/pg status - Show server status and active lobbies")).color(NamedTextColor.GRAY)));
+        }
+        
+        if (player.hasPermission("pg.admin") || player.hasPermission("pg.debug")) {
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.debug", "/pg debug - Toggle debug logging mode")).color(NamedTextColor.GRAY)));
+        }
+        
         player.sendMessage(Messages.CommandsLabel());
         return true;
     }
