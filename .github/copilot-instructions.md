@@ -2,7 +2,7 @@
 
 ## Overview
 
-PotionGames is a Minecraft Paper 1.26+ plugin that implements a minigames system similar to SurvivalGames but with potion effects. The plugin supports multi-lobby systems, custom shops, team-based gameplay, and persistent statistics storage via SQLite or MySQL.
+PotionGames is a Minecraft Paper 26.1.x plugin that implements a minigames system similar to SurvivalGames but with potion effects. The plugin supports multi-lobby systems, custom shops, team-based gameplay, and persistent statistics storage via SQLite or MySQL.
 
 **Current Architecture**: Fully refactored to class-based OOP (Phase 7 complete). No monolithic singleton patterns.
 
@@ -17,7 +17,7 @@ The compiled JAR will be in `target/PotionGamesX-1.0.0.jar`
 **Setup Requirements:**
 - Java 25+
 - Maven 3.8+
-- Paper API 1.26+ (fetched by Maven from `https://repo.papermc.io`)
+- Paper API 26.1.x (fetched by Maven from `https://repo.papermc.io`)
 - VaultAPI 1.7.1 (optional, for economy features)
 - Multiverse-Core (soft dependency, for multi-world support)
 
@@ -572,7 +572,7 @@ if (!plugin.getGame().isActivePlayer(player)) {
 
 ## Dependencies
 
-- **Paper API 1.26+**: Latest Bukkit API for Minecraft 1.26 servers
+- **Paper API 26.1.x**: Latest Bukkit API for Minecraft 26.1 servers
 - **VaultAPI 1.7.1**: Optional economy & permission integration (soft dependency)
 - **Multiverse-Core**: Soft dependency for multi-world support (required at runtime for multi-lobby)
 - **Maven 3.8+**: Build tool
@@ -618,7 +618,7 @@ if (!plugin.getGame().isActivePlayer(player)) {
 
 This codebase currently has no automated unit tests. Testing is manual:
 
-1. Run a Paper 1.26+ server locally
+1. Run a Paper 26.1.x server locally
 2. Place compiled JAR in `plugins/` folder
 3. Install optional dependencies (Multiverse-Core, Vault if needed)
 4. Test manually:

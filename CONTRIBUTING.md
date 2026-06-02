@@ -7,7 +7,7 @@ Thank you for your interest in contributing to PotionGames! This guide will help
 ### Prerequisites
 - Java 25+
 - Maven 3.8+
-- Paper API 1.26+ knowledge
+- Paper API 26.1.x knowledge
 - Git
 
 ### Setup
@@ -172,7 +172,7 @@ src/main/java/com/tw0far/potiongames/
 
 - [ ] Code compiles with 0 errors
 - [ ] Code compiles with 0 warnings
-- [ ] Tested on Paper 1.26+ server
+- [ ] Tested on Paper 26.1.x server
 - [ ] Updated CHANGELOG.md
 - [ ] Updated documentation if needed
 - [ ] Follows code style guidelines

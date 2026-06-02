@@ -1,6 +1,6 @@
 # PotionGames v1.0 - Official Documentation
 
-> A modern Minecraft minigames plugin for Paper 1.26+ servers with potions, loot, and team-based gameplay.
+> A modern Minecraft minigames plugin for Paper 26.1.x servers with potions, loot, and team-based gameplay.
 
 ## 📋 Documentation Index
 
@@ -68,7 +68,7 @@ All config files in `plugins/PotionGames/`:
 | Metric | Status |
 |--------|--------|
 | Java | 25+ required |
-| Paper | 1.26+ required |
+| Paper | 26.1.x required |
 | Code Warnings | ✅ 0 |
 | Code Errors | ✅ 0 |
 | JAR Size | 0.31 MB |
@@ -78,7 +78,7 @@ All config files in `plugins/PotionGames/`:
 
 - **Java 25+**
 - **Maven 3.8+**
-- **Paper 1.26+** (from papermc.io)
+- **Paper 26.1.x** (from papermc.io)
 - **VaultAPI 1.7.1** (optional, for economy)
 - **Multiverse-Core** (soft dependency)
 

@@ -1,5 +1,5 @@
 # PotionGames Configuration File
-# Minecraft Paper 1.26+
+# Minecraft Paper 26.1.x
 # 
 # Data Organization:
 #   - config.yml (this file): Global settings, shops, kits, loot configuration

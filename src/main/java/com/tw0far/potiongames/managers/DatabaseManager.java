@@ -11,7 +11,7 @@ import java.util.logging.Logger;
  * Centralized database manager.
  * Handles all SQL operations for both SQLite and MySQL.
  * 
- * Deprecated API Notes (Java 23 / Paper 1.26):
+ * Deprecated API Notes (Java 23 / Paper 26.1.x):
  * - Replaced deprecated getItemInHand() with getItemInMainHand()
  * - Replaced deprecated getArmorContents() with Equipment Slot API
  */

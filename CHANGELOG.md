@@ -95,7 +95,7 @@ All notable changes to PotionGames are documented in this file.
 
 | Dependency | Version | Purpose |
 |------------|---------|---------|
-| Paper API | 1.26+ | Bukkit API |
+| Paper API | 26.1.x | Bukkit API |
 | VaultAPI | 1.7.1 | Economy system (optional) |
 | Java | 25+ | Language runtime |
 | Maven | 3.8+ | Build tool |
