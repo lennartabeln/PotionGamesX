@@ -189,14 +189,3 @@ pg:
     # Auto-kick players with suspicious patterns (hacks/cheats)
     antiCheatEnabled: false
   
-  # ════════════════════════════════════════════════════════════════════════════════
-  # LOBBY CONFIGURATION
-  # ════════════════════════════════════════════════════════════════════════════════
-  # See arenadata.yml for lobby/arena/spawn definitions
-  # Per-lobby settings override defaults and stored in arenadata.yml
-  
-  lobbies:
-    0:
-      settings: {}
-    1:
-      settings: {}
