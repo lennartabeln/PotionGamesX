@@ -2,6 +2,7 @@ package com.tw0far.potiongames.handlers;
 
 import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Game;
+import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.Bukkit;
@@ -85,28 +86,25 @@ public class ReloadHandler {
         try {
             Game game = plugin.getGame();
             if (game != null) {
-                // Iterate through all lobbies and end them
-                // Use getLobbies() if available, or iterate through lobbiesById
-                for (int i = 1; i <= 100; i++) {
-                    Lobby lobby = game.getLobby(i);
-                    if (lobby != null) {
-                        try {
-                            // TODO: End the lobby's current round properly
-                            // lobby.endRound("Server reload initiated");
-                            
-                            // Teleport all players out
-                            lobby.getParticipants().forEach(participant -> {
-                                if (participant != null && participant.getPlayer() != null) {
-                                    try {
-                                        participant.getPlayer().kick(net.kyori.adventure.text.Component.text(Messages.raw("server.reload_rejoining", "Server reload - rejoining now")));
-                                    } catch (Exception e) {
-                                        plugin.getLogger().log(Level.WARNING, "Could not kick player", e);
-                                    }
-                                }
-                            });
-                        } catch (Exception e) {
-                            plugin.getLogger().log(Level.WARNING, "Error stopping lobby", e);
-                        }
+                for (Lobby lobby : new ArrayList<>(game.getLobbies())) {
+                    if (lobby == null) {
+                        continue;
+                    }
+
+                    try {
+                        lobby.clearParticipants();
+                        lobby.clearVoting();
+                        lobby.clearTeams();
+                        lobby.clearArenaVotes();
+                        lobby.clearChests();
+                        lobby.clearBlockTracking();
+                        lobby.setCurrentArena(null);
+                        lobby.setState(GameStates.WAITING);
+                        lobby.setJoinable(true);
+                        lobby.setPaused(false);
+                        lobby.setDeathmatch(false);
+                    } catch (Exception e) {
+                        plugin.getLogger().log(Level.WARNING, "Error stopping lobby " + lobby.getId(), e);
                     }
                 }
             }
