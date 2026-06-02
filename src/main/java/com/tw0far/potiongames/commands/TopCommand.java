@@ -3,7 +3,14 @@ package com.tw0far.potiongames.commands;
 import com.tw0far.potiongames.main.PotionGames;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Locale;
+import java.util.UUID;
 
 /**
  * /pg top [type] - Show top players leaderboard
@@ -34,22 +41,98 @@ public class TopCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        String type = args.length > 1 ? args[1].toLowerCase() : "kills";
-        
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
-        
-        player.sendMessage(Component.text("Top 10 Players by " + type.toUpperCase()).color(NamedTextColor.GOLD));
-        
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("(Statistics feature coming soon - database integration needed)").color(NamedTextColor.GRAY)));
-        
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
-        
+        if (!plugin.getDatabaseManager().isConnected()) {
+            player.sendMessage(Component.text("Statistics database is not connected.").color(NamedTextColor.RED));
+            return true;
+        }
+
+        String type = args.length > 1 ? args[1].toLowerCase(Locale.ROOT) : "kills";
+        String column;
+        String label;
+
+        switch (type) {
+            case "kills" -> {
+                column = "KILLS";
+                label = "Kills";
+            }
+            case "deaths" -> {
+                column = "DEATHS";
+                label = "Deaths";
+            }
+            case "wins" -> {
+                column = "WINS";
+                label = "Wins";
+            }
+            case "kd" -> {
+                column = "KD";
+                label = "K/D Ratio";
+            }
+            default -> {
+                player.sendMessage(Component.text("Unknown leaderboard type: " + type).color(NamedTextColor.RED));
+                player.sendMessage(Component.text("Use /pg top [kills|deaths|wins|kd]").color(NamedTextColor.GRAY));
+                return true;
+            }
+        }
+
+        player.sendMessage(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY));
+        player.sendMessage(Component.text("Top 10 Players by " + label).color(NamedTextColor.GOLD));
+
+        String query = "SELECT UUID, " + column + " FROM Stats ORDER BY " + column + " DESC LIMIT 10";
+        try (ResultSet resultSet = plugin.getDatabaseManager().query(query)) {
+            if (resultSet == null) {
+                player.sendMessage(Component.text("Unable to read leaderboard data right now.").color(NamedTextColor.RED));
+                return true;
+            }
+
+            int rank = 1;
+            boolean hasEntries = false;
+            while (resultSet.next()) {
+                hasEntries = true;
+                String uuidValue = resultSet.getString("UUID");
+                String playerName = resolvePlayerName(uuidValue);
+                String value = formatValue(type, resultSet);
+                player.sendMessage(Component.text(rank + ". " + playerName + " - " + value).color(NamedTextColor.GRAY));
+                rank++;
+            }
+
+            if (!hasEntries) {
+                player.sendMessage(Component.text("No leaderboard entries found yet.").color(NamedTextColor.GRAY));
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().warning("Failed to build leaderboard for type " + type + ": " + e.getMessage());
+            player.sendMessage(Component.text("Failed to load leaderboard data.").color(NamedTextColor.RED));
+        }
+
+        player.sendMessage(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY));
         return true;
     }
-    
+
+    private String resolvePlayerName(String uuidValue) {
+        try {
+            UUID uuid = UUID.fromString(uuidValue);
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            if (offlinePlayer.getName() != null && !offlinePlayer.getName().isBlank()) {
+                return offlinePlayer.getName();
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Fall back to the stored UUID prefix below.
+        }
+
+        if (uuidValue == null || uuidValue.isBlank()) {
+            return "Unknown";
+        }
+        return uuidValue.length() > 8 ? uuidValue.substring(0, 8) : uuidValue;
+    }
+
+    private String formatValue(String type, ResultSet resultSet) throws SQLException {
+        return switch (type) {
+            case "kd" -> String.format(Locale.ROOT, "%.3f", resultSet.getDouble("KD"));
+            case "deaths" -> Integer.toString(resultSet.getInt("DEATHS"));
+            case "wins" -> Integer.toString(resultSet.getInt("WINS"));
+            default -> Integer.toString(resultSet.getInt("KILLS"));
+        };
+    }
+
     @Override
     public String getUsage() {
         return "/pg top [kills|deaths|wins|kd]";
