@@ -45,9 +45,12 @@ public class SignChangeEventListener implements Listener {
             
             // Format the sign with colors using component API when available
             Component c0 = Messages.SignPrefix();
-            Component c1 = Component.text(e.getLine(1) == null ? "" : e.getLine(1)).color(NamedTextColor.BLUE);
-            Component c2 = Component.text(e.getLine(2) == null ? "" : e.getLine(2)).color(NamedTextColor.AQUA);
-            Component c3 = Component.text(e.getLine(3) == null ? "" : e.getLine(3)).color(NamedTextColor.GREEN);
+            String line2 = e.getLine(1);
+            String line3 = e.getLine(2);
+            String line4 = e.getLine(3);
+            Component c1 = Component.text(line2 == null ? "" : line2).color(NamedTextColor.BLUE);
+            Component c2 = Component.text(line3 == null ? "" : line3).color(NamedTextColor.AQUA);
+            Component c3 = Component.text(line4 == null ? "" : line4).color(NamedTextColor.GREEN);
             
             // Try to use component-based method if available, otherwise fall back to legacy setLine
             try {

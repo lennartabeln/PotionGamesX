@@ -53,6 +53,24 @@ public class InventoryEventListener implements Listener {
     public InventoryEventListener(PotionGames plugin) {
         this.plugin = plugin;
     }
+
+    private String getPlainDisplayName(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) {
+            return null;
+        }
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null || !meta.hasDisplayName()) {
+            return null;
+        }
+
+        Component displayName = meta.displayName();
+        if (displayName == null) {
+            return null;
+        }
+
+        return PlainTextComponentSerializer.plainText().serialize(displayName);
+    }
     
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
@@ -134,9 +152,13 @@ public class InventoryEventListener implements Listener {
             }
             ItemStack item = new ItemStack(Material.MAP);
             ItemMeta meta = item.getItemMeta();
-            assert meta != null;
+            if (meta == null) {
+                continue;
+            }
             meta.displayName(Component.text(arena.getName()).color(NamedTextColor.AQUA));
-            item.setItemMeta(meta);
+            if (!item.setItemMeta(meta)) {
+                continue;
+            }
             inv.setItem(slot++, item);
         }
 
@@ -174,9 +196,8 @@ public class InventoryEventListener implements Listener {
     
     private void handleArenaVoting(InventoryClickEvent e, Player p, String s) {
         if (e.getView().title().equals(Messages.ArenaSelector())) {
-            if (e.getCurrentItem() != null) {
-                if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                    String displayname = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName());
+            String displayname = getPlainDisplayName(e.getCurrentItem());
+            if (displayname != null) {
                     
                     // Check if player has already voted using delegation
                     if (!plugin.hasPlayerVotedInLobby(s, p)) {
@@ -200,7 +221,6 @@ public class InventoryEventListener implements Listener {
                     p.sendMessage(Settings.prefix.append(Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
                     p.sendMessage(Settings.prefix.append(Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyVoteCount(s, displayname))).color(NamedTextColor.AQUA)));
                     p.sendMessage(Messages.ArenaSelector());
-                }
             }
         }
     }
@@ -208,23 +228,21 @@ public class InventoryEventListener implements Listener {
     private void handleTeamSelection(InventoryClickEvent e, Player p, String s) {
         if (plugin.isActivateTeams(s)) {
             if (e.getView().title().equals(Messages.SelectorTeam())) {
-                if (e.getCurrentItem() != null) {
-                    if (Objects.requireNonNull(e.getCurrentItem().getItemMeta()).hasDisplayName()) {
-                        String displayname = PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName());
-                        int maxteamplayers = plugin.getLobbyTeamSize(s);
-                        
-                        // Check if player already has a team using delegation
-                        if (!plugin.hasPlayerTeamInLobby(s, p)) {
-                            // First time assigning team
-                            if (e.getCurrentItem().getItemMeta().displayName().equals(Messages.RandomLabel())) {
-                                assignRandomTeam(e, p, s, maxteamplayers);
-                            } else {
-                                assignSpecificTeam(e, p, s, displayname, maxteamplayers);
-                            }
+                String displayname = getPlainDisplayName(e.getCurrentItem());
+                if (displayname != null) {
+                    int maxteamplayers = plugin.getLobbyTeamSize(s);
+                         
+                    // Check if player already has a team using delegation
+                    if (!plugin.hasPlayerTeamInLobby(s, p)) {
+                        // First time assigning team
+                        if (displayname.equals(PlainTextComponentSerializer.plainText().serialize(Messages.RandomLabel()))) {
+                            assignRandomTeam(e, p, s, maxteamplayers);
                         } else {
-                            // Switching teams
-                            switchTeam(e, p, s, displayname, maxteamplayers);
+                            assignSpecificTeam(e, p, s, displayname, maxteamplayers);
                         }
+                    } else {
+                        // Switching teams
+                        switchTeam(e, p, s, displayname, maxteamplayers);
                     }
                 }
             }
@@ -300,7 +318,7 @@ public class InventoryEventListener implements Listener {
         }
         
         // Assign to new team
-        if (e.getCurrentItem().getItemMeta().displayName().equals(Messages.RandomLabel())) {
+        if (displayname.equals(PlainTextComponentSerializer.plainText().serialize(Messages.RandomLabel()))) {
             assignRandomTeam(e, p, s, maxteamplayers);
         } else {
             assignSpecificTeam(e, p, s, displayname, maxteamplayers);
@@ -309,11 +327,13 @@ public class InventoryEventListener implements Listener {
     
     private void handleShop(InventoryClickEvent e, Player p, String s) {
         if (e.getView().title().equals(Messages.ShopLabel())) {
-            if (e.getCurrentItem() != null) {
+            String displayname = getPlainDisplayName(e.getCurrentItem());
+            if (displayname != null) {
                 amount = (int) (p.getTotalExperience() * 10);
                 bottle = 0;
+                ItemStack bottleItem = plugin.getBottle();
                 for (ItemStack item : p.getInventory().getContents()) {
-                    if (item != null && item.equals(plugin.getBottle())) {
+                    if (item != null && bottleItem != null && item.getType() == bottleItem.getType()) {
                         bottle += item.getAmount();
                     }
                 }
@@ -329,14 +349,16 @@ public class InventoryEventListener implements Listener {
                     } else {
                         coinamount = itemStateManager.getShopCost(shopitem - 1);
                     }
-                    if (Objects.requireNonNull(PlainTextComponentSerializer.plainText().serialize(e.getCurrentItem().getItemMeta().displayName())).matches(shopItems.get(shopitem - 1))) {
+                    if (displayname.equals(shopItems.get(shopitem - 1))) {
                         if (bottle >= 1) {
                             if (amount >= coinamount) {
                                 amount = amount - coinamount;
                                 bottle = bottle - 1;
                                         ItemStack randombarrier = new ItemStack(Objects.requireNonNull(itemStateManager.getShopPotionType(shopitem - 1)));
                                 PotionMeta randombarriermeta = (PotionMeta) randombarrier.getItemMeta();
-                                assert randombarriermeta != null;
+                                if (randombarriermeta == null) {
+                                    continue;
+                                }
                                         PotionEffect shopPotion = Objects.requireNonNull(itemStateManager.getShopPotion(shopitem - 1));
                                         randombarriermeta.addCustomEffect(new PotionEffect(shopPotion.getType(), shopPotion.getDuration(), shopPotion.getAmplifier()), true);
                                 randombarriermeta.displayName(Component.text(shopItems.get(shopitem - 1)));
@@ -536,16 +558,17 @@ public class InventoryEventListener implements Listener {
     
     private void handleLobbySelection(InventoryClickEvent e, Player p) {
         if (e.getView().title().equals(Messages.LobbyListTitle())) {
-            if (e.getCurrentItem() != null) {
+            String displayname = getPlainDisplayName(e.getCurrentItem());
+            if (displayname != null) {
                 p.closeInventory();
-                plugin.onJoinLobby(p, PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName()));
+                plugin.onJoinLobby(p, displayname);
             }
             e.setCancelled(true);
         }
         if (e.getView().title().equals(Messages.ChooseLobbyTitle())) {
-            if (e.getCurrentItem() != null) {
+            String lobbyName = getPlainDisplayName(e.getCurrentItem());
+            if (lobbyName != null) {
                 p.closeInventory();
-                String lobbyName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName());
                 try {
                     int lobbyId = Integer.parseInt(lobbyName);
                     Lobby lobby = plugin.getLobbyById(lobbyId);
@@ -564,9 +587,9 @@ public class InventoryEventListener implements Listener {
             e.setCancelled(true);
         }
         if (e.getView().title().equals(Settings.prefix.append(Component.text(Messages.raw("choose.arena", "Choose Arena")).color(NamedTextColor.DARK_AQUA)))) {
-            if (e.getCurrentItem() != null) {
+            String arenaName = getPlainDisplayName(e.getCurrentItem());
+            if (arenaName != null) {
                 p.closeInventory();
-                String arenaName = PlainTextComponentSerializer.plainText().serialize(Objects.requireNonNull(e.getCurrentItem().getItemMeta()).displayName());
                 Lobby lobby = resolveSetupLobby(p);
                 if (lobby == null) {
                     p.sendMessage(Messages.ChooseLobbyFirst());
@@ -632,7 +655,8 @@ public class InventoryEventListener implements Listener {
                         while (Settings.chestdata.contains("pg.customchests." + chestnumber)) {
                             int chestitem = 1;
                             ConfigurationSection customChest = Settings.chestdata.getConfigurationSection("pg.customchests." + chestnumber);
-                            if (customChest != null && e.getClickedBlock().getType().toString().equals(Objects.requireNonNull(customChest.get("chesttype")).toString())) {
+                            Object chestType = customChest.get("chesttype");
+                            if (customChest != null && chestType != null && e.getClickedBlock().getType().toString().equals(chestType.toString())) {
                                 if (customChest.getBoolean("activate")) {
                                     
                                         String s = null;
@@ -641,7 +665,7 @@ public class InventoryEventListener implements Listener {
                                                 s = Integer.toString(ii);
                                             }
                                         }
-                                        if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
+                                        if (s != null && plugin.getLobbyGameState(s) == GameStates.INGAME) {
                                             if (!plugin.hasLobbyChest(s, e.getClickedBlock().getLocation())) {
                                                 Inventory inv = Bukkit.createInventory(p, customChest.getInt("chestsize"), Settings.prefix);
                                                 Random rnd = new Random();
@@ -701,14 +725,18 @@ public class InventoryEventListener implements Listener {
                                                 }
                                                 ItemStack randombarrier = new ItemStack(Objects.requireNonNull(itemStateManager.getShopPotionType(shopitem - 1)));
                                             ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                            assert randombarriermeta != null;
-                                                randombarriermeta.displayName(Component.text(shopItems.get(shopitem - 1)));
+                                            if (randombarriermeta == null) {
+                                                continue;
+                                            }
+                                            randombarriermeta.displayName(Component.text(shopItems.get(shopitem - 1)));
                                             ArrayList<Component> lore = new ArrayList<>();
                                             PotionEffect shopPotion = Objects.requireNonNull(itemStateManager.getShopPotion(shopitem - 1));
                                             lore.add(Component.text(plugin.getChatmessages().get(50) + ": " + shopPotion.getDuration() / 20));
                                             lore.add(Component.text(plugin.getChatmessages().get(51) + ": " + coinamount + " " + plugin.getChatmessages().get(52)));
                                             randombarriermeta.lore(lore);
-                                            randombarrier.setItemMeta(randombarriermeta);
+                                            if (!randombarrier.setItemMeta(randombarriermeta)) {
+                                                continue;
+                                            }
                                             inv.setItem(shopitem - 1, randombarrier);
                                             shopitem++;
                                         }
@@ -858,12 +886,16 @@ public class InventoryEventListener implements Listener {
                             if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                assert randombarriermeta != null;
+                                if (randombarriermeta == null) {
+                                    return;
+                                }
                                 randombarriermeta.displayName(Messages.RandomLabel());
                                 ArrayList<Component> randomlore = new ArrayList<>();
                                 randomlore.add(0, Component.text(plugin.getChatmessages().get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, "Random", 0))).color(NamedTextColor.AQUA)));
                                 randombarriermeta.lore(randomlore);
-                                randombarrier.setItemMeta(randombarriermeta);
+                                if (!randombarrier.setItemMeta(randombarriermeta)) {
+                                    return;
+                                }
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ArenaSelectorTitle());
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
@@ -873,10 +905,14 @@ public class InventoryEventListener implements Listener {
                                         arenalore.add(0, Component.text(plugin.getChatmessages().get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, all, 0))).color(NamedTextColor.AQUA)));
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        assert arenamapmeta != null;
+                                        if (arenamapmeta == null) {
+                                            continue;
+                                        }
                                         arenamapmeta.displayName(Component.text(all).color(NamedTextColor.AQUA));
                                         arenamapmeta.lore(arenalore);
-                                        arenamap.setItemMeta(arenamapmeta);
+                                        if (!arenamap.setItemMeta(arenamapmeta)) {
+                                            continue;
+                                        }
                                         inv.setItem(slot, arenamap);
                                         slot++;
                                     }
@@ -896,9 +932,13 @@ public class InventoryEventListener implements Listener {
                             if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                assert randombarriermeta != null;
+                                if (randombarriermeta == null) {
+                                    return;
+                                }
                                 randombarriermeta.displayName(Messages.RandomLabel());
-                                randombarrier.setItemMeta(randombarriermeta);
+                                if (!randombarrier.setItemMeta(randombarriermeta)) {
+                                    return;
+                                }
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.getChatmessages().get(43)).color(NamedTextColor.DARK_AQUA)));
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
@@ -907,7 +947,9 @@ public class InventoryEventListener implements Listener {
                                     arenalore.add(0, Component.text(plugin.getChatmessages().get(44) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.getOrDefault(plugin.getLobbiesTeamsMap(s), all, 0))).color(NamedTextColor.AQUA)));
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                    assert arenamapmeta != null;
+                                    if (arenamapmeta == null) {
+                                        continue;
+                                    }
                                     arenamapmeta.displayName(Component.text(Integer.toString(all)).color(NamedTextColor.AQUA));
                                     for (Player temp : plugin.getLobbiesTeamPlayerNamesMap(s).keySet()) {
                                         if (SafeMapAccess.getOrDefault(plugin.getLobbiesTeamPlayerNamesMap(s), temp, "").equals(Integer.toString(all)) && temp != null) {
@@ -915,7 +957,9 @@ public class InventoryEventListener implements Listener {
                                         }
                                     }
                                     arenamapmeta.lore(arenalore);
-                                    arenamap.setItemMeta(arenamapmeta);
+                                    if (!arenamap.setItemMeta(arenamapmeta)) {
+                                        continue;
+                                    }
                                     inv.setItem(slot, arenamap);
                                     slot++;
                                 }
@@ -934,17 +978,25 @@ public class InventoryEventListener implements Listener {
                             if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
-                                assert randombarriermeta != null;
+                                if (randombarriermeta == null) {
+                                    return;
+                                }
                                 randombarriermeta.displayName(Messages.RandomLabel());
-                                randombarrier.setItemMeta(randombarriermeta);
+                                if (!randombarrier.setItemMeta(randombarriermeta)) {
+                                    return;
+                                }
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.getChatmessages().get(62)).color(NamedTextColor.DARK_AQUA)));
                                 inv.setItem(0, randombarrier);
                                 for (int i = 1; i <= plugin.getActiveKits(); i++) {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                    assert arenamapmeta != null;
+                                    if (arenamapmeta == null) {
+                                        continue;
+                                    }
                                     arenamapmeta.displayName(Component.text(Settings.kitdata.getString("pg.kits." + i + ".name")));
-                                    arenamap.setItemMeta(arenamapmeta);
+                                    if (!arenamap.setItemMeta(arenamapmeta)) {
+                                        continue;
+                                    }
                                     inv.setItem(i, arenamap);
                                 }
                                 p.openInventory(inv);
@@ -1021,10 +1073,14 @@ public class InventoryEventListener implements Listener {
                                         ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        assert arenamapmeta != null;
+                                        if (arenamapmeta == null) {
+                                            continue;
+                                        }
                                         arenamapmeta.displayName(Component.text(Integer.toString(slot)));
                                         arenamapmeta.lore(arenalore);
-                                        arenamap.setItemMeta(arenamapmeta);
+                                        if (!arenamap.setItemMeta(arenamapmeta)) {
+                                            continue;
+                                        }
                                         inv.setItem(slot - 1, arenamap);
                                     }
                                 }
@@ -1140,10 +1196,14 @@ public class InventoryEventListener implements Listener {
                                         ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        assert arenamapmeta != null;
+                                        if (arenamapmeta == null) {
+                                            continue;
+                                        }
                                         arenamapmeta.displayName(Component.text(Integer.toString(slot)));
                                         arenamapmeta.lore(arenalore);
-                                        arenamap.setItemMeta(arenamapmeta);
+                                        if (!arenamap.setItemMeta(arenamapmeta)) {
+                                            continue;
+                                        }
                                         inv.setItem(slot - 1, arenamap);
                                     }
                                 }

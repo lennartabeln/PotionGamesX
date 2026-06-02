@@ -6,6 +6,7 @@ import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -76,28 +77,36 @@ public class CombatEventListener implements Listener {
             if (s != null) {
                 if (!plugin.isLobbyBuildAllowed(s)) {
                     if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
-                        if (p.getKiller() != null) {
+                        Player killer = p.getKiller();
+                        if (killer != null) {
                             plugin.getDatabaseManager().addDeaths(p.getUniqueId().toString(), 1);
                             plugin.getDatabaseManager().addLosses(p.getUniqueId().toString(), 1);
-                            plugin.getDatabaseManager().addKills(p.getKiller().getUniqueId().toString(), 1);
+                            plugin.getDatabaseManager().addKills(killer.getUniqueId().toString(), 1);
                             if (plugin.isEnableRewards()) {
-                                EconomyResponse r = PotionGames.getEconomy().depositPlayer(p.getKiller(), plugin.getKillReward());
+                                EconomyResponse r = PotionGames.getEconomy().depositPlayer(killer, plugin.getKillReward());
                                 if (r.transactionSuccess()) {
                                     Component comp = Messages.KillReward(plugin.getKillReward())
                                         .append(Component.text(" " + PotionGames.getEconomy().format(r.amount)).color(NamedTextColor.LIGHT_PURPLE));
-                                    p.getKiller().sendMessage(comp);
+                                    killer.sendMessage(comp);
                                 } else {
                                     Component comp = Messages.ErrorGeneric()
                                         .append(Component.text(": " + r.errorMessage).color(NamedTextColor.RED));
-                                    p.getKiller().sendMessage(comp);
+                                    killer.sendMessage(comp);
                                 }
                             }
                             if (plugin.isActivateScoreboard()) {
-                                Team killsTeam = Objects.requireNonNull(p.getKiller().getScoreboard().getTeam("kills"));
-                                Component tempComponent = killsTeam.prefix();
-                                int tempInt = Integer.parseInt(tempComponent.toString());
-                                tempInt++;
-                                killsTeam.prefix(Component.text(String.valueOf(tempInt)).color(NamedTextColor.DARK_AQUA));
+                                Team killsTeam = killer.getScoreboard().getTeam("kills");
+                                if (killsTeam != null && killsTeam.prefix() != null) {
+                                    Component tempComponent = killsTeam.prefix();
+                                    String currentValue = PlainTextComponentSerializer.plainText().serialize(tempComponent);
+                                    try {
+                                        int tempInt = Integer.parseInt(currentValue);
+                                        tempInt++;
+                                        killsTeam.prefix(Component.text(String.valueOf(tempInt)).color(NamedTextColor.DARK_AQUA));
+                                    } catch (NumberFormatException ignored) {
+                                        // Ignore malformed scoreboard values during combat events.
+                                    }
+                                }
                             }
                         } else {
                             plugin.getDatabaseManager().addDeaths(p.getUniqueId().toString(), 1);
@@ -125,8 +134,9 @@ public class CombatEventListener implements Listener {
                             player++;
                         }
                         try {
-                            Player killer = p.getKiller();
-                            assert killer != null;
+                            if (killer == null) {
+                                return;
+                            }
                             killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0));
                             killer.playSound(killer.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 1, 1);
                             p.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1, 1);

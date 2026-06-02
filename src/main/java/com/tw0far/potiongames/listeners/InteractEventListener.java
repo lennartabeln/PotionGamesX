@@ -46,7 +46,7 @@ public class InteractEventListener implements Listener {
             
             // Handle join signs (component-based sign API)
             Component c = sign.getSide(Side.FRONT).line(0);
-            String line0 = c == null ? "" : PlainTextComponentSerializer.plainText().serialize(c);
+            String line0 = PlainTextComponentSerializer.plainText().serialize(c);
             if (line0.contains("PG") || line0.contains("Join")) {
                 e.setCancelled(true);
                 // Sign interaction would be handled by other listeners
