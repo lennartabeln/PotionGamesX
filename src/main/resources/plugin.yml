@@ -3,8 +3,13 @@ author: Tw0Far
 main: com.tw0far.potiongames.main.PotionGames
 version: 1.0.0
 api-version: 26.1.2
-softdepend: [ Multiverse-Core, Vault ]
+softdepend:
+  - Multiverse-Core
+  - Vault
 commands:
   pg:
     description: Get list of commands + permissions
-    aliases: [ potiongames, pgames, potiong ]
+    aliases:
+      - potiongames
+      - pgames
+      - potiong
