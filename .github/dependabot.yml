@@ -1,0 +1,17 @@
+version: 2
+updates:
+  # Configuration for Maven dependencies (pom.xml)
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly" # Can be set to "daily", "weekly", or "monthly"
+    open-pull-requests-limit: 5 # Limits spam by only allowing 5 open PRs at a time
+
+    # Recommended for Minecraft Plugins:
+    # This prevents Dependabot from breaking your plugin by trying to upgrade 
+    # your core Minecraft/Paper/Spigot API to a completely different major version.
+    ignore:
+      - dependency-name: "io.papermc.paper:paper-api"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "org.spigotmc:spigot-api"
+        update-types: ["version-update:semver-major"]
