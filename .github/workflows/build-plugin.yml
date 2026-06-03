@@ -28,7 +28,7 @@ jobs:
       run: |
         cd target
         JAR_FILE=$(ls *.jar | head -n 1)
-        mv "$JAR_FILE" "plugin-${{ github.event.release.tag_name }}.jar"
+        mv "$JAR_FILE" "PotionGamesX-${{ github.event.release.tag_name }}.jar"
 
     - name: Upload Binaries to Release
       uses: softprops/action-gh-release@v2
