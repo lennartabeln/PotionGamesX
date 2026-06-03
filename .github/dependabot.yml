@@ -1,19 +1,9 @@
 version: 2
-
-registries:
-  jitpack-public:
-    type: maven-repository
-    url: https://jitpack.io
-    username: "dummy"   # Satisfies Dependabot's strict requirement
-    password: "dummy"   # JitPack will ignore this for public repos
-
 updates:
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
       interval: "weekly"
-    registries:
-      - jitpack-public
     open-pull-requests-limit: 5
     ignore:
       - dependency-name: "io.papermc.paper:paper-api"
