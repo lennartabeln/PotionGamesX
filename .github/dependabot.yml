@@ -1,27 +1,20 @@
 version: 2
 
-# This tells Dependabot that JitPack is a public registry, 
-# preventing it from crashing and asking for a password.
 registries:
   jitpack-public:
     type: maven-repository
     url: https://jitpack.io
+    username: "dummy"   # Satisfies Dependabot's strict requirement
+    password: "dummy"   # JitPack will ignore this for public repos
 
 updates:
   - package-ecosystem: "maven"
     directory: "/"
     schedule:
-      interval: "weekly" # Checks for updates every week
-    
-    # Links the maven updater to the public JitPack registry defined above
+      interval: "weekly"
     registries:
       - jitpack-public
-
-    # Prevents PR spam by capping open dependency updates at 5
     open-pull-requests-limit: 5
-
-    # Safe updates for Minecraft: Keeps your core APIs on your target 
-    # Minecraft version while letting minor patches and libraries update safely.
     ignore:
       - dependency-name: "io.papermc.paper:paper-api"
         update-types: ["version-update:semver-major"]
