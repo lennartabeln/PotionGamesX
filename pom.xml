@@ -34,7 +34,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.MilkBowl</groupId>
+            <groupId>com.github.milkbowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7.1</version>
         </dependency>
