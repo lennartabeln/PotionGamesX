@@ -11,13 +11,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public final class Settings {
-    public static File arenadatafile = null;
-    public static File chestdatafile = null;
-    public static File kitdatafile = null;
-    public static File messagesfile = null;
-    public static File shopdatafile = null;
-    public static FileConfiguration arenadata;
-    public static FileConfiguration chestdata;
+    public static File lobbiesFile = null;
+    public static File chestsFile = null;
+    public static File kitsFile = null;
+    public static File messagesFile = null;
+    public static File shopFile = null;
+    public static FileConfiguration lobbies;
+    public static FileConfiguration chests;
     public static FileConfiguration kitdata;
     public static FileConfiguration messages;
     public static FileConfiguration shopdata;
@@ -117,12 +117,16 @@ public final class Settings {
     public static String getUser() { return configManager != null ? configManager.getUser() : "root"; }
 
     public static void loadConfigurations() {
-        // Arena/lobby/spawn data from arenadata.yml
-        Settings.arenadata = YamlConfiguration.loadConfiguration(Settings.arenadatafile);
-        // Chest loot data from chestdata.yml (loot.yml or chestloot.yml)
-        Settings.chestdata = YamlConfiguration.loadConfiguration(Settings.chestdatafile);
+        // Arena/lobby/spawn data from lobbies.yml
+        Settings.lobbies = YamlConfiguration.loadConfiguration(Settings.lobbiesFile);
+        // Chest loot data from chests.yml
+        Settings.chests = YamlConfiguration.loadConfiguration(Settings.chestsFile);
         // Messages from messages.yml
-        Settings.messages = YamlConfiguration.loadConfiguration(Settings.messagesfile);
+        Settings.messages = YamlConfiguration.loadConfiguration(Settings.messagesFile);
+        // Kit data from kits.yml
+        Settings.kitdata = YamlConfiguration.loadConfiguration(Settings.kitsFile);
+        // Shop data from shop.yml
+        Settings.shopdata = YamlConfiguration.loadConfiguration(Settings.shopFile);
     }
 
     public static void loadSettings(PotionGames pg) {

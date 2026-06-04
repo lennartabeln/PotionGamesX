@@ -21,7 +21,7 @@ All notable changes to PotionGames are documented in this file.
 - New `performance` section - Tune update rates and limits
 - New `security` section - Configure player limits and banned items
 - Configuration validator on startup - Warns about invalid settings
-- Consolidated config structure (config.yml, arenadata.yml, chestloot.yml, messages.yml)
+- Consolidated config structure (config.yml, lobbies.yml, chests.yml, messages.yml)
 
 #### Architecture
 - Refactored to class-based OOP (no monolithic patterns)
@@ -63,8 +63,8 @@ All notable changes to PotionGames are documented in this file.
 
 ### Configuration Consolidation
 - ✅ Main config for global settings and shops/kits
-- ✅ arenadata.yml for lobbies, arenas, spawns
-- ✅ chestloot.yml for chest loot definitions
+- ✅ lobbies.yml for lobbies, arenas, spawns
+- ✅ chests.yml for chest loot definitions
 - ✅ messages.yml for localization
 
 ### Build & Quality

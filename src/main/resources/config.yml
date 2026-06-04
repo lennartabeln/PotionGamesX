@@ -2,10 +2,12 @@
 # Minecraft Paper 26.1.x
 # 
 # Data Organization:
-#   - config.yml (this file): Global settings, shops, kits, loot configuration
-#   - arenadata.yml: Lobbies, arenas, spawns (all locations)
-#   - chestloot.yml: Chest loot item definitions
+#   - config.yml (this file): Global settings, database configuration
+#   - lobbies.yml: Lobbies, arenas, spawns (all locations)
+#   - chests.yml: Chest loot item definitions
 #   - messages.yml: Localized text messages
+#   - kits.yml: Kit definitions
+#   - shop.yml: Shop items
 
 pg:
   # ════════════════════════════════════════════════════════════════════════════════

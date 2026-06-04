@@ -72,8 +72,8 @@ public class Game {
         lobbies.clear();
         Set<Integer> lobbyIds = new HashSet<>();
 
-        if (Settings.arenadata.contains("pg.lobbies")) {
-            for (String key : Settings.arenadata.getConfigurationSection("pg.lobbies").getKeys(false)) {
+        if (Settings.lobbies.contains("pg.lobbies")) {
+            for (String key : Settings.lobbies.getConfigurationSection("pg.lobbies").getKeys(false)) {
                 try {
                     lobbyIds.add(Integer.parseInt(key));
                 } catch (NumberFormatException ignored) {
@@ -96,7 +96,7 @@ public class Game {
         for (Integer lobbyId : lobbyIds) {
             LobbyConfig lobbyConfig = new LobbyConfig(
                 lobbyId,
-                Settings.arenadata,
+                Settings.lobbies,
                 Settings.countdown,
                 Settings.maxPlayers,
                 Settings.minPlayers,

@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.bootstrap;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Settings;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -15,17 +16,17 @@ public final class ChestLootInitializer {
     }
 
     public void seed() {
-        // Load loot items from config
-        var config = plugin.getConfig();
+        // Load loot items from chests.yml
+        var config = Settings.chests;
         if (config == null) {
-            plugin.getLogger().warning("Config not loaded, using fallback chest loot");
+            plugin.getLogger().warning("Chest loot configuration not loaded, using fallback defaults");
             seedDefaults();
             return;
         }
 
         ConfigurationSection itemsConfig = config.getConfigurationSection("pg.chestloot.normal.items");
         if (itemsConfig == null) {
-            plugin.getLogger().warning("No pg.chestloot.normal.items section found, using fallback chest loot");
+            plugin.getLogger().warning("No pg.chestloot.normal.items section found in chests.yml, using fallback defaults");
             seedDefaults();
             return;
         }

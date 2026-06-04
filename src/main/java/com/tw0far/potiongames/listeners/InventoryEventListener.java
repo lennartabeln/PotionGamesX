@@ -617,7 +617,7 @@ public class InventoryEventListener implements Listener {
                 }
                 if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
                     if (e.getHand() == EquipmentSlot.HAND) {
-                        if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(Settings.chestdata.get("pg.chestblocks.normal")).toString())) {
+                        if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(Settings.chests.get("pg.chestblocks.normal")).toString())) {
                             
                                 String s = plugin.getGame().getPlayerLobby(p);
                                 if (s != null && plugin.getLobbyGameState(s) == GameStates.INGAME) {
@@ -626,7 +626,7 @@ public class InventoryEventListener implements Listener {
                                         Random rnd = new Random();
                                         IItemStateManager itemStateManager = plugin.getItemStateManager();
                                         ChestLootProfile profile = resolveLootProfile(
-                                                Settings.chestdata.getConfigurationSection("pg.chestloot.normal"),
+                                                Settings.chests.getConfigurationSection("pg.chestloot.normal"),
                                                 defaultNormalLootProfile());
                                         fillLootChest(inv, rnd, profile, itemStateManager);
                                         plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
@@ -652,9 +652,9 @@ public class InventoryEventListener implements Listener {
                             
                         }
                         int chestnumber = 1;
-                        while (Settings.chestdata.contains("pg.customchests." + chestnumber)) {
+                        while (Settings.chests.contains("pg.customchests." + chestnumber)) {
                             int chestitem = 1;
-                            ConfigurationSection customChest = Settings.chestdata.getConfigurationSection("pg.customchests." + chestnumber);
+                            ConfigurationSection customChest = Settings.chests.getConfigurationSection("pg.customchests." + chestnumber);
                             Object chestType = customChest.get("chesttype");
                             if (customChest != null && chestType != null && e.getClickedBlock().getType().toString().equals(chestType.toString())) {
                                 if (customChest.getBoolean("activate")) {
@@ -690,7 +690,7 @@ public class InventoryEventListener implements Listener {
                             }
                             chestnumber++;
                         }
-                        if ((e.getClickedBlock()).getType().toString().equals(Objects.requireNonNull(Settings.chestdata.get("pg.chestblocks.shop")).toString())) {
+                        if ((e.getClickedBlock()).getType().toString().equals(Objects.requireNonNull(Settings.chests.get("pg.chestblocks.shop")).toString())) {
                             
                                 String s = null;
                                 for (int ii = 1; ii <= 27; ii++) {
@@ -1069,7 +1069,7 @@ public class InventoryEventListener implements Listener {
                             
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ChooseLobbyTitle());
                                 for (int slot = 1; slot <= 27; slot++) {
-                                    if (Settings.arenadata.contains("pg.lobbies." + slot)) {
+                                    if (Settings.lobbies.contains("pg.lobbies." + slot)) {
                                         ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
@@ -1092,12 +1092,12 @@ public class InventoryEventListener implements Listener {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ChooseArenaTitle());
                             
                                 for (int slot = 1; slot < 27; slot++) {
-                                    if (Settings.arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
+                                    if (Settings.lobbies.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.displayName(Component.text(Settings.arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name")));
+                                        arenamapmeta.displayName(Component.text(Settings.lobbies.getString("pg.lobbies." + lobby + "." + slot + ".name")));
                                         arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
@@ -1165,7 +1165,7 @@ public class InventoryEventListener implements Listener {
                                     int i = 1;
                                     boolean arenaName = false;
                                     while (!arenaName) {
-                                        if (arena.toString().matches(Objects.requireNonNull(Settings.arenadata.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
+                                        if (arena.toString().matches(Objects.requireNonNull(Settings.lobbies.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
                                             arenaNumber = i;
                                             arenaName = true;
                                         } else {
@@ -1173,12 +1173,12 @@ public class InventoryEventListener implements Listener {
                                         }
                                     }
                                     int max = 1;
-                                    while (Settings.arenadata.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + max)) {
+                                    while (Settings.lobbies.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + max)) {
                                         spawnNumber = max;
                                         max++;
                                     }
-                                    Settings.arenadata.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
-                                    Settings.arenadata.save(Settings.arenadatafile);
+                                    Settings.lobbies.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
+                                    Settings.lobbies.save(Settings.lobbiesfile);
                                     p.sendMessage(Settings.prefix.append(Component.text(String.valueOf(spawnNumber)).color(NamedTextColor.AQUA)).append(Component.text(" " + Messages.raw("spawn.removed", "Spawn removed successfully.")).color(NamedTextColor.GREEN)).append(Component.text(" (Lobby: " + lobby + ")").color(NamedTextColor.GRAY)));
                                 } catch (Exception ex) {
                                     p.sendMessage(Settings.prefix.append(arena.color(NamedTextColor.AQUA)).append(Component.text(" " + Messages.raw("lobby.join_success", "Successfully joined lobby")).color(NamedTextColor.RED)).append(Component.text(" (Lobby: " + lobby + ")").color(NamedTextColor.GRAY)));
@@ -1192,7 +1192,7 @@ public class InventoryEventListener implements Listener {
                             
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ChooseLobbyTitle());
                                 for (int slot = 1; slot <= 27; slot++) {
-                                    if (Settings.arenadata.contains("pg.lobbies." + slot)) {
+                                    if (Settings.lobbies.contains("pg.lobbies." + slot)) {
                                         ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
@@ -1215,12 +1215,12 @@ public class InventoryEventListener implements Listener {
                             Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ChooseArenaTitle());
                             
                                 for (int slot = 1; slot < 27; slot++) {
-                                    if (Settings.arenadata.contains("pg.lobbies." + lobby + "." + slot)) {
+                                    if (Settings.lobbies.contains("pg.lobbies." + lobby + "." + slot)) {
                                         ArrayList<Component> arenalore = new ArrayList<>();
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         assert arenamapmeta != null;
-                                        arenamapmeta.displayName(Component.text(Settings.arenadata.getString("pg.lobbies." + lobby + "." + slot + ".name")));
+                                        arenamapmeta.displayName(Component.text(Settings.lobbies.getString("pg.lobbies." + lobby + "." + slot + ".name")));
                                         arenamapmeta.lore(arenalore);
                                         arenamap.setItemMeta(arenamapmeta);
                                         inv.setItem(slot - 1, arenamap);
@@ -1259,7 +1259,7 @@ public class InventoryEventListener implements Listener {
                         String line2 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(1));
                         String line3 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(2));
                         
-                            if (e.getClickedBlock().getLocation().equals(Settings.arenadata.getLocation("pg.lobbies." + line1 + ".sign"))) {
+                            if (e.getClickedBlock().getLocation().equals(Settings.lobbies.getLocation("pg.lobbies." + line1 + ".sign"))) {
                                 if (plugin.getGame().getPlayerLobby(p) == null && plugin.getGame().getSpectatorLobby(p) == null) {
                                     e.setCancelled(true);
                                     plugin.onJoinLobby(p, line1);

@@ -25,25 +25,27 @@ public final class BootstrapInitializer {
 
     public void initialize() {
         plugin.getDataFolder().mkdirs();
-        Settings.arenadatafile = new File(plugin.getDataFolder() + File.separator + "arenadata.yml");
-        Settings.chestdatafile = new File(plugin.getDataFolder() + File.separator + "chestloot.yml");
-        Settings.messagesfile = new File(plugin.getDataFolder() + File.separator + "messages.yml");
+        Settings.lobbiesFile = new File(plugin.getDataFolder() + File.separator + "lobbies.yml");
+        Settings.chestsFile = new File(plugin.getDataFolder() + File.separator + "chests.yml");
+        Settings.messagesFile = new File(plugin.getDataFolder() + File.separator + "messages.yml");
+        Settings.kitsFile = new File(plugin.getDataFolder() + File.separator + "kits.yml");
+        Settings.shopFile = new File(plugin.getDataFolder() + File.separator + "shop.yml");
         
         // Ensure all files exist before loading
-        ensureFileExists(Settings.arenadatafile, "arenadata.yml");
-        ensureFileExists(Settings.chestdatafile, "chestloot.yml");
-        ensureFileExists(Settings.messagesfile, "messages.yml");
+        ensureFileExists(Settings.lobbiesFile, "lobbies.yml");
+        ensureFileExists(Settings.chestsFile, "chests.yml");
+        ensureFileExists(Settings.messagesFile, "messages.yml");
+        ensureFileExists(Settings.kitsFile, "kits.yml");
+        ensureFileExists(Settings.shopFile, "shop.yml");
         
-        // Config.yml: Main config with shops, kits, database, global settings
-        // arenadata.yml: Lobbies, arenas, spawns
-        // chestloot.yml: Chest loot definitions
+        // Config.yml: Main config with database, global settings
+        // lobbies.yml: Lobbies, arenas, spawns
+        // chests.yml: Chest loot definitions
         // messages.yml: Localized messages
+        // kits.yml: Kit definitions
+        // shop.yml: Shop items
         
         Settings.loadConfigurations();
-        
-        // Kit and shop data now stored in main config.yml
-        Settings.kitdata = plugin.getConfig();
-        Settings.shopdata = plugin.getConfig();
         
         Settings.loadSettings(plugin);
         plugin.getGame().load();
@@ -186,7 +188,7 @@ public final class BootstrapInitializer {
         plugin.replaceChatmessages(mutableChat);
 
         try {
-            Settings.messages.save(Settings.messagesfile);
+            Settings.messages.save(Settings.messagesFile);
         } catch (IOException ex) {
             Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
@@ -231,27 +233,27 @@ public final class BootstrapInitializer {
 
         int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
-            if (plugin.getConfig().get("pg.potions." + shopitem) == null) {
-                plugin.getConfig().addDefault("pg.potions." + shopitem, shop.get(shopitem - 1));
-                plugin.getConfig().addDefault("pg.potions." + shopitem + ".name", shop.get(shopitem - 1));
-                plugin.getConfig().addDefault("pg.potions." + shopitem + ".shoppotion", shoppotion.get(shopitem - 1));
-                plugin.getConfig().addDefault("pg.potions." + shopitem + ".shoppotiontype", shoppotiontype.get(shopitem - 1));
-                plugin.getConfig().addDefault("pg.potions." + shopitem + ".kit", shopkit.get(shopitem - 1));
-                plugin.getConfig().addDefault("pg.potions." + shopitem + ".cost", shopcost.get(shopitem - 1));
-                plugin.getConfig().addDefault("pg.potions." + shopitem + ".sale", shopsale.get(shopitem - 1));
-                plugin.getConfig().options().copyDefaults(true);
+            if (Settings.shopdata.get("pg.potions." + shopitem) == null) {
+                Settings.shopdata.addDefault("pg.potions." + shopitem, shop.get(shopitem - 1));
+                Settings.shopdata.addDefault("pg.potions." + shopitem + ".name", shop.get(shopitem - 1));
+                Settings.shopdata.addDefault("pg.potions." + shopitem + ".shoppotion", shoppotion.get(shopitem - 1));
+                Settings.shopdata.addDefault("pg.potions." + shopitem + ".shoppotiontype", shoppotiontype.get(shopitem - 1));
+                Settings.shopdata.addDefault("pg.potions." + shopitem + ".kit", shopkit.get(shopitem - 1));
+                Settings.shopdata.addDefault("pg.potions." + shopitem + ".cost", shopcost.get(shopitem - 1));
+                Settings.shopdata.addDefault("pg.potions." + shopitem + ".sale", shopsale.get(shopitem - 1));
+                Settings.shopdata.options().copyDefaults(true);
             } else {
-                String name = plugin.getConfig().getString("pg.potions." + shopitem + ".name");
+                String name = Settings.shopdata.getString("pg.potions." + shopitem + ".name");
                 shop.set(shopitem - 1, name);
-                PotionEffect potion = (PotionEffect) plugin.getConfig().get("pg.potions." + shopitem + ".shoppotion");
+                PotionEffect potion = (PotionEffect) Settings.shopdata.get("pg.potions." + shopitem + ".shoppotion");
                 shoppotion.set(shopitem - 1, potion);
-                ItemStack potiontype = (ItemStack) plugin.getConfig().get("pg.potions." + shopitem + ".shoppotiontype");
+                ItemStack potiontype = (ItemStack) Settings.shopdata.get("pg.potions." + shopitem + ".shoppotiontype");
                 shoppotiontype.set(shopitem - 1, potiontype);
-                String kitname = plugin.getConfig().getString("pg.potions." + shopitem + ".kit");
+                String kitname = Settings.shopdata.getString("pg.potions." + shopitem + ".kit");
                 shopkit.set(shopitem - 1, kitname);
-                Integer cost = (Integer) plugin.getConfig().get("pg.potions." + shopitem + ".cost");
+                Integer cost = (Integer) Settings.shopdata.get("pg.potions." + shopitem + ".cost");
                 shopcost.set(shopitem - 1, cost);
-                Integer sale = (Integer) plugin.getConfig().get("pg.potions." + shopitem + ".sale");
+                Integer sale = (Integer) Settings.shopdata.get("pg.potions." + shopitem + ".sale");
                 shopsale.set(shopitem - 1, sale);
             }
             shopitem++;
@@ -266,7 +268,7 @@ public final class BootstrapInitializer {
         plugin.replaceShopsale(shopsale);
 
         try {
-            plugin.saveConfig();
+            Settings.shopdata.save(Settings.shopFile);
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
@@ -316,7 +318,7 @@ public final class BootstrapInitializer {
         }
 
         try {
-            Settings.kitdata.save(Settings.kitdatafile);
+            Settings.kitdata.save(Settings.kitsFile);
         } catch (IOException ex) {
             Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }

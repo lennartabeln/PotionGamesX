@@ -59,8 +59,8 @@ All config files in `plugins/PotionGames/`:
 | File | Purpose |
 |------|---------|
 | **config.yml** | Global settings, database, shops, kits |
-| **arenadata.yml** | Lobbies, arenas, spawn locations |
-| **chestloot.yml** | Chest loot item definitions |
+| **lobbies.yml** | Lobbies, arenas, spawn locations |
+| **chests.yml** | Chest loot item definitions |
 | **messages.yml** | Localized text messages |
 
 ## 📊 Build Status

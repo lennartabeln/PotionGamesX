@@ -1274,8 +1274,8 @@ public class PotionGames extends JavaPlugin {
     public void clearEffects(Player all) {
         // Remove all configured potion effects
         int chestitem = 1;
-        while (Settings.chestdata.contains("pg.potions." + chestitem)) {
-            PotionEffect effect = (PotionEffect) Settings.chestdata.get("pg.potions." + chestitem);
+        while (Settings.chests.contains("pg.potions." + chestitem)) {
+            PotionEffect effect = (PotionEffect) Settings.chests.get("pg.potions." + chestitem);
             if (effect != null) {
                 all.removePotionEffect(effect.getType());
             }

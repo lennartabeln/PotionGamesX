@@ -52,7 +52,7 @@ public class ForceCommand implements ICommand {
                 int i = 1;
                 boolean votetedarena = false;
                 while (!votetedarena) {
-                    if (arena.matches(Objects.requireNonNull(Settings.arenadata.getString("pg.arenas." + i + ".name")))) {
+                    if (arena.matches(Objects.requireNonNull(Settings.lobbies.getString("pg.arenas." + i + ".name")))) {
                         String arenaNumber = Integer.toString(i);
                         plugin.setLobbyVotedArena(lobbyId, arena);
                         plugin.setLobbyCurrentVote(lobbyId, arenaNumber);

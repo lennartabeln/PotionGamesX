@@ -17,7 +17,7 @@ import com.tw0far.potiongames.main.PotionGames;
  */
 public class LobbyConfig {
     private final int lobbyId;
-    private final FileConfiguration arenadata;
+    private final FileConfiguration lobbies;
     
     // Game settings with global defaults
     private int countdown;
@@ -36,7 +36,7 @@ public class LobbyConfig {
      * Create a new LobbyConfig with global defaults.
      * 
      * @param lobbyId The lobby ID
-     * @param arenadata The arena-data.yml configuration
+     * @param lobbies The lobbies.yml configuration
      * @param globalCountdown Global default countdown
      * @param globalMaxPlayers Global default max players
      * @param globalMinPlayers Global default min players
@@ -49,7 +49,7 @@ public class LobbyConfig {
      */
     public LobbyConfig(
             int lobbyId,
-            FileConfiguration arenadata,
+            FileConfiguration lobbies,
             int globalCountdown,
             int globalMaxPlayers,
             int globalMinPlayers,
@@ -61,7 +61,7 @@ public class LobbyConfig {
             boolean globalActivateAirdrops) {
         
         this.lobbyId = lobbyId;
-        this.arenadata = arenadata;
+        this.lobbies = lobbies;
         
         String defaultsPath = "pg.defaults";
         String lobbyRootPath = "pg.lobbies." + lobbyId;
@@ -94,8 +94,8 @@ public class LobbyConfig {
      * Get an integer value from config, or return default if not set.
      */
     private int getIntOrDefault(String path, int defaultValue) {
-        if (arenadata.contains(path)) {
-            return arenadata.getInt(path);
+        if (lobbies.contains(path)) {
+            return lobbies.getInt(path);
         }
         PotionGames plugin = PotionGames.getInstance();
         if (plugin != null && plugin.getConfig().contains(path)) {
@@ -108,8 +108,8 @@ public class LobbyConfig {
      * Get a boolean value from config, or return default if not set.
      */
     private boolean getBooleanOrDefault(String path, boolean defaultValue) {
-        if (arenadata.contains(path)) {
-            return arenadata.getBoolean(path);
+        if (lobbies.contains(path)) {
+            return lobbies.getBoolean(path);
         }
         PotionGames plugin = PotionGames.getInstance();
         if (plugin != null && plugin.getConfig().contains(path)) {
@@ -120,24 +120,24 @@ public class LobbyConfig {
 
     private int getLobbyInt(String key, String lobbySettingsPath, String lobbyRootPath, int defaultValue) {
         String settingsKey = lobbySettingsPath + "." + key;
-        if (arenadata.contains(settingsKey)) {
-            return arenadata.getInt(settingsKey);
+        if (lobbies.contains(settingsKey)) {
+            return lobbies.getInt(settingsKey);
         }
         String legacyKey = lobbyRootPath + "." + key;
-        if (arenadata.contains(legacyKey)) {
-            return arenadata.getInt(legacyKey);
+        if (lobbies.contains(legacyKey)) {
+            return lobbies.getInt(legacyKey);
         }
         return defaultValue;
     }
 
     private boolean getLobbyBoolean(String key, String lobbySettingsPath, String lobbyRootPath, boolean defaultValue) {
         String settingsKey = lobbySettingsPath + "." + key;
-        if (arenadata.contains(settingsKey)) {
-            return arenadata.getBoolean(settingsKey);
+        if (lobbies.contains(settingsKey)) {
+            return lobbies.getBoolean(settingsKey);
         }
         String legacyKey = lobbyRootPath + "." + key;
-        if (arenadata.contains(legacyKey)) {
-            return arenadata.getBoolean(legacyKey);
+        if (lobbies.contains(legacyKey)) {
+            return lobbies.getBoolean(legacyKey);
         }
         return defaultValue;
     }
@@ -195,46 +195,46 @@ public class LobbyConfig {
     
     public void setCountdown(int countdown) {
         this.countdown = countdown;
-        arenadata.set("pg.lobbies." + lobbyId + ".countdown", countdown);
+        lobbies.set("pg.lobbies." + lobbyId + ".countdown", countdown);
     }
     
     public void setMaxPlayers(int maxPlayers) {
         this.maxPlayers = maxPlayers;
-        arenadata.set("pg.lobbies." + lobbyId + ".maxPlayers", maxPlayers);
+        lobbies.set("pg.lobbies." + lobbyId + ".maxPlayers", maxPlayers);
     }
     
     public void setMinPlayers(int minPlayers) {
         this.minPlayers = minPlayers;
-        arenadata.set("pg.lobbies." + lobbyId + ".minPlayers", minPlayers);
+        lobbies.set("pg.lobbies." + lobbyId + ".minPlayers", minPlayers);
     }
     
     public void setTeamSize(int teamSize) {
         this.teamSize = teamSize;
-        arenadata.set("pg.lobbies." + lobbyId + ".teamSize", teamSize);
+        lobbies.set("pg.lobbies." + lobbyId + ".teamSize", teamSize);
     }
     
     public void setRoundTime(int roundTime) {
         this.roundTime = roundTime;
-        arenadata.set("pg.lobbies." + lobbyId + ".roundTime", roundTime);
+        lobbies.set("pg.lobbies." + lobbyId + ".roundTime", roundTime);
     }
     
     public void setActivateTeams(boolean activate) {
         this.activateTeams = activate;
-        arenadata.set("pg.lobbies." + lobbyId + ".activateTeams", activate);
+        lobbies.set("pg.lobbies." + lobbyId + ".activateTeams", activate);
     }
     
     public void setActivateKits(boolean activate) {
         this.activateKits = activate;
-        arenadata.set("pg.lobbies." + lobbyId + ".activateKits", activate);
+        lobbies.set("pg.lobbies." + lobbyId + ".activateKits", activate);
     }
     
     public void setActivateShop(boolean activate) {
         this.activateShop = activate;
-        arenadata.set("pg.lobbies." + lobbyId + ".activateShop", activate);
+        lobbies.set("pg.lobbies." + lobbyId + ".activateShop", activate);
     }
     
     public void setActivateAirdrops(boolean activate) {
         this.activateAirdrops = activate;
-        arenadata.set("pg.lobbies." + lobbyId + ".activateAirdrops", activate);
+        lobbies.set("pg.lobbies." + lobbyId + ".activateAirdrops", activate);
     }
 }

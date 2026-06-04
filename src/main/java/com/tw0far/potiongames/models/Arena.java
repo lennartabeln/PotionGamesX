@@ -87,10 +87,10 @@ public class Arena {
      */
     private void loadSpawns() {
         String spawnPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".spawns";
-        if (Settings.arenadata.contains(spawnPath)) {
-            for (String key : Settings.arenadata.getConfigurationSection(spawnPath).getKeys(false)) {
+        if (Settings.lobbies.contains(spawnPath)) {
+            for (String key : Settings.lobbies.getConfigurationSection(spawnPath).getKeys(false)) {
                 try {
-                    Location spawn = Settings.arenadata.getLocation(spawnPath + "." + key);
+                    Location spawn = Settings.lobbies.getLocation(spawnPath + "." + key);
                     if (spawn != null) {
                         spawns.add(spawn);
                     }
@@ -106,10 +106,10 @@ public class Arena {
      */
     private void loadDeathmatchSpawns() {
         String deathmatchPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".deathmatch";
-        if (Settings.arenadata.contains(deathmatchPath)) {
-            for (String key : Settings.arenadata.getConfigurationSection(deathmatchPath).getKeys(false)) {
+        if (Settings.lobbies.contains(deathmatchPath)) {
+            for (String key : Settings.lobbies.getConfigurationSection(deathmatchPath).getKeys(false)) {
                 try {
-                    Location spawn = Settings.arenadata.getLocation(deathmatchPath + "." + key);
+                    Location spawn = Settings.lobbies.getLocation(deathmatchPath + "." + key);
                     if (spawn != null) {
                         deathmatchSpawns.add(spawn);
                     }
@@ -125,17 +125,17 @@ public class Arena {
      */
     private void loadChests() {
         String chestPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".chests";
-        if (Settings.arenadata.contains(chestPath)) {
-            for (String key : Settings.arenadata.getConfigurationSection(chestPath).getKeys(false)) {
+        if (Settings.lobbies.contains(chestPath)) {
+            for (String key : Settings.lobbies.getConfigurationSection(chestPath).getKeys(false)) {
                 try {
-                    Location chestLoc = Settings.arenadata.getLocation(chestPath + "." + key + ".location");
+                    Location chestLoc = Settings.lobbies.getLocation(chestPath + "." + key + ".location");
                     if (chestLoc != null) {
                         chestLocations.add(chestLoc);
                         
                         // Load loot items if defined
                         String lootPath = chestPath + "." + key + ".items";
-                        if (Settings.arenadata.contains(lootPath)) {
-                            List<?> items = Settings.arenadata.getList(lootPath);
+                        if (Settings.lobbies.contains(lootPath)) {
+                            List<?> items = Settings.lobbies.getList(lootPath);
                             if (items != null && !items.isEmpty()) {
                                 ItemStack[] loot = items.toArray(new ItemStack[0]);
                                 chestLoot.put(chestLoc, loot);
@@ -153,9 +153,9 @@ public class Arena {
      * Add this arena to configuration file.
      */
     public boolean add() {
-        Settings.arenadata.createSection("pg.lobbies." + lobbyId + ".arenas." + name);
+        Settings.lobbies.createSection("pg.lobbies." + lobbyId + ".arenas." + name);
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -167,9 +167,9 @@ public class Arena {
      * Remove this arena from configuration file.
      */
     public boolean remove() {
-        Settings.arenadata.set("pg.lobbies." + lobbyId + ".arenas." + name, null);
+        Settings.lobbies.set("pg.lobbies." + lobbyId + ".arenas." + name, null);
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -226,11 +226,11 @@ public class Arena {
         
         int nextId = spawns.size();
         String spawnPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".spawns." + nextId;
-        Settings.arenadata.set(spawnPath, spawn);
+        Settings.lobbies.set(spawnPath, spawn);
         spawns.add(spawn);
         
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -252,11 +252,11 @@ public class Arena {
         }
         
         String spawnPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".spawns." + spawnId;
-        Settings.arenadata.set(spawnPath, spawn);
+        Settings.lobbies.set(spawnPath, spawn);
         spawns.add(spawn);
         
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -277,11 +277,11 @@ public class Arena {
         }
         
         String spawnPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".spawns." + spawnId;
-        Settings.arenadata.set(spawnPath, null);
+        Settings.lobbies.set(spawnPath, null);
         
         try {
             spawns.remove(spawnId);
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -323,11 +323,11 @@ public class Arena {
         
         int nextId = deathmatchSpawns.size();
         String spawnPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".deathmatch." + nextId;
-        Settings.arenadata.set(spawnPath, spawn);
+        Settings.lobbies.set(spawnPath, spawn);
         deathmatchSpawns.add(spawn);
         
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -349,11 +349,11 @@ public class Arena {
         }
         
         String spawnPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".deathmatch." + spawnId;
-        Settings.arenadata.set(spawnPath, spawn);
+        Settings.lobbies.set(spawnPath, spawn);
         deathmatchSpawns.add(spawn);
         
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -374,11 +374,11 @@ public class Arena {
         }
         
         String spawnPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".deathmatch." + spawnId;
-        Settings.arenadata.set(spawnPath, null);
+        Settings.lobbies.set(spawnPath, null);
         
         try {
             deathmatchSpawns.remove(spawnId);
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -440,9 +440,9 @@ public class Arena {
         int chestId = chestLocations.size();
         String chestPath = "pg.lobbies." + lobbyId + ".arenas." + name + ".chests." + chestId;
         
-        Settings.arenadata.set(chestPath + ".location", location);
+        Settings.lobbies.set(chestPath + ".location", location);
         if (items != null && items.length > 0) {
-            Settings.arenadata.set(chestPath + ".items", items);
+            Settings.lobbies.set(chestPath + ".items", items);
         }
         
         chestLocations.add(location);
@@ -451,7 +451,7 @@ public class Arena {
         }
         
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());

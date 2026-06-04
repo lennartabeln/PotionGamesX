@@ -41,7 +41,7 @@ public class JoinCommand implements ICommand {
         if (args.length > 0) {
             try {
                 int lobbyId = Integer.parseInt(args[0]);
-                if (Settings.arenadata.contains("pg.lobbies." + lobbyId)) {
+                if (Settings.lobbies.contains("pg.lobbies." + lobbyId)) {
                     if (plugin.getGame().getLobbies().size() > 0) {
                         Lobby lobby = plugin.getGame().getLobby(lobbyId);
                         lobby.join(player);

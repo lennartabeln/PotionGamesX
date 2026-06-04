@@ -134,9 +134,9 @@ public class Lobby {
 
     public boolean enable() {
         enabled = !enabled;
-        Settings.arenadata.set("pg.lobbies." + id + ".enabled", enabled);
+        Settings.lobbies.set("pg.lobbies." + id + ".enabled", enabled);
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -161,23 +161,23 @@ public class Lobby {
             countdown = lobbyConfig.getCountdown();
         } else {
             // Fallback loading directly from arena-data.yml when no LobbyConfig is provided.
-            activateTeams = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateTeams");
-            activateKits = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateKits");
-            activateShop = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateShop");
-            activateAirdrops = Settings.arenadata.getBoolean("pg.lobbies." + id + ".activateAirdrops");
-            roundTime = Settings.arenadata.getInt("pg.lobbies." + id + ".roundTime");
-            maxPlayers = Settings.arenadata.getInt("pg.lobbies." + id + ".maxPlayers");
-            minPlayers = Settings.arenadata.getInt("pg.lobbies." + id + ".minPlayers");
-            teamSize = Settings.arenadata.getInt("pg.lobbies." + id + ".teamSize");
+            activateTeams = Settings.lobbies.getBoolean("pg.lobbies." + id + ".activateTeams");
+            activateKits = Settings.lobbies.getBoolean("pg.lobbies." + id + ".activateKits");
+            activateShop = Settings.lobbies.getBoolean("pg.lobbies." + id + ".activateShop");
+            activateAirdrops = Settings.lobbies.getBoolean("pg.lobbies." + id + ".activateAirdrops");
+            roundTime = Settings.lobbies.getInt("pg.lobbies." + id + ".roundTime");
+            maxPlayers = Settings.lobbies.getInt("pg.lobbies." + id + ".maxPlayers");
+            minPlayers = Settings.lobbies.getInt("pg.lobbies." + id + ".minPlayers");
+            teamSize = Settings.lobbies.getInt("pg.lobbies." + id + ".teamSize");
         }
         
-        enabled = Settings.arenadata.getBoolean("pg.lobbies." + id + ".enabled");
-        spawn = Settings.arenadata.getLocation("pg.lobbies." + id + ".spawn");
-        joinSign = Settings.arenadata.contains("pg.lobbies." + id + ".joinSign") ? (Sign) Settings.arenadata.getLocation("pg.lobbies." + id + ".joinSign").getBlock().getState() : null;
+        enabled = Settings.lobbies.getBoolean("pg.lobbies." + id + ".enabled");
+        spawn = Settings.lobbies.getLocation("pg.lobbies." + id + ".spawn");
+        joinSign = Settings.lobbies.contains("pg.lobbies." + id + ".joinSign") ? (Sign) Settings.lobbies.getLocation("pg.lobbies." + id + ".joinSign").getBlock().getState() : null;
         updateJoinSign();
 
-        if (Settings.arenadata.contains("pg.lobbies." + id + ".arenas")) {
-            for (String key : Settings.arenadata.getConfigurationSection("pg.lobbies." + id + ".arenas").getKeys(false)) {
+        if (Settings.lobbies.contains("pg.lobbies." + id + ".arenas")) {
+            for (String key : Settings.lobbies.getConfigurationSection("pg.lobbies." + id + ".arenas").getKeys(false)) {
                 Arena arena = new Arena(key, id, lobbyConfig);
                 arena.load();
                 arenas.add(arena);
@@ -187,18 +187,18 @@ public class Lobby {
 
     public boolean add(Location spawn) {
         this.spawn = spawn;
-        Settings.arenadata.set("pg.lobbies." + id + ".enabled", enabled);
-        Settings.arenadata.set("pg.lobbies." + id + ".spawn", spawn);
-        Settings.arenadata.set("pg.lobbies." + id + ".activateTeams", activateTeams);
-        Settings.arenadata.set("pg.lobbies." + id + ".activateKits", activateKits);
-        Settings.arenadata.set("pg.lobbies." + id + ".activateShop", activateShop);
-        Settings.arenadata.set("pg.lobbies." + id + ".activateAirdrops", activateAirdrops);
-        Settings.arenadata.set("pg.lobbies." + id + ".roundTime", roundTime);
-        Settings.arenadata.set("pg.lobbies." + id + ".maxPlayers", maxPlayers);
-        Settings.arenadata.set("pg.lobbies." + id + ".minPlayers", minPlayers);
-        Settings.arenadata.set("pg.lobbies." + id + ".teamSize", teamSize);
+        Settings.lobbies.set("pg.lobbies." + id + ".enabled", enabled);
+        Settings.lobbies.set("pg.lobbies." + id + ".spawn", spawn);
+        Settings.lobbies.set("pg.lobbies." + id + ".activateTeams", activateTeams);
+        Settings.lobbies.set("pg.lobbies." + id + ".activateKits", activateKits);
+        Settings.lobbies.set("pg.lobbies." + id + ".activateShop", activateShop);
+        Settings.lobbies.set("pg.lobbies." + id + ".activateAirdrops", activateAirdrops);
+        Settings.lobbies.set("pg.lobbies." + id + ".roundTime", roundTime);
+        Settings.lobbies.set("pg.lobbies." + id + ".maxPlayers", maxPlayers);
+        Settings.lobbies.set("pg.lobbies." + id + ".minPlayers", minPlayers);
+        Settings.lobbies.set("pg.lobbies." + id + ".teamSize", teamSize);
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -207,9 +207,9 @@ public class Lobby {
     }
 
     public boolean remove() {
-        Settings.arenadata.set("pg.lobbies." + id, null);
+        Settings.lobbies.set("pg.lobbies." + id, null);
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
             Bukkit.getConsoleSender().sendMessage(ex.getMessage());
@@ -377,9 +377,9 @@ public class Lobby {
     public boolean setJoinSign(Location loc) {
         BlockState b = loc.getBlock().getState();
         joinSign = (Sign) b;
-        Settings.arenadata.set("pg.lobbies." + id + ".joinSign", loc);
+        Settings.lobbies.set("pg.lobbies." + id + ".joinSign", loc);
         try {
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.lobbies.save(Settings.lobbiesFile);
             updateJoinSign();
             return true;
         } catch (Exception ex) {

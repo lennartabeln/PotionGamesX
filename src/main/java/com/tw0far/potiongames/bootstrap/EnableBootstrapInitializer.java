@@ -102,7 +102,7 @@ public final class EnableBootstrapInitializer {
         }
 
         try {
-            Settings.messages.save(Settings.messagesfile);
+            Settings.messages.save(Settings.messagesFile);
         } catch (IOException ex) {
             sendError(context, ex);
         }
@@ -133,8 +133,8 @@ public final class EnableBootstrapInitializer {
         }
 
         try {
-            Settings.shopdata.save(Settings.shopdatafile);
-            Settings.arenadata.save(Settings.arenadatafile);
+            Settings.shopdata.save(Settings.shopFile);
+            Settings.lobbies.save(Settings.lobbiesFile);
         } catch (IOException ex) {
             sendError(context, ex);
         }
@@ -160,7 +160,7 @@ public final class EnableBootstrapInitializer {
         }
 
         try {
-            Settings.kitdata.save(Settings.kitdatafile);
+            Settings.kitdata.save(Settings.kitsFile);
         } catch (IOException ex) {
             sendError(context, ex);
         }
@@ -199,7 +199,7 @@ public final class EnableBootstrapInitializer {
         }
 
         for (int lobby = 1; lobby <= 27; lobby++) {
-            if (!Settings.arenadata.contains("pg.lobbies." + lobby)) {
+            if (!Settings.lobbies.contains("pg.lobbies." + lobby)) {
                 continue;
             }
 
@@ -247,8 +247,8 @@ public final class EnableBootstrapInitializer {
                 temp.put(context.getChatmessages().get(42), 0);
                 for (int max = 1; max < 27; max++) {
                     String arenaPath = "pg.lobbies." + s + "." + max + ".name";
-                    if (Settings.arenadata.contains(arenaPath)) {
-                        String arenaName = Settings.arenadata.getString(arenaPath);
+                    if (Settings.lobbies.contains(arenaPath)) {
+                        String arenaName = Settings.lobbies.getString(arenaPath);
                         temp.put(arenaName, 0);
                         context.getLobbyvoteplayernamesdata().put(null, arenaName);
                     }
@@ -289,18 +289,18 @@ public final class EnableBootstrapInitializer {
 
     private <T> void syncLobbyConfig(EnableBootstrapContext context, String lobbyId, String key, T defaultValue, Consumer<T> setter) {
         String path = "pg.lobbies." + lobbyId + "." + key;
-        if (Settings.arenadata.get(path) == null) {
-            Settings.arenadata.addDefault(path, defaultValue);
-            Settings.arenadata.options().copyDefaults(true);
+        if (Settings.lobbies.get(path) == null) {
+            Settings.lobbies.addDefault(path, defaultValue);
+            Settings.lobbies.options().copyDefaults(true);
             try {
-                Settings.arenadata.save(Settings.arenadatafile);
+                Settings.lobbies.save(Settings.lobbiesFile);
             } catch (IOException ex) {
                 sendError(context, ex);
             }
             return;
         }
         @SuppressWarnings("unchecked")
-        T value = (T) Settings.arenadata.get(path);
+        T value = (T) Settings.lobbies.get(path);
         setter.accept(value);
     }
 

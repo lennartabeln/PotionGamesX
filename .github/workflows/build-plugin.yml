@@ -2,7 +2,7 @@ name: Build and Release Minecraft Plugin
 
 on:
   release:
-    types: [created]
+    types: [published, created]
 
 jobs:
   build:
@@ -21,18 +21,43 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Determine Version
+      id: get_version
+      run: |
+        # Use tag name if available, otherwise fallback to plugin.yml
+        TAG_VERSION="${{ github.event.release.tag_name }}"
+        if [ -z "$TAG_VERSION" ]; then
+          TAG_VERSION=$(grep '^version:' src/main/resources/plugin.yml | cut -d ':' -f 2 | tr -d ' ')
+        fi
+        # Remove 'v' prefix if present for Maven versioning
+        MAVEN_VERSION=$(echo "$TAG_VERSION" | sed 's/^v//')
+        echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+        echo "maven_version=$MAVEN_VERSION" >> $GITHUB_OUTPUT
+        echo "VERSION determined: $TAG_VERSION"
+        echo "MAVEN_VERSION determined: $MAVEN_VERSION"
+
+    - name: Update Versions (plugin.yml and pom.xml)
+      run: |
+        # Sync plugin.yml version
+        sed -i "s/^version: .*/version: ${{ steps.get_version.outputs.version }}/" src/main/resources/plugin.yml
+        # Sync pom.xml version
+        mvn versions:set -DnewVersion=${{ steps.get_version.outputs.maven_version }} -DgenerateBackupPoms=false
+
     - name: Build with Maven
       run: mvn clean package
 
-    - name: Rename JAR with Tag Version
+    - name: Rename JAR with Version
       run: |
         cd target
-        JAR_FILE=$(ls *.jar | head -n 1)
-        mv "$JAR_FILE" "PotionGamesX-${{ github.event.release.tag_name }}.jar"
+        # Find the main JAR file (excluding 'original' JARs created by some plugins)
+        JAR_FILE=$(ls *.jar | grep -v "original-" | head -n 1)
+        mv "$JAR_FILE" "PotionGamesX-${{ steps.get_version.outputs.version }}.jar"
 
     - name: Upload Binaries to Release
       uses: softprops/action-gh-release@v2
       with:
-        files: target/PotionGamesX-${{ github.event.release.tag_name }}.jar
+        name: "PotionGamesX-${{ steps.get_version.outputs.version }}"
+        files: target/PotionGamesX-${{ steps.get_version.outputs.version }}.jar
+        prerelease: ${{ github.event.release.prerelease }}
       env:
         GITHUB_TOKEN: ${{ github.token }}
