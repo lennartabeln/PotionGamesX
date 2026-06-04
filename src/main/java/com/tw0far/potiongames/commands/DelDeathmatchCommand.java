@@ -27,7 +27,7 @@ public class DelDeathmatchCommand implements ICommand {
     
     @Override
     public boolean requiresGameServer() {
-        return true;
+        return false;
     }
     
     @Override

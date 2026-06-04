@@ -26,7 +26,7 @@ public class HeadP1Command implements ICommand {
     
     @Override
     public boolean requiresGameServer() {
-        return true;
+        return false;
     }
     
     @Override

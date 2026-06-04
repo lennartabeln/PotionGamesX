@@ -35,7 +35,7 @@ public class ListCommand implements ICommand {
     
     @Override
     public boolean requiresGameServer() {
-        return false;
+        return true;
     }
     
     @Override

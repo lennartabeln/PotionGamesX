@@ -45,7 +45,7 @@ public class ConfigurationManager implements IConfigurationManager {
     private boolean compassOnSpawn = false;
     private boolean allowOutsideChat = false;
     private boolean changeGamerules = true;
-    private boolean gameServer = true;
+    private boolean gameServer = false;
     private boolean mysql = false;
     private boolean deathmatch = false;
     private boolean joinable = true;
