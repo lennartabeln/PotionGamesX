@@ -5,18 +5,18 @@ import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
 /**
- * /pg setlobby [lobbynumber] - Set/create a lobby
+ * /pg addlobby [lobbynumber] - Add a lobby (Multi-Lobby only)
  */
-public class SetLobbyCommand implements ICommand {
+public class AddLobbyCommand implements ICommand {
     private final PotionGames plugin;
     
-    public SetLobbyCommand(PotionGames plugin) {
+    public AddLobbyCommand(PotionGames plugin) {
         this.plugin = plugin;
     }
     
     @Override
     public String getName() {
-        return "setlobby";
+        return "addlobby";
     }
     
     @Override
@@ -32,7 +32,7 @@ public class SetLobbyCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(Messages.raw("command.setlobby.usage", "Usage: /pg setlobby <lobbynumber>"));
+            player.sendMessage(Messages.raw("command.addlobby.usage", "Usage: /pg addlobby <lobbynumber>"));
             return false;
         }
         try {
@@ -40,13 +40,13 @@ public class SetLobbyCommand implements ICommand {
             plugin.getSetupHandler().addLobby(player, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.raw("command.setlobby.usage", "Usage: /pg setlobby <lobbynumber>"));
+            player.sendMessage(Messages.raw("command.addlobby.usage", "Usage: /pg addlobby <lobbynumber>"));
             return false;
         }
     }
     
     @Override
     public String getUsage() {
-        return Messages.raw("command.setlobby.usage", "/pg setlobby <lobbynumber>");
+        return Messages.raw("command.addlobby.usage", "/pg addlobby <lobbynumber>");
     }
 }

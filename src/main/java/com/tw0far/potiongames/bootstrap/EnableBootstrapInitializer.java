@@ -25,13 +25,70 @@ public final class EnableBootstrapInitializer {
 
     public void initialize(EnableBootstrapContext context) {
         loadGlobalConfig(context);
-        syncMessages(context);
         syncShop(context);
         syncKits(context);
         configureMysql(context);
         plugin.getDatabaseManager().connect();
-        configureCoin(context.getCoin(), context.getChatmessages());
+        configureCoin(context.getCoin());
         initializeLobbies(context);
+    }
+
+    private void syncShop(EnableBootstrapContext context) {
+        int shopitem = 1;
+        for (int i = 0; i < context.getShop().size(); i++) {
+            String potionPath = "pg.potions." + shopitem;
+            if (Settings.shopdata.get(potionPath) == null) {
+                Settings.shopdata.addDefault(potionPath, context.getShop().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".name", context.getShop().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".shoppotion", context.getShoppotion().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".shoppotiontype", context.getShoppotiontype().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".kit", context.getShopkit().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".cost", context.getShopcost().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".sale", context.getShopsale().get(shopitem - 1));
+                Settings.shopdata.options().copyDefaults(true);
+            } else {
+                context.getShop().set(shopitem - 1, Settings.shopdata.getString(potionPath + ".name"));
+                context.getShoppotion().set(shopitem - 1, (PotionEffect) Settings.shopdata.get(potionPath + ".shoppotion"));
+                context.getShoppotiontype().set(shopitem - 1, (ItemStack) Settings.shopdata.get(potionPath + ".shoppotiontype"));
+                context.getShopkit().set(shopitem - 1, Settings.shopdata.getString(potionPath + ".kit"));
+                context.getShopcost().set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".cost"));
+                context.getShopsale().set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".sale"));
+            }
+            shopitem++;
+        }
+
+        try {
+            Settings.shopdata.save(Settings.shopFile);
+            Settings.lobbies.save(Settings.lobbiesFile);
+        } catch (IOException ex) {
+            sendError(context, ex);
+        }
+    }
+
+    private void syncKits(EnableBootstrapContext context) {
+        context.getKitplayers().put(Messages.RandomText(), 0);
+        for (String all : context.getKits()) {
+            context.getKitplayers().put(all, 0);
+        }
+
+        int kititem = 1;
+        for (int i = 0; i < context.getKits().size(); i++) {
+            String kitPath = "pg.kits." + kititem;
+            if (Settings.kitdata.get(kitPath) == null) {
+                Settings.kitdata.addDefault(kitPath, context.getKits().get(kititem - 1));
+                Settings.kitdata.addDefault(kitPath + ".name", context.getKits().get(kititem - 1));
+                Settings.kitdata.options().copyDefaults(true);
+            } else {
+                context.getKits().set(kititem - 1, Settings.kitdata.getString(kitPath + ".name"));
+            }
+            kititem++;
+        }
+
+        try {
+            Settings.kitdata.save(Settings.kitsFile);
+        } catch (IOException ex) {
+            sendError(context, ex);
+        }
     }
 
     private void loadGlobalConfig(EnableBootstrapContext context) {
@@ -88,82 +145,11 @@ public final class EnableBootstrapInitializer {
         return getter.apply(path);
     }
 
-    private void syncMessages(EnableBootstrapContext context) {
-        int message = 1;
-        for (int i = 0; i < context.getChatmessages().size(); i++) {
-            String path = "pg.messages." + context.getLanguage() + "." + message;
-            if (Settings.messages.get(path) == null) {
-                Settings.messages.addDefault(path, context.getChatmessages().get(message - 1));
-                Settings.messages.options().copyDefaults(true);
-            } else {
-                context.getChatmessages().set(message - 1, Settings.messages.getString(path));
-            }
-            message++;
-        }
-
-        try {
-            Settings.messages.save(Settings.messagesFile);
-        } catch (IOException ex) {
-            sendError(context, ex);
-        }
-    }
-
-    private void syncShop(EnableBootstrapContext context) {
-        int shopitem = 1;
-        for (int i = 0; i < context.getShop().size(); i++) {
-            String potionPath = "pg.potions." + shopitem;
-            if (Settings.shopdata.get(potionPath) == null) {
-                Settings.shopdata.addDefault(potionPath, context.getShop().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".name", context.getShop().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".shoppotion", context.getShoppotion().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".shoppotiontype", context.getShoppotiontype().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".kit", context.getShopkit().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".cost", context.getShopcost().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".sale", context.getShopsale().get(shopitem - 1));
-                Settings.shopdata.options().copyDefaults(true);
-            } else {
-                context.getShop().set(shopitem - 1, Settings.shopdata.getString(potionPath + ".name"));
-                context.getShoppotion().set(shopitem - 1, (PotionEffect) Settings.shopdata.get(potionPath + ".shoppotion"));
-                context.getShoppotiontype().set(shopitem - 1, (ItemStack) Settings.shopdata.get(potionPath + ".shoppotiontype"));
-                context.getShopkit().set(shopitem - 1, Settings.shopdata.getString(potionPath + ".kit"));
-                context.getShopcost().set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".cost"));
-                context.getShopsale().set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".sale"));
-            }
-            shopitem++;
-        }
-
-        try {
-            Settings.shopdata.save(Settings.shopFile);
-            Settings.lobbies.save(Settings.lobbiesFile);
-        } catch (IOException ex) {
-            sendError(context, ex);
-        }
-    }
-
-    private void syncKits(EnableBootstrapContext context) {
-        context.getKitplayers().put(context.getChatmessages().get(42), 0);
-        for (String all : context.getKits()) {
-            context.getKitplayers().put(all, 0);
-        }
-
-        int kititem = 1;
-        for (int i = 0; i < context.getKits().size(); i++) {
-            String kitPath = "pg.kits." + kititem;
-            if (Settings.kitdata.get(kitPath) == null) {
-                Settings.kitdata.addDefault(kitPath, context.getKits().get(kititem - 1));
-                Settings.kitdata.addDefault(kitPath + ".name", context.getKits().get(kititem - 1));
-                Settings.kitdata.options().copyDefaults(true);
-            } else {
-                context.getKits().set(kititem - 1, Settings.kitdata.getString(kitPath + ".name"));
-            }
-            kititem++;
-        }
-
-        try {
-            Settings.kitdata.save(Settings.kitsFile);
-        } catch (IOException ex) {
-            sendError(context, ex);
-        }
+    private void configureCoin(ItemStack coin) {
+        ItemMeta coinmeta = coin.getItemMeta();
+        assert coinmeta != null;
+        coinmeta.displayName(Messages.CoinSingle());
+        coin.setItemMeta(coinmeta);
     }
 
     private void configureMysql(EnableBootstrapContext context) {
@@ -183,13 +169,6 @@ public final class EnableBootstrapInitializer {
             context.setUser(config.getString("pg.mysql.user"));
             context.setPassword(config.getString("pg.mysql.password"));
         }
-    }
-
-    private void configureCoin(ItemStack coin, java.util.List<String> chatmessages) {
-        ItemMeta coinmeta = coin.getItemMeta();
-        assert coinmeta != null;
-        coinmeta.displayName(Messages.CoinSingle());
-        coin.setItemMeta(coinmeta);
     }
 
     private void initializeLobbies(EnableBootstrapContext context) {
@@ -244,7 +223,7 @@ public final class EnableBootstrapInitializer {
             if (!context.getLobbyVoteallowed().get(s)) {
                 context.getLobbyVoteallowed().replace(s, true);
                 HashMap<String, Integer> temp = new HashMap<>();
-                temp.put(context.getChatmessages().get(42), 0);
+                temp.put(Messages.RandomText(), 0);
                 for (int max = 1; max < 27; max++) {
                     String arenaPath = "pg.lobbies." + s + "." + max + ".name";
                     if (Settings.lobbies.contains(arenaPath)) {
@@ -270,7 +249,7 @@ public final class EnableBootstrapInitializer {
 
             if (!context.getLobbyKitallowed().get(s)) {
                 context.getLobbyKitallowed().replace(s, true);
-                context.getKitplayers().put(context.getChatmessages().get(42), 0);
+                context.getKitplayers().put(Messages.RandomText(), 0);
                 for (String all : context.getKits()) {
                     context.getKitplayers().put(all, 0);
                 }

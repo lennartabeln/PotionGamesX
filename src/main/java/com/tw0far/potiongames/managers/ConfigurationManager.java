@@ -420,10 +420,10 @@ public class ConfigurationManager implements IConfigurationManager {
     public void setAddarena(boolean addarena) { this.addarena = addarena; }
     
     @Override
-    public void setDellobby(boolean dellobby) { this.dellobby = dellobby; }
+    public void setRemoveLobby(boolean removeLobby) { this.dellobby = removeLobby; }
     
     @Override
-    public void setDelarena(boolean delarena) { this.delarena = delarena; }
+    public void setRemoveArena(boolean removeArena) { this.delarena = removeArena; }
     
     @Override
     public void setReload(boolean reload) { this.reload = reload; }

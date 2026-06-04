@@ -118,6 +118,15 @@ public class Game {
         }
     }
 
+    public boolean autoJoinLobby(Player player) {
+        if (lobbies.isEmpty()) {
+            return false;
+        }
+        Lobby lobby = lobbies.get(0);
+        lobby.addActivePlayer(player);
+        return true;
+    }
+    
     public void registerPlayer(Player player, Lobby lobby) {
         if (player == null || lobby == null) {
             return;

@@ -13,7 +13,6 @@ import java.util.HashMap;
 import com.tw0far.potiongames.models.GameStates;
 
 public final class EnableBootstrapContext {
-    private final ArrayList<String> chatmessages;
     private final ArrayList<String> shop;
     private final ArrayList<PotionEffect> shoppotion;
     private final ArrayList<ItemStack> shoppotiontype;
@@ -98,9 +97,8 @@ public final class EnableBootstrapContext {
     private String user;
     private String password;
 
-    // Original constructor kept for binary compatibility
     public EnableBootstrapContext(
-            ArrayList<String> chatmessages, ArrayList<String> shop, ArrayList<PotionEffect> shoppotion,
+            ArrayList<String> shop, ArrayList<PotionEffect> shoppotion,
             ArrayList<ItemStack> shoppotiontype, ArrayList<String> shopkit, ArrayList<Integer> shopcost,
             ArrayList<Integer> shopsale, ArrayList<String> kits, HashMap<String, Integer> kitplayers,
             HashMap<String, Boolean> lobbyCheckArenas, HashMap<String, Boolean> lobbyActivateTeams,
@@ -133,7 +131,6 @@ public final class EnableBootstrapContext {
             boolean enableRewards, boolean broadcastStarting, int winningReward, int killReward, String language,
             String host, String port, String database, String user, String password
     ) {
-        this.chatmessages = chatmessages;
         this.shop = shop;
         this.shoppotion = shoppotion;
         this.shoppotiontype = shoppotiontype;
@@ -218,7 +215,6 @@ public final class EnableBootstrapContext {
     }
 
     // Getters for collections - return the mutable collections so the initializer can populate them
-    public ArrayList<String> getChatmessages() { return chatmessages; }
     public ArrayList<String> getShop() { return shop; }
     public ArrayList<PotionEffect> getShoppotion() { return shoppotion; }
     public ArrayList<ItemStack> getShoppotiontype() { return shoppotiontype; }

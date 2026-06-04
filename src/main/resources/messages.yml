@@ -83,7 +83,7 @@ en_US:
       setup: "/pg setup - Set up plugin"
       setup_usage: "/pg setup - Start setup mode (requires pg.setup)"
       addlobby: "/pg addlobby [lobbynumber] - Add a lobby"
-      removelobby: "/pg removelobby [lobbynumber] - Remove a lobby"
+      dellobby: "/pg dellobby [lobbynumber] - Remove a lobby"
       addarena: "/pg addarena [lobbynumber] [arenaname] - Add an arena"
       addarena_usage: "/pg addarena <lobbynumber> <arenaname>"
       addspawn: "/pg addspawn [lobbynumber] [arenaname] - Add a spawn"

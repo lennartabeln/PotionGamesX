@@ -39,7 +39,7 @@ public class HelpCommand implements ICommand {
         if (player.hasPermission("pg.setup")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.setup", "/pg setup - Set up plugin")).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.addlobby", "/pg addlobby [lobbynumber] - Add a lobby")).color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.removelobby", "/pg removelobby [lobbynumber] - Remove a lobby")).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.dellobby", "/pg dellobby [lobbynumber] - Remove a lobby")).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.addarena", "/pg addarena [lobbynumber] [arenaname] - Add an arena")).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.addspawn", "/pg addspawn [lobbynumber] [arenaname] - Add a spawn")).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.adddeathmatch", "/pg adddeathmatch [lobbynumber] [arenaname] - Add a deathmatch spawn")).color(NamedTextColor.GRAY)));

@@ -50,7 +50,7 @@ public final class BootstrapInitializer {
         Settings.loadSettings(plugin);
         plugin.getGame().load();
 
-        seedChatMessages();
+        Messages.seed();
         seedShopData();
         seedKitData();
     }
@@ -62,135 +62,6 @@ public final class BootstrapInitializer {
             } catch (IOException e) {
                 Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": Could not create " + name + " - " + e.getMessage()).color(NamedTextColor.RED)));
             }
-        }
-    }
-
-    private void seedChatMessages() {
-        // Build a mutable list of default chat messages, then replace plugin list via API
-        java.util.List<String> mutableChat = new java.util.ArrayList<>(plugin.getChatmessages());
-        Collections.addAll(mutableChat,
-                "Waiting for players!",
-                "The game starts in",
-                "Player-Finder",
-                "The game starts now!",
-                "has won the game!",
-                "Teleporting to lobby in",
-                "Teleporting to lobby now!",
-                "will be played!",
-                "Dead",
-                "was killed by",
-                "died",
-                "I'm on fire!",
-                "Blocks away from next player",
-                "No player found!",
-                "Arena-Selector",
-                "Votes",
-                "You have voted for",
-                "in spectator mode",
-                "could not be teleported to the lobby!",
-                "The game has already started!",
-                "The game has been started!",
-                "Not enough players to start the game!",
-                "Pause",
-                "Build",
-                "Lobby successfully set!",
-                "Server stopped!",
-                "has been forced as arena!",
-                "is not an arena!",
-                "successfully removed!",
-                "successfully set!",
-                "Successfully joined lobby",
-                "is not a valid spawn!",
-                "Successfully left lobby",
-                "Place",
-                "Head successfully set!",
-                "Sign successfully set!",
-                "Connection to database established!",
-                "Connection to database failed! For more information see console.",
-                "Connection to database closed!",
-                "Failed to close connection to database! For more information see console.",
-                "Plugin started successfully!",
-                "Plugin stopped successfully!",
-                "Random",
-                "Team-Selector",
-                "Players",
-                "You are now in team",
-                "You now have the kit",
-                "This team is already full!",
-                "Update-Checker-Error",
-                "Shop",
-                "Duration",
-                "Price",
-                "Coins",
-                "You not have enough Coins!",
-                "You not have an empty bottle!",
-                "Coin",
-                "Stats",
-                "Won",
-                "Lost",
-                "Kills",
-                "Deaths",
-                "K/D",
-                "Kit-Selector",
-                "File loading / saving fail! For more information see console.",
-                "Commands",
-                "Rounds",
-                "Lobby successfully removed!",
-                "seconds remaining to end this round!",
-                "Nobody won this round!",
-                "Type lobby number in chat to add it!",
-                "Type arena name in chat to add it!",
-                "Type lobby number in chat to remove it!",
-                "Type arena name in chat to remove it!",
-                "could not be teleported to a spawn!",
-                "This lobby does not exists!",
-                "Use /pg help for help!",
-                "There is not a new update available.",
-                "There is a new update available.",
-                "Plugin successfully reloaded!",
-                "Extremely explosive TNT",
-                "Leave",
-                "Teleporting to deathmatch arena in",
-                "Teleporting to deathmatch arena now!",
-                "Deathmatch is starting in",
-                "Deathmatch started!",
-                "Could not update Rank-Wall!",
-                "Please inform an admin!",
-                "Could not join lobby!",
-                "Could not teleport to arena!",
-                "Could not teleport to deathmatch arena!",
-                "Could not load an arena!",
-                "Reward",
-                "An error occurred",
-                "For winning the round you get",
-                "For killing a player you get",
-                "Lobby%s is starting! Join with /pg join%s",
-                "You have a block above you!",
-                "Airdrop is falling at your location!",
-                "Airdrop is falling at",
-                "This arena does not exists!",
-                "Lobby enabled!",
-                "Lobby disabled!");
-
-        int message = 1;
-        for (String defaultText : new java.util.ArrayList<>(mutableChat)) {
-            if (Settings.messages.get("pg.messages." + Settings.language + "." + message) == null) {
-                Settings.messages.addDefault("pg.messages." + Settings.language + "." + message, defaultText);
-                Settings.messages.options().copyDefaults(true);
-            } else {
-                String text = Settings.messages.getString("pg.messages." + Settings.language + "." + message);
-                mutableChat.set(message - 1, text);
-            }
-            message++;
-        }
-
-        // Replace the plugin's internal list with the newly built mutable list (defensive copy)
-        plugin.replaceChatmessages(mutableChat);
-
-        try {
-            Settings.messages.save(Settings.messagesFile);
-        } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
     }
 

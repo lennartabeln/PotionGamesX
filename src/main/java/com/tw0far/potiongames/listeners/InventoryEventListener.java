@@ -711,7 +711,7 @@ public class InventoryEventListener implements Listener {
                                             }
                                         }
                                         Inventory inv;
-                                        inv = Bukkit.createInventory(p, 9 * 3, Settings.prefix.append(Component.text(plugin.getChatmessages().get(49))).color(NamedTextColor.DARK_AQUA));
+                                        inv = Bukkit.createInventory(p, 9 * 3, Settings.prefix.append(Component.text(Messages.ShopText())).color(NamedTextColor.DARK_AQUA));
                                         plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
                                         var itemStateManager = plugin.getItemStateManager();
                                         ArrayList<String> shopItems = new ArrayList<>(itemStateManager.getShopItems());
@@ -731,8 +731,8 @@ public class InventoryEventListener implements Listener {
                                             randombarriermeta.displayName(Component.text(shopItems.get(shopitem - 1)));
                                             ArrayList<Component> lore = new ArrayList<>();
                                             PotionEffect shopPotion = Objects.requireNonNull(itemStateManager.getShopPotion(shopitem - 1));
-                                            lore.add(Component.text(plugin.getChatmessages().get(50) + ": " + shopPotion.getDuration() / 20));
-                                            lore.add(Component.text(plugin.getChatmessages().get(51) + ": " + coinamount + " " + plugin.getChatmessages().get(52)));
+                                            lore.add(Component.text(Messages.raw("duration.label", "Duration") + ": " + shopPotion.getDuration() / 20));
+                                            lore.add(Component.text(Messages.PriceLabel() + ": " + coinamount + " " + Messages.raw("coins.label", "Coins")));
                                             randombarriermeta.lore(lore);
                                             if (!randombarrier.setItemMeta(randombarriermeta)) {
                                                 continue;
@@ -806,7 +806,7 @@ public class InventoryEventListener implements Listener {
                                         Location loc = p.getEyeLocation().add(0, 1, 0);
                                         while (loc.getY() <= 320) {
                                             if (loc.getBlock().getType() != Material.AIR) {
-                                                p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(96)).color(NamedTextColor.RED)));
+                                                p.sendMessage(Messages.YouBlockAbove());
                                                 blocked = true;
                                                 break;
                                             }
@@ -814,9 +814,9 @@ public class InventoryEventListener implements Listener {
                                         }
                                         if (!blocked) {
                                             for (Player all : plugin.getPlayersInLobby(s)) {
-                                                all.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(98) + ": ").color(NamedTextColor.GREEN)).append(Component.text(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()).color(NamedTextColor.AQUA)));
+                                                all.sendMessage(Messages.AirdropFallingAt(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()));
                                             }
-                                            p.sendMessage(Settings.prefix.append(Component.text(plugin.getChatmessages().get(97)).color(NamedTextColor.GREEN)));
+                                            p.sendMessage(Messages.AirdropFallingHere());
                                             BlockData b = Material.DRIED_KELP_BLOCK.createBlockData();
                                             Location spawnLoc = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() + 100, p.getLocation().getZ());
                                             p.getWorld().spawn(spawnLoc, FallingBlock.class, fallingBlock -> fallingBlock.setBlockData(b));
@@ -867,9 +867,9 @@ public class InventoryEventListener implements Listener {
                                         }
                                     }
                                     if (result != null) {
-                                        p.sendActionBar(Settings.prefix.append(Component.text(plugin.getChatmessages().get(12) + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf((int) lastDistance)).color(NamedTextColor.AQUA)));
+                                        p.sendActionBar(Messages.PlayerFinderDistance((int) lastDistance));
                                     } else {
-                                        p.sendActionBar(Settings.prefix.append(Component.text(plugin.getChatmessages().get(13)).color(NamedTextColor.RED))); 
+                                        p.sendActionBar(Messages.NoPlayerFound()); 
                                     }
                                 }
                             
@@ -891,7 +891,7 @@ public class InventoryEventListener implements Listener {
                                 }
                                 randombarriermeta.displayName(Messages.RandomLabel());
                                 ArrayList<Component> randomlore = new ArrayList<>();
-                                randomlore.add(0, Component.text(plugin.getChatmessages().get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, "Random", 0))).color(NamedTextColor.AQUA)));
+                                randomlore.add(0, Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, "Random", 0))).color(NamedTextColor.AQUA)));
                                 randombarriermeta.lore(randomlore);
                                 if (!randombarrier.setItemMeta(randombarriermeta)) {
                                     return;
@@ -902,7 +902,7 @@ public class InventoryEventListener implements Listener {
                                 for (String all : plugin.getLobbyvotes().get(s).keySet()) {
                                     if (!all.matches("Random")) {
                                         ArrayList<Component> arenalore = new ArrayList<>();
-                                        arenalore.add(0, Component.text(plugin.getChatmessages().get(15) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, all, 0))).color(NamedTextColor.AQUA)));
+                                        arenalore.add(0, Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, all, 0))).color(NamedTextColor.AQUA)));
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         if (arenamapmeta == null) {
@@ -939,12 +939,12 @@ public class InventoryEventListener implements Listener {
                                 if (!randombarrier.setItemMeta(randombarriermeta)) {
                                     return;
                                 }
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.getChatmessages().get(43)).color(NamedTextColor.DARK_AQUA)));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.SelectorTeam());
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
                                 for (Integer all : plugin.getLobbiesTeamsMap(s).keySet()) {
                                     ArrayList<Component> arenalore = new ArrayList<>();
-                                    arenalore.add(0, Component.text(plugin.getChatmessages().get(44) + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.getOrDefault(plugin.getLobbiesTeamsMap(s), all, 0))).color(NamedTextColor.AQUA)));
+                                    arenalore.add(0, Component.text(Messages.raw("players.label", "Players") + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.getOrDefault(plugin.getLobbiesTeamsMap(s), all, 0))).color(NamedTextColor.AQUA)));
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     if (arenamapmeta == null) {
@@ -985,7 +985,7 @@ public class InventoryEventListener implements Listener {
                                 if (!randombarrier.setItemMeta(randombarriermeta)) {
                                     return;
                                 }
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Settings.prefix.append(Component.text(plugin.getChatmessages().get(62)).color(NamedTextColor.DARK_AQUA)));
+                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.KitSelector());
                                 inv.setItem(0, randombarrier);
                                 for (int i = 1; i <= plugin.getActiveKits(); i++) {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
@@ -1146,12 +1146,12 @@ public class InventoryEventListener implements Listener {
                         if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteLobbyLabel())) {
                             
                                 p.getInventory().clear();
-                                plugin.getConfigManager().setDellobby(true);
+                                plugin.getConfigManager().setRemoveLobby(true);
                                 p.sendMessage(Messages.TypeArenaNameAdd());
                             
                         } else if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteArenaLabel())) {
                             p.getInventory().clear();
-                            plugin.getConfigManager().setDelarena(true);
+                            plugin.getConfigManager().setRemoveArena(true);
                             p.sendMessage(Messages.TypeLobbyNumberRemove());
                         } else if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteSpawnLabel())) {
                             if (handleSetupSpawnAction(p, false)) {

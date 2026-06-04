@@ -97,7 +97,7 @@ public class ChatEventListener implements Listener {
             try {
                 int lobbyId = Integer.parseInt(input);
                 plugin.getSetupHandler().removeLobby(p, lobbyId);
-                plugin.getConfigManager().setDellobby(false);
+                plugin.getConfigManager().setRemoveLobby(false);
             } catch (NumberFormatException ex) {
                 p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
             }
@@ -117,7 +117,7 @@ public class ChatEventListener implements Listener {
             // Input is the arena name to delete
             if (selectedLobby != null) {
                 plugin.getSetupHandler().removeArena(p, input, selectedLobby);
-                plugin.getConfigManager().setDelarena(false);
+                plugin.getConfigManager().setRemoveArena(false);
             } else {
                 p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
             }

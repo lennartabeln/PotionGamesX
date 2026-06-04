@@ -101,17 +101,6 @@ public class PotionGames extends JavaPlugin {
         kitplayers.clear();
         if (map != null) kitplayers.putAll(map);
     }
-    public java.util.List<String> getChatmessages() { return java.util.Collections.unmodifiableList(chatmessages); }
-    /**
-     * Replace the plugin's chat messages with the provided list (defensive copy).
-     * Used during initialization to seed default messages without exposing a mutable view.
-     */
-    public void replaceChatmessages(java.util.List<String> messages) {
-        chatmessages.clear();
-        if (messages != null) {
-            chatmessages.addAll(messages);
-        }
-    }
     public java.util.List<String> getShop() { return java.util.Collections.unmodifiableList(shop); }
     public ArrayList<PotionEffect> getShoppotion() { return shoppotion; }
     public ArrayList<ItemStack> getShoppotiontype() { return shoppotiontype; }
@@ -782,7 +771,6 @@ public class PotionGames extends JavaPlugin {
     private final ArrayList<String> teamed = new ArrayList<>();
     private final ArrayList<String> kits = new ArrayList<>();
     private final ArrayList<String> kited = new ArrayList<>();
-    private final ArrayList<String> chatmessages = new ArrayList<>();
     private final ArrayList<String> shop = new ArrayList<>();
     private final ArrayList<PotionEffect> shoppotion = new ArrayList<>();
     private final ArrayList<ItemStack> shoppotiontype = new ArrayList<>();
@@ -977,6 +965,14 @@ public class PotionGames extends JavaPlugin {
         EnableBootstrapContext bootstrapContext = createEnableBootstrapContext();
         new EnableBootstrapInitializer(this).initialize(bootstrapContext);
         applyEnableBootstrapContext(bootstrapContext);
+
+        // Auto-join first lobby if enabled
+        if (configManager.isGameServer() && configManager.isStartOnJoin()) {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                game.autoJoinLobby(player);
+            }
+        }
+
         if (activateMysql && !databaseManager.isConnected()) {
             Bukkit.getPluginManager().disablePlugin(this);
         } else {
@@ -1036,7 +1032,7 @@ public class PotionGames extends JavaPlugin {
 
     private EnableBootstrapContext createEnableBootstrapContext() {
         return new EnableBootstrapContext(
-                new ArrayList<>(chatmessages), new ArrayList<>(shop), new ArrayList<>(shoppotion), new ArrayList<>(shoppotiontype), new ArrayList<>(shopkit), new ArrayList<>(shopcost), new ArrayList<>(shopsale), new ArrayList<>(kits),
+                new ArrayList<>(shop), new ArrayList<>(shoppotion), new ArrayList<>(shoppotiontype), new ArrayList<>(shopkit), new ArrayList<>(shopcost), new ArrayList<>(shopsale), new ArrayList<>(kits),
                 new HashMap<>(kitplayers), new HashMap<>(lobbyCheckArenas), new HashMap<>(lobbyActivateTeams), new HashMap<>(lobbyActivateKits), new HashMap<>(lobbyActivateShop),
                 new HashMap<>(lobbyActivateAirdrops), new HashMap<>(lobbyJoinable), new HashMap<>(lobbyForcearena), new HashMap<>(lobbyDeathmatch), new HashMap<>(lobbyMove),
                 new HashMap<>(lobbyVoteallowed), new HashMap<>(lobbyTeamallowed), new HashMap<>(lobbyKitallowed), new HashMap<>(lobbyAmount), new HashMap<>(lobbyStates), new HashMap<>(lobbyTickstarted), new HashMap<>(lobbyBuild),

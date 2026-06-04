@@ -49,7 +49,7 @@ public class CommandDispatcher implements CommandExecutor {
         
         // Admin commands - Setup
         registerCommand(new SetupCommand(plugin));
-        registerCommand(new SetLobbyCommand(plugin));
+        registerCommand(new AddLobbyCommand(plugin));
         registerCommand(new DelLobbyCommand(plugin));
         registerCommand(new AddArenaCommand(plugin));
         registerCommand(new DelArenaCommand(plugin));

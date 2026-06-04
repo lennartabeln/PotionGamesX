@@ -100,8 +100,8 @@ public interface IConfigurationManager extends IManager {
     void setGameServer(boolean gameServer);
     void setAddlobby(boolean addlobby);
     void setAddarena(boolean addarena);
-    void setDellobby(boolean dellobby);
-    void setDelarena(boolean delarena);
+    void setRemoveLobby(boolean removeLobby);
+    void setRemoveArena(boolean removeArena);
     void setReload(boolean reload);
     void setCompassOnSpawn(boolean compassOnSpawn);
     void setAllowOutsideChat(boolean allowOutsideChat);
