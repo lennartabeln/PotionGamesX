@@ -2,7 +2,7 @@ name: Build and Release Minecraft Plugin
 
 on:
   release:
-    types: [published, created]
+    types: [published]
 
 jobs:
   build:
@@ -51,7 +51,14 @@ jobs:
         cd target
         # Find the main JAR file (excluding 'original' or 'shaded' JARs)
         JAR_FILE=$(ls *.jar | grep -v "original-" | grep -v "shaded" | head -n 1)
-        mv "$JAR_FILE" "PotionGamesX-${{ steps.get_version.outputs.version }}.jar"
+        NEW_NAME="PotionGamesX-${{ steps.get_version.outputs.version }}.jar"
+        echo "Found JAR: $JAR_FILE"
+        echo "Target Name: $NEW_NAME"
+        if [ "$JAR_FILE" != "$NEW_NAME" ]; then
+          mv "$JAR_FILE" "$NEW_NAME"
+        else
+          echo "JAR already has the correct name. Skipping rename."
+        fi
 
     - name: Upload Binaries to Release
       uses: softprops/action-gh-release@v2
