@@ -40,20 +40,6 @@ public class InteractEventListener implements Listener {
             return;
         }
         
-        // Check for sign interactions
-        if (block.getState() instanceof Sign) {
-            Sign sign = (Sign) block.getState();
-            
-            // Handle join signs (component-based sign API)
-            Component c = sign.getSide(Side.FRONT).line(0);
-            String line0 = PlainTextComponentSerializer.plainText().serialize(c);
-            if (line0.contains("PG") || line0.contains("Join")) {
-                e.setCancelled(true);
-                // Sign interaction would be handled by other listeners
-                return;
-            }
-        }
-        
         // Allow normal interactions during games
         // (eating, drinking potions, etc. are handled by specific listeners)
     }

@@ -32,7 +32,13 @@ public class SetupCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         try {
-            plugin.getSetupHandler().setup(player);
+            if (plugin.getSetupStateManager().isSetupPlayer(player)) {
+                plugin.getSetupHandler().exitSetup(player);
+                player.sendMessage(Messages.raw("setup.disabled", "Setup mode disabled."));
+            } else {
+                plugin.getSetupHandler().setup(player);
+                player.sendMessage(Messages.raw("setup.enabled", "Setup mode enabled."));
+            }
         } catch (Exception ex) {
             player.sendMessage(Messages.ErrorGeneric());
         }

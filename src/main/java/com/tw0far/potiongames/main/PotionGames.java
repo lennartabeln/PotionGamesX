@@ -894,6 +894,9 @@ public class PotionGames extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Register BungeeCord channel for server switching
+        getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+
         instance = this;
         saveDefaultConfig();
         

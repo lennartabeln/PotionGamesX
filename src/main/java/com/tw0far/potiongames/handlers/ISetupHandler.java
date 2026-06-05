@@ -24,4 +24,5 @@ public interface ISetupHandler {
     void addDeathmatchSpawn(Player p, String arenaName, int lobbyId);
     void removeDeathmatchSpawn(Player p, String arenaName);
     void removeDeathmatchSpawn(Player p, String arenaName, int lobbyId);
+    void exitSetup(Player p);
 }

@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
  * 
  * Responsibilities:
  * - Track which players are in setup mode
- * - Save/restore player inventory, armor, level, exp, location, gamemode
+ * - Save/restore player inventory, armor, level, exp, location, gamemode, health, food level
  * - Used by /pg setup command to temporarily modify player state
  */
 public class SetupStateManager implements ISetupStateManager {
@@ -26,6 +26,8 @@ public class SetupStateManager implements ISetupStateManager {
     private HashMap<String, Float> exp = new HashMap<>();               // player name -> exp
     private HashMap<String, Location> loc = new HashMap<>();            // player name -> location
     private HashMap<String, GameMode> gm = new HashMap<>();             // player name -> game mode
+    private HashMap<String, Double> health = new HashMap<>();           // player name -> health
+    private HashMap<String, Integer> food = new HashMap<>();            // player name -> food level
     private HashMap<String, Integer> selectedLobby = new HashMap<>();   // player name -> lobby id
     private HashMap<String, String> selectedArena = new HashMap<>();    // player name -> arena name
     
@@ -54,6 +56,8 @@ public class SetupStateManager implements ISetupStateManager {
         exp.clear();
         loc.clear();
         gm.clear();
+        health.clear();
+        food.clear();
         selectedLobby.clear();
         selectedArena.clear();
     }
@@ -87,6 +91,8 @@ public class SetupStateManager implements ISetupStateManager {
         exp.clear();
         loc.clear();
         gm.clear();
+        health.clear();
+        food.clear();
         selectedLobby.clear();
         selectedArena.clear();
     }
@@ -245,5 +251,39 @@ public class SetupStateManager implements ISetupStateManager {
     @Override
     public void removeSavedGameMode(Player player) {
         gm.remove(player.getName());
+    }
+    
+    // ===== Health Backup =====
+    
+    @Override
+    public void savePlayerHealth(Player player, double health) {
+        this.health.put(player.getName(), health);
+    }
+    
+    @Override
+    public Double getPlayerHealth(Player player) {
+        return this.health.get(player.getName());
+    }
+    
+    @Override
+    public void removeSavedHealth(Player player) {
+        this.health.remove(player.getName());
+    }
+    
+    // ===== FoodLevel Backup =====
+    
+    @Override
+    public void savePlayerFoodLevel(Player player, int foodLevel) {
+        this.food.put(player.getName(), foodLevel);
+    }
+    
+    @Override
+    public Integer getPlayerFoodLevel(Player player) {
+        return this.food.get(player.getName());
+    }
+    
+    @Override
+    public void removeSavedFoodLevel(Player player) {
+        this.food.remove(player.getName());
     }
 }

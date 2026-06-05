@@ -8,6 +8,7 @@ import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import com.tw0far.potiongames.managers.IItemStateManager;
 import com.tw0far.potiongames.util.SafeMapAccess;
+import com.tw0far.potiongames.config.ConfigKeys;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -35,7 +36,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -75,23 +75,21 @@ public class InventoryEventListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (plugin.isGameServer()) {
-            // Get lobby ID using Game class methods
-            String s = plugin.getGame().getPlayerLobby(p);
-            if (s == null) {
-                s = plugin.getGame().getSpectatorLobby(p);
-            }
-            if (s != null) {
-                GameStates lobbyState = plugin.getLobbyGameState(s);
-                boolean canBuild = plugin.isLobbyBuildAllowed(s);
-                if ((lobbyState == GameStates.WAITING || lobbyState == GameStates.PREPARING) && !canBuild) {
-                    handleArenaVoting(e, p, s);
-                    handleTeamSelection(e, p, s);
-                    handleShop(e, p, s);
-                }
-            }
-            handleLobbySelection(e, p);
+        // Get lobby ID using Game class methods
+        String s = plugin.getGame().getPlayerLobby(p);
+        if (s == null) {
+            s = plugin.getGame().getSpectatorLobby(p);
         }
+        if (s != null) {
+            GameStates lobbyState = plugin.getLobbyGameState(s);
+            boolean canBuild = plugin.isLobbyBuildAllowed(s);
+            if ((lobbyState == GameStates.WAITING || lobbyState == GameStates.PREPARING) && !canBuild) {
+                handleArenaVoting(e, p, s);
+                handleTeamSelection(e, p, s);
+                handleShop(e, p, s);
+            }
+        }
+        handleLobbySelection(e, p);
     }
 
     private boolean isNamedItem(Player player, Material material, Component displayName) {
@@ -576,7 +574,6 @@ public class InventoryEventListener implements Listener {
                         plugin.getSetupStateManager().setSelectedLobby(p, lobbyId);
                         plugin.getSetupStateManager().removeSelectedArena(p);
                         p.sendMessage(Messages.LobbySelected(lobbyId));
-                        openChooseArenaInventory(p, lobby);
                     } else {
                         p.sendMessage(Messages.LobbyDoesNotExist());
                     }
@@ -610,6 +607,51 @@ public class InventoryEventListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
         Player p = e.getPlayer();
+        
+        // Handle all signs
+        if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock() != null) {
+            Material clickedType = e.getClickedBlock().getType();
+            if (clickedType.name().contains("_SIGN")) {
+                Sign sign = (Sign) e.getClickedBlock().getState();
+                String line1 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(0));
+                String line2 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(1));
+                String line3 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(2));
+                
+                // Check Join Signs
+                try {
+                    int lobbyId = Integer.parseInt(line1);
+                    String signKey = ConfigKeys.LOBBY_JOIN_SIGN.getKey(lobbyId);
+                    if (e.getClickedBlock().getLocation().equals(Settings.lobbies.getLocation(signKey))) {
+                        e.setCancelled(true);
+                        if (plugin.getGame().getPlayerLobby(p) == null && plugin.getGame().getSpectatorLobby(p) == null) {
+                            plugin.onJoinLobby(p, line1);
+                        }
+                        return;
+                    }
+                } catch (NumberFormatException ignored) {}
+
+                // Check Stats Signs
+                if (line2.matches("PotionGames") && line3.matches("Stats")) {
+                    e.setCancelled(true);
+                    int wins = plugin.getDatabaseManager().getWins(p.getUniqueId().toString());
+                    int losses = plugin.getDatabaseManager().getLosses(p.getUniqueId().toString());
+                    int rounds = plugin.getDatabaseManager().getRounds(p.getUniqueId().toString());
+                    int kills = plugin.getDatabaseManager().getKills(p.getUniqueId().toString());
+                    int deaths = plugin.getDatabaseManager().getDeaths(p.getUniqueId().toString());
+                    double kd = plugin.getDatabaseManager().getKD(p.getUniqueId().toString());
+                    p.sendMessage(Messages.StatsLabel());
+                    p.sendMessage(Messages.RoundsLabel(rounds));
+                    p.sendMessage(Messages.WinsLabel(wins));
+                    p.sendMessage(Messages.LossesLabel(losses));
+                    p.sendMessage(Messages.KillsLabel(kills));
+                    p.sendMessage(Messages.DeathsLabel(deaths));
+                    p.sendMessage(Messages.KDLabel(kd));
+                    p.sendMessage(Messages.StatsLabel());
+                    return;
+                }
+            }
+        }
+
         if (plugin.isGameServer()) {
             if (plugin.getGame().isActivePlayer(p) || plugin.getGame().isInLobby(p)) {
                 if (e.getAction() == Action.PHYSICAL && Objects.requireNonNull(e.getClickedBlock()).getType() == Material.FARMLAND) {
@@ -1036,7 +1078,7 @@ public class InventoryEventListener implements Listener {
                     }
                 }
             }
-            if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR)) {
+            if (e.getAction().equals(Action.LEFT_CLICK_BLOCK) || e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.RIGHT_CLICK_BLOCK) || e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 if (e.getHand() == EquipmentSlot.HAND) {
                     if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
                         if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteLobbyLabel())) {
@@ -1088,220 +1130,18 @@ public class InventoryEventListener implements Listener {
                             
                         } else if (isNamedItem(p, Material.CLOCK, Messages.ChooseArenaLabel())) {
                             openChooseArenaInventory(p, resolveSetupLobby(p));
-                            /*
-                            Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ChooseArenaTitle());
-                            
-                                for (int slot = 1; slot < 27; slot++) {
-                                    if (Settings.lobbies.contains("pg.lobbies." + lobby + "." + slot)) {
-                                        ArrayList<Component> arenalore = new ArrayList<>();
-                                        ItemStack arenamap = new ItemStack(Material.MAP);
-                                        ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        assert arenamapmeta != null;
-                                        arenamapmeta.displayName(Component.text(Settings.lobbies.getString("pg.lobbies." + lobby + "." + slot + ".name")));
-                                        arenamapmeta.lore(arenalore);
-                                        arenamap.setItemMeta(arenamapmeta);
-                                        inv.setItem(slot - 1, arenamap);
-                                    }
-                                }
-                            
-                            p.openInventory(inv);
-                            */
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.OAK_SIGN) {
                         if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Messages.SetupJoinSignLabel())) {
-                            org.bukkit.block.Block target = p.getTargetBlockExact(5);
-                            if (target != null && target.getState() instanceof org.bukkit.block.Sign) {
-                                if (p.hasPermission("pg.setup")) {
-                                plugin.getConfig().set("pg.Lobby.sign", Objects.requireNonNull(target.getLocation()));
-                                plugin.saveConfig();
-                                p.sendMessage(Messages.HeadSet());
-                                }
-                            }
+                            plugin.getSetupHandler().setJoinSign(p);
+                            e.setCancelled(true);
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.BARRIER) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Messages.SetupLeaveModeLabel())) {
-                            p.getInventory().getItemInMainHand().setAmount(0);
-                            p.getInventory().setContents(plugin.getSetupStateManager().getPlayerInventory(p));
-                            p.getInventory().setArmorContents(plugin.getSetupStateManager().getPlayerArmor(p));
-                            p.teleport(plugin.getSetupStateManager().getPlayerLocation(p));
-                            p.setLevel(plugin.getSetupStateManager().getPlayerLevel(p));
-                            p.setExp(plugin.getSetupStateManager().getPlayerExp(p));
-                            p.setGameMode(plugin.getSetupStateManager().getPlayerGameMode(p));
-                            plugin.getSetupStateManager().removeSavedInventory(p);
-                            plugin.getSetupStateManager().removeSavedArmor(p);
-                            plugin.getSetupStateManager().removeSavedLocation(p);
-                            plugin.getSetupStateManager().removeSavedLevel(p);
-                            plugin.getSetupStateManager().removeSavedExp(p);
-                            plugin.getSetupStateManager().removeSavedGameMode(p);
-                            plugin.getSetupStateManager().removeSetupPlayer(p);
-                        }
-                    }
-                }
-            }
-            if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
-                if (e.getHand() == EquipmentSlot.HAND) {
-                    if (p.getInventory().getItemInMainHand().getType() == Material.STICK) {
-                        if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteLobbyLabel())) {
-                            
-                                p.getInventory().clear();
-                                plugin.getConfigManager().setRemoveLobby(true);
-                                p.sendMessage(Messages.TypeArenaNameAdd());
-                            
-                        } else if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteArenaLabel())) {
-                            p.getInventory().clear();
-                            plugin.getConfigManager().setRemoveArena(true);
-                            p.sendMessage(Messages.TypeLobbyNumberRemove());
-                        } else if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteSpawnLabel())) {
-                            if (handleSetupSpawnAction(p, false)) {
-                                e.setCancelled(true);
-                            }
-                            /*
-                            if (p.hasPermission("pg.setup")) {
-                                int arenaNumber = 1;
-                                int spawnNumber = 1;
-                                try {
-                                    int i = 1;
-                                    boolean arenaName = false;
-                                    while (!arenaName) {
-                                        if (arena.toString().matches(Objects.requireNonNull(Settings.lobbies.getString("pg.lobbies." + lobby + "." + i + ".name")))) {
-                                            arenaNumber = i;
-                                            arenaName = true;
-                                        } else {
-                                            i++;
-                                        }
-                                    }
-                                    int max = 1;
-                                    while (Settings.lobbies.contains("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + max)) {
-                                        spawnNumber = max;
-                                        max++;
-                                    }
-                                    Settings.lobbies.set("pg.lobbies." + lobby + "." + arenaNumber + ".spawns." + spawnNumber, null);
-                                    Settings.lobbies.save(Settings.lobbiesfile);
-                                    p.sendMessage(Settings.prefix.append(Component.text(String.valueOf(spawnNumber)).color(NamedTextColor.AQUA)).append(Component.text(" " + Messages.raw("spawn.removed", "Spawn removed successfully.")).color(NamedTextColor.GREEN)).append(Component.text(" (Lobby: " + lobby + ")").color(NamedTextColor.GRAY)));
-                                } catch (Exception ex) {
-                                    p.sendMessage(Settings.prefix.append(arena.color(NamedTextColor.AQUA)).append(Component.text(" " + Messages.raw("lobby.join_success", "Successfully joined lobby")).color(NamedTextColor.RED)).append(Component.text(" (Lobby: " + lobby + ")").color(NamedTextColor.GRAY)));
-                                }
-                            }
-                            */
-                        }
-                    }
-                    if (p.getInventory().getItemInMainHand().getType() == Material.CLOCK) {
-                        if (isNamedItem(p, Material.CLOCK, Messages.ChooseLobbyLabel())) {
-                            
-                                Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ChooseLobbyTitle());
-                                for (int slot = 1; slot <= 27; slot++) {
-                                    if (Settings.lobbies.contains("pg.lobbies." + slot)) {
-                                        ArrayList<Component> arenalore = new ArrayList<>();
-                                        ItemStack arenamap = new ItemStack(Material.MAP);
-                                        ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        if (arenamapmeta == null) {
-                                            continue;
-                                        }
-                                        arenamapmeta.displayName(Component.text(Integer.toString(slot)));
-                                        arenamapmeta.lore(arenalore);
-                                        if (!arenamap.setItemMeta(arenamapmeta)) {
-                                            continue;
-                                        }
-                                        inv.setItem(slot - 1, arenamap);
-                                    }
-                                }
-                                p.openInventory(inv);
-                            
-                        } else if (isNamedItem(p, Material.CLOCK, Messages.ChooseArenaLabel())) {
-                            openChooseArenaInventory(p, resolveSetupLobby(p));
-                            /*
-                            Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ChooseArenaTitle());
-                            
-                                for (int slot = 1; slot < 27; slot++) {
-                                    if (Settings.lobbies.contains("pg.lobbies." + lobby + "." + slot)) {
-                                        ArrayList<Component> arenalore = new ArrayList<>();
-                                        ItemStack arenamap = new ItemStack(Material.MAP);
-                                        ItemMeta arenamapmeta = arenamap.getItemMeta();
-                                        assert arenamapmeta != null;
-                                        arenamapmeta.displayName(Component.text(Settings.lobbies.getString("pg.lobbies." + lobby + "." + slot + ".name")));
-                                        arenamapmeta.lore(arenalore);
-                                        arenamap.setItemMeta(arenamapmeta);
-                                        inv.setItem(slot - 1, arenamap);
-                                    }
-                                }
-                            
-                            p.openInventory(inv);
-                            */
-                        }
-                    }
-                    if (p.getInventory().getItemInMainHand().getType() == Material.BARRIER) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Messages.SetupLeaveModeLabel())) {
-                            p.getInventory().getItemInMainHand().setAmount(0);
-                            p.getInventory().setContents(plugin.getSetupStateManager().getPlayerInventory(p));
-                            p.getInventory().setArmorContents(plugin.getSetupStateManager().getPlayerArmor(p));
-                            p.teleport(plugin.getSetupStateManager().getPlayerLocation(p));
-                            p.setLevel(plugin.getSetupStateManager().getPlayerLevel(p));
-                            p.setExp(plugin.getSetupStateManager().getPlayerExp(p));
-                            p.setGameMode(plugin.getSetupStateManager().getPlayerGameMode(p));
-                            plugin.getSetupStateManager().removeSavedInventory(p);
-                            plugin.getSetupStateManager().removeSavedArmor(p);
-                            plugin.getSetupStateManager().removeSavedLocation(p);
-                            plugin.getSetupStateManager().removeSavedLevel(p);
-                            plugin.getSetupStateManager().removeSavedExp(p);
-                            plugin.getSetupStateManager().removeSavedGameMode(p);
-                            plugin.getSetupStateManager().removeSetupPlayer(p);
-                        }
-                    }
-                }
-            }
-            if (e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                if (e.getHand() == EquipmentSlot.HAND) {
-                    if (Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.ACACIA_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.BIRCH_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.SPRUCE_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.ACACIA_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.BIRCH_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.DARK_OAK_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.JUNGLE_WALL_SIGN || Objects.requireNonNull(e.getClickedBlock()).getType() == Material.OAK_WALL_SIGN) {
-                        Sign sign = (Sign) e.getClickedBlock().getState();
-                        String line1 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(0));
-                        String line2 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(1));
-                        String line3 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(2));
-                        
-                            if (e.getClickedBlock().getLocation().equals(Settings.lobbies.getLocation("pg.lobbies." + line1 + ".sign"))) {
-                                if (plugin.getGame().getPlayerLobby(p) == null && plugin.getGame().getSpectatorLobby(p) == null) {
-                                    e.setCancelled(true);
-                                    plugin.onJoinLobby(p, line1);
-                                }
-                            }
-                        
-                        if (line2.matches("PotionGames") && line3.matches("Stats")) {
-                            int wins = plugin.getDatabaseManager().getWins(p.getUniqueId().toString());
-                            int losses = plugin.getDatabaseManager().getLosses(p.getUniqueId().toString());
-                            int rounds = plugin.getDatabaseManager().getRounds(p.getUniqueId().toString());
-                            int kills = plugin.getDatabaseManager().getKills(p.getUniqueId().toString());
-                            int deaths = plugin.getDatabaseManager().getDeaths(p.getUniqueId().toString());
-                            double kd = plugin.getDatabaseManager().getKD(p.getUniqueId().toString());
-                            p.sendMessage(Messages.StatsLabel());
-                            p.sendMessage(Messages.RoundsLabel(rounds));
-                            p.sendMessage(Messages.WinsLabel(wins));
-                            p.sendMessage(Messages.LossesLabel(losses));
-                            p.sendMessage(Messages.KillsLabel(kills));
-                            p.sendMessage(Messages.DeathsLabel(deaths));
-                            p.sendMessage(Messages.KDLabel(kd));
-                            p.sendMessage(Messages.StatsLabel());
-                        }
-                        if (line1.matches("Place #1") || line1.matches("Place #2") || line1.matches("Place #3")) {
-                            Player pstats = Bukkit.getPlayer(line2.toString());
-                            p.sendMessage(Messages.StatsLabel());
-                            if (pstats != null) {
-                                int wins = plugin.getDatabaseManager().getWins(pstats.getUniqueId().toString());
-                                int losses = plugin.getDatabaseManager().getLosses(pstats.getUniqueId().toString());
-                                int rounds = plugin.getDatabaseManager().getRounds(pstats.getUniqueId().toString());
-                                int kills = plugin.getDatabaseManager().getKills(pstats.getUniqueId().toString());
-                                int deaths = plugin.getDatabaseManager().getDeaths(pstats.getUniqueId().toString());
-                                double kd = plugin.getDatabaseManager().getKD(pstats.getUniqueId().toString());
-                                p.sendMessage(Messages.RoundsLabel(rounds));
-                                p.sendMessage(Messages.WinsLabel(wins));
-                                p.sendMessage(Messages.LossesLabel(losses));
-                                p.sendMessage(Messages.KillsLabel(kills));
-                                p.sendMessage(Messages.DeathsLabel(deaths));
-                                p.sendMessage(Messages.KDLabel(kd));
-                            } else {
-                                p.sendMessage(Messages.NoPlayerFound());
-                            }
-                            p.sendMessage(Messages.StatsLabel());
+                        if (isNamedItem(p, Material.BARRIER, Messages.SetupLeaveModeLabel())) {
+                            plugin.getSetupHandler().exitSetup(p);
+                            e.setCancelled(true);
                         }
                     }
                 }

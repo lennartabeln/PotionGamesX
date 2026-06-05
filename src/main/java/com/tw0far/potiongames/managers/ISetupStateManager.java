@@ -52,4 +52,14 @@ public interface ISetupStateManager extends IManager {
     void savePlayerGameMode(Player player, org.bukkit.GameMode gameMode);
     org.bukkit.GameMode getPlayerGameMode(Player player);
     void removeSavedGameMode(Player player);
+
+    // Health backup
+    void savePlayerHealth(Player player, double health);
+    Double getPlayerHealth(Player player);
+    void removeSavedHealth(Player player);
+
+    // FoodLevel backup
+    void savePlayerFoodLevel(Player player, int foodLevel);
+    Integer getPlayerFoodLevel(Player player);
+    void removeSavedFoodLevel(Player player);
 }

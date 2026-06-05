@@ -688,6 +688,15 @@ public class Lobby {
         if (this.state != newState) {
             this.state = newState;
             updateJoinSign();
+            
+            // Trigger kick if GameServer mode is on and game just ended (transitioned to RESET)
+            if (newState == GameStates.RESET && com.tw0far.potiongames.main.PotionGames.getInstance().isGameServer()) {
+                org.bukkit.Bukkit.getConsoleSender().sendMessage(com.tw0far.potiongames.models.Settings.prefix.append(net.kyori.adventure.text.Component.text("Game finished. Kicking players...").color(net.kyori.adventure.text.format.NamedTextColor.YELLOW)));
+                
+                for (Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
+                    player.kick(net.kyori.adventure.text.Component.text("Game finished!").color(net.kyori.adventure.text.format.NamedTextColor.GREEN));
+                }
+            }
         }
     }
 

@@ -33,14 +33,10 @@ public class JoinCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (plugin.isStartOnJoin()) {
-            return true;
-        }
-        
         // Multi-lobby system: args should contain lobby ID
-        if (args.length > 0) {
+        if (args.length > 1) {
             try {
-                int lobbyId = Integer.parseInt(args[0]);
+                int lobbyId = Integer.parseInt(args[1]);
                 if (Settings.lobbies.contains("pg.lobbies." + lobbyId)) {
                     if (plugin.getGame().getLobbies().size() > 0) {
                         Lobby lobby = plugin.getGame().getLobby(lobbyId);

@@ -33,9 +33,10 @@ public class SetupHandler implements ISetupHandler {
         pg.savePlayerExp(p, p.getExp());
         pg.savePlayerLocation(p, p.getLocation());
         pg.savePlayerGameMode(p, p.getGameMode());
+        pg.getSetupStateManager().savePlayerHealth(p, p.getHealth());
+        pg.getSetupStateManager().savePlayerFoodLevel(p, p.getFoodLevel());
 
         inventory.clear();
-        // Use setArmorContents to avoid deprecated individual setters
         inventory.setArmorContents(new ItemStack[] { null, null, null, null });
 
         p.setHealth(20);
@@ -47,6 +48,7 @@ public class SetupHandler implements ISetupHandler {
         p.setFireTicks(0);
         p.setAllowFlight(true);
         p.setFlying(true);
+        // ... (remaining items setup)
 
         ItemStack addlobby = new ItemStack(Material.STICK);
         ItemMeta addlobbymeta = addlobby.getItemMeta();
@@ -338,5 +340,45 @@ public class SetupHandler implements ISetupHandler {
         } else {
             p.sendMessage(Messages.FileSaveFailed());
         }
+    }
+
+    @Override
+    public void exitSetup(Player p) {
+        p.getInventory().clear();
+        p.getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
+        
+        ItemStack[] savedInv = pg.getSetupStateManager().getPlayerInventory(p);
+        if (savedInv != null) {
+            p.getInventory().setContents(savedInv);
+        }
+        
+        ItemStack[] savedArmor = pg.getSetupStateManager().getPlayerArmor(p);
+        if (savedArmor != null) {
+            p.getInventory().setArmorContents(savedArmor);
+        }
+        p.teleport(pg.getSetupStateManager().getPlayerLocation(p));
+        p.setLevel(pg.getSetupStateManager().getPlayerLevel(p));
+        p.setExp(pg.getSetupStateManager().getPlayerExp(p));
+        p.setGameMode(pg.getSetupStateManager().getPlayerGameMode(p));
+        
+        Double health = pg.getSetupStateManager().getPlayerHealth(p);
+        p.setHealth(health != null ? health : 20.0);
+        Integer food = pg.getSetupStateManager().getPlayerFoodLevel(p);
+        p.setFoodLevel(food != null ? food : 20);
+        pg.clearEffects(p);
+        p.setFireTicks(0);
+        p.setAllowFlight(false);
+        p.setFlying(false);
+        
+        pg.getSetupStateManager().removeSavedInventory(p);
+        pg.getSetupStateManager().removeSavedArmor(p);
+        pg.getSetupStateManager().removeSavedLocation(p);
+        pg.getSetupStateManager().removeSavedLevel(p);
+        pg.getSetupStateManager().removeSavedExp(p);
+        pg.getSetupStateManager().removeSavedGameMode(p);
+        pg.getSetupStateManager().removeSavedHealth(p);
+        pg.getSetupStateManager().removeSavedFoodLevel(p);
+        pg.getSetupStateManager().removeSetupPlayer(p);
+        pg.removeSetupPlayer(p);
     }
 }
