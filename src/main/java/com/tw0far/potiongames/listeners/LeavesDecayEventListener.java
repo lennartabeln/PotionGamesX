@@ -18,7 +18,7 @@ public class LeavesDecayEventListener implements Listener {
     
     @EventHandler
     public void onLeavesDecay(LeavesDecayEvent e) {
-        if (!plugin.isGameServer()) {
+        if (!plugin.getConfigManager().isGameServer()) {
             return;
         }
         

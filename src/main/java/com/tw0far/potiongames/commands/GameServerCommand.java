@@ -34,7 +34,7 @@ public class GameServerCommand implements ICommand {
     @Override
     public boolean execute(Player player, String[] args) {
         // Get current state
-        boolean currentState = plugin.isGameServer();
+        boolean currentState = plugin.getConfigManager().isGameServer();
         boolean newState = !currentState;
         
         // Update config manager

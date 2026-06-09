@@ -1,20 +1,17 @@
 package com.tw0far.potiongames.bootstrap;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.managers.IItemStateManager;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.function.Consumer;
 
 public final class EnableBootstrapInitializer {
     private final PotionGames plugin;
@@ -23,36 +20,35 @@ public final class EnableBootstrapInitializer {
         this.plugin = plugin;
     }
 
-    public void initialize(EnableBootstrapContext context) {
-        loadGlobalConfig(context);
-        syncShop(context);
-        syncKits(context);
-        configureMysql(context);
+    public void initialize() {
+        syncShop();
+        syncKits();
         plugin.getDatabaseManager().connect();
-        configureCoin(context.getCoin());
-        initializeLobbies(context);
+        configureCoin(plugin);
+        initializeLobbies();
     }
 
-    private void syncShop(EnableBootstrapContext context) {
+    private void syncShop() {
+        IItemStateManager ism = plugin.getItemStateManager();
         int shopitem = 1;
-        for (int i = 0; i < context.getShop().size(); i++) {
+        for (int i = 0; i < ism.getShopItemsRaw().size(); i++) {
             String potionPath = "pg.potions." + shopitem;
             if (Settings.shopdata.get(potionPath) == null) {
-                Settings.shopdata.addDefault(potionPath, context.getShop().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".name", context.getShop().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".shoppotion", context.getShoppotion().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".shoppotiontype", context.getShoppotiontype().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".kit", context.getShopkit().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".cost", context.getShopcost().get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".sale", context.getShopsale().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath, ism.getShopItemsRaw().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".name", ism.getShopItemsRaw().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".shoppotion", ism.getShopPotionsRaw().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".shoppotiontype", ism.getShopPotionTypesRaw().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".kit", ism.getShopKitsRaw().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".cost", ism.getShopCostsRaw().get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".sale", ism.getShopSalesRaw().get(shopitem - 1));
                 Settings.shopdata.options().copyDefaults(true);
             } else {
-                context.getShop().set(shopitem - 1, Settings.shopdata.getString(potionPath + ".name"));
-                context.getShoppotion().set(shopitem - 1, (PotionEffect) Settings.shopdata.get(potionPath + ".shoppotion"));
-                context.getShoppotiontype().set(shopitem - 1, (ItemStack) Settings.shopdata.get(potionPath + ".shoppotiontype"));
-                context.getShopkit().set(shopitem - 1, Settings.shopdata.getString(potionPath + ".kit"));
-                context.getShopcost().set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".cost"));
-                context.getShopsale().set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".sale"));
+                ism.getShopItemsRaw().set(shopitem - 1, Settings.shopdata.getString(potionPath + ".name"));
+                ism.getShopPotionsRaw().set(shopitem - 1, (PotionEffect) Settings.shopdata.get(potionPath + ".shoppotion"));
+                ism.getShopPotionTypesRaw().set(shopitem - 1, (ItemStack) Settings.shopdata.get(potionPath + ".shoppotiontype"));
+                ism.getShopKitsRaw().set(shopitem - 1, Settings.shopdata.getString(potionPath + ".kit"));
+                ism.getShopCostsRaw().set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".cost"));
+                ism.getShopSalesRaw().set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".sale"));
             }
             shopitem++;
         }
@@ -61,25 +57,26 @@ public final class EnableBootstrapInitializer {
             Settings.shopdata.save(Settings.shopFile);
             Settings.lobbies.save(Settings.lobbiesFile);
         } catch (IOException ex) {
-            sendError(context, ex);
+            sendError(ex);
         }
     }
 
-    private void syncKits(EnableBootstrapContext context) {
-        context.getKitplayers().put(Messages.RandomText(), 0);
-        for (String all : context.getKits()) {
-            context.getKitplayers().put(all, 0);
+    private void syncKits() {
+        IItemStateManager ism = plugin.getItemStateManager();
+        ism.getKitplayersRaw().put(Messages.RandomText(), 0);
+        for (String all : ism.getKitsRaw()) {
+            ism.getKitplayersRaw().put(all, 0);
         }
 
         int kititem = 1;
-        for (int i = 0; i < context.getKits().size(); i++) {
+        for (int i = 0; i < ism.getKitsRaw().size(); i++) {
             String kitPath = "pg.kits." + kititem;
             if (Settings.kitdata.get(kitPath) == null) {
-                Settings.kitdata.addDefault(kitPath, context.getKits().get(kititem - 1));
-                Settings.kitdata.addDefault(kitPath + ".name", context.getKits().get(kititem - 1));
+                Settings.kitdata.addDefault(kitPath, ism.getKitsRaw().get(kititem - 1));
+                Settings.kitdata.addDefault(kitPath + ".name", ism.getKitsRaw().get(kititem - 1));
                 Settings.kitdata.options().copyDefaults(true);
             } else {
-                context.getKits().set(kititem - 1, Settings.kitdata.getString(kitPath + ".name"));
+                ism.getKitsRaw().set(kititem - 1, Settings.kitdata.getString(kitPath + ".name"));
             }
             kititem++;
         }
@@ -87,92 +84,23 @@ public final class EnableBootstrapInitializer {
         try {
             Settings.kitdata.save(Settings.kitsFile);
         } catch (IOException ex) {
-            sendError(context, ex);
+            sendError(ex);
         }
     }
 
-    private void loadGlobalConfig(EnableBootstrapContext context) {
-        FileConfiguration config = plugin.getConfig();
-        context.setActivateMysql(readBoolean(config, "pg.activateMySQL", context.isActivateMysql()));
-        context.setCountdown(readInt(config, "pg.countdown", context.getCountdown()));
-        context.setStartOnJoin(readBoolean(config, "pg.startOnJoin", context.isStartOnJoin()));
-        context.setCompassOnSpawn(readBoolean(config, "pg.compassOnSpawn", context.isCompassOnSpawn()));
-        context.setAllowOutsideChat(readBoolean(config, "pg.allowOutsideChat", context.isAllowOutsideChat()));
-        context.setChangeGamerules(readBoolean(config, "pg.changeGamerules", context.isChangeGamerules()));
-        context.setActivateTeams(readBoolean(config, "pg.activateTeams", context.isActivateTeams()));
-        context.setActivateKits(readBoolean(config, "pg.activateKits", context.isActivateKits()));
-        context.setActivateShop(readBoolean(config, "pg.activateShop", context.isActivateShop()));
-        context.setActivateAirdrops(readBoolean(config, "pg.activateAirdrops", context.isActivateAirdrops()));
-        context.setGameServer(readBoolean(config, "pg.getGame()Server", context.isGameServer()));
-        context.setMaxPlayers(readInt(config, "pg.maxPlayers", context.getMaxPlayers()));
-        context.setMinPlayers(readInt(config, "pg.minPlayers", context.getMinPlayers()));
-        context.setTeamSize(readInt(config, "pg.teamSize", context.getTeamSize()));
-        context.setTeamAmount(context.getMaxPlayers() / context.getTeamSize());
-        context.setRoundTime(readInt(config, "pg.roundTime", context.getRoundTime()));
-        context.setRoundTimeSeconds(context.getRoundTime() * 60);
-        context.setActivePotions(readInt(config, "pg.activePotions", context.getActivePotions()));
-        context.setActiveKits(readInt(config, "pg.activeKits", context.getActiveKits()));
-        context.setActivateScoreboard(readBoolean(config, "pg.activateScoreboard", context.isActivateScoreboard()));
-        context.setFriendlyFire(readBoolean(config, "pg.friendlyFire", context.isFriendlyFire()));
-        context.setJoinStarted(readBoolean(config, "pg.joinStarted", context.isJoinStarted()));
-        context.setActivateDeathmatch(readBoolean(config, "pg.activateDeathmatch", context.isActivateDeathmatch()));
-        context.setEnableRewards(readBoolean(config, "pg.enableRewards", context.isEnableRewards()));
-        context.setBroadcastStarting(readBoolean(config, "pg.broadcastStarting", context.isBroadcastStarting()));
-        context.setWinningReward(readInt(config, "pg.winningReward", context.getWinningReward()));
-        context.setKillReward(readInt(config, "pg.killReward", context.getKillReward()));
-        context.setLanguage(readString(config, "pg.language", context.getLanguage()));
-    }
-
-    private boolean readBoolean(FileConfiguration config, String path, boolean defaultValue) {
-        return readConfigValue(config, path, defaultValue, config::getBoolean);
-    }
-
-    private int readInt(FileConfiguration config, String path, int defaultValue) {
-        return readConfigValue(config, path, defaultValue, config::getInt);
-    }
-
-    private String readString(FileConfiguration config, String path, String defaultValue) {
-        return readConfigValue(config, path, defaultValue, config::getString);
-    }
-
-    private <T> T readConfigValue(FileConfiguration config, String path, T defaultValue, java.util.function.Function<String, T> getter) {
-        if (config.get(path) == null) {
-            config.addDefault(path, defaultValue);
-            config.options().copyDefaults(true);
-            plugin.saveConfig();
-            return defaultValue;
-        }
-        return getter.apply(path);
-    }
-
-    private void configureCoin(ItemStack coin) {
+    private void configureCoin(PotionGames plugin) {
+        ItemStack coin = plugin.getCoin();
         ItemMeta coinmeta = coin.getItemMeta();
-        assert coinmeta != null;
+        if (coinmeta == null) {
+            plugin.getLogger().warning("[PotionGames] Coin ItemMeta is null, skipping coin configuration");
+            return;
+        }
         coinmeta.displayName(Messages.CoinSingle());
         coin.setItemMeta(coinmeta);
     }
 
-    private void configureMysql(EnableBootstrapContext context) {
-        FileConfiguration config = plugin.getConfig();
-        if (config.get("pg.mysql") == null) {
-            config.addDefault("pg.mysql.host", "localhost");
-            config.addDefault("pg.mysql.port", "3306");
-            config.addDefault("pg.mysql.database", "potiongames");
-            config.addDefault("pg.mysql.user", "root");
-            config.addDefault("pg.mysql.password", "");
-            config.options().copyDefaults(true);
-            plugin.saveConfig();
-        } else {
-            context.setHost(config.getString("pg.mysql.host"));
-            context.setPort(config.getString("pg.mysql.port"));
-            context.setDatabase(config.getString("pg.mysql.database"));
-            context.setUser(config.getString("pg.mysql.user"));
-            context.setPassword(config.getString("pg.mysql.password"));
-        }
-    }
-
-    private void initializeLobbies(EnableBootstrapContext context) {
-        if (!context.isGameServer()) {
+    private void initializeLobbies() {
+        if (!plugin.getConfigManager().isGameServer()) {
             new RankWallUpdater(plugin).start();
             return;
         }
@@ -183,90 +111,90 @@ public final class EnableBootstrapInitializer {
             }
 
             String s = Integer.toString(lobby);
-            context.getLobbyCheckArenas().put(s, false);
-            context.getLobbyActivateTeams().put(s, true);
-            context.getLobbyActivateKits().put(s, true);
-            context.getLobbyActivateShop().put(s, true);
-            context.getLobbyActivateAirdrops().put(s, true);
-            context.getLobbyJoinable().put(s, true);
-            context.getLobbyForcearena().put(s, false);
-            context.getLobbyDeathmatch().put(s, false);
-            context.getLobbyMove().put(s, true);
-            context.getLobbyVoteallowed().put(s, false);
-            context.getLobbyTeamallowed().put(s, false);
-            context.getLobbyKitallowed().put(s, false);
-            context.getLobbyAmount().put(s, 0);
-            context.getLobbyTickstarted().put(s, true);
-            context.getLobbyBuild().put(s, false);
-            context.getLobbyPause().put(s, false);
-            context.getLobbyVote().put(s, null);
-            context.getLobbyVotedarena().put(s, null);
-            context.getLobbyteamSize().put(s, 2);
-            context.getLobbymaxPlayers().put(s, 24);
-            context.getLobbyminPlayers().put(s, context.getLobbymaxPlayers().get(s) / 2);
-            context.getLobbyteamAmount().put(s, context.getLobbymaxPlayers().get(s) / context.getLobbyteamSize().get(s));
-            context.getLobbyroundTime().put(s, 30);
-            context.getLobbyroundTimeSeconds().put(s, context.getLobbyroundTime().get(s) * 60);
+            var lsm = plugin.getLobbyStateManager();
+            var asm = plugin.getArenaStateManager();
 
-            syncLobbyConfig(context, s, "activateTeams", context.isActivateTeams(), value -> context.getLobbyActivateTeams().replace(s, value));
-            syncLobbyConfig(context, s, "activateKits", context.isActivateKits(), value -> context.getLobbyActivateKits().replace(s, value));
-            syncLobbyConfig(context, s, "activateShop", context.isActivateShop(), value -> context.getLobbyActivateShop().replace(s, value));
-            syncLobbyConfig(context, s, "activateAirdrops", context.isActivateAirdrops(), value -> context.getLobbyActivateAirdrops().replace(s, value));
-            syncLobbyConfig(context, s, "teamSize", context.getTeamSize(), value -> context.getLobbyteamSize().replace(s, value));
-            syncLobbyConfig(context, s, "maxPlayers", context.getMaxPlayers(), value -> context.getLobbymaxPlayers().replace(s, value));
-            syncLobbyConfig(context, s, "minPlayers", context.getMinPlayers(), value -> context.getLobbyminPlayers().replace(s, value));
-            syncLobbyConfig(context, s, "roundTime", context.getRoundTime(), value -> context.getLobbyroundTime().replace(s, value));
+            lsm.setCheckArenas(s, false);
+            lsm.setActivateTeams(s, true);
+            lsm.setActivateKits(s, true);
+            lsm.setActivateShop(s, true);
+            lsm.setActivateAirdrops(s, true);
+            lsm.setJoinable(s, true);
+            lsm.setForcearena(s, false);
+            lsm.setDeathmatchEnabled(s, false);
+            lsm.setMoveAllowed(s, true);
+            lsm.setVoteallowed(s, false);
+            lsm.setTeamallowed(s, false);
+            lsm.setKitallowed(s, false);
+            lsm.setLobbyAmount(s, 0);
+            lsm.setTickstarted(s, true);
+            lsm.setBuildAllowed(s, false);
+            lsm.setPaused(s, false);
+            lsm.setCurrentVote(s, null);
+            lsm.setVotedArena(s, null);
+            lsm.setMaxPlayers(s, 24);
+            lsm.setMinPlayers(s, 12);
+            lsm.setRoundTime(s, 30);
+            lsm.setRoundTimeSeconds(s, 1800);
+            asm.setLobbyTeamSize(s, 2);
+            asm.initializeLobbyTeams(s, 12);
 
-            context.getLobbyroundTimeSeconds().put(s, context.getLobbyroundTime().get(s) * 60);
-            context.getLobbyteamAmount().put(s, context.getLobbymaxPlayers().get(s) / context.getLobbyteamSize().get(s));
+            syncLobbyConfig(s, "activateTeams", plugin.getConfigManager().isActivateTeams(),
+                    value -> lsm.setActivateTeams(s, value));
+            syncLobbyConfig(s, "activateKits", plugin.getConfigManager().isActivateKits(),
+                    value -> lsm.setActivateKits(s, value));
+            syncLobbyConfig(s, "activateShop", plugin.getConfigManager().isActivateShop(),
+                    value -> lsm.setActivateShop(s, value));
+            syncLobbyConfig(s, "activateAirdrops", false,
+                    value -> lsm.setActivateAirdrops(s, value));
+            syncLobbyConfig(s, "teamSize", 2,
+                    value -> { asm.setLobbyTeamSize(s, value);
+                               asm.initializeLobbyTeams(s, 12 / value); });
+            syncLobbyConfig(s, "maxPlayers", 24,
+                    value -> { lsm.setMaxPlayers(s, value);
+                               lsm.setMinPlayers(s, value / 2); });
+            syncLobbyConfig(s, "minPlayers", 12,
+                    value -> lsm.setMinPlayers(s, value));
+            syncLobbyConfig(s, "roundTime", 30,
+                    value -> { lsm.setRoundTime(s, value);
+                               lsm.setRoundTimeSeconds(s, value * 60); });
 
-            if (!context.getLobbyVoteallowed().get(s)) {
-                context.getLobbyVoteallowed().replace(s, true);
-                HashMap<String, Integer> temp = new HashMap<>();
-                temp.put(Messages.RandomText(), 0);
+            lsm.setRoundTimeSeconds(s, lsm.getRoundTime(s) * 60);
+
+            if (!lsm.isVoteallowed(s)) {
+                lsm.setVoteallowed(s, true);
                 for (int max = 1; max < 27; max++) {
                     String arenaPath = "pg.lobbies." + s + "." + max + ".name";
                     if (Settings.lobbies.contains(arenaPath)) {
                         String arenaName = Settings.lobbies.getString(arenaPath);
-                        temp.put(arenaName, 0);
-                        context.getLobbyvoteplayernamesdata().put(null, arenaName);
+                        asm.addLobbyVote(s, arenaName);
+                        asm.removeLobbyVote(s, arenaName); // keep at 0
                     }
                 }
-                context.getLobbyvotes().put(s, temp);
-                context.getLobbyvoteplayernames().put(s, context.getLobbyvoteplayernamesdata());
             }
 
-            if (!context.getLobbyTeamallowed().get(s)) {
-                context.getLobbyTeamallowed().replace(s, true);
-                HashMap<Integer, Integer> temp = new HashMap<>();
-                for (int max = 1; max <= context.getLobbyteamAmount().get(s); max++) {
-                    temp.put(max, 0);
-                    context.getLobbyteamplayernamesdata().put(null, Integer.toString(max));
-                }
-                context.getLobbyteams().put(s, temp);
-                context.getLobbyteamplayernames().put(s, context.getLobbyteamplayernamesdata());
+            if (!lsm.isTeamallowed(s)) {
+                lsm.setTeamallowed(s, true);
+                asm.initializeLobbyTeams(s, 12 / asm.getLobbyTeamSize(s));
             }
 
-            if (!context.getLobbyKitallowed().get(s)) {
-                context.getLobbyKitallowed().replace(s, true);
-                context.getKitplayers().put(Messages.RandomText(), 0);
-                for (String all : context.getKits()) {
-                    context.getKitplayers().put(all, 0);
+            if (!lsm.isKitallowed(s)) {
+                lsm.setKitallowed(s, true);
+                var ism = plugin.getItemStateManager();
+                ism.getKitplayersRaw().put(Messages.RandomText(), 0);
+                for (String all : ism.getKitsRaw()) {
+                    ism.getKitplayersRaw().put(all, 0);
                 }
             }
 
-            context.getLobbyLiquidPlaced().put(s, context.getLobbyLiquidPlacedData());
-            context.getLobbyPlacedBlocks().put(s, context.getLobbyPlacedBlocksData());
-            context.getLobbyBreakedBlocks().put(s, context.getLobbyBreakedBlocksData());
-            context.getLobbyWaterBlocks().put(s, context.getLobbyWaterBlocksData());
-            context.getLobbyStates().put(s, GameStates.WAITING);
-            if (plugin.getLobbyById(lobby) != null) {
-                plugin.getLobbyById(lobby).startTick();
+            lsm.setGameState(s, GameStates.WAITING);
+            if (plugin.getGame().getLobby(lobby) != null) {
+                plugin.getGame().getLobby(lobby).startTick();
             }
         }
     }
 
-    private <T> void syncLobbyConfig(EnableBootstrapContext context, String lobbyId, String key, T defaultValue, Consumer<T> setter) {
+    private <T> void syncLobbyConfig(String lobbyId, String key, T defaultValue, java.util.function.Consumer<T> setter) {
         String path = "pg.lobbies." + lobbyId + "." + key;
         if (Settings.lobbies.get(path) == null) {
             Settings.lobbies.addDefault(path, defaultValue);
@@ -274,7 +202,7 @@ public final class EnableBootstrapInitializer {
             try {
                 Settings.lobbies.save(Settings.lobbiesFile);
             } catch (IOException ex) {
-                sendError(context, ex);
+                sendError(ex);
             }
             return;
         }
@@ -283,8 +211,8 @@ public final class EnableBootstrapInitializer {
         setter.accept(value);
     }
 
-    private void sendError(EnableBootstrapContext context, IOException ex) {
-        Bukkit.getConsoleSender().sendMessage(Settings.prefix.append(
+    private void sendError(IOException ex) {
+        plugin.getComponentLogger().info(Settings.prefix.append(
                 Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED))
         ));
     }

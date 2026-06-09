@@ -26,15 +26,16 @@ public class SetupHandler implements ISetupHandler {
     @Override
     public void setup(Player p) {
         PlayerInventory inventory = p.getInventory();
-        pg.addSetupPlayer(p);
-        pg.savePlayerInventory(p, inventory.getContents());
-        pg.savePlayerArmor(p, inventory.getArmorContents());
-        pg.savePlayerLevel(p, p.getLevel());
-        pg.savePlayerExp(p, p.getExp());
-        pg.savePlayerLocation(p, p.getLocation());
-        pg.savePlayerGameMode(p, p.getGameMode());
-        pg.getSetupStateManager().savePlayerHealth(p, p.getHealth());
-        pg.getSetupStateManager().savePlayerFoodLevel(p, p.getFoodLevel());
+        var ssm = pg.getSetupStateManager();
+        ssm.addSetupPlayer(p);
+        ssm.savePlayerInventory(p, inventory.getContents());
+        ssm.savePlayerArmor(p, inventory.getArmorContents());
+        ssm.savePlayerLevel(p, p.getLevel());
+        ssm.savePlayerExp(p, p.getExp());
+        ssm.savePlayerLocation(p, p.getLocation());
+        ssm.savePlayerGameMode(p, p.getGameMode());
+        ssm.savePlayerHealth(p, p.getHealth());
+        ssm.savePlayerFoodLevel(p, p.getFoodLevel());
 
         inventory.clear();
         inventory.setArmorContents(new ItemStack[] { null, null, null, null });
@@ -379,6 +380,5 @@ public class SetupHandler implements ISetupHandler {
         pg.getSetupStateManager().removeSavedHealth(p);
         pg.getSetupStateManager().removeSavedFoodLevel(p);
         pg.getSetupStateManager().removeSetupPlayer(p);
-        pg.removeSetupPlayer(p);
     }
 }

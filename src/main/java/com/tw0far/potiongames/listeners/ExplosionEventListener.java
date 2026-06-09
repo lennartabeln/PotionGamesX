@@ -18,7 +18,7 @@ public class ExplosionEventListener implements Listener {
     
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e) {
-        if (!plugin.isGameServer()) {
+        if (!plugin.getConfigManager().isGameServer()) {
             return;
         }
         

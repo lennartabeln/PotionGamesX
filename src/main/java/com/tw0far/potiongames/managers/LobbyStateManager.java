@@ -52,10 +52,8 @@ public class LobbyStateManager implements ILobbyStateManager {
     private final Map<String, String> lobbyVotedarena = new HashMap<>();
     
     // Lobby Settings
-    private final Map<String, Integer> lobbyteamSize = new HashMap<>();
     private final Map<String, Integer> lobbymaxPlayers = new HashMap<>();
     private final Map<String, Integer> lobbyminPlayers = new HashMap<>();
-    private final Map<String, Integer> lobbyteamAmount = new HashMap<>();
     private final Map<String, Integer> lobbyroundTime = new HashMap<>();
     private final Map<String, Integer> lobbyroundTimeSeconds = new HashMap<>();
     
@@ -307,16 +305,6 @@ public class LobbyStateManager implements ILobbyStateManager {
     
     // ===== Lobby Settings =====
     @Override
-    public Integer getTeamSize(String lobbyId) {
-        return lobbyteamSize.getOrDefault(lobbyId, plugin.getConfigManager().getTeamSize());
-    }
-    
-    @Override
-    public void setTeamSize(String lobbyId, Integer value) {
-        lobbyteamSize.put(lobbyId, value);
-    }
-    
-    @Override
     public Integer getMaxPlayers(String lobbyId) {
         return lobbymaxPlayers.getOrDefault(lobbyId, plugin.getConfigManager().getMaxPlayers());
     }
@@ -334,16 +322,6 @@ public class LobbyStateManager implements ILobbyStateManager {
     @Override
     public void setMinPlayers(String lobbyId, Integer value) {
         lobbyminPlayers.put(lobbyId, value);
-    }
-    
-    @Override
-    public Integer getTeamAmount(String lobbyId) {
-        return lobbyteamAmount.getOrDefault(lobbyId, plugin.getConfigManager().getTeamAmount());
-    }
-    
-    @Override
-    public void setTeamAmount(String lobbyId, Integer value) {
-        lobbyteamAmount.put(lobbyId, value);
     }
     
     @Override
@@ -420,10 +398,8 @@ public class LobbyStateManager implements ILobbyStateManager {
         lobbySingleArena.remove(lobbyId);
         lobbyVote.remove(lobbyId);
         lobbyVotedarena.remove(lobbyId);
-        lobbyteamSize.remove(lobbyId);
         lobbymaxPlayers.remove(lobbyId);
         lobbyminPlayers.remove(lobbyId);
-        lobbyteamAmount.remove(lobbyId);
         lobbyroundTime.remove(lobbyId);
         lobbyroundTimeSeconds.remove(lobbyId);
     }
@@ -452,10 +428,8 @@ public class LobbyStateManager implements ILobbyStateManager {
         lobbySingleArena.clear();
         lobbyVote.clear();
         lobbyVotedarena.clear();
-        lobbyteamSize.clear();
         lobbymaxPlayers.clear();
         lobbyminPlayers.clear();
-        lobbyteamAmount.clear();
         lobbyroundTime.clear();
         lobbyroundTimeSeconds.clear();
     }

@@ -89,27 +89,6 @@ public interface IPlayerStateManager extends IManager {
      */
     Collection<Player> getShopPlayers();
     
-    // ===== SETUP MODE =====
-    /**
-     * Add player to setup mode
-     */
-    void addToSetup(Player player);
-    
-    /**
-     * Remove player from setup mode
-     */
-    void removeFromSetup(Player player);
-    
-    /**
-     * Check if player is in setup mode
-     */
-    boolean isInSetup(Player player);
-    
-    /**
-     * Get all players in setup mode
-     */
-    Collection<Player> getSetupPlayers();
-    
     // ===== LOBBY ASSIGNMENT =====
     /**
      * Assign player to a lobby

@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import com.tw0far.potiongames.main.PotionGames;
 
 /**
  * Represents a single arena within a lobby.
@@ -95,7 +96,7 @@ public class Arena {
                         spawns.add(spawn);
                     }
                 } catch (Exception ex) {
-                    Bukkit.getConsoleSender().sendMessage("Error loading spawn " + key + " for arena " + name + ": " + ex.getMessage());
+                    PotionGames.getInstance().getLogger().warning("Error loading spawn " + key + " for arena " + name + ": " + ex.getMessage());
                 }
             }
         }
@@ -114,7 +115,7 @@ public class Arena {
                         deathmatchSpawns.add(spawn);
                     }
                 } catch (Exception ex) {
-                    Bukkit.getConsoleSender().sendMessage("Error loading deathmatch spawn " + key + " for arena " + name + ": " + ex.getMessage());
+                    PotionGames.getInstance().getLogger().warning("Error loading deathmatch spawn " + key + " for arena " + name + ": " + ex.getMessage());
                 }
             }
         }
@@ -143,7 +144,7 @@ public class Arena {
                         }
                     }
                 } catch (Exception ex) {
-                    Bukkit.getConsoleSender().sendMessage("Error loading chest " + key + " for arena " + name + ": " + ex.getMessage());
+                    PotionGames.getInstance().getLogger().warning("Error loading chest " + key + " for arena " + name + ": " + ex.getMessage());
                 }
             }
         }
@@ -158,7 +159,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -172,7 +173,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -233,7 +234,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             spawns.remove(spawn);
             return false;
         }
@@ -259,7 +260,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             spawns.remove(spawn);
             return false;
         }
@@ -284,7 +285,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -330,7 +331,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             deathmatchSpawns.remove(spawn);
             return false;
         }
@@ -356,7 +357,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             deathmatchSpawns.remove(spawn);
             return false;
         }
@@ -381,7 +382,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -454,7 +455,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             chestLocations.remove(location);
             chestLoot.remove(location);
             return false;

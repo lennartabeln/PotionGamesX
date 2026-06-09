@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
@@ -38,18 +39,27 @@ public class StartCommand implements ICommand {
         }
         
         if (lobbyId != null) {
-            if (plugin.getLobbyAmount(lobbyId) >= plugin.getLobbyMinPlayers(lobbyId)) {
-                if (plugin.getLobbyCountdown(lobbyId) >= 10) {
-                    plugin.setLobbyCountdown(lobbyId, 10);
-                    // Broadcast to all players in this lobby
-                    for (Player all : plugin.getGame().getPlayersInLobby(lobbyId)) {
-                        all.sendMessage(Messages.GameStarted());
+            try {
+                Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
+                if (lobby != null) {
+                    // Check if enough players
+                    if (lobby.getPlayerCount() >= lobby.getMinPlayers()) {
+                        if (lobby.getState() == com.tw0far.potiongames.models.GameStates.WAITING) {
+                            lobby.setCountdown(10);
+                            lobby.startCountdown();
+                            // Broadcast to all players in this lobby
+                            for (Player all : plugin.getGame().getPlayersInLobby(lobbyId)) {
+                                all.sendMessage(Messages.GameStarted());
+                            }
+                        } else {
+                            player.sendMessage(Messages.GameAlreadyStarted());
+                        }
+                    } else {
+                        player.sendMessage(Messages.GameNotEnoughPlayers());
                     }
-                } else {
-                    player.sendMessage(Messages.GameAlreadyStarted());
                 }
-            } else {
-                player.sendMessage(Messages.GameNotEnoughPlayers());
+            } catch (NumberFormatException e) {
+                player.sendMessage(Messages.HelpUsePgHelp());
             }
         }
         return true;

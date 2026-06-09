@@ -3,9 +3,6 @@ package com.tw0far.potiongames.models;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Optimized loot table structure combining all loot arrays into single organized object.
  * Replaces 9 separate ArrayList<ItemStack> and 1 ArrayList<PotionEffect>.

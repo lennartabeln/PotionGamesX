@@ -1,11 +1,11 @@
 package com.tw0far.potiongames.bootstrap;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.managers.IItemStateManager;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -30,23 +30,14 @@ public final class BootstrapInitializer {
         Settings.messagesFile = new File(plugin.getDataFolder() + File.separator + "messages.yml");
         Settings.kitsFile = new File(plugin.getDataFolder() + File.separator + "kits.yml");
         Settings.shopFile = new File(plugin.getDataFolder() + File.separator + "shop.yml");
-        
-        // Ensure all files exist before loading
+
         ensureFileExists(Settings.lobbiesFile, "lobbies.yml");
-        ensureFileExists(Settings.chestsFile, "chests.yml");
-        ensureFileExists(Settings.messagesFile, "messages.yml");
-        ensureFileExists(Settings.kitsFile, "kits.yml");
-        ensureFileExists(Settings.shopFile, "shop.yml");
-        
-        // Config.yml: Main config with database, global settings
-        // lobbies.yml: Lobbies, arenas, spawns
-        // chests.yml: Chest loot definitions
-        // messages.yml: Localized messages
-        // kits.yml: Kit definitions
-        // shop.yml: Shop items
-        
+        saveResourceIfMissing("chests.yml", Settings.chestsFile);
+        saveResourceIfMissing("messages.yml", Settings.messagesFile);
+        saveResourceIfMissing("kits.yml", Settings.kitsFile);
+        saveResourceIfMissing("shop.yml", Settings.shopFile);
+
         Settings.loadConfigurations();
-        
         Settings.loadSettings(plugin);
         plugin.getGame().load();
 
@@ -54,25 +45,33 @@ public final class BootstrapInitializer {
         seedShopData();
         seedKitData();
     }
-    
+
     private void ensureFileExists(File file, String name) {
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": Could not create " + name + " - " + e.getMessage()).color(NamedTextColor.RED)));
+                plugin.getComponentLogger().info(Messages.FileSaveFailed()
+                    .append(Component.text(": Could not create " + name + " - " + e.getMessage()).color(NamedTextColor.RED)));
             }
         }
     }
 
+    private void saveResourceIfMissing(String resourceName, File targetFile) {
+        if (!targetFile.exists()) {
+            plugin.saveResource(resourceName, false);
+        }
+    }
+
     private void seedShopData() {
-        // Work on mutable copies, then replace plugin's internal collections via API
-        List<String> shop = new java.util.ArrayList<>(plugin.getShop());
-        List<PotionEffect> shoppotion = new java.util.ArrayList<>(plugin.getShoppotion());
-        List<ItemStack> shoppotiontype = new java.util.ArrayList<>(plugin.getShoppotiontype());
-        List<String> shopkit = new java.util.ArrayList<>(plugin.getShopkit());
-        List<Integer> shopcost = new java.util.ArrayList<>(plugin.getShopcost());
-        List<Integer> shopsale = new java.util.ArrayList<>(plugin.getShopsale());
+        IItemStateManager ism = plugin.getItemStateManager();
+
+        List<String> shop = ism.getShopItemsRaw();
+        List<PotionEffect> shoppotion = ism.getShopPotionsRaw();
+        List<ItemStack> shoppotiontype = ism.getShopPotionTypesRaw();
+        List<String> shopkit = ism.getShopKitsRaw();
+        List<Integer> shopcost = ism.getShopCostsRaw();
+        List<Integer> shopsale = ism.getShopSalesRaw();
 
         addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "JUMP_BOOST", PotionEffectType.JUMP_BOOST, Material.POTION, "Looter");
         addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "RESISTANCE", PotionEffectType.RESISTANCE, Material.POTION, "Tank");
@@ -104,44 +103,34 @@ public final class BootstrapInitializer {
 
         int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
-            if (Settings.shopdata.get("pg.potions." + shopitem) == null) {
-                Settings.shopdata.addDefault("pg.potions." + shopitem, shop.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".name", shop.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".shoppotion", shoppotion.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".shoppotiontype", shoppotiontype.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".kit", shopkit.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".cost", shopcost.get(shopitem - 1));
-                Settings.shopdata.addDefault("pg.potions." + shopitem + ".sale", shopsale.get(shopitem - 1));
+            String potionPath = "pg.potions." + shopitem;
+            if (Settings.shopdata.get(potionPath) == null) {
+                Settings.shopdata.addDefault(potionPath, shop.get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".name", shop.get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".shoppotion", shoppotion.get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".shoppotiontype", shoppotiontype.get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".kit", shopkit.get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".cost", shopcost.get(shopitem - 1));
+                Settings.shopdata.addDefault(potionPath + ".sale", shopsale.get(shopitem - 1));
                 Settings.shopdata.options().copyDefaults(true);
             } else {
-                String name = Settings.shopdata.getString("pg.potions." + shopitem + ".name");
-                shop.set(shopitem - 1, name);
-                PotionEffect potion = (PotionEffect) Settings.shopdata.get("pg.potions." + shopitem + ".shoppotion");
-                shoppotion.set(shopitem - 1, potion);
-                ItemStack potiontype = (ItemStack) Settings.shopdata.get("pg.potions." + shopitem + ".shoppotiontype");
-                shoppotiontype.set(shopitem - 1, potiontype);
-                String kitname = Settings.shopdata.getString("pg.potions." + shopitem + ".kit");
-                shopkit.set(shopitem - 1, kitname);
-                Integer cost = (Integer) Settings.shopdata.get("pg.potions." + shopitem + ".cost");
-                shopcost.set(shopitem - 1, cost);
-                Integer sale = (Integer) Settings.shopdata.get("pg.potions." + shopitem + ".sale");
-                shopsale.set(shopitem - 1, sale);
+                shop.set(shopitem - 1, Settings.shopdata.getString(potionPath + ".name"));
+                shoppotion.set(shopitem - 1, (PotionEffect) Settings.shopdata.get(potionPath + ".shoppotion"));
+                shoppotiontype.set(shopitem - 1, (ItemStack) Settings.shopdata.get(potionPath + ".shoppotiontype"));
+                shopkit.set(shopitem - 1, Settings.shopdata.getString(potionPath + ".kit"));
+                shopcost.set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".cost"));
+                shopsale.set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".sale"));
             }
             shopitem++;
         }
 
-        // Replace plugin internal collections so other code sees final data
-        plugin.replaceShop(shop);
-        plugin.replaceShoppotion(shoppotion);
-        plugin.replaceShoppotiontype(shoppotiontype);
-        plugin.replaceShopkit(shopkit);
-        plugin.replaceShopcost(shopcost);
-        plugin.replaceShopsale(shopsale);
+        ism.replaceShop(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale);
 
         try {
             Settings.shopdata.save(Settings.shopFile);
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
+            plugin.getComponentLogger().info(Messages.FileSaveFailed()
+                .append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
     }
 
@@ -149,7 +138,7 @@ public final class BootstrapInitializer {
                               List<Integer> shopcost, List<Integer> shopsale, String name, PotionEffectType effect,
                               Material potionMaterial, String kit) {
         shop.add(name);
-        shoppotion.add(new PotionEffect(effect, 30 * 20, 1));
+        shoppotion.add(new PotionEffect(effect, 30 * 20, 1, true, true, true));
         shoppotiontype.add(new ItemStack(potionMaterial));
         shopkit.add(kit);
         shopcost.add(4);
@@ -157,33 +146,30 @@ public final class BootstrapInitializer {
     }
 
     private void seedKitData() {
-        // Use a mutable copy for kits and replace plugin data after population
-        List<String> kits = new java.util.ArrayList<>(plugin.getKits());
+        IItemStateManager ism = plugin.getItemStateManager();
+        List<String> kits = ism.getKitsRaw();
         Collections.addAll(kits, "Rich Kid", "Fighter", "Healer", "Looter", "Ghost", "Tank");
         for (int i = 7; i < 27; i++) {
             kits.add("kit" + i);
         }
 
-        // Build mutable kitplayers map and replace after population
         java.util.Map<String, Integer> kitplayers = new java.util.HashMap<>();
         kitplayers.put(Messages.RandomText(), 0);
         for (String all : kits) {
             kitplayers.put(all, 0);
         }
 
-        // Replace plugin internal collections
-        plugin.replaceKits(kits);
-        plugin.replaceKitplayers(kitplayers);
+        ism.replaceKitplayers(kitplayers);
 
         int kititem = 1;
         for (int i = 0; i < kits.size(); i++) {
-            if (Settings.kitdata.get("pg.kits." + kititem) == null) {
-                Settings.kitdata.addDefault("pg.kits." + kititem, kits.get(kititem - 1));
-                Settings.kitdata.addDefault("pg.kits." + kititem + ".name", kits.get(kititem - 1));
+            String kitPath = "pg.kits." + kititem;
+            if (Settings.kitdata.get(kitPath) == null) {
+                Settings.kitdata.addDefault(kitPath, kits.get(kititem - 1));
+                Settings.kitdata.addDefault(kitPath + ".name", kits.get(kititem - 1));
                 Settings.kitdata.options().copyDefaults(true);
             } else {
-                String name = Settings.kitdata.getString("pg.kits." + kititem + ".name");
-                kits.set(kititem - 1, name);
+                kits.set(kititem - 1, Settings.kitdata.getString(kitPath + ".name"));
             }
             kititem++;
         }
@@ -191,7 +177,8 @@ public final class BootstrapInitializer {
         try {
             Settings.kitdata.save(Settings.kitsFile);
         } catch (IOException ex) {
-            Bukkit.getConsoleSender().sendMessage(Messages.FileSaveFailed().append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
+            plugin.getComponentLogger().info(Messages.FileSaveFailed()
+                .append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
     }
 }

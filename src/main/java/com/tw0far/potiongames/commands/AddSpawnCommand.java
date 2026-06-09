@@ -42,7 +42,7 @@ public class AddSpawnCommand implements ICommand {
         try {
             int lobbyId = Integer.parseInt(args[1]);
             String arenaName = args[2];
-            Lobby lobby = plugin.getLobbyById(lobbyId);
+            Lobby lobby = plugin.getGame().getLobby(lobbyId);
             if (lobby == null) {
                 player.sendMessage(Messages.LobbyDoesNotExist());
                 return false;

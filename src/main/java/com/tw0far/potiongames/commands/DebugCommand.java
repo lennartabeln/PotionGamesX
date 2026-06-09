@@ -9,11 +9,9 @@ import org.bukkit.entity.Player;
  * /pg debug - Toggle verbose debug logging for troubleshooting
  */
 public class DebugCommand implements ICommand {
-    private final PotionGames plugin;
     private boolean debugMode = false;
     
     public DebugCommand(PotionGames plugin) {
-        this.plugin = plugin;
     }
     
     @Override

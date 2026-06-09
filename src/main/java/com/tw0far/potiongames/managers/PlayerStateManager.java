@@ -21,8 +21,6 @@ public class PlayerStateManager implements IPlayerStateManager {
     private final Set<Player> activePlayers = new HashSet<>();
     private final Set<Player> spectators = new HashSet<>();
     private final Set<Player> shopPlayers = new HashSet<>();
-    private final Set<Player> setupPlayers = new HashSet<>();
-    
     // Lobby Assignments
     private final Map<Player, String> playerLobby = new HashMap<>();
     private final Map<Player, String> specLobby = new HashMap<>();
@@ -121,27 +119,6 @@ public class PlayerStateManager implements IPlayerStateManager {
         return new HashSet<>(shopPlayers);
     }
     
-    // ===== SETUP MODE =====
-    @Override
-    public void addToSetup(Player player) {
-        setupPlayers.add(player);
-    }
-    
-    @Override
-    public void removeFromSetup(Player player) {
-        setupPlayers.remove(player);
-    }
-    
-    @Override
-    public boolean isInSetup(Player player) {
-        return setupPlayers.contains(player);
-    }
-    
-    @Override
-    public Collection<Player> getSetupPlayers() {
-        return new HashSet<>(setupPlayers);
-    }
-    
     // ===== LOBBY ASSIGNMENT =====
     @Override
     public void assignToLobby(Player player, String lobbyId) {
@@ -231,7 +208,6 @@ public class PlayerStateManager implements IPlayerStateManager {
         activePlayers.clear();
         spectators.clear();
         shopPlayers.clear();
-        setupPlayers.clear();
         playerLobby.clear();
         specLobby.clear();
     }
@@ -248,7 +224,6 @@ public class PlayerStateManager implements IPlayerStateManager {
         all.addAll(activePlayers);
         all.addAll(spectators);
         all.addAll(shopPlayers);
-        all.addAll(setupPlayers);
         return all;
     }
 }

@@ -9,12 +9,9 @@ public interface IConfigurationManager extends IManager {
     // Reload configuration
     void reload();
     int getCountdown();
-    int getReset();
     int getTeamSize();
     int getMaxPlayers();
     int getMinPlayers();
-    int getPlayerAmount();
-    int getTeamAmount();
     int getRoundTime();
     int getRoundTimeSeconds();
     int getActivePotions();
@@ -24,12 +21,9 @@ public interface IConfigurationManager extends IManager {
     
     // Game Rule Setters
     void setCountdown(int countdown);
-    void setReset(int reset);
     void setTeamSize(int teamSize);
     void setMaxPlayers(int maxPlayers);
     void setMinPlayers(int minPlayers);
-    void setPlayerAmount(int playerAmount);
-    void setTeamAmount(int teamAmount);
     void setRoundTime(int roundTime);
     void setRoundTimeSeconds(int roundTimeSeconds);
     void setActivePotions(int activePotions);
@@ -69,16 +63,9 @@ public interface IConfigurationManager extends IManager {
     boolean isTickStarted();
     boolean isMySQL();
     boolean isGameServer();
-    boolean isAddlobby();
-    boolean isAddarena();
-    boolean isDellobby();
-    boolean isDelarena();
-    boolean isReload();
     boolean isCompassOnSpawn();
     boolean isAllowOutsideChat();
     boolean isChangeGamerules();
-    boolean isCheckArenas();
-    boolean isSingleArena();
     boolean isFriendlyFire();
     boolean isJoinStarted();
     boolean isEnableRewards();
@@ -98,16 +85,9 @@ public interface IConfigurationManager extends IManager {
     void setTickStarted(boolean tickStarted);
     void setMySQL(boolean mysql);
     void setGameServer(boolean gameServer);
-    void setAddlobby(boolean addlobby);
-    void setAddarena(boolean addarena);
-    void setRemoveLobby(boolean removeLobby);
-    void setRemoveArena(boolean removeArena);
-    void setReload(boolean reload);
     void setCompassOnSpawn(boolean compassOnSpawn);
     void setAllowOutsideChat(boolean allowOutsideChat);
     void setChangeGamerules(boolean changeGamerules);
-    void setCheckArenas(boolean checkArenas);
-    void setSingleArena(boolean singleArena);
     void setFriendlyFire(boolean friendlyFire);
     void setJoinStarted(boolean joinStarted);
     void setEnableRewards(boolean enableRewards);

@@ -1,0 +1,58 @@
+# PotionGames Kit Configuration
+# Structure: pg.kits.<number>.name
+# Populated on first run; edit to customize kit selection.
+
+pg:
+  kits:
+    1:
+      name: "Rich Kid"
+    2:
+      name: "Fighter"
+    3:
+      name: "Healer"
+    4:
+      name: "Looter"
+    5:
+      name: "Ghost"
+    6:
+      name: "Tank"
+    7:
+      name: "kit7"
+    8:
+      name: "kit8"
+    9:
+      name: "kit9"
+    10:
+      name: "kit10"
+    11:
+      name: "kit11"
+    12:
+      name: "kit12"
+    13:
+      name: "kit13"
+    14:
+      name: "kit14"
+    15:
+      name: "kit15"
+    16:
+      name: "kit16"
+    17:
+      name: "kit17"
+    18:
+      name: "kit18"
+    19:
+      name: "kit19"
+    20:
+      name: "kit20"
+    21:
+      name: "kit21"
+    22:
+      name: "kit22"
+    23:
+      name: "kit23"
+    24:
+      name: "kit24"
+    25:
+      name: "kit25"
+    26:
+      name: "kit26"

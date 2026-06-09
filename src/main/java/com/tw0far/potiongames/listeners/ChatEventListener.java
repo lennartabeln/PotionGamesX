@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -61,8 +62,17 @@ public class ChatEventListener implements Listener {
             }
             
             // Add colored name prefix based on team
-            if (plugin.isLobbyActivateTeams(lobbyId)) {
-                String teamName = plugin.getGame().getPlayerTeam(p);
+            boolean activateTeams;
+            try {
+                int id = Integer.parseInt(lobbyId);
+                Lobby lobby = plugin.getGame().getLobby(id);
+                activateTeams = lobby != null ? lobby.isActivateTeams() : plugin.getConfigManager().isActivateTeams();
+            } catch (NumberFormatException e2) {
+                activateTeams = plugin.getConfigManager().isActivateTeams();
+            }
+            if (activateTeams) {
+                Lobby chatLobby = plugin.getGame().getLobbyByPlayer(p);
+                String teamName = chatLobby != null ? chatLobby.getPlayerTeam(p) : null;
                 if (teamName != null) {
                     Component currentMessage = e.message();
                     e.message(Component.text("[" + teamName + "] ").color(NamedTextColor.YELLOW).append(currentMessage));
@@ -81,43 +91,43 @@ public class ChatEventListener implements Listener {
         Integer selectedLobby = plugin.getSetupStateManager().getSelectedLobby(p);
         
         // Handle add lobby
-        if (plugin.getConfigManager().isAddlobby()) {
+        if (plugin.getSetupStateManager().isAddlobby()) {
             // Input is the lobby ID to add
             try {
                 int lobbyId = Integer.parseInt(input);
                 plugin.getSetupHandler().addLobby(p, lobbyId);
-                plugin.getConfigManager().setAddlobby(false);
+                plugin.getSetupStateManager().setAddlobby(false);
             } catch (NumberFormatException ex) {
                 p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
             }
         } 
         // Handle delete lobby
-        else if (plugin.getConfigManager().isDellobby()) {
+        else if (plugin.getSetupStateManager().isDellobby()) {
             // Input is the lobby ID to delete
             try {
                 int lobbyId = Integer.parseInt(input);
                 plugin.getSetupHandler().removeLobby(p, lobbyId);
-                plugin.getConfigManager().setRemoveLobby(false);
+                plugin.getSetupStateManager().setDellobby(false);
             } catch (NumberFormatException ex) {
                 p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
             }
         } 
         // Handle add arena
-        else if (plugin.getConfigManager().isAddarena()) {
+        else if (plugin.getSetupStateManager().isAddarena()) {
             // Input is the arena name to add
             if (selectedLobby != null) {
                 plugin.getSetupHandler().addArena(p, input, selectedLobby);
-                plugin.getConfigManager().setAddarena(false);
+                plugin.getSetupStateManager().setAddarena(false);
             } else {
                 p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
             }
         } 
         // Handle delete arena
-        else if (plugin.getConfigManager().isDelarena()) {
+        else if (plugin.getSetupStateManager().isDelarena()) {
             // Input is the arena name to delete
             if (selectedLobby != null) {
                 plugin.getSetupHandler().removeArena(p, input, selectedLobby);
-                plugin.getConfigManager().setRemoveArena(false);
+                plugin.getSetupStateManager().setDelarena(false);
             } else {
                 p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
             }

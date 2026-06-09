@@ -62,4 +62,14 @@ public interface ISetupStateManager extends IManager {
     void savePlayerFoodLevel(Player player, int foodLevel);
     Integer getPlayerFoodLevel(Player player);
     void removeSavedFoodLevel(Player player);
+
+    // Setup flow flags (transient, not configuration)
+    boolean isAddlobby();
+    void setAddlobby(boolean addlobby);
+    boolean isAddarena();
+    void setAddarena(boolean addarena);
+    boolean isDellobby();
+    void setDellobby(boolean dellobby);
+    boolean isDelarena();
+    void setDelarena(boolean delarena);
 }

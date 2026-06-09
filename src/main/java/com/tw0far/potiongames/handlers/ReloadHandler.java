@@ -4,7 +4,6 @@ import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Lobby;
-import com.tw0far.potiongames.models.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -138,10 +137,6 @@ public class ReloadHandler {
                         plugin.getSetupStateManager().removeSavedArmor(player);
                     }
                     
-                    // Clear scoreboards
-                    if (plugin.getGame().getScoreboards().containsKey(player)) {
-                        plugin.getGame().getScoreboards().remove(player);
-                    }
                     
                 } catch (Exception e) {
                     plugin.getLogger().log(Level.WARNING, "Error restoring player " + player.getName(), e);
@@ -158,7 +153,8 @@ public class ReloadHandler {
     private void cancelScheduledTasks() {
         try {
             // Cancel all plugin tasks
-            Bukkit.getScheduler().cancelTasks(plugin);
+            plugin.getServer().getGlobalRegionScheduler().cancelTasks(plugin);
+            Bukkit.getAsyncScheduler().cancelTasks(plugin);
             plugin.getLogger().info("All scheduled tasks canceled");
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error canceling tasks", e);
@@ -190,11 +186,7 @@ public class ReloadHandler {
             plugin.getBlockStateManager().clearAll();
             plugin.getGame().clearAllPlayers();
             plugin.getGame().clearShopItems();
-            plugin.getGame().clearRankData();
             plugin.getGame().clearAllLoot();
-            plugin.getGame().clearChests();
-            plugin.getGame().clearScoreboards();
-            plugin.getGame().clearChannels();
             plugin.getSetupStateManager().clearAllSetupPlayers();
             
             plugin.getLogger().info("All collections cleared");

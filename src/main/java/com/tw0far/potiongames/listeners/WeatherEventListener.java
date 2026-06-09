@@ -19,7 +19,7 @@ public class WeatherEventListener implements Listener {
     
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent e) {
-        if (!plugin.isGameServer()) {
+        if (!plugin.getConfigManager().isGameServer()) {
             return;
         }
         
@@ -39,7 +39,7 @@ public class WeatherEventListener implements Listener {
     
     @EventHandler
     public void onLightningStrike(LightningStrikeEvent e) {
-        if (!plugin.isGameServer()) {
+        if (!plugin.getConfigManager().isGameServer()) {
             return;
         }
         

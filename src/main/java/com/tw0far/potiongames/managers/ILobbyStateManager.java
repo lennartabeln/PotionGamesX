@@ -76,14 +76,10 @@ public interface ILobbyStateManager extends IManager {
     void setVotedArena(String lobbyId, String votedArena);
     
     // Lobby Settings (per-lobby overrides)
-    Integer getTeamSize(String lobbyId);
-    void setTeamSize(String lobbyId, Integer value);
     Integer getMaxPlayers(String lobbyId);
     void setMaxPlayers(String lobbyId, Integer value);
     Integer getMinPlayers(String lobbyId);
     void setMinPlayers(String lobbyId, Integer value);
-    Integer getTeamAmount(String lobbyId);
-    void setTeamAmount(String lobbyId, Integer value);
     Integer getRoundTime(String lobbyId);
     void setRoundTime(String lobbyId, Integer value);
     Integer getRoundTimeSeconds(String lobbyId);

@@ -4,7 +4,6 @@ import com.tw0far.potiongames.main.PotionGames;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFadeEvent;
-import org.bukkit.Material;
 
 /**
  * Handles block fade/decay events.
@@ -19,7 +18,7 @@ public class BlockFadeEventListener implements Listener {
     
     @EventHandler
     public void onBlockFade(BlockFadeEvent e) {
-        if (!plugin.isGameServer()) {
+        if (!plugin.getConfigManager().isGameServer()) {
             return;
         }
         

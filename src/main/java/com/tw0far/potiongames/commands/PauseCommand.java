@@ -38,10 +38,10 @@ public class PauseCommand implements ICommand {
         }
 
         if (lobbyId != null) {
-            boolean currentPause = plugin.isLobbyPaused(lobbyId);
-            plugin.setLobbyPaused(lobbyId, !currentPause);
+            boolean currentPause = plugin.getLobbyStateManager().isPaused(lobbyId);
+            plugin.getLobbyStateManager().setPaused(lobbyId, !currentPause);
 
-            boolean paused = plugin.isLobbyPaused(lobbyId);
+            boolean paused = plugin.getLobbyStateManager().isPaused(lobbyId);
             for (Player p : plugin.getGame().getPlayersInLobby(lobbyId)) {
                 p.sendMessage(Messages.PauseToggle(paused));
             }

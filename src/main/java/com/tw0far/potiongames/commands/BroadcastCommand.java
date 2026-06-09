@@ -11,10 +11,7 @@ import org.bukkit.entity.Player;
  * Permission: pg.broadcast (or pg.admin)
  */
 public class BroadcastCommand implements ICommand {
-    private final PotionGames plugin;
-    
     public BroadcastCommand(PotionGames plugin) {
-        this.plugin = plugin;
     }
     
     @Override

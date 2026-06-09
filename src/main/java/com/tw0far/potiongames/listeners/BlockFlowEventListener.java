@@ -18,7 +18,7 @@ public class BlockFlowEventListener implements Listener {
     
     @EventHandler
     public void onBlockFlow(BlockFromToEvent e) {
-        if (!plugin.isGameServer()) {
+        if (!plugin.getConfigManager().isGameServer()) {
             return;
         }
         

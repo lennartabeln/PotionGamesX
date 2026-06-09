@@ -38,6 +38,10 @@ public class ItemStateManager implements IItemStateManager {
     private final List<Integer> shopcost = new ArrayList<>();
     private final List<Integer> shopsale = new ArrayList<>();
     
+    // Kit data
+    private final List<String> kits = new ArrayList<>();
+    private final Map<String, Integer> kitplayers = new HashMap<>();
+    
     private final Random random = new Random();
     
     @Override
@@ -256,6 +260,77 @@ public class ItemStateManager implements IItemStateManager {
         shopsale.clear();
     }
     
+    // ===== KITS =====
+    @Override
+    public List<String> getKitsRaw() { return kits; }
+    @Override
+    public void replaceKits(List<String> list) {
+        kits.clear();
+        if (list != null) kits.addAll(list);
+    }
+    @Override
+    public Map<String, Integer> getKitplayersRaw() { return kitplayers; }
+    @Override
+    public void replaceKitplayers(Map<String, Integer> map) {
+        kitplayers.clear();
+        if (map != null) kitplayers.putAll(map);
+    }
+    @Override
+    public void clearKits() {
+        kits.clear();
+        kitplayers.clear();
+    }
+    
+    // ===== BATCH REPLACE (for bootstrap seeding) =====
+    @Override
+    public void replaceLoot(List<ItemStack> food1, List<ItemStack> food2,
+                            List<ItemStack> armour1, List<ItemStack> armour2, List<ItemStack> armour3,
+                            List<ItemStack> armour4, List<ItemStack> armour5,
+                            List<ItemStack> weapons1, List<ItemStack> weapons2,
+                            List<PotionEffect> potions) {
+        replaceList(this.food1, food1);
+        replaceList(this.food2, food2);
+        replaceList(this.armour1, armour1);
+        replaceList(this.armour2, armour2);
+        replaceList(this.armour3, armour3);
+        replaceList(this.armour4, armour4);
+        replaceList(this.armour5, armour5);
+        replaceList(this.weapons1, weapons1);
+        replaceList(this.weapons2, weapons2);
+        replaceList(this.potions, potions);
+    }
+    
+    @Override
+    public void replaceShop(List<String> shop, List<PotionEffect> shoppotion, List<ItemStack> shoppotiontype,
+                            List<String> shopkit, List<Integer> shopcost, List<Integer> shopsale) {
+        replaceList(this.shop, shop);
+        replaceList(this.shoppotion, shoppotion);
+        replaceList(this.shoppotiontype, shoppotiontype);
+        replaceList(this.shopkit, shopkit);
+        replaceList(this.shopcost, shopcost);
+        replaceList(this.shopsale, shopsale);
+    }
+    
+    private <T> void replaceList(List<T> target, List<T> source) {
+        target.clear();
+        if (source != null) {
+            target.addAll(source);
+        }
+    }
+    
+    @Override
+    public List<String> getShopItemsRaw() { return shop; }
+    @Override
+    public List<Integer> getShopCostsRaw() { return shopcost; }
+    @Override
+    public List<Integer> getShopSalesRaw() { return shopsale; }
+    @Override
+    public List<PotionEffect> getShopPotionsRaw() { return shoppotion; }
+    @Override
+    public List<ItemStack> getShopPotionTypesRaw() { return shoppotiontype; }
+    @Override
+    public List<String> getShopKitsRaw() { return shopkit; }
+    
     // ===== BATCH OPERATIONS =====
     @Override
     public void clearAll() {
@@ -264,5 +339,6 @@ public class ItemStateManager implements IItemStateManager {
         clearWeapons();
         clearPotions();
         clearShop();
+        clearKits();
     }
 }

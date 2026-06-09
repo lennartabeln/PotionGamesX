@@ -1,11 +1,10 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.models.Arena;
+import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
-import com.tw0far.potiongames.models.Settings;
 import org.bukkit.entity.Player;
-
-import java.util.Objects;
 
 /**
  * /pg force [arena] - Force a specific arena
@@ -34,11 +33,11 @@ public class ForceCommand implements ICommand {
     
     @Override
     public boolean execute(Player player, String[] args) {
-        if (args.length < 1) {
+        if (args.length < 2) {
             return false;
         }
         
-        String arena = args[0];
+        String arena = args[1];
         
         // Multi-lobby mode
         String lobbyId = plugin.getGame().getPlayerLobby(player);
@@ -48,22 +47,21 @@ public class ForceCommand implements ICommand {
         
         if (lobbyId != null) {
             try {
-                plugin.setLobbyForcearena(lobbyId, true);
-                int i = 1;
-                boolean votetedarena = false;
-                while (!votetedarena) {
-                    if (arena.matches(Objects.requireNonNull(Settings.lobbies.getString("pg.arenas." + i + ".name")))) {
-                        String arenaNumber = Integer.toString(i);
-                        plugin.setLobbyVotedArena(lobbyId, arena);
-                        plugin.setLobbyCurrentVote(lobbyId, arenaNumber);
-                        votetedarena = true;
+                Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
+                if (lobby != null) {
+                    Arena targetArena = lobby.getArena(arena);
+                    if (targetArena != null) {
+                        plugin.getLobbyStateManager().setForcearena(lobbyId, true);
+                        lobby.setCurrentArena(targetArena);
+                        lobby.setVotedArenaName(arena);
+                        
+                        // Broadcast to all players in this lobby
+                        for (Player all : plugin.getGame().getPlayersInLobby(lobbyId)) {
+                            all.sendMessage(Messages.ArenaForced(arena));
+                        }
                     } else {
-                        i++;
+                        player.sendMessage(Messages.ArenaNotArena(arena));
                     }
-                }
-                // Broadcast to all players in this lobby
-                for (Player all : plugin.getGame().getPlayersInLobby(lobbyId)) {
-                    all.sendMessage(Messages.ArenaForced(arena));
                 }
             } catch (Exception ex) {
                 player.sendMessage(Messages.ArenaNotArena(arena));

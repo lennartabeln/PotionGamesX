@@ -28,9 +28,9 @@ public class SpectatorEventListener implements Listener {
             return;
         }
         
-        // Ensure spectators remain invisible and in creative mode
-        if (p.getGameMode() != GameMode.CREATIVE) {
-            p.setGameMode(GameMode.CREATIVE);
+        // Ensure spectators remain invisible and in spectator mode
+        if (p.getGameMode() != GameMode.SPECTATOR) {
+            p.setGameMode(GameMode.SPECTATOR);
         }
         
         if (!p.hasPotionEffect(PotionEffectType.INVISIBILITY)) {

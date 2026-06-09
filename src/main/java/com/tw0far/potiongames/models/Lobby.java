@@ -1,14 +1,19 @@
 package com.tw0far.potiongames.models;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.Side;
@@ -16,11 +21,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.tw0far.potiongames.main.PotionGames;
-
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class Lobby {
+    private static final Logger LOGGER = Logger.getLogger("Minecraft");
     private int id;
     private Location spawn;
     private final LobbyConfig lobbyConfig;
@@ -34,7 +39,7 @@ public class Lobby {
     private int maxPlayers = 24;
     private int minPlayers = 2;
     private int teamSize = 2;
-    private int teamAmount = maxPlayers / teamSize;
+    private int teamAmount = teamSize > 0 ? maxPlayers / teamSize : maxPlayers;
     
     private int playerCount = 0;
     private ArrayList<Participant> participants = new ArrayList<>();
@@ -47,7 +52,7 @@ public class Lobby {
     private GameStates state = GameStates.WAITING;
     private Sign joinSign = null;
 
-    private int tickTaskId = -1;
+    private ScheduledTask tickTask = null;
     private int endingTimer = 10;
     private int prepareTimer = 60;
     private int gameTimer = roundTime * 60;
@@ -139,7 +144,7 @@ public class Lobby {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -173,7 +178,13 @@ public class Lobby {
         
         enabled = Settings.lobbies.getBoolean("pg.lobbies." + id + ".enabled");
         spawn = Settings.lobbies.getLocation("pg.lobbies." + id + ".spawn");
-        joinSign = Settings.lobbies.contains("pg.lobbies." + id + ".joinSign") ? (Sign) Settings.lobbies.getLocation("pg.lobbies." + id + ".joinSign").getBlock().getState() : null;
+        joinSign = null;
+        if (Settings.lobbies.contains("pg.lobbies." + id + ".joinSign")) {
+            Location signLoc = Settings.lobbies.getLocation("pg.lobbies." + id + ".joinSign");
+            if (signLoc != null && signLoc.getBlock().getState() instanceof Sign) {
+                joinSign = (Sign) signLoc.getBlock().getState();
+            }
+        }
         updateJoinSign();
 
         if (Settings.lobbies.contains("pg.lobbies." + id + ".arenas")) {
@@ -201,7 +212,7 @@ public class Lobby {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -212,7 +223,7 @@ public class Lobby {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -245,7 +256,7 @@ public class Lobby {
             participant.teleportToLobby();
             setPlayerCount(playerCount + 1);
         }
-        if (tickTaskId == -1) {
+        if (tickTask == null || tickTask.isCancelled()) {
             startTick();
         }
     }
@@ -383,7 +394,7 @@ public class Lobby {
             updateJoinSign();
             return true;
         } catch (Exception ex) {
-            Bukkit.getConsoleSender().sendMessage(ex.getMessage());
+            PotionGames.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -431,16 +442,14 @@ public class Lobby {
     }
 
     public void startTick() {
-        tickTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(PotionGames.getInstance(), () -> {
-            runGameTick();
-        }, 0L, 20L);
+        tickTask = PotionGames.getInstance().getServer().getGlobalRegionScheduler().runAtFixedRate(PotionGames.getInstance(), scheduledTask -> runGameTick(), 1, 20);
     }
 
     public void startCountdown() {
         if (state == GameStates.WAITING) {
             prepareTimer = Math.max(1, countdown);
             setState(GameStates.PREPARING);
-            if (tickTaskId == -1) {
+            if (tickTask == null || tickTask.isCancelled()) {
                 startTick();
             }
         }
@@ -506,7 +515,8 @@ public class Lobby {
         if (previousTeam != null) {
             try {
                 decrementTeamCount(Integer.parseInt(previousTeam));
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException e) {
+                LOGGER.log(Level.WARNING, "[PotionGames] Invalid team ID", e);
             }
         }
 
@@ -596,9 +606,11 @@ public class Lobby {
                         setCurrentArena(getVotedArena());
                     }
                     if (currentArena != null) {
+                        distributeTeams();
                         currentArena.teleport(participants);
                     }
-                    gameTimer = Math.max(1, roundTime);
+                    gameTimer = Math.max(1, roundTime * 60);
+                    deathmatch = false;
                     setState(GameStates.INGAME);
                 } else if (prepareTimer == countdown) {
                     if (currentArena == null) {
@@ -629,6 +641,20 @@ public class Lobby {
                     setState(GameStates.ENDING);
                     endingTimer = Math.max(1, reset);
                 }
+                checkWinCondition();
+                gameTimer--;
+                break;
+            case DEATHMATCH:
+                if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
+                    for (Participant participant : participants) {
+                        participant.sendMessage(Messages.DeathmatchStartingIn(gameTimer));
+                    }
+                } else if (gameTimer < 0) {
+                    announceDraw();
+                    setState(GameStates.ENDING);
+                    endingTimer = Math.max(1, reset);
+                }
+                checkWinCondition();
                 gameTimer--;
                 break;
             case ENDING:
@@ -637,20 +663,27 @@ public class Lobby {
                 }
                 if (endingTimer <= 0) {
                     setState(GameStates.RESET);
-                    for (Participant participant : participants) {
-                        participant.teleportToLobby();
-                    }
                 }
                 endingTimer--;
                 break;
             case RESET:
+                restoreBlocks();
+                for (Player player : new ArrayList<>(activePlayers)) {
+                    sendToServer(player, PotionGames.getInstance().getConfig().getString("pg.bungeeServer", "lobby"));
+                }
+                for (Player player : new ArrayList<>(spectatorPlayers)) {
+                    sendToServer(player, PotionGames.getInstance().getConfig().getString("pg.bungeeServer", "lobby"));
+                }
+                PotionGames.getInstance().getGame().clearAllPlayers();
                 setCurrentArena(null);
                 clearVoting();
                 clearArenaVotes();
+                clearBlockTracking();
+                clearChests();
                 setState(GameStates.WAITING);
-                if (playerCount == 0 && tickTaskId != -1) {
-                    Bukkit.getScheduler().cancelTask(tickTaskId);
-                    tickTaskId = -1;
+                if (playerCount == 0 && tickTask != null && !tickTask.isCancelled()) {
+                    tickTask.cancel();
+                    tickTask = null;
                 }
                 break;
             default:
@@ -659,6 +692,106 @@ public class Lobby {
 
         if (playerCount == 0 && state != GameStates.WAITING) {
             setState(GameStates.RESET);
+        }
+    }
+
+    private void checkWinCondition() {
+        int aliveCount = 0;
+        Player lastAlive = null;
+        for (Player player : activePlayers) {
+            if (player != null && player.isOnline() && player.getGameMode() != org.bukkit.GameMode.SPECTATOR) {
+                aliveCount++;
+                lastAlive = player;
+            }
+        }
+        if (aliveCount <= 1 && lastAlive != null) {
+            announceWinner(lastAlive);
+            endRound();
+        } else if (aliveCount <= 1) {
+            announceDraw();
+            endRound();
+                } else if (aliveCount == 2 && PotionGames.getInstance().getConfigManager().isActivateDeathmatch() && !deathmatch) {
+            activateDeathmatch();
+        }
+    }
+
+    private void activateDeathmatch() {
+        deathmatch = true;
+        for (Player player : new ArrayList<>(activePlayers)) {
+            if (currentArena != null) {
+                Location spawn = currentArena.getRandomDeathmatchSpawn();
+                if (spawn != null) {
+                    player.teleport(spawn);
+                }
+            }
+        }
+        for (Participant participant : participants) {
+            participant.sendMessage(Messages.DeathmatchStarted());
+        }
+        gameTimer = 60;
+        setState(GameStates.DEATHMATCH);
+    }
+
+    private void announceWinner(Player winner) {
+        String winnerName = winner == null ? "Unknown" : winner.getName();
+        for (Participant participant : participants) {
+            participant.sendMessage(Messages.WinnerHasWonTheGame(winnerName));
+        }
+        for (Player player : activePlayers) {
+            if (player != null && player.equals(winner)) {
+                PotionGames plugin = PotionGames.getInstance();
+                if (plugin.getConfigManager().isEnableRewards()) {
+                    player.sendMessage(Messages.WinReward(plugin.getConfigManager().getWinningReward()));
+                }
+                plugin.getDatabaseManager().addWins(player.getUniqueId().toString(), 1);
+            } else if (player != null) {
+                PotionGames plugin = PotionGames.getInstance();
+                plugin.getDatabaseManager().addLosses(player.getUniqueId().toString(), 1);
+            }
+        }
+    }
+
+    private void announceDraw() {
+        for (Participant participant : participants) {
+            participant.sendMessage(Messages.RoundNobodyWon());
+        }
+    }
+
+    private void restoreBlocks() {
+        for (Map.Entry<Location, Object> entry : new HashMap<>(placedBlocks).entrySet()) {
+            Location loc = entry.getKey();
+            if (entry.getValue() instanceof Material) {
+                loc.getBlock().setType((Material) entry.getValue());
+            }
+        }
+        for (Map.Entry<Location, Object> entry : new HashMap<>(breakedBlocks).entrySet()) {
+            Location loc = entry.getKey();
+            if (entry.getValue() instanceof Material) {
+                loc.getBlock().setType((Material) entry.getValue());
+            }
+        }
+        for (Map.Entry<Location, Object> entry : new HashMap<>(waterBlocks).entrySet()) {
+            Location loc = entry.getKey();
+            if (entry.getValue() instanceof org.bukkit.block.data.BlockData) {
+                loc.getBlock().setBlockData((org.bukkit.block.data.BlockData) entry.getValue());
+            }
+        }
+        placedBlocks.clear();
+        breakedBlocks.clear();
+        waterBlocks.clear();
+        liquidPlaced.clear();
+    }
+
+    public void sendToServer(Player player, String server) {
+        if (player == null || !player.isOnline()) return;
+        try {
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(b);
+            out.writeUTF("Connect");
+            out.writeUTF(server);
+            player.sendPluginMessage(PotionGames.getInstance(), "BungeeCord", b.toByteArray());
+        } catch (Exception e) {
+            player.kick(Component.text("Game finished! Connecting to " + server + "...").color(NamedTextColor.GREEN));
         }
     }
 
@@ -686,16 +819,17 @@ public class Lobby {
 
     public void setState(GameStates newState) {
         if (this.state != newState) {
+            GameStates oldState = this.state;
             this.state = newState;
             updateJoinSign();
             
-            // Trigger kick if GameServer mode is on and game just ended (transitioned to RESET)
-            if (newState == GameStates.RESET && com.tw0far.potiongames.main.PotionGames.getInstance().isGameServer()) {
-                org.bukkit.Bukkit.getConsoleSender().sendMessage(com.tw0far.potiongames.models.Settings.prefix.append(net.kyori.adventure.text.Component.text("Game finished. Kicking players...").color(net.kyori.adventure.text.format.NamedTextColor.YELLOW)));
-                
-                for (Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
-                    player.kick(net.kyori.adventure.text.Component.text("Game finished!").color(net.kyori.adventure.text.format.NamedTextColor.GREEN));
-                }
+            PotionGames plugin = PotionGames.getInstance();
+            
+            // Game just ended (transitioned to RESET) - move players via BungeeCord
+            if (newState == GameStates.RESET && oldState != GameStates.RESET && plugin.getConfigManager().isGameServer()) {
+                PotionGames.getInstance().getComponentLogger().info(
+                    com.tw0far.potiongames.models.Settings.prefix
+                        .append(Component.text("Game finished. Sending players back to hub...").color(NamedTextColor.YELLOW)));
             }
         }
     }
@@ -724,6 +858,10 @@ public class Lobby {
 
     public int getPlayerCount() {
         return this.playerCount;
+    }
+    
+    public int getMinPlayers() {
+        return this.minPlayers;
     }
     
     // ===== PHASE 7.2: Runtime State Accessors =====

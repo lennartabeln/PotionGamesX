@@ -69,13 +69,13 @@ public class HelpCommand implements ICommand {
         }
         
         if (player.hasPermission("pg.join")) {
-            if (!plugin.isStartOnJoin()) {
+            if (!plugin.getConfigManager().isStartOnJoin()) {
                 player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.join", "/pg join # - Join a game")).color(NamedTextColor.GRAY)));
                 player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.list", "/pg list - List of all lobbies")).color(NamedTextColor.GRAY)));
             }
         }
         
-        if (!plugin.isStartOnJoin()) {
+        if (!plugin.getConfigManager().isStartOnJoin()) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.raw("help.leave", "/pg leave - Leave the game")).color(NamedTextColor.GRAY)));
         }
         

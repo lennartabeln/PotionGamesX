@@ -36,9 +36,12 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Random;
 
 /**
@@ -46,6 +49,7 @@ import java.util.Random;
  * Extracted from monolithic Events.java.
  */
 public class InventoryEventListener implements Listener {
+    private static final Logger LOGGER = Logger.getLogger("Minecraft");
     private static int amount;
     private static int bottle;
     private final PotionGames plugin;
@@ -81,8 +85,8 @@ public class InventoryEventListener implements Listener {
             s = plugin.getGame().getSpectatorLobby(p);
         }
         if (s != null) {
-            GameStates lobbyState = plugin.getLobbyGameState(s);
-            boolean canBuild = plugin.isLobbyBuildAllowed(s);
+            GameStates lobbyState = plugin.getLobbyStateManager().getGameState(s);
+            boolean canBuild = plugin.getLobbyStateManager().isBuildAllowed(s);
             if ((lobbyState == GameStates.WAITING || lobbyState == GameStates.PREPARING) && !canBuild) {
                 handleArenaVoting(e, p, s);
                 handleTeamSelection(e, p, s);
@@ -104,13 +108,13 @@ public class InventoryEventListener implements Listener {
     private Lobby resolveSetupLobby(Player player) {
         Integer selectedLobby = plugin.getSetupStateManager().getSelectedLobby(player);
         if (selectedLobby != null) {
-            return plugin.getLobbyById(selectedLobby);
+            return plugin.getGame().getLobby(selectedLobby);
         }
 
         String activeLobbyId = plugin.getGame().getPlayerLobby(player);
         if (activeLobbyId != null) {
             try {
-                return plugin.getLobbyById(Integer.parseInt(activeLobbyId));
+                return plugin.getGame().getLobby(Integer.parseInt(activeLobbyId));
             } catch (NumberFormatException ignored) {
             }
         }
@@ -198,40 +202,42 @@ public class InventoryEventListener implements Listener {
             if (displayname != null) {
                     
                     // Check if player has already voted using delegation
-                    if (!plugin.hasPlayerVotedInLobby(s, p)) {
+                    if (!plugin.getArenaStateManager().hasPlayerVotedInLobby(s, p)) {
                         // First time voting - add vote
                         p.closeInventory();
-                        plugin.addLobbyVote(s, displayname);
-                        plugin.recordPlayerVoteInLobby(s, p, displayname);
+                        plugin.getArenaStateManager().addLobbyVote(s, displayname);
+                        plugin.getArenaStateManager().recordPlayerVoteInLobby(s, p, displayname);
+                        try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null) { lobby.recordVote(p, displayname); } } catch (NumberFormatException ignored) { }
                     } else {
                         // Switching vote - remove old vote and add new
                         p.closeInventory();
-                        String previousVote = plugin.getPlayerVoteInLobby(s, p);
+                        String previousVote = plugin.getArenaStateManager().getPlayerVoteInLobby(s, p);
                         if (previousVote != null) {
-                            plugin.removeLobbyVote(s, previousVote);
+                            plugin.getArenaStateManager().removeLobbyVote(s, previousVote);
                         }
-                        plugin.addLobbyVote(s, displayname);
-                        plugin.recordPlayerVoteInLobby(s, p, displayname);
+                        plugin.getArenaStateManager().addLobbyVote(s, displayname);
+                        plugin.getArenaStateManager().recordPlayerVoteInLobby(s, p, displayname);
+                        try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null) { lobby.recordVote(p, displayname); } } catch (NumberFormatException ignored) { }
                     }
                     
                     // Send feedback messages
                     p.sendMessage(Messages.ArenaSelector());
                     p.sendMessage(Settings.prefix.append(Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
-                    p.sendMessage(Settings.prefix.append(Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyVoteCount(s, displayname))).color(NamedTextColor.AQUA)));
+                    p.sendMessage(Settings.prefix.append(Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getArenaStateManager().getLobbyVoteCount(s, displayname))).color(NamedTextColor.AQUA)));
                     p.sendMessage(Messages.ArenaSelector());
             }
         }
     }
     
     private void handleTeamSelection(InventoryClickEvent e, Player p, String s) {
-        if (plugin.isActivateTeams(s)) {
+        if (plugin.getLobbyStateManager().isActivateTeams(s)) {
             if (e.getView().title().equals(Messages.SelectorTeam())) {
                 String displayname = getPlainDisplayName(e.getCurrentItem());
                 if (displayname != null) {
-                    int maxteamplayers = plugin.getLobbyTeamSize(s);
+                    int maxteamplayers = plugin.getArenaStateManager().getLobbyTeamSize(s);
                          
                     // Check if player already has a team using delegation
-                    if (!plugin.hasPlayerTeamInLobby(s, p)) {
+                    if (!plugin.getArenaStateManager().hasPlayerTeamInLobby(s, p)) {
                         // First time assigning team
                         if (displayname.equals(PlainTextComponentSerializer.plainText().serialize(Messages.RandomLabel()))) {
                             assignRandomTeam(e, p, s, maxteamplayers);
@@ -249,7 +255,7 @@ public class InventoryEventListener implements Listener {
     
     private void assignRandomTeam(InventoryClickEvent e, Player p, String s, int maxteamplayers) {
         boolean teamfound = false;
-        Map<Integer, Integer> lobbyTeamsMap = plugin.getLobbyTeams(s);
+        Map<Integer, Integer> lobbyTeamsMap = plugin.getArenaStateManager().getLobbyTeams(s);
         
         if (lobbyTeamsMap == null || lobbyTeamsMap.isEmpty()) {
             return;
@@ -258,21 +264,21 @@ public class InventoryEventListener implements Listener {
         while (!teamfound) {
             Random rnd = new Random();
             int rndTeam = rnd.nextInt(lobbyTeamsMap.size()) + 1;
-            Integer teamPlayers = plugin.getLobbyTeamPlayerCount(s, rndTeam);
+            Integer teamPlayers = plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, rndTeam);
             
             if (teamPlayers != null && teamPlayers < maxteamplayers) {
                 teamfound = true;
                 p.closeInventory();
-                plugin.incrementLobbyTeamPlayers(s, rndTeam);
-                plugin.recordPlayerTeamInLobby(s, p, Integer.toString(rndTeam));
+                plugin.getArenaStateManager().incrementLobbyTeamPlayers(s, rndTeam);
+                plugin.getArenaStateManager().recordPlayerTeamInLobby(s, p, Integer.toString(rndTeam));
                 
                 // Send feedback
                 p.sendMessage(Messages.SelectorTeam());
                 p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("team.now_in", "You are now in team") + ": ").color(NamedTextColor.GREEN)).append(Component.text(rndTeam).color(NamedTextColor.LIGHT_PURPLE)));
-                p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("players.label", "Players") + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyTeamPlayerCount(s, rndTeam))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
+                p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("players.label", "Players") + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, rndTeam))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
                 p.sendMessage(Messages.SelectorTeam());
                 
-                if (plugin.isActivateScoreboard()) {
+                if (plugin.getConfigManager().isActivateScoreboard()) {
                     Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(Integer.toString(rndTeam)).color(NamedTextColor.DARK_AQUA));
                 }
             }
@@ -281,20 +287,20 @@ public class InventoryEventListener implements Listener {
     
     private void assignSpecificTeam(InventoryClickEvent e, Player p, String s, String displayname, int maxteamplayers) {
         int teamId = Integer.parseInt(displayname);
-        Integer currentPlayers = plugin.getLobbyTeamPlayerCount(s, teamId);
+        Integer currentPlayers = plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, teamId);
         
         if (currentPlayers != null && currentPlayers < maxteamplayers) {
             p.closeInventory();
-            plugin.incrementLobbyTeamPlayers(s, teamId);
-            plugin.recordPlayerTeamInLobby(s, p, displayname);
+            plugin.getArenaStateManager().incrementLobbyTeamPlayers(s, teamId);
+            plugin.getArenaStateManager().recordPlayerTeamInLobby(s, p, displayname);
             
             // Send feedback
             p.sendMessage(Messages.SelectorTeam());
             p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("team.now_in", "You are now in team") + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
-            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("players.label", "Players") + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getLobbyTeamPlayerCount(s, teamId))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("players.label", "Players") + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, teamId))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
             p.sendMessage(Messages.SelectorTeam());
             
-            if (plugin.isActivateScoreboard()) {
+            if (plugin.getConfigManager().isActivateScoreboard()) {
                 Objects.requireNonNull(p.getScoreboard().getTeam("team")).prefix(Component.text(displayname).color(NamedTextColor.DARK_AQUA));
             }
         } else {
@@ -309,10 +315,10 @@ public class InventoryEventListener implements Listener {
         p.closeInventory();
         
         // Get player's current team and remove from it
-        String previousTeam = plugin.getPlayerTeamInLobby(s, p);
+        String previousTeam = plugin.getArenaStateManager().getPlayerTeamInLobby(s, p);
         if (previousTeam != null) {
-            plugin.decrementLobbyTeamPlayers(s, Integer.parseInt(previousTeam));
-            plugin.removePlayerTeamInLobby(s, p);
+            plugin.getArenaStateManager().decrementLobbyTeamPlayers(s, Integer.parseInt(previousTeam));
+            plugin.getArenaStateManager().removePlayerTeamInLobby(s, p);
         }
         
         // Assign to new team
@@ -342,7 +348,10 @@ public class InventoryEventListener implements Listener {
                 
                 for (int i = 0; i < shopItems.size(); i++) {
                     int coinamount;
-                    if (plugin.hasPlayerKit(p) && plugin.getPlayerKit(p) != null && plugin.getPlayerKit(p).equals(itemStateManager.getShopKit(shopitem - 1))) {
+                                                Lobby __kl = plugin.getGame().getLobby(Integer.parseInt(s));
+                                                String __kn = __kl != null && __kl.getParticipant(p) != null && __kl.getParticipant(p).getKit() != null
+                                                    ? __kl.getParticipant(p).getKit().getName() : null;
+                                                if (__kn != null && __kn.equals(itemStateManager.getShopKit(shopitem - 1))) {
                         coinamount = itemStateManager.getShopSale(shopitem - 1);
                     } else {
                         coinamount = itemStateManager.getShopCost(shopitem - 1);
@@ -358,7 +367,7 @@ public class InventoryEventListener implements Listener {
                                     continue;
                                 }
                                         PotionEffect shopPotion = Objects.requireNonNull(itemStateManager.getShopPotion(shopitem - 1));
-                                        randombarriermeta.addCustomEffect(new PotionEffect(shopPotion.getType(), shopPotion.getDuration(), shopPotion.getAmplifier()), true);
+                                        randombarriermeta.addCustomEffect(new PotionEffect(shopPotion.getType(), shopPotion.getDuration(), shopPotion.getAmplifier(), shopPotion.isAmbient(), shopPotion.hasParticles(), shopPotion.hasIcon()), true);
                                 randombarriermeta.displayName(Component.text(shopItems.get(shopitem - 1)));
                                 randombarrier.setItemMeta(randombarriermeta);
                                 p.getInventory().addItem(randombarrier);
@@ -569,7 +578,7 @@ public class InventoryEventListener implements Listener {
                 p.closeInventory();
                 try {
                     int lobbyId = Integer.parseInt(lobbyName);
-                    Lobby lobby = plugin.getLobbyById(lobbyId);
+                    Lobby lobby = plugin.getGame().getLobby(lobbyId);
                     if (lobby != null) {
                         plugin.getSetupStateManager().setSelectedLobby(p, lobbyId);
                         plugin.getSetupStateManager().removeSelectedArena(p);
@@ -628,10 +637,12 @@ public class InventoryEventListener implements Listener {
                         }
                         return;
                     }
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ex) {
+                    LOGGER.log(Level.WARNING, "[PotionGames] Invalid lobby ID on join sign", ex);
+                }
 
                 // Check Stats Signs
-                if (line2.matches("PotionGames") && line3.matches("Stats")) {
+                if (line2 != null && line2.matches("PotionGames") && line3 != null && line3.matches("Stats")) {
                     e.setCancelled(true);
                     int wins = plugin.getDatabaseManager().getWins(p.getUniqueId().toString());
                     int losses = plugin.getDatabaseManager().getLosses(p.getUniqueId().toString());
@@ -652,7 +663,7 @@ public class InventoryEventListener implements Listener {
             }
         }
 
-        if (plugin.isGameServer()) {
+        if (plugin.getConfigManager().isGameServer()) {
             if (plugin.getGame().isActivePlayer(p) || plugin.getGame().isInLobby(p)) {
                 if (e.getAction() == Action.PHYSICAL && Objects.requireNonNull(e.getClickedBlock()).getType() == Material.FARMLAND) {
                     e.setCancelled(true);
@@ -662,8 +673,10 @@ public class InventoryEventListener implements Listener {
                         if ((Objects.requireNonNull(e.getClickedBlock())).getType().toString().equals(Objects.requireNonNull(Settings.chests.get("pg.chestblocks.normal")).toString())) {
                             
                                 String s = plugin.getGame().getPlayerLobby(p);
-                                if (s != null && plugin.getLobbyGameState(s) == GameStates.INGAME) {
-                                    if (!plugin.hasLobbyChest(s, e.getClickedBlock().getLocation())) {
+                                if (s != null && plugin.getLobbyStateManager().getGameState(s) == GameStates.INGAME) {
+                                    boolean hasLobbyChest = false;
+                                    try { hasLobbyChest = plugin.getGame().getLobby(Integer.parseInt(s)) != null && plugin.getGame().getLobby(Integer.parseInt(s)).hasChestInventory(e.getClickedBlock().getLocation()); } catch (NumberFormatException ignored) { }
+                                    if (!hasLobbyChest) {
                                         Inventory inv = Bukkit.createInventory(p, 27, Settings.prefix);
                                         Random rnd = new Random();
                                         IItemStateManager itemStateManager = plugin.getItemStateManager();
@@ -671,9 +684,10 @@ public class InventoryEventListener implements Listener {
                                                 Settings.chests.getConfigurationSection("pg.chestloot.normal"),
                                                 defaultNormalLootProfile());
                                         fillLootChest(inv, rnd, profile, itemStateManager);
-                                        plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
+                                        try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null && inv != null) lobby.setChestInventory(e.getClickedBlock().getLocation(), inv.getContents()); } catch (NumberFormatException ignored) { }
                                     }
-                                    Inventory chestInv = plugin.getLobbyChestInventory(s, e.getClickedBlock().getLocation());
+                                    Inventory chestInv;
+                                    try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null && lobby.hasChestInventory(e.getClickedBlock().getLocation())) { Inventory tmpInv = Bukkit.createInventory(null, 27); ItemStack[] items = lobby.getChestInventory(e.getClickedBlock().getLocation()); if (items != null) tmpInv.setContents(items); chestInv = tmpInv; } else { chestInv = null; } } catch (NumberFormatException ignored) { chestInv = null; }
                                     if (chestInv != null) {
                                         p.openInventory(chestInv);
                                     }
@@ -707,8 +721,10 @@ public class InventoryEventListener implements Listener {
                                                 s = Integer.toString(ii);
                                             }
                                         }
-                                        if (s != null && plugin.getLobbyGameState(s) == GameStates.INGAME) {
-                                            if (!plugin.hasLobbyChest(s, e.getClickedBlock().getLocation())) {
+                                        if (s != null && plugin.getLobbyStateManager().getGameState(s) == GameStates.INGAME) {
+                                    boolean hasLobbyChest = false;
+                                    try { hasLobbyChest = plugin.getGame().getLobby(Integer.parseInt(s)) != null && plugin.getGame().getLobby(Integer.parseInt(s)).hasChestInventory(e.getClickedBlock().getLocation()); } catch (NumberFormatException ignored) { }
+                                    if (!hasLobbyChest) {
                                                 Inventory inv = Bukkit.createInventory(p, customChest.getInt("chestsize"), Settings.prefix);
                                                 Random rnd = new Random();
                                                 IItemStateManager itemStateManager = plugin.getItemStateManager();
@@ -718,10 +734,11 @@ public class InventoryEventListener implements Listener {
                                                     chestitem++;
                                                 }
                                                 fillLootChest(inv, rnd, profile, itemStateManager);
-                                                plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
+                                                try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null && inv != null) lobby.setChestInventory(e.getClickedBlock().getLocation(), inv.getContents()); } catch (NumberFormatException ignored) { }
                                                 p.openInventory(inv);
                                             } else {
-                                                Inventory chestInv = plugin.getLobbyChestInventory(s, e.getClickedBlock().getLocation());
+                                                Inventory chestInv;
+                                    try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null && lobby.hasChestInventory(e.getClickedBlock().getLocation())) { Inventory tmpInv = Bukkit.createInventory(null, 27); ItemStack[] items = lobby.getChestInventory(e.getClickedBlock().getLocation()); if (items != null) tmpInv.setContents(items); chestInv = tmpInv; } else { chestInv = null; } } catch (NumberFormatException ignored) { chestInv = null; }
                                                 if (chestInv != null) {
                                                     p.openInventory(chestInv);
                                                 }
@@ -740,8 +757,10 @@ public class InventoryEventListener implements Listener {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.isLobbyActivateShop(s)) {
-                                    if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
+                                boolean isLobbyActivateShop = false;
+                                try { isLobbyActivateShop = plugin.getGame().getLobby(Integer.parseInt(s)) != null && plugin.getGame().getLobby(Integer.parseInt(s)).isActivateShop(); } catch (NumberFormatException ignored) { }
+                                if (isLobbyActivateShop) {
+                                    if (plugin.getLobbyStateManager().getGameState(s) == GameStates.INGAME) {
                                         for (ItemStack item : p.getInventory().getContents()) {
                                             if (item != null) {
                                                 if (item.getType() == plugin.getCoin().getType()) {
@@ -754,13 +773,16 @@ public class InventoryEventListener implements Listener {
                                         }
                                         Inventory inv;
                                         inv = Bukkit.createInventory(p, 9 * 3, Settings.prefix.append(Component.text(Messages.ShopText())).color(NamedTextColor.DARK_AQUA));
-                                        plugin.setLobbyChestInventory(s, e.getClickedBlock().getLocation(), inv);
+                                        try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null && inv != null) lobby.setChestInventory(e.getClickedBlock().getLocation(), inv.getContents()); } catch (NumberFormatException ignored) { }
                                         var itemStateManager = plugin.getItemStateManager();
                                         ArrayList<String> shopItems = new ArrayList<>(itemStateManager.getShopItems());
                                         int shopitem = 1;
-                                        for (int i = 0; i < plugin.getActivePotions(); i++) {
+                                        for (int i = 0; i < plugin.getConfigManager().getActivePotions(); i++) {
                                             int coinamount;
-                                                if (plugin.hasPlayerKit(p) && plugin.getPlayerKit(p) != null && plugin.getPlayerKit(p).equals(itemStateManager.getShopKit(shopitem - 1))) {
+                    Lobby _kl = plugin.getGame().getLobby(Integer.parseInt(s));
+                    String _kn = _kl != null && _kl.getParticipant(p) != null && _kl.getParticipant(p).getKit() != null
+                        ? _kl.getParticipant(p).getKit().getName() : null;
+                    if (_kn != null && _kn.equals(itemStateManager.getShopKit(shopitem - 1))) {
                                                     coinamount = itemStateManager.getShopSale(shopitem - 1);
                                                 } else {
                                                     coinamount = itemStateManager.getShopCost(shopitem - 1);
@@ -783,7 +805,8 @@ public class InventoryEventListener implements Listener {
                                             shopitem++;
                                         }
                                     }
-                                    Inventory chestInv = plugin.getLobbyChestInventory(s, e.getClickedBlock().getLocation());
+                                    Inventory chestInv;
+                                    try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null && lobby.hasChestInventory(e.getClickedBlock().getLocation())) { Inventory tmpInv = Bukkit.createInventory(null, 27); ItemStack[] items = lobby.getChestInventory(e.getClickedBlock().getLocation()); if (items != null) tmpInv.setContents(items); chestInv = tmpInv; } else { chestInv = null; } } catch (NumberFormatException ignored) { chestInv = null; }
                                     if (chestInv != null) {
                                         p.openInventory(chestInv);
                                     }
@@ -798,7 +821,7 @@ public class InventoryEventListener implements Listener {
                                 }
                             }
                             if (e.getClickedBlock().getBlockData() instanceof Waterlogged) {
-                                plugin.trackLobbyWaterBlock(s, e.getClickedBlock().getLocation(), e.getClickedBlock().getBlockData());
+                                plugin.getBlockStateManager().trackLobbyWaterBlock(s, e.getClickedBlock().getLocation(), e.getClickedBlock().getBlockData());
                             }
                         
                     }
@@ -813,7 +836,7 @@ public class InventoryEventListener implements Listener {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
+                                if (plugin.getLobbyStateManager().getGameState(s) == GameStates.INGAME) {
                                     double health = p.getHealth();
                                     int foodlvl = p.getFoodLevel();
                                     if (health >= 20 && foodlvl >= 13) {
@@ -842,8 +865,10 @@ public class InventoryEventListener implements Listener {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.isLobbyActivateAirdrops(s)) {
-                                    if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
+                                boolean isLobbyActivateAirdrops = false;
+                                try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null) isLobbyActivateAirdrops = lobby.isActivateAirdrops(); } catch (NumberFormatException ignored) { }
+                                if (isLobbyActivateAirdrops) {
+                                    if (plugin.getLobbyStateManager().getGameState(s) == GameStates.INGAME) {
                                         boolean blocked = false;
                                         Location loc = p.getEyeLocation().add(0, 1, 0);
                                         while (loc.getY() <= 320) {
@@ -855,14 +880,14 @@ public class InventoryEventListener implements Listener {
                                             loc.add(0, 1, 0);
                                         }
                                         if (!blocked) {
-                                            for (Player all : plugin.getPlayersInLobby(s)) {
+                                            for (Player all : plugin.getGame().getPlayersInLobby(s)) {
                                                 all.sendMessage(Messages.AirdropFallingAt(p.getLocation().getBlockX() + " " + p.getLocation().getBlockY() + " " + p.getLocation().getBlockZ()));
                                             }
                                             p.sendMessage(Messages.AirdropFallingHere());
                                             BlockData b = Material.DRIED_KELP_BLOCK.createBlockData();
                                             Location spawnLoc = new Location(p.getWorld(), p.getLocation().getX(), p.getLocation().getY() + 100, p.getLocation().getZ());
                                             p.getWorld().spawn(spawnLoc, FallingBlock.class, fallingBlock -> fallingBlock.setBlockData(b));
-                                            plugin.addLobbyPlacedBlock(s, p.getLocation(), b.getMaterial());
+                                            try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null) lobby.addPlacedBlock(p.getLocation(), b.getMaterial()); } catch (NumberFormatException ignored) { }
                                             p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
                                         }
                                     }
@@ -877,7 +902,7 @@ public class InventoryEventListener implements Listener {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
+                                if (plugin.getLobbyStateManager().getGameState(s) == GameStates.INGAME) {
                                     plugin.clearEffects(p);
                                     p.getInventory().setItemInMainHand(new ItemStack(Material.BUCKET));
                                 }
@@ -891,11 +916,15 @@ public class InventoryEventListener implements Listener {
                                         s = Integer.toString(ii);
                                     }
                                 }
-                                if (plugin.getLobbyGameState(s) == GameStates.INGAME) {
+                                if (plugin.getLobbyStateManager().getGameState(s) == GameStates.INGAME) {
                                     Player result = null;
                                     double lastDistance = Double.MAX_VALUE;
+                                    String playerTeam_p = null;
+                                    try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null) playerTeam_p = lobby.getPlayerTeam(p); } catch (NumberFormatException ignored) { }
                                     for (Player cp : p.getWorld().getPlayers()) {
-                                        if (plugin.getGame().getPlayerLobby(cp) != null && Objects.equals(plugin.getPlayerTeam(s, p), plugin.getPlayerTeam(s, cp))) {
+                                        String playerTeam_cp = null;
+                                        try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null) playerTeam_cp = lobby.getPlayerTeam(cp); } catch (NumberFormatException ignored) { }
+                                        if (plugin.getGame().getPlayerLobby(cp) != null && Objects.equals(playerTeam_p, playerTeam_cp)) {
                                             if (p == cp) {
                                                 continue;
                                             }
@@ -904,8 +933,6 @@ public class InventoryEventListener implements Listener {
                                                 lastDistance = distance;
                                                 result = cp;
                                             }
-                                        } else {
-                                            result = null;
                                         }
                                     }
                                     if (result != null) {
@@ -925,26 +952,28 @@ public class InventoryEventListener implements Listener {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
+                            if (plugin.getLobbyStateManager().getGameState(s) == GameStates.WAITING || plugin.getLobbyStateManager().getGameState(s) == GameStates.PREPARING) {
+                                Map<String, Integer> lobbyVotesMap = new HashMap<>();
+                                try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null) lobbyVotesMap = lobby.getVotingMap(); } catch (NumberFormatException ignored) { }
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 if (randombarriermeta == null) {
                                     return;
                                 }
                                 randombarriermeta.displayName(Messages.RandomLabel());
-                                ArrayList<Component> randomlore = new ArrayList<>();
-                                randomlore.add(0, Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, "Random", 0))).color(NamedTextColor.AQUA)));
-                                randombarriermeta.lore(randomlore);
+                                    ArrayList<Component> randomlore = new ArrayList<>();
+                                    randomlore.add(0, Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(lobbyVotesMap.getOrDefault("Random", 0))).color(NamedTextColor.AQUA)));
+                                    randombarriermeta.lore(randomlore);
                                 if (!randombarrier.setItemMeta(randombarriermeta)) {
                                     return;
                                 }
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.ArenaSelectorTitle());
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
-                                for (String all : plugin.getLobbyvotes().get(s).keySet()) {
+                                for (String all : lobbyVotesMap.keySet()) {
                                     if (!all.matches("Random")) {
                                         ArrayList<Component> arenalore = new ArrayList<>();
-                                        arenalore.add(0, Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.get(plugin.getLobbyvotes(), s, all, 0))).color(NamedTextColor.AQUA)));
+                                        arenalore.add(0, Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(lobbyVotesMap.getOrDefault(all, 0))).color(NamedTextColor.AQUA)));
                                         ItemStack arenamap = new ItemStack(Material.MAP);
                                         ItemMeta arenamapmeta = arenamap.getItemMeta();
                                         if (arenamapmeta == null) {
@@ -971,7 +1000,11 @@ public class InventoryEventListener implements Listener {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
+                            if (plugin.getLobbyStateManager().getGameState(s) == GameStates.WAITING || plugin.getLobbyStateManager().getGameState(s) == GameStates.PREPARING) {
+                                Map<Integer, Integer> lobbyTeamsMap = new HashMap<>();
+                                try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null) lobbyTeamsMap = lobby.getTeamsMap(); } catch (NumberFormatException ignored) { }
+                                Map<Player, String> lobbyTeamPlayerNamesMap = new HashMap<>();
+                                try { Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(s)); if (lobby != null) lobbyTeamPlayerNamesMap = lobby.getTeamPlayerNamesMap(); } catch (NumberFormatException ignored) { }
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 if (randombarriermeta == null) {
@@ -984,17 +1017,17 @@ public class InventoryEventListener implements Listener {
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.SelectorTeam());
                                 inv.setItem(0, randombarrier);
                                 int slot = 1;
-                                for (Integer all : plugin.getLobbiesTeamsMap(s).keySet()) {
+                                for (Integer all : lobbyTeamsMap.keySet()) {
                                     ArrayList<Component> arenalore = new ArrayList<>();
-                                    arenalore.add(0, Component.text(Messages.raw("players.label", "Players") + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.getOrDefault(plugin.getLobbiesTeamsMap(s), all, 0))).color(NamedTextColor.AQUA)));
+                                    arenalore.add(0, Component.text(Messages.raw("players.label", "Players") + ": ").color(NamedTextColor.GREEN).append(Component.text(String.valueOf(SafeMapAccess.getOrDefault(lobbyTeamsMap, all, 0))).color(NamedTextColor.AQUA)));
                                     ItemStack arenamap = new ItemStack(Material.PLAYER_HEAD);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     if (arenamapmeta == null) {
                                         continue;
                                     }
                                     arenamapmeta.displayName(Component.text(Integer.toString(all)).color(NamedTextColor.AQUA));
-                                    for (Player temp : plugin.getLobbiesTeamPlayerNamesMap(s).keySet()) {
-                                        if (SafeMapAccess.getOrDefault(plugin.getLobbiesTeamPlayerNamesMap(s), temp, "").equals(Integer.toString(all)) && temp != null) {
+                                    for (Player temp : lobbyTeamPlayerNamesMap.keySet()) {
+                                        if (SafeMapAccess.getOrDefault(lobbyTeamPlayerNamesMap, temp, "").equals(Integer.toString(all)) && temp != null) {
                                             arenalore.add(Component.text(temp.getName()).color(NamedTextColor.GRAY));
                                         }
                                     }
@@ -1017,7 +1050,7 @@ public class InventoryEventListener implements Listener {
                                     s = Integer.toString(ii);
                                 }
                             }
-                            if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
+                            if (plugin.getLobbyStateManager().getGameState(s) == GameStates.WAITING || plugin.getLobbyStateManager().getGameState(s) == GameStates.PREPARING) {
                                 ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
                                 ItemMeta randombarriermeta = randombarrier.getItemMeta();
                                 if (randombarriermeta == null) {
@@ -1029,7 +1062,7 @@ public class InventoryEventListener implements Listener {
                                 }
                                 Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.KitSelector());
                                 inv.setItem(0, randombarrier);
-                                for (int i = 1; i <= plugin.getActiveKits(); i++) {
+                                for (int i = 1; i <= plugin.getConfigManager().getActiveKits(); i++) {
                                     ItemStack arenamap = new ItemStack(Material.ARMOR_STAND);
                                     ItemMeta arenamapmeta = arenamap.getItemMeta();
                                     if (arenamapmeta == null) {
@@ -1054,7 +1087,7 @@ public class InventoryEventListener implements Listener {
                                 s = Integer.toString(ii);
                             }
                         }
-                        if (plugin.getLobbyGameState(s) == GameStates.WAITING || plugin.getLobbyGameState(s) == GameStates.PREPARING) {
+                        if (plugin.getLobbyStateManager().getGameState(s) == GameStates.WAITING || plugin.getLobbyStateManager().getGameState(s) == GameStates.PREPARING) {
                             plugin.onLeaveLobby(p, s);
                         }
                     
@@ -1091,14 +1124,14 @@ public class InventoryEventListener implements Listener {
                             if (p.hasPermission("pg.setup")) {
                                 
                                     p.getInventory().clear();
-                                    plugin.getConfigManager().setAddlobby(true);
+                                    plugin.getSetupStateManager().setAddlobby(true);
                                     e.setCancelled(true);
                                     p.sendMessage(Messages.LobbyEnabled());
                                 
                             }
                         } else if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteArenaLabel())) {
                             p.getInventory().clear();
-                            plugin.getConfigManager().setAddarena(true);
+                            plugin.getSetupStateManager().setAddarena(true);
                             p.sendMessage(Messages.TypeArenaNameAdd());
                         } else if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteSpawnLabel())) {
                             if (handleSetupSpawnAction(p, true)) {
@@ -1133,7 +1166,8 @@ public class InventoryEventListener implements Listener {
                         }
                     }
                     if (p.getInventory().getItemInMainHand().getType() == Material.OAK_SIGN) {
-                        if (Objects.requireNonNull(p.getInventory().getItemInMainHand().getItemMeta()).displayName().equals(Messages.SetupJoinSignLabel())) {
+                        ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
+                        if (meta != null && meta.displayName() != null && meta.displayName().equals(Messages.SetupJoinSignLabel())) {
                             plugin.getSetupHandler().setJoinSign(p);
                             e.setCancelled(true);
                         }
@@ -1152,7 +1186,7 @@ public class InventoryEventListener implements Listener {
     @EventHandler
     public void onDropItem(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
-        if (plugin.isGameServer()) {
+        if (plugin.getConfigManager().isGameServer()) {
             if (plugin.getGame().getActivePlayers().contains(p) || plugin.getGame().getPlayerLobby(p) != null) {
                 
                     String s = null;
@@ -1161,7 +1195,7 @@ public class InventoryEventListener implements Listener {
                             s = Integer.toString(ii);
                         }
                     }
-                    GameStates state = plugin.getLobbyGameState(s); e.setCancelled(state != GameStates.INGAME && !Objects.equals(plugin.getGame().getPlayerLobby(p), s));
+                    GameStates state = plugin.getLobbyStateManager().getGameState(s); e.setCancelled(state != GameStates.INGAME && !Objects.equals(plugin.getGame().getPlayerLobby(p), s));
                 
             }
         }

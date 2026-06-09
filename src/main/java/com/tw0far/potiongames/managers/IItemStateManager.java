@@ -149,6 +149,59 @@ public interface IItemStateManager extends IManager {
      */
     void clearShop();
     
+    // ===== BATCH REPLACE (for bootstrap seeding) =====
+    /**
+     * Replace all loot pools from parallel lists
+     */
+    void replaceLoot(List<ItemStack> food1, List<ItemStack> food2,
+                     List<ItemStack> armour1, List<ItemStack> armour2, List<ItemStack> armour3,
+                     List<ItemStack> armour4, List<ItemStack> armour5,
+                     List<ItemStack> weapons1, List<ItemStack> weapons2,
+                     List<PotionEffect> potions);
+    
+    /**
+     * Replace shop items from parallel lists
+     */
+    void replaceShop(List<String> shop, List<PotionEffect> shoppotion, List<ItemStack> shoppotiontype,
+                     List<String> shopkit, List<Integer> shopcost, List<Integer> shopsale);
+    
+    /**
+     * Get mutable shop items list
+     */
+    List<String> getShopItemsRaw();
+    
+    /**
+     * Get mutable shop cost list
+     */
+    List<Integer> getShopCostsRaw();
+    
+    /**
+     * Get mutable shop sale list
+     */
+    List<Integer> getShopSalesRaw();
+    
+    /**
+     * Get mutable shop potion list
+     */
+    List<PotionEffect> getShopPotionsRaw();
+    
+    /**
+     * Get mutable shop potion type list
+     */
+    List<ItemStack> getShopPotionTypesRaw();
+    
+    /**
+     * Get mutable shop kit list
+     */
+    List<String> getShopKitsRaw();
+    
+    // ===== KITS =====
+    List<String> getKitsRaw();
+    void replaceKits(List<String> kits);
+    Map<String, Integer> getKitplayersRaw();
+    void replaceKitplayers(Map<String, Integer> kitplayers);
+    void clearKits();
+    
     // ===== BATCH OPERATIONS =====
     /**
      * Clear all loot and shop items

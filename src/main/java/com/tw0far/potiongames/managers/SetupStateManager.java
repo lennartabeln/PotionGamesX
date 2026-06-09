@@ -286,4 +286,34 @@ public class SetupStateManager implements ISetupStateManager {
     public void removeSavedFoodLevel(Player player) {
         this.food.remove(player.getName());
     }
+
+    // ===== Setup Flow Flags =====
+    private boolean addlobby = false;
+    private boolean addarena = false;
+    private boolean dellobby = false;
+    private boolean delarena = false;
+
+    @Override
+    public boolean isAddlobby() { return addlobby; }
+
+    @Override
+    public void setAddlobby(boolean addlobby) { this.addlobby = addlobby; }
+
+    @Override
+    public boolean isAddarena() { return addarena; }
+
+    @Override
+    public void setAddarena(boolean addarena) { this.addarena = addarena; }
+
+    @Override
+    public boolean isDellobby() { return dellobby; }
+
+    @Override
+    public void setDellobby(boolean dellobby) { this.dellobby = dellobby; }
+
+    @Override
+    public boolean isDelarena() { return delarena; }
+
+    @Override
+    public void setDelarena(boolean delarena) { this.delarena = delarena; }
 }

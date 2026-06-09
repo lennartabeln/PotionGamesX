@@ -13,12 +13,9 @@ public class ConfigurationManager implements IConfigurationManager {
     
     // Game settings
     private int countdown = 60;
-    private int reset = 10;
     private int maxPlayers = 24;
     private int minPlayers = 12;
-    private int playerAmount = 0;
     private int teamSize = 2;
-    private int teamAmount;
     private int roundTime = 30;
     private int roundTimeSeconds;
     private int activePotions = 19;
@@ -56,14 +53,7 @@ public class ConfigurationManager implements IConfigurationManager {
     private boolean teamallowed = false;
     private boolean kitallowed = false;
     private boolean forcearena = false;
-    private boolean addlobby = false;
-    private boolean addarena = false;
-    private boolean dellobby = false;
-    private boolean delarena = false;
-    private boolean reload = false;
-    private boolean checkArenas = false;
-    private boolean singleArena = false;
-    
+
     // Database
     private String language = "en_US";
     private String host = "localhost";
@@ -75,7 +65,6 @@ public class ConfigurationManager implements IConfigurationManager {
         this.plugin = plugin;
         this.config = plugin.getConfig();
         // Calculate derived values
-        this.teamAmount = maxPlayers / teamSize;
         this.roundTimeSeconds = roundTime * 60;
     }
     
@@ -91,64 +80,54 @@ public class ConfigurationManager implements IConfigurationManager {
     
     private void loadAllConfig() {
         // Game settings
-        countdown = config.getInt("countdown", 60);
-        reset = config.getInt("reset", 10);
-        maxPlayers = config.getInt("maxPlayers", 24);
-        minPlayers = config.getInt("minPlayers", 12);
-        playerAmount = config.getInt("playerAmount", 0);
-        teamSize = config.getInt("teamSize", 2);
-        teamAmount = maxPlayers / teamSize;
-        roundTime = config.getInt("roundTime", 30);
+        countdown = config.getInt("pg.defaults.countdown", 60);
+        maxPlayers = config.getInt("pg.defaults.maxPlayers", 24);
+        minPlayers = config.getInt("pg.defaults.minPlayers", 12);
+        teamSize = config.getInt("pg.defaults.teamSize", 2);
+        roundTime = config.getInt("pg.defaults.roundTime", 30);
         roundTimeSeconds = roundTime * 60;
-        activePotions = config.getInt("activePotions", 19);
-        activeKits = config.getInt("activeKits", 6);
-        winningReward = config.getInt("winningReward", 100);
-        killReward = config.getInt("killReward", 10);
+        activePotions = config.getInt("pg.activePotions", 19);
+        activeKits = config.getInt("pg.activeKits", 6);
+        winningReward = config.getInt("pg.winningReward", 100);
+        killReward = config.getInt("pg.killReward", 10);
         
         // Feature flags
-        activateTeams = config.getBoolean("activateTeams", true);
-        activateKits = config.getBoolean("activateKits", true);
-        activateShop = config.getBoolean("activateShop", true);
-        activateAirdrops = config.getBoolean("activateAirdrops", true);
-        activateMysql = config.getBoolean("activateMySQL", false);
-        activateScoreboard = config.getBoolean("activateScoreboard", true);
-        activateDeathmatch = config.getBoolean("activateDeathmatch", true);
-        enableRewards = config.getBoolean("enableRewards", false);
-        broadcastStarting = config.getBoolean("broadcastStarting", false);
+        activateTeams = config.getBoolean("pg.defaults.activateTeams", true);
+        activateKits = config.getBoolean("pg.defaults.activateKits", true);
+        activateShop = config.getBoolean("pg.defaults.activateShop", true);
+        activateAirdrops = config.getBoolean("pg.defaults.activateAirdrops", true);
+        activateMysql = config.getBoolean("pg.activateMySQL", false);
+        activateScoreboard = config.getBoolean("pg.activateScoreboard", true);
+        activateDeathmatch = config.getBoolean("pg.activateDeathmatch", true);
+        enableRewards = config.getBoolean("pg.enableRewards", false);
+        broadcastStarting = config.getBoolean("pg.broadcastStarting", false);
         
         // Behavior flags
-        startOnJoin = config.getBoolean("startOnJoin", false);
-        friendlyFire = config.getBoolean("friendlyFire", false);
-        joinStarted = config.getBoolean("joinStarted", true);
-        tickStarted = config.getBoolean("tickStarted", false);
-        compassOnSpawn = config.getBoolean("compassOnSpawn", false);
-        allowOutsideChat = config.getBoolean("allowOutsideChat", false);
-        changeGamerules = config.getBoolean("changeGamerules", true);
-        gameServer = config.getBoolean("gameServer", true);
-        mysql = config.getBoolean("mysql", false);
-        deathmatch = config.getBoolean("deathmatch", false);
-        joinable = config.getBoolean("joinable", true);
-        pause = config.getBoolean("pause", false);
-        build = config.getBoolean("build", false);
-        move = config.getBoolean("move", true);
-        voteallowed = config.getBoolean("voteallowed", false);
-        teamallowed = config.getBoolean("teamallowed", false);
-        kitallowed = config.getBoolean("kitallowed", false);
-        forcearena = config.getBoolean("forcearena", false);
-        addlobby = config.getBoolean("addlobby", false);
-        addarena = config.getBoolean("addarena", false);
-        dellobby = config.getBoolean("dellobby", false);
-        delarena = config.getBoolean("delarena", false);
-        reload = config.getBoolean("reload", false);
-        checkArenas = config.getBoolean("checkArenas", false);
-        singleArena = config.getBoolean("singleArena", false);
+        startOnJoin = config.getBoolean("pg.startOnJoin", false);
+        friendlyFire = config.getBoolean("pg.friendlyFire", false);
+        joinStarted = config.getBoolean("pg.joinStarted", true);
+        tickStarted = config.getBoolean("pg.defaults.tickStarted", false);
+        compassOnSpawn = config.getBoolean("pg.compassOnSpawn", false);
+        allowOutsideChat = config.getBoolean("pg.allowOutsideChat", false);
+        changeGamerules = config.getBoolean("pg.changeGamerules", true);
+        gameServer = config.getBoolean("pg.gameServer", true);
+        mysql = config.getBoolean("pg.mysql", false);
+        deathmatch = config.getBoolean("pg.deathmatch", false);
+        joinable = config.getBoolean("pg.joinable", true);
+        pause = config.getBoolean("pg.pause", false);
+        build = config.getBoolean("pg.build", false);
+        move = config.getBoolean("pg.move", true);
+        voteallowed = config.getBoolean("pg.voteallowed", false);
+        teamallowed = config.getBoolean("pg.teamallowed", false);
+        kitallowed = config.getBoolean("pg.kitallowed", false);
+        forcearena = config.getBoolean("pg.forcearena", false);
         
         // Database
-        language = config.getString("language", "en_US");
-        host = config.getString("mysql.host", "localhost");
-        port = config.getString("mysql.port", "3306");
-        database = config.getString("mysql.database", "potiongames");
-        user = config.getString("mysql.user", "root");
+        language = config.getString("pg.language", "en_US");
+        host = config.getString("pg.mysql.host", "localhost");
+        port = config.getString("pg.mysql.port", "3306");
+        database = config.getString("pg.mysql.database", "potiongames");
+        user = config.getString("pg.mysql.user", "root");
     }
     
     @Override
@@ -162,9 +141,6 @@ public class ConfigurationManager implements IConfigurationManager {
     public int getCountdown() { return countdown; }
     
     @Override
-    public int getReset() { return reset; }
-    
-    @Override
     public int getTeamSize() { return teamSize; }
     
     @Override
@@ -172,12 +148,6 @@ public class ConfigurationManager implements IConfigurationManager {
     
     @Override
     public int getMinPlayers() { return minPlayers; }
-    
-    @Override
-    public int getPlayerAmount() { return playerAmount; }
-    
-    @Override
-    public int getTeamAmount() { return teamAmount; }
     
     @Override
     public int getRoundTime() { return roundTime; }
@@ -202,29 +172,18 @@ public class ConfigurationManager implements IConfigurationManager {
     public void setCountdown(int countdown) { this.countdown = countdown; }
     
     @Override
-    public void setReset(int reset) { this.reset = reset; }
-    
-    @Override
     public void setTeamSize(int teamSize) { 
         this.teamSize = teamSize;
-        this.teamAmount = maxPlayers / teamSize;
     }
     
     @Override
     public void setMaxPlayers(int maxPlayers) { 
         this.maxPlayers = maxPlayers;
         this.minPlayers = maxPlayers / 2;
-        this.teamAmount = maxPlayers / teamSize;
     }
     
     @Override
     public void setMinPlayers(int minPlayers) { this.minPlayers = minPlayers; }
-    
-    @Override
-    public void setPlayerAmount(int playerAmount) { this.playerAmount = playerAmount; }
-    
-    @Override
-    public void setTeamAmount(int teamAmount) { this.teamAmount = teamAmount; }
     
     @Override
     public void setRoundTime(int roundTime) { 
@@ -332,21 +291,6 @@ public class ConfigurationManager implements IConfigurationManager {
     public boolean isGameServer() { return gameServer; }
     
     @Override
-    public boolean isAddlobby() { return addlobby; }
-    
-    @Override
-    public boolean isAddarena() { return addarena; }
-    
-    @Override
-    public boolean isDellobby() { return dellobby; }
-    
-    @Override
-    public boolean isDelarena() { return delarena; }
-    
-    @Override
-    public boolean isReload() { return reload; }
-    
-    @Override
     public boolean isCompassOnSpawn() { return compassOnSpawn; }
     
     @Override
@@ -354,12 +298,6 @@ public class ConfigurationManager implements IConfigurationManager {
     
     @Override
     public boolean isChangeGamerules() { return changeGamerules; }
-    
-    @Override
-    public boolean isCheckArenas() { return checkArenas; }
-    
-    @Override
-    public boolean isSingleArena() { return singleArena; }
     
     @Override
     public boolean isFriendlyFire() { return friendlyFire; }
@@ -414,21 +352,6 @@ public class ConfigurationManager implements IConfigurationManager {
     public void setGameServer(boolean gameServer) { this.gameServer = gameServer; }
     
     @Override
-    public void setAddlobby(boolean addlobby) { this.addlobby = addlobby; }
-    
-    @Override
-    public void setAddarena(boolean addarena) { this.addarena = addarena; }
-    
-    @Override
-    public void setRemoveLobby(boolean removeLobby) { this.dellobby = removeLobby; }
-    
-    @Override
-    public void setRemoveArena(boolean removeArena) { this.delarena = removeArena; }
-    
-    @Override
-    public void setReload(boolean reload) { this.reload = reload; }
-    
-    @Override
     public void setCompassOnSpawn(boolean compassOnSpawn) { this.compassOnSpawn = compassOnSpawn; }
     
     @Override
@@ -436,12 +359,6 @@ public class ConfigurationManager implements IConfigurationManager {
     
     @Override
     public void setChangeGamerules(boolean changeGamerules) { this.changeGamerules = changeGamerules; }
-    
-    @Override
-    public void setCheckArenas(boolean checkArenas) { this.checkArenas = checkArenas; }
-    
-    @Override
-    public void setSingleArena(boolean singleArena) { this.singleArena = singleArena; }
     
     @Override
     public void setFriendlyFire(boolean friendlyFire) { this.friendlyFire = friendlyFire; }

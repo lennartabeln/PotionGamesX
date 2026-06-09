@@ -1,26 +1,30 @@
 # PotionGames Configuration File
 # Minecraft Paper 26.1.x
-# 
+#
 # Data Organization:
-#   - config.yml (this file): Global settings, database configuration
-#   - lobbies.yml: Lobbies, arenas, spawns (all locations)
-#   - chests.yml: Chest loot item definitions
-#   - messages.yml: Localized text messages
-#   - kits.yml: Kit definitions
-#   - shop.yml: Shop items
+#   config.yml (this file): Global settings, database, feature toggles
+#   lobbies.yml: Lobbies, arenas, spawns (all locations)
+#   chests.yml: Chest loot item definitions
+#   messages.yml: Localized text messages
+#   kits.yml: Kit definitions
+#   shop.yml: Shop items
 
 pg:
-  # ════════════════════════════════════════════════════════════════════════════════
+  # ═══════════════════════════════════════════════════════
   # CORE SETTINGS
-  # ════════════════════════════════════════════════════════════════════════════════
-  
-  language: en_US
+  # ═══════════════════════════════════════════════════════
+
   gameServer: true
-  
-  # ════════════════════════════════════════════════════════════════════════════════
+  language: en_US
+
+  # BungeeCord / Proxy network support
+  # When game ends, players are sent back to this server
+  bungeeServer: lobby
+
+  # ═══════════════════════════════════════════════════════
   # DATABASE CONFIGURATION
-  # ════════════════════════════════════════════════════════════════════════════════
-  
+  # ═══════════════════════════════════════════════════════
+
   activateMySQL: false
   mysql:
     host: localhost
@@ -28,166 +32,73 @@ pg:
     database: potiongames
     user: root
     password: "admin"
-  
-  # ════════════════════════════════════════════════════════════════════════════════
-  # DEFAULT GAME SETTINGS (Applied to all lobbies unless overridden)
-  # ════════════════════════════════════════════════════════════════════════════════
-  
+
+  # ═══════════════════════════════════════════════════════
+  # DEFAULT GAME SETTINGS
+  # (Applied to all lobbies unless overridden)
+  # ═══════════════════════════════════════════════════════
+
   defaults:
     # Timing
     countdown: 60              # Seconds before game starts
     roundTime: 30              # Minutes per round
-    
+
     # Player limits
     maxPlayers: 24
     minPlayers: 2
     teamSize: 2
-    
+
     # Feature flags
-    activateTeams: true
+    activateAirdrops: true
     activateKits: true
     activateShop: true
-    activateAirdrops: true
-  
-  # ════════════════════════════════════════════════════════════════════════════════
+    activateTeams: true
+
+  # ═══════════════════════════════════════════════════════
   # GLOBAL FEATURES
-  # ════════════════════════════════════════════════════════════════════════════════
-  
+  # ═══════════════════════════════════════════════════════
+
   # Gameplay
-  activateScoreboard: true
   activateDeathmatch: true
+  activateScoreboard: true
+  broadcastStarting: false
+  changeGamerules: true
   friendlyFire: false
   joinStarted: false
-  
+
   # Player behavior
-  startOnJoin: false
-  compassOnSpawn: false
   allowOutsideChat: false
-  changeGamerules: true
-  broadcastStarting: false
-  
-  # Economy (requires Vault plugin)
+  compassOnSpawn: false
+  startOnJoin: false
+
+  # Economy (requires Vault)
   enableRewards: false
-  winningReward: 100           # Coins for winning a round
   killReward: 10               # Coins per kill
-  
+  winningReward: 100           # Coins for winning a round
+
   # Content limits
-  activePotions: 19            # Number of shop potions
   activeKits: 6                # Number of player kits
-  
-  # ════════════════════════════════════════════════════════════════════════════════
-  # SHOP ITEMS
-  # ════════════════════════════════════════════════════════════════════════════════
-  # Populated automatically on startup from hardcoded defaults
-  # Structure: pg.potions.<number>.name, .shoppotion, .shoppotiontype, .kit, .cost, .sale
-  
-  potions: {}
-  
-  # ════════════════════════════════════════════════════════════════════════════════
-  # CHEST LOOT CONFIGURATION
-  # ════════════════════════════════════════════════════════════════════════════════
-  # Define custom loot profiles for chest types in this section
-  # factor: 1.0 = default, 0.5 = half density, 2.0 = double density
-  
-  chestloot:
-    # Standard chest (End Portal Frame) - default loot profile
-    normal:
-      loot:
-        factor: 1.0
-        food1: 20.0
-        food2: 10.0
-        armour1: 15.0
-        armour2: 15.0
-        armour3: 7.0
-        armour4: 5.0
-        armour5: 3.0
-        weapons1: 20.0
-        weapons2: 5.0
-      
-      items:
-        food1:
-          - "CAKE:1"
-          - "BREAD:3"
-          - "PUMPKIN_PIE:3"
-          - "COOKIE:3"
-          - "BAKED_POTATO:3"
-        
-        food2:
-          - "RABBIT_STEW:1"
-          - "MUSHROOM_STEW:1"
-          - "BEETROOT_SOUP:1"
-          - "GOLDEN_CARROT:1"
-          - "MILK_BUCKET:1"
-        
-        armour1:
-          - "LEATHER_HELMET:1"
-          - "LEATHER_CHESTPLATE:1"
-          - "LEATHER_LEGGINGS:1"
-          - "LEATHER_BOOTS:1"
-        
-        armour2:
-          - "CHAINMAIL_HELMET:1"
-          - "CHAINMAIL_CHESTPLATE:1"
-          - "CHAINMAIL_LEGGINGS:1"
-          - "CHAINMAIL_BOOTS:1"
-        
-        armour3:
-          - "GOLDEN_HELMET:1"
-          - "GOLDEN_CHESTPLATE:1"
-          - "GOLDEN_LEGGINGS:1"
-          - "GOLDEN_BOOTS:1"
-        
-        armour4:
-          - "IRON_HELMET:1"
-          - "IRON_CHESTPLATE:1"
-          - "IRON_LEGGINGS:1"
-          - "IRON_BOOTS:1"
-        
-        armour5:
-          - "DIAMOND_HELMET:1"
-          - "DIAMOND_CHESTPLATE:1"
-          - "DIAMOND_LEGGINGS:1"
-          - "DIAMOND_BOOTS:1"
-        
-        weapons1:
-          - "WOODEN_SWORD:1"
-          - "STONE_SWORD:1"
-          - "WOODEN_AXE:1"
-        
-        weapons2:
-          - "IRON_SWORD:1"
-          - "DIAMOND_SWORD:1"
-          - "IRON_AXE:1"
-  
-  # ════════════════════════════════════════════════════════════════════════════════
+  activePotions: 19            # Number of shop potions
+
+  # ═══════════════════════════════════════════════════════
   # PERFORMANCE & LOGGING
-  # ════════════════════════════════════════════════════════════════════════════════
-  
+  # ═══════════════════════════════════════════════════════
+
   logging:
-    # Log level: INFO (default), DEBUG (verbose), TRACE (very verbose)
-    level: INFO
-    # Save logs to file (true/false)
-    toFile: false
-    # Log file path (relative to plugin folder)
+    level: INFO                 # Log level: INFO, DEBUG, TRACE
+    toFile: false               # Save logs to file
     filePath: "logs/potiongames.log"
-  
+
   performance:
-    # Update frequency for lobbies (in ticks, lower = more frequent, 20 ticks = 1 second)
-    lobbyUpdateRate: 2
-    # Update frequency for scoreboards (in ticks)
-    scoreboardUpdateRate: 5
-    # Maximum simultaneous games to run
-    maxConcurrentGames: 10
-  
-  # ════════════════════════════════════════════════════════════════════════════════
+    lobbyUpdateRate: 2          # Ticks between lobby updates (20 = 1 sec)
+    maxConcurrentGames: 10      # Maximum simultaneous games
+    scoreboardUpdateRate: 5     # Ticks between scoreboard updates
+
+  # ═══════════════════════════════════════════════════════
   # SECURITY & RESTRICTIONS
-  # ════════════════════════════════════════════════════════════════════════════════
-  
+  # ═══════════════════════════════════════════════════════
+
   security:
-    # Maximum players per IP address (0 = unlimited)
-    maxPlayersPerIP: 0
-    # Banned items in games (separated by comma, e.g. LAVA_BUCKET,WATER_BUCKET)
-    bannedItems: ""
-    # Auto-kick players with suspicious patterns (hacks/cheats)
-    antiCheatEnabled: false
-  
+    antiCheatEnabled: false     # Auto-kick suspicious patterns
+    bannedItems: ""             # Comma-separated banned items
+    maxPlayersPerIP: 0          # 0 = unlimited

@@ -11,7 +11,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.Material;
-import com.tw0far.potiongames.models.Settings;
 
 /**
  * /pg list - Open GUI with all lobbies
@@ -53,7 +52,7 @@ public class ListCommand implements ICommand {
         for (Lobby lobby : lobbies) {
             int id = lobby.getId();
             int active = lobby.getActivePlayers().size();
-            int max = plugin.getMaxPlayers();
+            int max = plugin.getConfigManager().getMaxPlayers();
 
             ItemStack item = new ItemStack(Material.CHEST);
             ItemMeta meta = item.getItemMeta();

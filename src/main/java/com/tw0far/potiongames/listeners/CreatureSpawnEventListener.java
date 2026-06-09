@@ -18,7 +18,7 @@ public class CreatureSpawnEventListener implements Listener {
     
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e) {
-        if (!plugin.isGameServer()) {
+        if (!plugin.getConfigManager().isGameServer()) {
             return;
         }
         

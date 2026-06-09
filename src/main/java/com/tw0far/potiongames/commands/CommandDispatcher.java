@@ -81,16 +81,22 @@ public class CommandDispatcher implements CommandExecutor {
     
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(MessageUtil.createError("Only players can use this command!"));
-            return true;
-        }
-        
-        Player player = (Player) sender;
+        boolean isPlayer = (sender instanceof Player);
         
         // Show help if no args
         if (args.length == 0) {
-            return commands.get("help").execute(player, args);
+            ICommand helpCmd = commands.get("help");
+            if (helpCmd != null) {
+                if (isPlayer) {
+                    return helpCmd.execute((Player) sender, args);
+                }
+                sender.sendMessage(Component.text("PotionGames Commands:").color(NamedTextColor.AQUA));
+                for (ICommand command : commands.values()) {
+                    sender.sendMessage(Component.text("  " + command.getUsage()).color(NamedTextColor.GRAY));
+                }
+                return true;
+            }
+            return true;
         }
         
         String subCommand = args[0].toLowerCase();
@@ -98,9 +104,28 @@ public class CommandDispatcher implements CommandExecutor {
         // Get and execute command
         ICommand command = commands.get(subCommand);
         if (command == null) {
-            player.sendMessage(MessageUtil.createError("Unknown command! Use /pg help for help."));
+            String msg = Messages.raw("command.unknown", "Unknown command! Use /pg help for help.");
+            sender.sendMessage(Component.text(msg).color(NamedTextColor.RED));
             return true;
         }
+        
+        // Check if command requires a player
+        if (!isPlayer) {
+            // Console-only commands that need player context
+            if (subCommand.equals("join") || subCommand.equals("leave")) {
+                sender.sendMessage(Component.text("This command can only be used by players!").color(NamedTextColor.RED));
+                return true;
+            }
+            // Allow other commands (reload, etc.) from console
+            try {
+                return command.execute((Player) sender, args);
+            } catch (ClassCastException e) {
+                sender.sendMessage(Component.text("This command can only be used by players!").color(NamedTextColor.RED));
+                return true;
+            }
+        }
+        
+        Player player = (Player) sender;
         
         // Check permission
         if (command.getPermission() != null && !player.hasPermission(command.getPermission())) {
@@ -109,7 +134,7 @@ public class CommandDispatcher implements CommandExecutor {
         }
         
         // Check if game server required
-        if (command.requiresGameServer() && !plugin.isGameServer()) {
+        if (command.requiresGameServer() && !plugin.getConfigManager().isGameServer()) {
             player.sendMessage(MessageUtil.createError(Messages.raw("command.not_game_server", "This is not a game server!")));
             return true;
         }
@@ -123,20 +148,5 @@ public class CommandDispatcher implements CommandExecutor {
             e.printStackTrace();
             return true;
         }
-    }
-    
-    /**
-     * Show available commands to player
-     */
-    public void showCommands(Player player) {
-        player.sendMessage(Component.text(Messages.raw("command.list_header", "═════════ PotionGames Commands ═════════")).color(NamedTextColor.AQUA));
-        
-        for (ICommand command : commands.values()) {
-            if (command.getPermission() == null || player.hasPermission(command.getPermission())) {
-                player.sendMessage(Component.text("  " + command.getUsage()).color(NamedTextColor.GRAY));
-            }
-        }
-        
-        player.sendMessage(Component.text(Messages.raw("command.list_footer", "═════════════════════════════════════════")).color(NamedTextColor.AQUA));
     }
 }

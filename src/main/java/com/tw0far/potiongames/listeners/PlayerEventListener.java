@@ -12,12 +12,15 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Handles player-specific events (join, quit, move).
  * Extracted from monolithic Events.java.
  */
 public class PlayerEventListener implements Listener {
+    private static final Logger LOGGER = Logger.getLogger("Minecraft");
     private final PotionGames plugin;
 
     public PlayerEventListener(PotionGames plugin) {
@@ -28,7 +31,6 @@ public class PlayerEventListener implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         plugin.getDatabaseManager().createPlayer(p.getUniqueId().toString());
-        plugin.joinChannel(p.getPlayer(), "Global");
         if (p.hasPermission("pg.update")) {
             new UpdateChecker(plugin, 87633).getVersion(version -> {
                 if (!plugin.getPluginMeta().getVersion().equalsIgnoreCase(version)) {
@@ -36,21 +38,31 @@ public class PlayerEventListener implements Listener {
                 }
             });
         }
+        
+        // Auto-join first lobby if configured
+        if (plugin.getConfigManager().isGameServer() && plugin.getConfigManager().isStartOnJoin()) {
+            plugin.getGame().autoJoinLobby(p);
+        }
     }
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
-        if (plugin.isGameServer()) {
+        if (plugin.getConfigManager().isGameServer()) {
             String lobbyId = plugin.getGame().getPlayerLobby(p);
             if (lobbyId != null) {
-                if (!plugin.isLobbyMoveAllowed(lobbyId)) {
-                    if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
-                        Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
-                        loc.setYaw(e.getTo().getYaw());
-                        loc.setPitch(e.getTo().getPitch());
-                        p.teleport(loc);
+                try {
+                    com.tw0far.potiongames.models.Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
+                    if (lobby != null && !lobby.isMoveAllowed()) {
+                        if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
+                            Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
+                            loc.setYaw(e.getTo().getYaw());
+                            loc.setPitch(e.getTo().getPitch());
+                            p.teleport(loc);
+                        }
                     }
+                } catch (NumberFormatException ex) {
+                    LOGGER.log(Level.WARNING, "[PotionGames] Invalid lobby ID in move event", ex);
                 }
             }
         }
@@ -59,7 +71,7 @@ public class PlayerEventListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
-        if (plugin.isGameServer()) {
+        if (plugin.getConfigManager().isGameServer()) {
             String lobbyId = null;
             if (plugin.getGame().isInLobby(p)) {
                 lobbyId = plugin.getGame().getPlayerLobby(p);

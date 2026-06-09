@@ -13,7 +13,7 @@ public class JoinLobbyHandler {
 
     public void onJoinLobby(Player player, String lobbyId) {
         try {
-            Lobby lobby = plugin.getLobbyById(Integer.parseInt(lobbyId));
+            Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
             if (lobby != null) {
                 plugin.getGame().setPlayerLobby(player, lobbyId);
                 lobby.join(player);

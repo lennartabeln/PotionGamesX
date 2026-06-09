@@ -4,7 +4,6 @@ import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Lobby;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**

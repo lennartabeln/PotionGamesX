@@ -3,62 +3,54 @@ package com.tw0far.potiongames.managers;
 import com.tw0far.potiongames.main.PotionGames;
 import org.bukkit.entity.Player;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Centralized database manager.
- * Handles all SQL operations for both SQLite and MySQL.
- * 
- * Deprecated API Notes (Java 23 / Paper 26.1.x):
- * - Replaced deprecated getItemInHand() with getItemInMainHand()
- * - Replaced deprecated getArmorContents() with Equipment Slot API
- */
 public class DatabaseManager implements IDatabaseManager {
     private static final Logger LOGGER = Logger.getLogger("Minecraft");
     private final PotionGames plugin;
     private final ConfigurationManager config;
-    
+
     private Connection connection;
-    private Statement statement;
     private boolean connected = false;
-    
+
     public DatabaseManager(PotionGames plugin, ConfigurationManager config) {
         this.plugin = plugin;
         this.config = config;
     }
-    
+
     @Override
     public void onEnable() {
         connect();
     }
-    
+
     @Override
     public void onDisable() {
         closeConnection();
     }
-    
+
     @Override
     public void reload() {
         closeConnection();
         onEnable();
     }
-    
-    /**
-     * Connect to MySQL database
-     */
+
     private void connectMySQL() {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             String url = String.format(
                 "jdbc:mysql://%s:%s/%s",
                 config.getHost(),
                 config.getPort(),
                 config.getDatabase()
             );
-            connection = DriverManager.getConnection(url, config.getUser(), ""); // Note: password not exposed in ConfigurationManager yet
-            statement = connection.createStatement();
+            String password = plugin.getConfig().getString("pg.mysql.password", "");
+            connection = DriverManager.getConnection(url, config.getUser(), password);
             connected = true;
             LOGGER.info("[PotionGames] Connected to MySQL database");
             createTablesIfNotExist();
@@ -67,15 +59,11 @@ public class DatabaseManager implements IDatabaseManager {
             connected = false;
         }
     }
-    
-    /**
-     * Connect to SQLite database
-     */
+
     private void connectSQLite() {
         try {
             String dbPath = plugin.getDataFolder() + "/stats.db";
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
-            statement = connection.createStatement();
             connected = true;
             LOGGER.info("[PotionGames] Connected to SQLite database");
             createTablesIfNotExist();
@@ -84,25 +72,15 @@ public class DatabaseManager implements IDatabaseManager {
             connected = false;
         }
     }
-    
+
     private void createTablesIfNotExist() {
-        try {
-            String sql = "CREATE TABLE IF NOT EXISTS Stats (" +
-                "UUID varchar(64), ROUNDS int, WINS int, LOSSES int, KILLS int, DEATHS int, KD double)";
-            statement.execute(sql);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "[PotionGames] Failed to create tables", e);
-        }
+        String sql = "CREATE TABLE IF NOT EXISTS Stats (" +
+            "UUID varchar(64), ROUNDS int, WINS int, LOSSES int, KILLS int, DEATHS int, KD double)";
+        executeUpdate(sql);
     }
-    
-    /**
-     * Close database connection
-     */
+
     public void closeConnection() {
         try {
-            if (statement != null && !statement.isClosed()) {
-                statement.close();
-            }
             if (connection != null && !connection.isClosed()) {
                 connection.close();
             }
@@ -112,7 +90,7 @@ public class DatabaseManager implements IDatabaseManager {
             LOGGER.log(Level.SEVERE, "[PotionGames] Failed to close database connection", e);
         }
     }
-    
+
     public boolean isConnected() {
         return connected;
     }
@@ -128,32 +106,57 @@ public class DatabaseManager implements IDatabaseManager {
 
     @Override
     public void update(String qry) {
-        if (!connected || statement == null) {
-            return;
-        }
-        try {
-            statement.executeUpdate(qry);
-        } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "[PotionGames] Failed to execute update", e);
-        }
+        executeUpdate(qry);
     }
 
     @Override
     public ResultSet query(String qry) {
-        if (!connected || statement == null) {
+        return executeQuery(qry);
+    }
+
+    private void executeUpdate(String sql, Object... params) {
+        if (!connected || connection == null) return;
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            setParameters(stmt, params);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "[PotionGames] Failed to execute update: " + sql, e);
+        }
+    }
+
+    private ResultSet executeQuery(String sql, Object... params) {
+        if (!connected || connection == null) return null;
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            setParameters(stmt, params);
+            return stmt.executeQuery();
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "[PotionGames] Failed to execute query: " + sql, e);
             return null;
         }
-        try {
-            return statement.executeQuery(qry);
-        } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "[PotionGames] Failed to execute query", e);
-            return null;
+    }
+
+    private void setParameters(PreparedStatement stmt, Object... params) throws SQLException {
+        for (int i = 0; i < params.length; i++) {
+            Object param = params[i];
+            if (param == null) {
+                stmt.setNull(i + 1, java.sql.Types.NULL);
+            } else if (param instanceof String) {
+                stmt.setString(i + 1, (String) param);
+            } else if (param instanceof Integer) {
+                stmt.setInt(i + 1, (Integer) param);
+            } else if (param instanceof Double) {
+                stmt.setDouble(i + 1, (Double) param);
+            } else {
+                stmt.setObject(i + 1, param);
+            }
         }
     }
 
     @Override
     public boolean playerExists(String uuid) {
-        try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
+        String sql = "SELECT UUID FROM Stats WHERE UUID = ?";
+        try (ResultSet rs = executeQuery(sql, uuid)) {
             return rs != null && rs.next() && rs.getString("UUID") != null;
         } catch (SQLException e) {
             LOGGER.log(Level.WARNING, "[PotionGames] Failed to check player existence", e);
@@ -164,126 +167,90 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void createPlayer(String uuid) {
         if (!playerExists(uuid)) {
-            update("INSERT INTO Stats(UUID, ROUNDS, WINS, LOSSES, KILLS, DEATHS, KD) VALUES ('" + uuid + "', '0', '0', '0', '0', '0', '0')");
+            String sql = "INSERT INTO Stats(UUID, ROUNDS, WINS, LOSSES, KILLS, DEATHS, KD) VALUES (?, 0, 0, 0, 0, 0, 0)";
+            executeUpdate(sql, uuid);
         }
     }
 
     @Override
     public int getKills(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if (rs != null && rs.next()) {
-                    i = rs.getInt("KILLS");
-                }
-            } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "[PotionGames] Failed to get kills", e);
-            }
-        } else {
+        if (!playerExists(uuid)) {
             createPlayer(uuid);
             return getKills(uuid);
         }
-        return i;
+        return getIntStat(uuid, "KILLS");
     }
 
     @Override
     public int getDeaths(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if (rs != null && rs.next()) {
-                    i = rs.getInt("DEATHS");
-                }
-            } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "[PotionGames] Failed to get deaths", e);
-            }
-        } else {
+        if (!playerExists(uuid)) {
             createPlayer(uuid);
             return getDeaths(uuid);
         }
-        return i;
+        return getIntStat(uuid, "DEATHS");
     }
 
     @Override
     public double getKD(String uuid) {
-        double i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if (rs != null && rs.next()) {
-                    i = rs.getDouble("KD");
-                }
-            } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "[PotionGames] Failed to get KD", e);
-            }
-        } else {
+        if (!playerExists(uuid)) {
             createPlayer(uuid);
             return getKD(uuid);
         }
-        return i;
+        String sql = "SELECT KD FROM Stats WHERE UUID = ?";
+        try (ResultSet rs = executeQuery(sql, uuid)) {
+            if (rs != null && rs.next()) {
+                return rs.getDouble("KD");
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "[PotionGames] Failed to get KD", e);
+        }
+        return 0;
     }
 
     @Override
     public int getWins(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if (rs != null && rs.next()) {
-                    i = rs.getInt("WINS");
-                }
-            } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "[PotionGames] Failed to get wins", e);
-            }
-        } else {
+        if (!playerExists(uuid)) {
             createPlayer(uuid);
             return getWins(uuid);
         }
-        return i;
+        return getIntStat(uuid, "WINS");
     }
 
     @Override
     public int getLosses(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if (rs != null && rs.next()) {
-                    try {
-                        i = rs.getInt("LOSSES");
-                    } catch (SQLException ex) {
-                        i = rs.getInt("LOSTS");
-                    }
-                }
-            } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "[PotionGames] Failed to get losses", e);
-            }
-        } else {
+        if (!playerExists(uuid)) {
             createPlayer(uuid);
             return getLosses(uuid);
         }
-        return i;
+        return getIntStat(uuid, "LOSSES");
     }
 
     @Override
     public int getRounds(String uuid) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if (rs != null && rs.next()) {
-                    i = rs.getInt("ROUNDS");
-                }
-            } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "[PotionGames] Failed to get rounds", e);
-            }
-        } else {
+        if (!playerExists(uuid)) {
             createPlayer(uuid);
             return getRounds(uuid);
         }
-        return i;
+        return getIntStat(uuid, "ROUNDS");
+    }
+
+    private int getIntStat(String uuid, String column) {
+        String sql = "SELECT " + column + " FROM Stats WHERE UUID = ?";
+        try (ResultSet rs = executeQuery(sql, uuid)) {
+            if (rs != null && rs.next()) {
+                return rs.getInt(column);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "[PotionGames] Failed to get " + column, e);
+        }
+        return 0;
     }
 
     @Override
     public void setKills(String uuid, int kills) {
         if (playerExists(uuid)) {
-            update("UPDATE Stats SET KILLS= '" + kills + "' WHERE UUID= '" + uuid + "';");
+            String sql = "UPDATE Stats SET KILLS = ? WHERE UUID = ?";
+            executeUpdate(sql, kills, uuid);
         } else {
             createPlayer(uuid);
             setKills(uuid, kills);
@@ -293,7 +260,8 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void setDeaths(String uuid, int deaths) {
         if (playerExists(uuid)) {
-            update("UPDATE Stats SET DEATHS= '" + deaths + "' WHERE UUID= '" + uuid + "';");
+            String sql = "UPDATE Stats SET DEATHS = ? WHERE UUID = ?";
+            executeUpdate(sql, deaths, uuid);
         } else {
             createPlayer(uuid);
             setDeaths(uuid, deaths);
@@ -311,7 +279,8 @@ public class DatabaseManager implements IDatabaseManager {
                 kd = kills;
             }
             kd = Math.round(kd * 1000) / 1000.0;
-            update("UPDATE Stats SET KD= '" + kd + "' WHERE UUID= '" + uuid + "';");
+            String sql = "UPDATE Stats SET KD = ? WHERE UUID = ?";
+            executeUpdate(sql, kd, uuid);
         } else {
             createPlayer(uuid);
             setKD(uuid, kd);
@@ -321,7 +290,8 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void setWins(String uuid, int wins) {
         if (playerExists(uuid)) {
-            update("UPDATE Stats SET WINS= '" + wins + "' WHERE UUID= '" + uuid + "';");
+            String sql = "UPDATE Stats SET WINS = ? WHERE UUID = ?";
+            executeUpdate(sql, wins, uuid);
         } else {
             createPlayer(uuid);
             setWins(uuid, wins);
@@ -331,11 +301,8 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void setLosses(String uuid, int losses) {
         if (playerExists(uuid)) {
-            try {
-                update("UPDATE Stats SET LOSSES= '" + losses + "' WHERE UUID= '" + uuid + "';");
-            } catch (Exception ex) {
-                update("UPDATE Stats SET LOSTS= '" + losses + "' WHERE UUID= '" + uuid + "';");
-            }
+            String sql = "UPDATE Stats SET LOSSES = ? WHERE UUID = ?";
+            executeUpdate(sql, losses, uuid);
         } else {
             createPlayer(uuid);
             setLosses(uuid, losses);
@@ -348,7 +315,8 @@ public class DatabaseManager implements IDatabaseManager {
             int wins = getWins(uuid);
             int losses = getLosses(uuid);
             rounds = wins + losses;
-            update("UPDATE Stats SET ROUNDS= '" + rounds + "' WHERE UUID= '" + uuid + "';");
+            String sql = "UPDATE Stats SET ROUNDS = ? WHERE UUID = ?";
+            executeUpdate(sql, rounds, uuid);
         } else {
             createPlayer(uuid);
             setRounds(uuid, rounds);
@@ -358,7 +326,7 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void addKills(String uuid, int kills) {
         if (playerExists(uuid)) {
-            setKills(uuid, (getKills(uuid) + kills));
+            setKills(uuid, getKills(uuid) + kills);
             setKD(uuid, 0);
         } else {
             createPlayer(uuid);
@@ -369,7 +337,7 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void addDeaths(String uuid, int deaths) {
         if (playerExists(uuid)) {
-            setDeaths(uuid, (getDeaths(uuid) + deaths));
+            setDeaths(uuid, getDeaths(uuid) + deaths);
             setKD(uuid, 0);
         } else {
             createPlayer(uuid);
@@ -380,7 +348,7 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void addWins(String uuid, int wins) {
         if (playerExists(uuid)) {
-            setWins(uuid, (getWins(uuid) + wins));
+            setWins(uuid, getWins(uuid) + wins);
             setRounds(uuid, 0);
         } else {
             createPlayer(uuid);
@@ -391,7 +359,7 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void addLosses(String uuid, int losses) {
         if (playerExists(uuid)) {
-            setLosses(uuid, (getLosses(uuid) + losses));
+            setLosses(uuid, getLosses(uuid) + losses);
             setRounds(uuid, 0);
         } else {
             createPlayer(uuid);
@@ -399,9 +367,6 @@ public class DatabaseManager implements IDatabaseManager {
         }
     }
 
-    /**
-     * Create a new player record in database
-     */
     public void createPlayer(Player player) {
         if (player != null) {
             createPlayer(player.getUniqueId().toString());
@@ -409,51 +374,43 @@ public class DatabaseManager implements IDatabaseManager {
     }
 
     public void updateStat(String uuid, String stat, int value) {
-        update("UPDATE Stats SET " + stat + "= '" + value + "' WHERE UUID= '" + uuid + "';");
+        String sql = "UPDATE Stats SET " + stat + " = ? WHERE UUID = ?";
+        executeUpdate(sql, value, uuid);
     }
 
     public void incrementStat(String uuid, String stat) {
-        update("UPDATE Stats SET " + stat + "= " + stat + " + 1 WHERE UUID= '" + uuid + "';");
+        String sql = "UPDATE Stats SET " + stat + " = " + stat + " + 1 WHERE UUID = ?";
+        executeUpdate(sql, uuid);
     }
 
     public int getStat(String uuid, String stat) {
-        int i = 0;
-        if (playerExists(uuid)) {
-            try (ResultSet rs = query("SELECT * FROM Stats WHERE UUID= '" + uuid + "'")) {
-                if (rs != null && rs.next()) {
-                    i = rs.getInt(stat);
-                }
-            } catch (SQLException e) {
-                LOGGER.log(Level.WARNING, "[PotionGames] Failed to get stat: " + stat, e);
-            }
-        } else {
+        if (!playerExists(uuid)) {
             createPlayer(uuid);
             return getStat(uuid, stat);
         }
-        return i;
+        String sql = "SELECT " + stat + " FROM Stats WHERE UUID = ?";
+        try (ResultSet rs = executeQuery(sql, uuid)) {
+            if (rs != null && rs.next()) {
+                return rs.getInt(stat);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, "[PotionGames] Failed to get stat: " + stat, e);
+        }
+        return 0;
     }
-    
-    /**
-     * Update player statistics
-     */
+
     public void updateStat(Player player, String stat, int value) {
         if (player != null) {
             updateStat(player.getUniqueId().toString(), stat, value);
         }
     }
-    
-    /**
-     * Increment player statistic
-     */
+
     public void incrementStat(Player player, String stat) {
         if (player != null) {
             incrementStat(player.getUniqueId().toString(), stat);
         }
     }
-    
-    /**
-     * Get player statistic
-     */
+
     public int getStat(Player player, String stat) {
         if (player != null) {
             return getStat(player.getUniqueId().toString(), stat);
@@ -461,25 +418,21 @@ public class DatabaseManager implements IDatabaseManager {
         return 0;
     }
 
-    // Convenience methods for common stats
     public int getKills(Player player) { return getStat(player, "KILLS"); }
     public int getDeaths(Player player) { return getStat(player, "DEATHS"); }
     public int getWins(Player player) { return getStat(player, "WINS"); }
     public int getLosses(Player player) { return getStat(player, "LOSSES"); }
-    
+
     public void setKills(Player player, int value) { updateStat(player, "KILLS", value); }
     public void setDeaths(Player player, int value) { updateStat(player, "DEATHS", value); }
     public void setWins(Player player, int value) { updateStat(player, "WINS", value); }
     public void setLosses(Player player, int value) { updateStat(player, "LOSSES", value); }
-    
+
     public void addKills(Player player) { incrementStat(player, "KILLS"); }
     public void addDeaths(Player player) { incrementStat(player, "DEATHS"); }
     public void addWins(Player player) { incrementStat(player, "WINS"); }
     public void addLosses(Player player) { incrementStat(player, "LOSSES"); }
-    
-    /**
-     * Get K/D ratio for a player
-     */
+
     public double getKDRatio(Player player) {
         int kills = getKills(player);
         int deaths = getDeaths(player);

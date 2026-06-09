@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.bootstrap;
 
 import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.managers.IItemStateManager;
 import com.tw0far.potiongames.models.Settings;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -32,22 +33,22 @@ public final class ChestLootInitializer {
         }
 
         // Load each loot pool from config
-        seedLootPool(itemsConfig, "food1", plugin.getFood1());
-        seedLootPool(itemsConfig, "food2", plugin.getFood2());
-        seedLootPool(itemsConfig, "armour1", plugin.getArmour1());
-        seedLootPool(itemsConfig, "armour2", plugin.getArmour2());
-        seedLootPool(itemsConfig, "armour3", plugin.getArmour3());
-        seedLootPool(itemsConfig, "armour4", plugin.getArmour4());
-        seedLootPool(itemsConfig, "armour5", plugin.getArmour5());
-        seedLootPool(itemsConfig, "weapons1", plugin.getWeapons1());
-        seedLootPool(itemsConfig, "weapons2", plugin.getWeapons2());
+        seedLootPool(itemsConfig, "food1", 1, true, false, false);
+        seedLootPool(itemsConfig, "food2", 2, true, false, false);
+        seedLootPool(itemsConfig, "armour1", 1, false, true, false);
+        seedLootPool(itemsConfig, "armour2", 2, false, true, false);
+        seedLootPool(itemsConfig, "armour3", 3, false, true, false);
+        seedLootPool(itemsConfig, "armour4", 4, false, true, false);
+        seedLootPool(itemsConfig, "armour5", 5, false, true, false);
+        seedLootPool(itemsConfig, "weapons1", 1, false, false, true);
+        seedLootPool(itemsConfig, "weapons2", 2, false, false, true);
     }
 
     /**
      * Load loot items from config into the specified loot pool.
      * Expected format: "MATERIAL:AMOUNT" (e.g., "CAKE:1", "BREAD:3")
      */
-    private void seedLootPool(ConfigurationSection itemsConfig, String poolName, java.util.List<ItemStack> targetPool) {
+    private void seedLootPool(ConfigurationSection itemsConfig, String poolName, int poolId, boolean isFood, boolean isArmor, boolean isWeapon) {
         if (!itemsConfig.contains(poolName)) {
             plugin.getLogger().warning("Loot pool '" + poolName + "' not found in config");
             return;
@@ -64,7 +65,14 @@ public final class ChestLootInitializer {
 
                 Material material = Material.valueOf(parts[0].toUpperCase());
                 int amount = Integer.parseInt(parts[1]);
-                targetPool.add(new ItemStack(material, amount));
+                ItemStack stack = new ItemStack(material, amount);
+                if (isFood) {
+                    plugin.getItemStateManager().addFood(poolId, stack);
+                } else if (isArmor) {
+                    plugin.getItemStateManager().addArmor(poolId, stack);
+                } else if (isWeapon) {
+                    plugin.getItemStateManager().addWeapon(poolId, stack);
+                }
             } catch (NumberFormatException e) {
                 plugin.getLogger().warning("Invalid amount in item: " + itemStr);
             } catch (IllegalArgumentException e) {
@@ -77,58 +85,51 @@ public final class ChestLootInitializer {
      * Fallback seeding with hardcoded defaults
      */
     private void seedDefaults() {
-        java.util.Collections.addAll(plugin.getFood1(),
-                new ItemStack(Material.CAKE, 1),
-                new ItemStack(Material.BREAD, 3),
-                new ItemStack(Material.PUMPKIN_PIE, 3),
-                new ItemStack(Material.COOKIE, 3),
-                new ItemStack(Material.BAKED_POTATO, 3));
+        IItemStateManager mgr = plugin.getItemStateManager();
 
-        java.util.Collections.addAll(plugin.getFood2(),
-                new ItemStack(Material.RABBIT_STEW, 1),
-                new ItemStack(Material.MUSHROOM_STEW, 1),
-                new ItemStack(Material.BEETROOT_SOUP, 1),
-                new ItemStack(Material.GOLDEN_CARROT, 1),
-                new ItemStack(Material.MILK_BUCKET, 1));
+        mgr.addFood(1, new ItemStack(Material.CAKE, 1));
+        mgr.addFood(1, new ItemStack(Material.BREAD, 3));
+        mgr.addFood(1, new ItemStack(Material.PUMPKIN_PIE, 3));
+        mgr.addFood(1, new ItemStack(Material.COOKIE, 3));
+        mgr.addFood(1, new ItemStack(Material.BAKED_POTATO, 3));
 
-        java.util.Collections.addAll(plugin.getArmour1(),
-                new ItemStack(Material.LEATHER_HELMET, 1),
-                new ItemStack(Material.LEATHER_CHESTPLATE, 1),
-                new ItemStack(Material.LEATHER_LEGGINGS, 1),
-                new ItemStack(Material.LEATHER_BOOTS, 1));
+        mgr.addFood(2, new ItemStack(Material.RABBIT_STEW, 1));
+        mgr.addFood(2, new ItemStack(Material.MUSHROOM_STEW, 1));
+        mgr.addFood(2, new ItemStack(Material.BEETROOT_SOUP, 1));
+        mgr.addFood(2, new ItemStack(Material.GOLDEN_CARROT, 1));
+        mgr.addFood(2, new ItemStack(Material.MILK_BUCKET, 1));
 
-        java.util.Collections.addAll(plugin.getArmour2(),
-                new ItemStack(Material.CHAINMAIL_HELMET, 1),
-                new ItemStack(Material.CHAINMAIL_CHESTPLATE, 1),
-                new ItemStack(Material.CHAINMAIL_LEGGINGS, 1),
-                new ItemStack(Material.CHAINMAIL_BOOTS, 1));
+        mgr.addArmor(1, new ItemStack(Material.LEATHER_HELMET, 1));
+        mgr.addArmor(1, new ItemStack(Material.LEATHER_CHESTPLATE, 1));
+        mgr.addArmor(1, new ItemStack(Material.LEATHER_LEGGINGS, 1));
+        mgr.addArmor(1, new ItemStack(Material.LEATHER_BOOTS, 1));
 
-        java.util.Collections.addAll(plugin.getArmour3(),
-                new ItemStack(Material.GOLDEN_HELMET, 1),
-                new ItemStack(Material.GOLDEN_CHESTPLATE, 1),
-                new ItemStack(Material.GOLDEN_LEGGINGS, 1),
-                new ItemStack(Material.GOLDEN_BOOTS, 1));
+        mgr.addArmor(2, new ItemStack(Material.CHAINMAIL_HELMET, 1));
+        mgr.addArmor(2, new ItemStack(Material.CHAINMAIL_CHESTPLATE, 1));
+        mgr.addArmor(2, new ItemStack(Material.CHAINMAIL_LEGGINGS, 1));
+        mgr.addArmor(2, new ItemStack(Material.CHAINMAIL_BOOTS, 1));
 
-        java.util.Collections.addAll(plugin.getArmour4(),
-                new ItemStack(Material.IRON_HELMET, 1),
-                new ItemStack(Material.IRON_CHESTPLATE, 1),
-                new ItemStack(Material.IRON_LEGGINGS, 1),
-                new ItemStack(Material.IRON_BOOTS, 1));
+        mgr.addArmor(3, new ItemStack(Material.GOLDEN_HELMET, 1));
+        mgr.addArmor(3, new ItemStack(Material.GOLDEN_CHESTPLATE, 1));
+        mgr.addArmor(3, new ItemStack(Material.GOLDEN_LEGGINGS, 1));
+        mgr.addArmor(3, new ItemStack(Material.GOLDEN_BOOTS, 1));
 
-        java.util.Collections.addAll(plugin.getArmour5(),
-                new ItemStack(Material.DIAMOND_HELMET, 1),
-                new ItemStack(Material.DIAMOND_CHESTPLATE, 1),
-                new ItemStack(Material.DIAMOND_LEGGINGS, 1),
-                new ItemStack(Material.DIAMOND_BOOTS, 1));
+        mgr.addArmor(4, new ItemStack(Material.IRON_HELMET, 1));
+        mgr.addArmor(4, new ItemStack(Material.IRON_CHESTPLATE, 1));
+        mgr.addArmor(4, new ItemStack(Material.IRON_LEGGINGS, 1));
+        mgr.addArmor(4, new ItemStack(Material.IRON_BOOTS, 1));
 
-        java.util.Collections.addAll(plugin.getWeapons1(),
-                new ItemStack(Material.WOODEN_SWORD, 1),
-                new ItemStack(Material.STONE_SWORD, 1),
-                new ItemStack(Material.WOODEN_AXE, 1));
+        mgr.addArmor(5, new ItemStack(Material.DIAMOND_HELMET, 1));
+        mgr.addArmor(5, new ItemStack(Material.DIAMOND_CHESTPLATE, 1));
+        mgr.addArmor(5, new ItemStack(Material.DIAMOND_LEGGINGS, 1));
+        mgr.addArmor(5, new ItemStack(Material.DIAMOND_BOOTS, 1));
 
-        java.util.Collections.addAll(plugin.getWeapons2(),
-                new ItemStack(Material.IRON_SWORD, 1),
-                new ItemStack(Material.DIAMOND_SWORD, 1),
-                new ItemStack(Material.IRON_AXE, 1));
+        mgr.addWeapon(1, new ItemStack(Material.WOODEN_SWORD, 1));
+        mgr.addWeapon(1, new ItemStack(Material.STONE_SWORD, 1));
+        mgr.addWeapon(1, new ItemStack(Material.WOODEN_AXE, 1));
+
+        mgr.addWeapon(2, new ItemStack(Material.IRON_SWORD, 1));
+        mgr.addWeapon(2, new ItemStack(Material.DIAMOND_SWORD, 1));
+        mgr.addWeapon(2, new ItemStack(Material.IRON_AXE, 1));
     }
 }
