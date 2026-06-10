@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,9 +13,9 @@ import org.bukkit.inventory.meta.PotionMeta;
  * Manages soup healing, potion consumption, etc.
  */
 public class ItemConsumeEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public ItemConsumeEventListener(PotionGames plugin) {
+    public ItemConsumeEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

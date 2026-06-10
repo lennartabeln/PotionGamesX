@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  * Manager for arena/voting state tracking.
- * Consolidates 9 HashMaps for arena voting and selection from PotionGames.
+ * Consolidates 9 HashMaps for arena voting and selection from PotionGamesX.
  * 
  * Manages:
  * - Arena list (arenas)

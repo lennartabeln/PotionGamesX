@@ -5,7 +5,7 @@ import java.io.File;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -52,7 +52,7 @@ public final class Settings {
     public static int winningReward = 100;
     public static int killReward = 10;
     public static String language = "en_US";
-    public static MySqlConfiguration mySqlConfig = null;
+
 
     public static void loadConfigurations() {
         // Arena/lobby/spawn data from lobbies.yml
@@ -67,7 +67,7 @@ public final class Settings {
         Settings.shopdata = YamlConfiguration.loadConfiguration(Settings.shopFile);
     }
 
-    public static void loadSettings(PotionGames pg) {
+    public static void loadSettings(PotionGamesX pg) {
         FileConfiguration cfg = pg.getConfig();
         if (cfg.get("pg.activateMySQL") == null) {
             cfg.addDefault("pg.activateMySQL", activateMySQL);
@@ -254,18 +254,11 @@ public final class Settings {
         if (cfg.get("pg.mysql") == null) {
             cfg.addDefault("pg.mysql.host", "localhost");
             cfg.addDefault("pg.mysql.port", "3306");
-            cfg.addDefault("pg.mysql.database", "potiongames");
+            cfg.addDefault("pg.mysql.database", "PotionGamesX");
             cfg.addDefault("pg.mysql.user", "root");
             cfg.addDefault("pg.mysql.password", "password");
             cfg.options().copyDefaults(true);
             pg.saveConfig();
-        } else {
-            String host = cfg.getString("pg.mysql.host");
-            String port = cfg.getString("pg.mysql.port");
-            String database = cfg.getString("pg.mysql.database");
-            String user = cfg.getString("pg.mysql.user");
-            String password = cfg.getString("pg.mysql.password");
-            mySqlConfig = new MySqlConfiguration(host, port, database, user, password);
         }
     }
 }

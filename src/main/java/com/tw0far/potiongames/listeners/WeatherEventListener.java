@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
@@ -11,9 +11,9 @@ import org.bukkit.event.weather.LightningStrikeEvent;
  * Prevents rain/weather changes during games if configured.
  */
 public class WeatherEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public WeatherEventListener(PotionGames plugin) {
+    public WeatherEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

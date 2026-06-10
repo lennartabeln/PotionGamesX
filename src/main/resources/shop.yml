@@ -3,8 +3,8 @@
 # Structure:
 #   pg.potions.<id>:
 #     name:             Display name of the potion
-#     shoppotion:       PotionEffect applied to the buyer
-#     shoppotiontype:   ItemStack material shown in the shop GUI
+#     shoppotion:       PotionEffect configuration (type, duration, amplifier, ambient, particles, icon)
+#     shoppotiontype:   ItemStack shown in the shop GUI (material, amount)
 #     kit:              Kit category (Fighter, Healer, Looter, Ghost, Tank)
 #     cost:             Price in coins
 #     sale:             Resale value in coins
@@ -13,460 +13,136 @@ pg:
   potions:
     1:
       name: "JUMP_BOOST"
-      shoppotion:
-        ==: PotionEffect
-        effect: JUMP_BOOST
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Looter
       cost: 4
       sale: 2
     2:
       name: "RESISTANCE"
-      shoppotion:
-        ==: PotionEffect
-        effect: RESISTANCE
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Tank
       cost: 4
       sale: 2
     3:
       name: "SPEED"
-      shoppotion:
-        ==: PotionEffect
-        effect: SPEED
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Looter
       cost: 4
       sale: 2
     4:
       name: "ABSORPTION"
-      shoppotion:
-        ==: PotionEffect
-        effect: ABSORPTION
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Tank
       cost: 4
       sale: 2
     5:
       name: "FIRE_RESISTANCE"
-      shoppotion:
-        ==: PotionEffect
-        effect: FIRE_RESISTANCE
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Tank
       cost: 4
       sale: 2
     6:
       name: "INSTANT_HEALTH"
-      shoppotion:
-        ==: PotionEffect
-        effect: INSTANT_HEALTH
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Healer
       cost: 4
       sale: 2
     7:
       name: "HEALTH_BOOST"
-      shoppotion:
-        ==: PotionEffect
-        effect: HEALTH_BOOST
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Healer
       cost: 4
       sale: 2
     8:
       name: "INVISIBILITY"
-      shoppotion:
-        ==: PotionEffect
-        effect: INVISIBILITY
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Ghost
       cost: 4
       sale: 2
     9:
       name: "REGENERATION"
-      shoppotion:
-        ==: PotionEffect
-        effect: REGENERATION
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Healer
       cost: 4
       sale: 2
     10:
       name: "SATURATION"
-      shoppotion:
-        ==: PotionEffect
-        effect: SATURATION
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Looter
       cost: 4
       sale: 2
     11:
       name: "STRENGTH"
-      shoppotion:
-        ==: PotionEffect
-        effect: STRENGTH
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     12:
       name: "DOLPHINS_GRACE"
-      shoppotion:
-        ==: PotionEffect
-        effect: DOLPHINS_GRACE
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Looter
       cost: 4
       sale: 2
     13:
       name: "NIGHT_VISION"
-      shoppotion:
-        ==: PotionEffect
-        effect: NIGHT_VISION
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Ghost
       cost: 4
       sale: 2
     14:
       name: "WATER_BREATHING"
-      shoppotion:
-        ==: PotionEffect
-        effect: WATER_BREATHING
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: POTION
-        amount: 1
       kit: Ghost
       cost: 4
       sale: 2
     15:
       name: "WEAKNESS"
-      shoppotion:
-        ==: PotionEffect
-        effect: WEAKNESS
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     16:
       name: "WITHER"
-      shoppotion:
-        ==: PotionEffect
-        effect: WITHER
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     17:
       name: "GLOWING"
-      shoppotion:
-        ==: PotionEffect
-        effect: GLOWING
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     18:
       name: "BLINDNESS"
-      shoppotion:
-        ==: PotionEffect
-        effect: BLINDNESS
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     19:
       name: "NAUSEA"
-      shoppotion:
-        ==: PotionEffect
-        effect: NAUSEA
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     20:
       name: "BAD_OMEN"
-      shoppotion:
-        ==: PotionEffect
-        effect: BAD_OMEN
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     21:
       name: "BAD_OMEN2"
-      shoppotion:
-        ==: PotionEffect
-        effect: BAD_OMEN
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     22:
       name: "BAD_OMEN3"
-      shoppotion:
-        ==: PotionEffect
-        effect: BAD_OMEN
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     23:
       name: "BAD_OMEN4"
-      shoppotion:
-        ==: PotionEffect
-        effect: BAD_OMEN
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     24:
       name: "BAD_OMEN5"
-      shoppotion:
-        ==: PotionEffect
-        effect: BAD_OMEN
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     25:
       name: "BAD_OMEN6"
-      shoppotion:
-        ==: PotionEffect
-        effect: BAD_OMEN
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     26:
       name: "BAD_OMEN7"
-      shoppotion:
-        ==: PotionEffect
-        effect: BAD_OMEN
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2
     27:
       name: "BAD_OMEN8"
-      shoppotion:
-        ==: PotionEffect
-        effect: BAD_OMEN
-        duration: 600
-        amplifier: 1
-        ambient: true
-        has-particles: true
-        has-icon: true
-      shoppotiontype:
-        ==: org.bukkit.inventory.ItemStack
-        type: SPLASH_POTION
-        amount: 1
       kit: Fighter
       cost: 4
       sale: 2

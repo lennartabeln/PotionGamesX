@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
  * Adds an arena to the specified lobby or the default lobby
  */
 public class AddArenaCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public AddArenaCommand(PotionGames plugin) {
+    public AddArenaCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -25,11 +25,7 @@ public class AddArenaCommand implements ICommand {
     public String getPermission() {
         return "pg.setup";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

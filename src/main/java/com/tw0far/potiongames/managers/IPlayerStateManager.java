@@ -5,7 +5,7 @@ import java.util.Collection;
 
 /**
  * Manager for all player-specific state tracking.
- * Consolidates 6 fundamental player lists from PotionGames.
+ * Consolidates 6 fundamental player lists from PotionGamesX.
  * 
  * Manages:
  * - Active game players (pgPlayers)

@@ -1,13 +1,13 @@
 package com.tw0far.potiongames.handlers;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.entity.Player;
 
 public class JoinLobbyHandler {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
 
-    public JoinLobbyHandler(PotionGames plugin) {
+    public JoinLobbyHandler(PotionGamesX plugin) {
         this.plugin = plugin;
     }
 
@@ -18,8 +18,6 @@ public class JoinLobbyHandler {
                 plugin.getGame().setPlayerLobby(player, lobbyId);
                 lobby.join(player);
             }
-        } catch (NumberFormatException ignored) {
-            // invalid lobby id
-        }
+        } catch (NumberFormatException ignored) { }
     }
 }

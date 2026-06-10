@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
  * Manages hunger during games.
  */
 public class FoodLevelEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public FoodLevelEventListener(PotionGames plugin) {
+    public FoodLevelEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

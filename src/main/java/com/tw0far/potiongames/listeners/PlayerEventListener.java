@@ -1,8 +1,8 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
-import com.tw0far.potiongames.updatechecker.UpdateChecker;
+import com.tw0far.potiongames.util.UpdateChecker;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,7 +11,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,9 +20,9 @@ import java.util.logging.Logger;
  */
 public class PlayerEventListener implements Listener {
     private static final Logger LOGGER = Logger.getLogger("Minecraft");
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
 
-    public PlayerEventListener(PotionGames plugin) {
+    public PlayerEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
 
@@ -47,41 +46,40 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
+        if (!plugin.getConfigManager().isGameServer()) return;
         Player p = e.getPlayer();
-        if (plugin.getConfigManager().isGameServer()) {
-            String lobbyId = plugin.getGame().getPlayerLobby(p);
-            if (lobbyId != null) {
-                try {
-                    com.tw0far.potiongames.models.Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
-                    if (lobby != null && !lobby.isMoveAllowed()) {
-                        if (e.getFrom().getX() != Objects.requireNonNull(e.getTo()).getX() || e.getFrom().getZ() != e.getTo().getZ()) {
-                            Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
-                            loc.setYaw(e.getTo().getYaw());
-                            loc.setPitch(e.getTo().getPitch());
-                            p.teleport(loc);
-                        }
+        String lobbyId = plugin.getGame().getPlayerLobby(p);
+        if (lobbyId != null) {
+            try {
+                com.tw0far.potiongames.models.Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
+                if (lobby != null && !lobby.isMoveAllowed()) {
+                    Location to = e.getTo();
+                    if (to != null && (e.getFrom().getX() != to.getX() || e.getFrom().getZ() != to.getZ())) {
+                        Location loc = new Location(p.getWorld(), e.getFrom().getX(), e.getTo().getY(), e.getFrom().getZ());
+                        loc.setYaw(e.getTo().getYaw());
+                        loc.setPitch(e.getTo().getPitch());
+                        p.teleport(loc);
                     }
-                } catch (NumberFormatException ex) {
-                    LOGGER.log(Level.WARNING, "[PotionGames] Invalid lobby ID in move event", ex);
                 }
+            } catch (NumberFormatException ex) {
+                LOGGER.log(Level.WARNING, "[PotionGamesX] Invalid lobby ID in move event", ex);
             }
         }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
+        if (!plugin.getConfigManager().isGameServer()) return;
         Player p = e.getPlayer();
-        if (plugin.getConfigManager().isGameServer()) {
-            String lobbyId = null;
-            if (plugin.getGame().isInLobby(p)) {
-                lobbyId = plugin.getGame().getPlayerLobby(p);
-            } else if (plugin.getGame().isInSpecLobby(p)) {
-                lobbyId = plugin.getGame().getSpectatorLobby(p);
-            }
-            if (lobbyId != null) {
-                plugin.onLeaveLobby(p, lobbyId);
-                e.quitMessage(null);
-            }
+        String lobbyId = null;
+        if (plugin.getGame().isInLobby(p)) {
+            lobbyId = plugin.getGame().getPlayerLobby(p);
+        } else if (plugin.getGame().isInSpecLobby(p)) {
+            lobbyId = plugin.getGame().getSpectatorLobby(p);
+        }
+        if (lobbyId != null) {
+            plugin.onLeaveLobby(p, lobbyId);
+            e.quitMessage(null);
         }
     }
 }

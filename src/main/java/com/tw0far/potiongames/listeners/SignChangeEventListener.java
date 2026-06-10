@@ -1,6 +1,5 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,8 +14,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
  * Manages join signs and other custom sign interactions.
  */
 public class SignChangeEventListener implements Listener {
-    public SignChangeEventListener(PotionGames plugin) {
-    }
     
     @EventHandler
     public void onSignChange(SignChangeEvent e) {
@@ -28,8 +25,8 @@ public class SignChangeEventListener implements Listener {
             return;
         }
         
-        // Check for PotionGames signs
-        if (line1.equalsIgnoreCase("[PG]") || line1.equalsIgnoreCase("[PotionGames]")) {
+        // Check for PotionGamesX signs
+        if (line1.equalsIgnoreCase("[PG]") || line1.equalsIgnoreCase("[PotionGamesX]")) {
             // Check if player has permission
             if (!p.hasPermission("pg.sign")) {
                 e.setCancelled(true);

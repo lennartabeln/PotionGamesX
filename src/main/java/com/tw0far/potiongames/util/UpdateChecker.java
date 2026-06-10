@@ -1,4 +1,4 @@
-package com.tw0far.potiongames.updatechecker;
+package com.tw0far.potiongames.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;

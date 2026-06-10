@@ -20,7 +20,7 @@ import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -144,7 +144,7 @@ public class Lobby {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -212,7 +212,7 @@ public class Lobby {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -223,7 +223,7 @@ public class Lobby {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -394,7 +394,7 @@ public class Lobby {
             updateJoinSign();
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -442,7 +442,7 @@ public class Lobby {
     }
 
     public void startTick() {
-        tickTask = PotionGames.getInstance().getServer().getGlobalRegionScheduler().runAtFixedRate(PotionGames.getInstance(), scheduledTask -> runGameTick(), 1, 20);
+        tickTask = PotionGamesX.getInstance().getServer().getGlobalRegionScheduler().runAtFixedRate(PotionGamesX.getInstance(), scheduledTask -> runGameTick(), 1, 20);
     }
 
     public void startCountdown() {
@@ -516,7 +516,7 @@ public class Lobby {
             try {
                 decrementTeamCount(Integer.parseInt(previousTeam));
             } catch (NumberFormatException e) {
-                LOGGER.log(Level.WARNING, "[PotionGames] Invalid team ID", e);
+                LOGGER.log(Level.WARNING, "[PotionGamesX] Invalid team ID", e);
             }
         }
 
@@ -669,12 +669,12 @@ public class Lobby {
             case RESET:
                 restoreBlocks();
                 for (Player player : new ArrayList<>(activePlayers)) {
-                    sendToServer(player, PotionGames.getInstance().getConfig().getString("pg.bungeeServer", "lobby"));
+                    sendToServer(player, PotionGamesX.getInstance().getConfig().getString("pg.bungeeServer", "lobby"));
                 }
                 for (Player player : new ArrayList<>(spectatorPlayers)) {
-                    sendToServer(player, PotionGames.getInstance().getConfig().getString("pg.bungeeServer", "lobby"));
+                    sendToServer(player, PotionGamesX.getInstance().getConfig().getString("pg.bungeeServer", "lobby"));
                 }
-                PotionGames.getInstance().getGame().clearAllPlayers();
+                PotionGamesX.getInstance().getGame().clearAllPlayers();
                 setCurrentArena(null);
                 clearVoting();
                 clearArenaVotes();
@@ -710,7 +710,7 @@ public class Lobby {
         } else if (aliveCount <= 1) {
             announceDraw();
             endRound();
-                } else if (aliveCount == 2 && PotionGames.getInstance().getConfigManager().isActivateDeathmatch() && !deathmatch) {
+                } else if (aliveCount == 2 && PotionGamesX.getInstance().getConfigManager().isActivateDeathmatch() && !deathmatch) {
             activateDeathmatch();
         }
     }
@@ -739,13 +739,13 @@ public class Lobby {
         }
         for (Player player : activePlayers) {
             if (player != null && player.equals(winner)) {
-                PotionGames plugin = PotionGames.getInstance();
+                PotionGamesX plugin = PotionGamesX.getInstance();
                 if (plugin.getConfigManager().isEnableRewards()) {
                     player.sendMessage(Messages.WinReward(plugin.getConfigManager().getWinningReward()));
                 }
                 plugin.getDatabaseManager().addWins(player.getUniqueId().toString(), 1);
             } else if (player != null) {
-                PotionGames plugin = PotionGames.getInstance();
+                PotionGamesX plugin = PotionGamesX.getInstance();
                 plugin.getDatabaseManager().addLosses(player.getUniqueId().toString(), 1);
             }
         }
@@ -789,7 +789,7 @@ public class Lobby {
             DataOutputStream out = new DataOutputStream(b);
             out.writeUTF("Connect");
             out.writeUTF(server);
-            player.sendPluginMessage(PotionGames.getInstance(), "BungeeCord", b.toByteArray());
+            player.sendPluginMessage(PotionGamesX.getInstance(), "BungeeCord", b.toByteArray());
         } catch (Exception e) {
             player.kick(Component.text("Game finished! Connecting to " + server + "...").color(NamedTextColor.GREEN));
         }
@@ -823,11 +823,11 @@ public class Lobby {
             this.state = newState;
             updateJoinSign();
             
-            PotionGames plugin = PotionGames.getInstance();
+            PotionGamesX plugin = PotionGamesX.getInstance();
             
             // Game just ended (transitioned to RESET) - move players via BungeeCord
             if (newState == GameStates.RESET && oldState != GameStates.RESET && plugin.getConfigManager().isGameServer()) {
-                PotionGames.getInstance().getComponentLogger().info(
+                PotionGamesX.getInstance().getComponentLogger().info(
                     com.tw0far.potiongames.models.Settings.prefix
                         .append(Component.text("Game finished. Sending players back to hub...").color(NamedTextColor.YELLOW)));
             }

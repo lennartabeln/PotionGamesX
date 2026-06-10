@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.GameStates;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -18,9 +18,9 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
  * Extracted from monolithic Events.java.
  */
 public class BlockEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public BlockEventListener(PotionGames plugin) {
+    public BlockEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

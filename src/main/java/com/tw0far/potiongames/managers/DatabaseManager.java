@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.managers;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;
@@ -13,13 +13,13 @@ import java.util.logging.Logger;
 
 public class DatabaseManager implements IDatabaseManager {
     private static final Logger LOGGER = Logger.getLogger("Minecraft");
-    private final PotionGames plugin;
-    private final ConfigurationManager config;
+    private final PotionGamesX plugin;
+    private final IConfigurationManager config;
 
     private Connection connection;
     private boolean connected = false;
 
-    public DatabaseManager(PotionGames plugin, ConfigurationManager config) {
+    public DatabaseManager(PotionGamesX plugin, IConfigurationManager config) {
         this.plugin = plugin;
         this.config = config;
     }
@@ -52,23 +52,23 @@ public class DatabaseManager implements IDatabaseManager {
             String password = plugin.getConfig().getString("pg.mysql.password", "");
             connection = DriverManager.getConnection(url, config.getUser(), password);
             connected = true;
-            LOGGER.info("[PotionGames] Connected to MySQL database");
+            LOGGER.info("[PotionGamesX] Connected to MySQL database");
             createTablesIfNotExist();
         } catch (ClassNotFoundException | SQLException e) {
-            LOGGER.log(Level.SEVERE, "[PotionGames] Failed to connect to MySQL", e);
+            LOGGER.log(Level.SEVERE, "[PotionGamesX] Failed to connect to MySQL", e);
             connected = false;
         }
     }
 
     private void connectSQLite() {
         try {
-            String dbPath = plugin.getDataFolder() + "/stats.db";
+            String dbPath = plugin.getDataFolder() + java.io.File.separator + "stats.db";
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
             connected = true;
-            LOGGER.info("[PotionGames] Connected to SQLite database");
+            LOGGER.info("[PotionGamesX] Connected to SQLite database");
             createTablesIfNotExist();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "[PotionGames] Failed to connect to SQLite", e);
+            LOGGER.log(Level.SEVERE, "[PotionGamesX] Failed to connect to SQLite", e);
             connected = false;
         }
     }
@@ -79,18 +79,20 @@ public class DatabaseManager implements IDatabaseManager {
         executeUpdate(sql);
     }
 
+    @Override
     public void closeConnection() {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
             }
             connected = false;
-            LOGGER.info("[PotionGames] Database connection closed");
+            LOGGER.info("[PotionGamesX] Database connection closed");
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "[PotionGames] Failed to close database connection", e);
+            LOGGER.log(Level.SEVERE, "[PotionGamesX] Failed to close database connection", e);
         }
     }
 
+    @Override
     public boolean isConnected() {
         return connected;
     }
@@ -120,7 +122,7 @@ public class DatabaseManager implements IDatabaseManager {
             setParameters(stmt, params);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "[PotionGames] Failed to execute update: " + sql, e);
+            LOGGER.log(Level.WARNING, "[PotionGamesX] Failed to execute update: " + sql, e);
         }
     }
 
@@ -131,7 +133,7 @@ public class DatabaseManager implements IDatabaseManager {
             setParameters(stmt, params);
             return stmt.executeQuery();
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "[PotionGames] Failed to execute query: " + sql, e);
+            LOGGER.log(Level.WARNING, "[PotionGamesX] Failed to execute query: " + sql, e);
             return null;
         }
     }
@@ -159,7 +161,7 @@ public class DatabaseManager implements IDatabaseManager {
         try (ResultSet rs = executeQuery(sql, uuid)) {
             return rs != null && rs.next() && rs.getString("UUID") != null;
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "[PotionGames] Failed to check player existence", e);
+            LOGGER.log(Level.WARNING, "[PotionGamesX] Failed to check player existence", e);
             return false;
         }
     }
@@ -202,7 +204,7 @@ public class DatabaseManager implements IDatabaseManager {
                 return rs.getDouble("KD");
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "[PotionGames] Failed to get KD", e);
+            LOGGER.log(Level.WARNING, "[PotionGamesX] Failed to get KD", e);
         }
         return 0;
     }
@@ -241,7 +243,7 @@ public class DatabaseManager implements IDatabaseManager {
                 return rs.getInt(column);
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "[PotionGames] Failed to get " + column, e);
+            LOGGER.log(Level.WARNING, "[PotionGamesX] Failed to get " + column, e);
         }
         return 0;
     }
@@ -394,7 +396,7 @@ public class DatabaseManager implements IDatabaseManager {
                 return rs.getInt(stat);
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "[PotionGames] Failed to get stat: " + stat, e);
+            LOGGER.log(Level.WARNING, "[PotionGamesX] Failed to get stat: " + stat, e);
         }
         return 0;
     }

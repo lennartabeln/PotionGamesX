@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -12,9 +12,9 @@ import org.bukkit.block.Block;
  * Manages interact restrictions and special interactions (signs, etc.).
  */
 public class InteractEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public InteractEventListener(PotionGames plugin) {
+    public InteractEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

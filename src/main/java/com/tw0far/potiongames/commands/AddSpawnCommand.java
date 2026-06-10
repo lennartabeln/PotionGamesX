@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
  * Adds a spawn point to the specified arena at the player's current location
  */
 public class AddSpawnCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public AddSpawnCommand(PotionGames plugin) {
+    public AddSpawnCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -25,11 +25,7 @@ public class AddSpawnCommand implements ICommand {
     public String getPermission() {
         return "pg.setup";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

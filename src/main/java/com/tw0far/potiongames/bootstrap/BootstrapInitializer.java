@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.bootstrap;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.managers.IItemStateManager;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
@@ -9,17 +9,17 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
+import com.tw0far.potiongames.util.PotionSerialization;
 import java.util.Collections;
 import java.util.List;
 
 public final class BootstrapInitializer {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
 
-    public BootstrapInitializer(PotionGames plugin) {
+    public BootstrapInitializer(PotionGamesX plugin) {
         this.plugin = plugin;
     }
 
@@ -58,7 +58,7 @@ public final class BootstrapInitializer {
     }
 
     private void saveResourceIfMissing(String resourceName, File targetFile) {
-        if (!targetFile.exists()) {
+        if (!targetFile.exists() && resourceName != null) {
             plugin.saveResource(resourceName, false);
         }
     }
@@ -73,55 +73,62 @@ public final class BootstrapInitializer {
         List<Integer> shopcost = ism.getShopCostsRaw();
         List<Integer> shopsale = ism.getShopSalesRaw();
 
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "JUMP_BOOST", PotionEffectType.JUMP_BOOST, Material.POTION, "Looter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "RESISTANCE", PotionEffectType.RESISTANCE, Material.POTION, "Tank");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "SPEED", PotionEffectType.SPEED, Material.POTION, "Looter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "ABSORPTION", PotionEffectType.ABSORPTION, Material.POTION, "Tank");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "FIRE_RESISTANCE", PotionEffectType.FIRE_RESISTANCE, Material.POTION, "Tank");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "INSTANT_HEALTH", PotionEffectType.INSTANT_HEALTH, Material.POTION, "Healer");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "HEALTH_BOOST", PotionEffectType.HEALTH_BOOST, Material.POTION, "Healer");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "INVISIBILITY", PotionEffectType.INVISIBILITY, Material.POTION, "Ghost");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "REGENERATION", PotionEffectType.REGENERATION, Material.POTION, "Healer");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "SATURATION", PotionEffectType.SATURATION, Material.POTION, "Looter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "STRENGTH", PotionEffectType.STRENGTH, Material.POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "DOLPHINS_GRACE", PotionEffectType.DOLPHINS_GRACE, Material.POTION, "Looter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "NIGHT_VISION", PotionEffectType.NIGHT_VISION, Material.POTION, "Ghost");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "WATER_BREATHING", PotionEffectType.WATER_BREATHING, Material.POTION, "Ghost");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "WEAKNESS", PotionEffectType.WEAKNESS, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "WITHER", PotionEffectType.WITHER, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "GLOWING", PotionEffectType.GLOWING, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BLINDNESS", PotionEffectType.BLINDNESS, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "NAUSEA", PotionEffectType.NAUSEA, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN", PotionEffectType.BAD_OMEN, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN2", PotionEffectType.BAD_OMEN, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN3", PotionEffectType.BAD_OMEN, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN4", PotionEffectType.BAD_OMEN, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN5", PotionEffectType.BAD_OMEN, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN6", PotionEffectType.BAD_OMEN, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN7", PotionEffectType.BAD_OMEN, Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN8", PotionEffectType.BAD_OMEN, Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "JUMP_BOOST", "JUMP_BOOST", Material.POTION, "Looter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "RESISTANCE", "RESISTANCE", Material.POTION, "Tank");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "SPEED", "SPEED", Material.POTION, "Looter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "ABSORPTION", "ABSORPTION", Material.POTION, "Tank");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "FIRE_RESISTANCE", "FIRE_RESISTANCE", Material.POTION, "Tank");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "INSTANT_HEALTH", "INSTANT_HEALTH", Material.POTION, "Healer");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "HEALTH_BOOST", "HEALTH_BOOST", Material.POTION, "Healer");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "INVISIBILITY", "INVISIBILITY", Material.POTION, "Ghost");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "REGENERATION", "REGENERATION", Material.POTION, "Healer");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "SATURATION", "SATURATION", Material.POTION, "Looter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "STRENGTH", "STRENGTH", Material.POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "DOLPHINS_GRACE", "DOLPHINS_GRACE", Material.POTION, "Looter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "NIGHT_VISION", "NIGHT_VISION", Material.POTION, "Ghost");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "WATER_BREATHING", "WATER_BREATHING", Material.POTION, "Ghost");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "WEAKNESS", "WEAKNESS", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "WITHER", "WITHER", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "GLOWING", "GLOWING", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BLINDNESS", "BLINDNESS", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "NAUSEA", "NAUSEA", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN2", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN3", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN4", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN5", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN6", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN7", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
+        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN8", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
 
-        int shopitem = 1;
         for (int i = 0; i < shop.size(); i++) {
-            String potionPath = "pg.potions." + shopitem;
-            if (Settings.shopdata.get(potionPath) == null) {
-                Settings.shopdata.addDefault(potionPath, shop.get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".name", shop.get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".shoppotion", shoppotion.get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".shoppotiontype", shoppotiontype.get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".kit", shopkit.get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".cost", shopcost.get(shopitem - 1));
-                Settings.shopdata.addDefault(potionPath + ".sale", shopsale.get(shopitem - 1));
-                Settings.shopdata.options().copyDefaults(true);
-            } else {
-                shop.set(shopitem - 1, Settings.shopdata.getString(potionPath + ".name"));
-                shoppotion.set(shopitem - 1, (PotionEffect) Settings.shopdata.get(potionPath + ".shoppotion"));
-                shoppotiontype.set(shopitem - 1, (ItemStack) Settings.shopdata.get(potionPath + ".shoppotiontype"));
-                shopkit.set(shopitem - 1, Settings.shopdata.getString(potionPath + ".kit"));
-                shopcost.set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".cost"));
-                shopsale.set(shopitem - 1, (Integer) Settings.shopdata.get(potionPath + ".sale"));
-            }
-            shopitem++;
+            String potionPath = "pg.potions." + (i + 1);
+            Settings.shopdata.addDefault(potionPath, shop.get(i));
+            Settings.shopdata.addDefault(potionPath + ".name", shop.get(i));
+            Settings.shopdata.addDefault(potionPath + ".shoppotion", shoppotion.get(i));
+            Settings.shopdata.addDefault(potionPath + ".shoppotiontype", shoppotiontype.get(i));
+            Settings.shopdata.addDefault(potionPath + ".kit", shopkit.get(i));
+            Settings.shopdata.addDefault(potionPath + ".cost", shopcost.get(i));
+            Settings.shopdata.addDefault(potionPath + ".sale", shopsale.get(i));
+        }
+        Settings.shopdata.options().copyDefaults(true);
+
+        for (int i = 0; i < shop.size(); i++) {
+            String potionPath = "pg.potions." + (i + 1);
+            String name = Settings.shopdata.getString(potionPath + ".name");
+            if (name != null) shop.set(i, name);
+
+            PotionEffect effect = PotionSerialization.deserializePotionEffect(Settings.shopdata.get(potionPath + ".shoppotion"), shop.get(i));
+            if (effect != null) shoppotion.set(i, effect);
+
+            ItemStack item = PotionSerialization.deserializeItemStack(Settings.shopdata.get(potionPath + ".shoppotiontype"));
+            if (item != null) shoppotiontype.set(i, item);
+
+            String kit = Settings.shopdata.getString(potionPath + ".kit");
+            if (kit != null) shopkit.set(i, kit);
+
+            if (Settings.shopdata.get(potionPath + ".cost") instanceof Integer cost) shopcost.set(i, cost);
+            if (Settings.shopdata.get(potionPath + ".sale") instanceof Integer sale) shopsale.set(i, sale);
         }
 
         ism.replaceShop(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale);
@@ -135,10 +142,10 @@ public final class BootstrapInitializer {
     }
 
     private void addShopEntry(List<String> shop, List<PotionEffect> shoppotion, List<ItemStack> shoppotiontype, List<String> shopkit,
-                              List<Integer> shopcost, List<Integer> shopsale, String name, PotionEffectType effect,
+                              List<Integer> shopcost, List<Integer> shopsale, String name, String effectName,
                               Material potionMaterial, String kit) {
         shop.add(name);
-        shoppotion.add(new PotionEffect(effect, 30 * 20, 1, true, true, true));
+        shoppotion.add(new PotionEffect(PotionSerialization.getPotionEffectType(effectName), 30 * 20, 1, true, true, true));
         shoppotiontype.add(new ItemStack(potionMaterial));
         shopkit.add(kit);
         shopcost.add(4);

@@ -22,7 +22,7 @@ public enum ConfigKeys {
     ACTIVATE_MYSQL("pg.activateMySQL", "Database", false),
     DB_HOST("pg.mysql.host", "Database", "localhost"),
     DB_PORT("pg.mysql.port", "Database", 3306),
-    DB_DATABASE("pg.mysql.database", "Database", "potiongames"),
+    DB_DATABASE("pg.mysql.database", "Database", "PotionGamesX"),
     DB_USER("pg.mysql.user", "Database", "root"),
     DB_PASSWORD("pg.mysql.password", "Database", ""),
     

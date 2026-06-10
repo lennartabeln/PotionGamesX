@@ -4,7 +4,7 @@ import com.tw0far.potiongames.models.GameStates;
 
 /**
  * Manager for all per-lobby state tracking.
- * Consolidates 21 HashMap fields that were previously in PotionGames.
+ * Consolidates 21 HashMap fields that were previously in PotionGamesX.
  * 
  * Manages:
  * - Lobby metadata (countdownLobby, resetLobby, lobbyAmount)

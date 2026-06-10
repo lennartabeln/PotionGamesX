@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import net.kyori.adventure.text.Component;
@@ -16,9 +16,9 @@ import org.bukkit.Material;
  * /pg list - Open GUI with all lobbies
  */
 public class ListCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public ListCommand(PotionGames plugin) {
+    public ListCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -31,11 +31,7 @@ public class ListCommand implements ICommand {
     public String getPermission() {
         return "pg.join";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return true;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {
@@ -69,7 +65,9 @@ public class ListCommand implements ICommand {
             inv.addItem(item);
         }
 
-        player.openInventory(inv);
+        if (inv != null) {
+            player.openInventory(inv);
+        }
         return true;
     }
     

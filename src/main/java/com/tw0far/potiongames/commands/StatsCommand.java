@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
  * /pg stats [player] - Show player statistics
  */
 public class StatsCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public StatsCommand(PotionGames plugin) {
+    public StatsCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -24,11 +24,7 @@ public class StatsCommand implements ICommand {
     public String getPermission() {
         return "pg.stats";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

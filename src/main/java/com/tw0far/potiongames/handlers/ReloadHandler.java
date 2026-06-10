@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.handlers;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Lobby;
@@ -22,9 +22,9 @@ import java.util.logging.Level;
  * - Leaves orphaned resources causing memory leaks
  */
 public class ReloadHandler {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public ReloadHandler(PotionGames plugin) {
+    public ReloadHandler(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

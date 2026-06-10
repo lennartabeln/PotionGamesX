@@ -1,45 +1,65 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 
 /**
  * /pg leave - Leave current game
  */
 public class LeaveCommand implements ICommand {
-    private final PotionGames plugin;
-    
-    public LeaveCommand(PotionGames plugin) {
+    private final PotionGamesX plugin;
+
+    public LeaveCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "leave";
     }
-    
+
     @Override
     public String getPermission() {
-        return null; // Everyone can use
+        return null;
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return true;
-    }
-    
+
+
     @Override
     public boolean execute(Player player, String[] args) {
         Lobby lobby = plugin.getGame().getLobbyByPlayer(player);
         if (lobby != null) {
             lobby.leave(player);
         }
+
+        if (plugin.getConfigManager().isGameServer()) {
+            String hub = plugin.getConfig().getString("pg.bungeeServer", "lobby");
+            sendToServer(player, hub);
+        }
+
         return true;
     }
-    
+
+    private void sendToServer(Player player, String server) {
+        if (player == null || !player.isOnline()) return;
+        try {
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(b);
+            out.writeUTF("Connect");
+            out.writeUTF(server);
+            player.sendPluginMessage(PotionGamesX.getInstance(), "BungeeCord", b.toByteArray());
+        } catch (Exception e) {
+            player.kick(Component.text("Connecting to " + server + "...").color(NamedTextColor.GREEN));
+        }
+    }
+
     @Override
     public String getUsage() {
         return Messages.raw("help.leave_usage", "/pg leave - Leave the current game");

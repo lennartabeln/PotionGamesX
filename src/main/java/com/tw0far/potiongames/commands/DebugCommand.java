@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class DebugCommand implements ICommand {
     private boolean debugMode = false;
     
-    public DebugCommand(PotionGames plugin) {
+    public DebugCommand(PotionGamesX plugin) {
     }
     
     @Override
@@ -23,11 +23,7 @@ public class DebugCommand implements ICommand {
     public String getPermission() {
         return "pg.debug";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -10,9 +10,9 @@ import org.bukkit.event.entity.EntityExplodeEvent;
  * Manages TNT explosions and other entity explosions during games.
  */
 public class ExplosionEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public ExplosionEventListener(PotionGames plugin) {
+    public ExplosionEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

@@ -14,7 +14,7 @@ pg:
   # CORE SETTINGS
   # ═══════════════════════════════════════════════════════
 
-  gameServer: true
+  gameServer: false
   language: en_US
 
   # BungeeCord / Proxy network support

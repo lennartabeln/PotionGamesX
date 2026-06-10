@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
  * Permission: pg.broadcast (or pg.admin)
  */
 public class BroadcastCommand implements ICommand {
-    public BroadcastCommand(PotionGames plugin) {
+    public BroadcastCommand(PotionGamesX plugin) {
     }
     
     @Override
@@ -23,11 +23,7 @@ public class BroadcastCommand implements ICommand {
     public String getPermission() {
         return "pg.broadcast";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {
@@ -43,7 +39,7 @@ public class BroadcastCommand implements ICommand {
         }
         
         Component broadcast = Component.text("").color(NamedTextColor.GOLD)
-            .append(Component.text("[PotionGames] ").color(NamedTextColor.GOLD))
+            .append(Component.text("[PotionGamesX] ").color(NamedTextColor.GOLD))
             .append(Component.text(message.toString()).color(NamedTextColor.YELLOW));
         
         Bukkit.broadcast(broadcast);

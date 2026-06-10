@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
  * Permission: pg.kick (or pg.admin)
  */
 public class KickCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public KickCommand(PotionGames plugin) {
+    public KickCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -25,11 +25,7 @@ public class KickCommand implements ICommand {
     public String getPermission() {
         return "pg.kick";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return true;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
  * Prevents dropping items during lobby/game phases.
  */
 public class ItemDropEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public ItemDropEventListener(PotionGames plugin) {
+    public ItemDropEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

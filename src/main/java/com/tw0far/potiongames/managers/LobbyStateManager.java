@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.managers;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.GameStates;
 
 import java.util.HashMap;
@@ -8,12 +8,12 @@ import java.util.Map;
 
 /**
  * Implementation of ILobbyStateManager.
- * Consolidates 21 HashMaps from PotionGames into a single manager.
+ * Consolidates 21 HashMaps from PotionGamesX into a single manager.
  * 
  * Reduces coupling and makes lobby state management centralized and testable.
  */
 public class LobbyStateManager implements ILobbyStateManager {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
     // Countdown & Reset
     private final Map<String, Integer> countdownLobby = new HashMap<>();
@@ -57,7 +57,7 @@ public class LobbyStateManager implements ILobbyStateManager {
     private final Map<String, Integer> lobbyroundTime = new HashMap<>();
     private final Map<String, Integer> lobbyroundTimeSeconds = new HashMap<>();
     
-    public LobbyStateManager(PotionGames plugin) {
+    public LobbyStateManager(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

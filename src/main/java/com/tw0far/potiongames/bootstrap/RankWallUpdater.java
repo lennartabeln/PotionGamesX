@@ -15,19 +15,19 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.sign.Side;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.destroystokyo.paper.profile.PlayerProfile;
+import io.papermc.paper.datacomponent.item.ResolvableProfile;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
-import com.tw0far.potiongames.util.SkullUtil;
-
 import net.kyori.adventure.text.Component;
 
 public class RankWallUpdater {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     private final HashMap<Integer, String> rank = new HashMap<>();
     private final ArrayList<Location> rankhead = new ArrayList<>();
     private final ArrayList<Location> ranksign = new ArrayList<>();
 
-    public RankWallUpdater(PotionGames plugin) {
+    public RankWallUpdater(PotionGamesX plugin) {
         this.plugin = plugin;
     }
 
@@ -53,7 +53,13 @@ public class RankWallUpdater {
                         int id = iii + 1;
                         Skull skull = (Skull) rankhead.get(iii).getBlock().getState();
                         UUID uuid = UUID.fromString(rank.get(id));
-                        SkullUtil.setSkullOwner(skull, uuid);
+                        if (skull != null && uuid != null) {
+                            PlayerProfile profile = Bukkit.createProfile(uuid);
+                            if (profile != null) {
+                                skull.setProfile(ResolvableProfile.resolvableProfile(profile));
+                                skull.update();
+                            }
+                        }
                     }
                     for (int iii = 0; iii < rank.size(); iii++) {
                         int id = iii + 1;
@@ -66,7 +72,7 @@ public class RankWallUpdater {
                         sign.getSide(Side.FRONT).line(3, Messages.SignKD(plugin.getDatabaseManager().getKD(rank.get(id))));
                         sign.update();
                     }
-                } catch (SQLException ex) {
+                } catch (SQLException ignored) {
                     plugin.getComponentLogger().info(Messages.RankwallCouldNotUpdate());
                 }
             }

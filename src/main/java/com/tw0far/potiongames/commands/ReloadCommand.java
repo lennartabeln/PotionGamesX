@@ -1,9 +1,8 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.handlers.ReloadHandler;
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
-import com.tw0far.potiongames.util.MessageUtil;
 import org.bukkit.entity.Player;
 
 /**
@@ -12,10 +11,10 @@ import org.bukkit.entity.Player;
  * FIXED: Now properly stops all games, clears memory, closes resources
  */
 public class ReloadCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     private final ReloadHandler reloadHandler;
     
-    public ReloadCommand(PotionGames plugin) {
+    public ReloadCommand(PotionGamesX plugin) {
         this.plugin = plugin;
         this.reloadHandler = new ReloadHandler(plugin);
     }
@@ -29,32 +28,28 @@ public class ReloadCommand implements ICommand {
     public String getPermission() {
         return "pg.setup";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {
         try {
-            player.sendMessage(MessageUtil.createInfo("Starting plugin reload... this may take a moment."));
+            player.sendMessage(CommandDispatcher.createInfo("Starting plugin reload... this may take a moment."));
             
             // Perform comprehensive reload
             boolean success = reloadHandler.performReload();
             
             if (success) {
-                player.sendMessage(MessageUtil.createSuccess("Plugin successfully reloaded!"));
+                player.sendMessage(CommandDispatcher.createSuccess("Plugin successfully reloaded!"));
                 plugin.getLogger().info("Plugin reloaded by " + player.getName());
             } else {
-                player.sendMessage(MessageUtil.createError("Plugin reload failed! Check console for details."));
+                player.sendMessage(CommandDispatcher.createError("Plugin reload failed! Check console for details."));
                 plugin.getLogger().severe("Plugin reload failed - partial state may remain");
             }
             
             return true;
             
         } catch (Exception e) {
-            player.sendMessage(MessageUtil.createError("Unexpected error during reload!"));
+            player.sendMessage(CommandDispatcher.createError("Unexpected error during reload!"));
             plugin.getLogger().severe("Reload failed with exception: " + e.getMessage());
             e.printStackTrace();
             return true;

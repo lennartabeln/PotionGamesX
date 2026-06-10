@@ -1,4 +1,4 @@
-package com.tw0far.potiongames.main;
+package com.tw0far.potiongames;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -21,16 +21,15 @@ import com.tw0far.potiongames.managers.*;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
-import com.tw0far.potiongames.updatechecker.UpdateChecker;
+import com.tw0far.potiongames.util.UpdateChecker;
 
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PotionGames extends JavaPlugin {
+public class PotionGamesX extends JavaPlugin {
 
     //New
-    private static PotionGames instance;
+    private static PotionGamesX instance;
     private final Game game = new Game();
     private IConfigurationManager configManager;
     private ILobbyStateManager lobbyStateManager;
@@ -40,7 +39,9 @@ public class PotionGames extends JavaPlugin {
     private IBlockStateManager blockStateManager;
     private ISetupStateManager setupStateManager;
     private IDatabaseManager databaseManager;
-    public static PotionGames getInstance() { return instance; }
+    private ISetupHandler setupHandler;
+    private JoinLobbyHandler joinLobbyHandler;
+    public static PotionGamesX getInstance() { return instance; }
     public Game getGame() { return game; }
     public IConfigurationManager getConfigManager() { return configManager; }
     public ILobbyStateManager getLobbyStateManager() { return lobbyStateManager; }
@@ -51,10 +52,6 @@ public class PotionGames extends JavaPlugin {
     public ISetupStateManager getSetupStateManager() { return setupStateManager; }
     public IDatabaseManager getDatabaseManager() { return databaseManager; }
     public ISetupHandler getSetupHandler() { return setupHandler; }
-    private ISetupHandler setupHandler = new SetupHandler(this);
-    private final JoinLobbyHandler joinLobbyHandler = new JoinLobbyHandler(this);
-    
-
 
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
@@ -70,6 +67,8 @@ public class PotionGames extends JavaPlugin {
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
         instance = this;
+        setupHandler = new SetupHandler(this);
+        joinLobbyHandler = new JoinLobbyHandler(this);
         saveDefaultConfig();
         
         // Initialize configuration manager
@@ -91,7 +90,7 @@ public class PotionGames extends JavaPlugin {
         setupStateManager.onEnable();
         
         // Initialize database manager
-        databaseManager = new DatabaseManager(this, (ConfigurationManager) configManager);
+        databaseManager = new DatabaseManager(this, configManager);
         databaseManager.onEnable();
         
         PluginManager pm = Bukkit.getPluginManager();
@@ -124,13 +123,19 @@ public class PotionGames extends JavaPlugin {
         pm.registerEvents(new WeatherEventListener(this), this);
         pm.registerEvents(new ExplosionEventListener(this), this);
         pm.registerEvents(new CreatureSpawnEventListener(this), this);
-        pm.registerEvents(new SignChangeEventListener(this), this);
+        pm.registerEvents(new SignChangeEventListener(), this);
         
         // Inventory events
         pm.registerEvents(new InventoryEventListener(this), this);
         
         // Register new command dispatcher (refactored from monolithic Commands.java)
-        Objects.requireNonNull(getCommand("pg")).setExecutor(new CommandDispatcher(this));
+        CommandDispatcher dispatcher = new CommandDispatcher(this);
+        dispatcher.register();
+        var pgCommand = getCommand("pg");
+        if (pgCommand != null) {
+            pgCommand.setExecutor(dispatcher);
+            pgCommand.setTabCompleter(dispatcher);
+        }
 
         new BootstrapInitializer(this).initialize();
         new ChestLootInitializer(this).seed();
@@ -220,7 +225,7 @@ public class PotionGames extends JavaPlugin {
         if (rsp == null) {
             return false;
         }
-        econ = java.util.Objects.requireNonNull(rsp.getProvider(), "Vault provider returned null");
+        econ = rsp.getProvider();
         return true;
     }
 
@@ -246,7 +251,7 @@ public class PotionGames extends JavaPlugin {
                 lobby.leave(p);
             }
         } catch (NumberFormatException e) {
-            log.log(Level.WARNING, "[PotionGames] Invalid lobby ID on leave", e);
+            log.log(Level.WARNING, "[PotionGamesX] Invalid lobby ID on leave", e);
         }
         game.removePlayerLobby(p);
         game.removeSpectatorLobby(p);

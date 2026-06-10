@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -14,9 +14,9 @@ import org.bukkit.potion.PotionEffectType;
  * Manages spectator mode interactions (invisibility, no-collision).
  */
 public class SpectatorEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public SpectatorEventListener(PotionGames plugin) {
+    public SpectatorEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

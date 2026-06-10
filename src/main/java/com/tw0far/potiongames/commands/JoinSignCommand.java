@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
  * Creates a join sign at the player's current location
  */
 public class JoinSignCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public JoinSignCommand(PotionGames plugin) {
+    public JoinSignCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -24,11 +24,7 @@ public class JoinSignCommand implements ICommand {
     public String getPermission() {
         return "pg.setup";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return true;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

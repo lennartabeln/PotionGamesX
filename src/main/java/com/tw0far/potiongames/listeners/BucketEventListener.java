@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
  * Manages water bucket usage during games.
  */
 public class BucketEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public BucketEventListener(PotionGames plugin) {
+    public BucketEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

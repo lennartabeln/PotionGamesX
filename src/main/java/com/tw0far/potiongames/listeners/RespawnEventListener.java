@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
  * Manages respawn location and game state after respawn.
  */
 public class RespawnEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public RespawnEventListener(PotionGames plugin) {
+    public RespawnEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

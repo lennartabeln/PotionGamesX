@@ -10,7 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 
 /**
  * Represents a single arena within a lobby.
@@ -96,7 +96,7 @@ public class Arena {
                         spawns.add(spawn);
                     }
                 } catch (Exception ex) {
-                    PotionGames.getInstance().getLogger().warning("Error loading spawn " + key + " for arena " + name + ": " + ex.getMessage());
+                    PotionGamesX.getInstance().getLogger().warning("Error loading spawn " + key + " for arena " + name + ": " + ex.getMessage());
                 }
             }
         }
@@ -115,7 +115,7 @@ public class Arena {
                         deathmatchSpawns.add(spawn);
                     }
                 } catch (Exception ex) {
-                    PotionGames.getInstance().getLogger().warning("Error loading deathmatch spawn " + key + " for arena " + name + ": " + ex.getMessage());
+                    PotionGamesX.getInstance().getLogger().warning("Error loading deathmatch spawn " + key + " for arena " + name + ": " + ex.getMessage());
                 }
             }
         }
@@ -144,7 +144,7 @@ public class Arena {
                         }
                     }
                 } catch (Exception ex) {
-                    PotionGames.getInstance().getLogger().warning("Error loading chest " + key + " for arena " + name + ": " + ex.getMessage());
+                    PotionGamesX.getInstance().getLogger().warning("Error loading chest " + key + " for arena " + name + ": " + ex.getMessage());
                 }
             }
         }
@@ -159,7 +159,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -173,7 +173,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -234,7 +234,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             spawns.remove(spawn);
             return false;
         }
@@ -260,7 +260,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             spawns.remove(spawn);
             return false;
         }
@@ -285,7 +285,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -331,7 +331,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             deathmatchSpawns.remove(spawn);
             return false;
         }
@@ -357,7 +357,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             deathmatchSpawns.remove(spawn);
             return false;
         }
@@ -382,7 +382,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             return false;
         }
     }
@@ -455,7 +455,7 @@ public class Arena {
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
-            PotionGames.getInstance().getLogger().warning(ex.getMessage());
+            PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
             chestLocations.remove(location);
             chestLoot.remove(location);
             return false;
@@ -467,13 +467,6 @@ public class Arena {
      * This method can be overridden by subclasses to provide custom loot generation.
      */
     public void generateLoot() {
-        for (Location chestLoc : chestLocations) {
-            // Default: use configured loot or generate random
-            if (!chestLoot.containsKey(chestLoc)) {
-                // No loot configured; can be overridden by subclasses
-                // or integrated with LootTable system
-            }
-        }
     }
 
     // ===== VOTING MANAGEMENT =====

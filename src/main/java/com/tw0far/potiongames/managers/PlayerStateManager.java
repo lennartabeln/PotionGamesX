@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  * Implementation of IPlayerStateManager.
- * Consolidates 6 player lists from PotionGames:
+ * Consolidates 6 player lists from PotionGamesX:
  * - pgPlayers (active)
  * - specPlayers (spectators)
  * - richkidPlayers (in shop)

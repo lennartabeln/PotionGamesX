@@ -1,15 +1,17 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
-import com.tw0far.potiongames.util.MessageUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.NotNull; 
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -17,12 +19,15 @@ import java.util.*;
  * Central command dispatcher.
  * Routes commands to individual command handlers instead of one monolithic class.
  */
-public class CommandDispatcher implements CommandExecutor {
-    private final PotionGames plugin;
+public class CommandDispatcher implements CommandExecutor, TabCompleter {
+    private final PotionGamesX plugin;
     private final Map<String, ICommand> commands = new HashMap<>();
     
-    public CommandDispatcher(PotionGames plugin) {
+    public CommandDispatcher(PotionGamesX plugin) {
         this.plugin = plugin;
+    }
+
+    public void register() {
         registerCommands();
     }
     
@@ -90,7 +95,7 @@ public class CommandDispatcher implements CommandExecutor {
                 if (isPlayer) {
                     return helpCmd.execute((Player) sender, args);
                 }
-                sender.sendMessage(Component.text("PotionGames Commands:").color(NamedTextColor.AQUA));
+                sender.sendMessage(Component.text("PotionGamesX Commands:").color(NamedTextColor.AQUA));
                 for (ICommand command : commands.values()) {
                     sender.sendMessage(Component.text("  " + command.getUsage()).color(NamedTextColor.GRAY));
                 }
@@ -111,42 +116,58 @@ public class CommandDispatcher implements CommandExecutor {
         
         // Check if command requires a player
         if (!isPlayer) {
-            // Console-only commands that need player context
-            if (subCommand.equals("join") || subCommand.equals("leave")) {
-                sender.sendMessage(Component.text("This command can only be used by players!").color(NamedTextColor.RED));
-                return true;
-            }
-            // Allow other commands (reload, etc.) from console
-            try {
-                return command.execute((Player) sender, args);
-            } catch (ClassCastException e) {
-                sender.sendMessage(Component.text("This command can only be used by players!").color(NamedTextColor.RED));
-                return true;
-            }
+            sender.sendMessage(Component.text("This command can only be used by players!").color(NamedTextColor.RED));
+            return true;
         }
         
         Player player = (Player) sender;
         
         // Check permission
         if (command.getPermission() != null && !player.hasPermission(command.getPermission())) {
-            player.sendMessage(MessageUtil.createError("You don't have permission to use this command!"));
+            player.sendMessage(createError("You don't have permission to use this command!"));
             return true;
         }
         
-        // Check if game server required
-        if (command.requiresGameServer() && !plugin.getConfigManager().isGameServer()) {
-            player.sendMessage(MessageUtil.createError(Messages.raw("command.not_game_server", "This is not a game server!")));
-            return true;
-        }
         
         // Execute command
         try {
             return command.execute(player, args);
         } catch (Exception e) {
-            player.sendMessage(MessageUtil.createError(Messages.raw("command.execution_error", "An error occurred while executing this command!")));
+            player.sendMessage(createError(Messages.raw("command.execution_error", "An error occurred while executing this command!")));
             plugin.getLogger().severe("Error executing command " + subCommand + ": " + e.getMessage());
             e.printStackTrace();
             return true;
         }
+    }
+
+    public static Component createInfo(String message) {
+        return Component.text(message).color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false);
+    }
+
+    public static Component createSuccess(String message) {
+        return Component.text(message).color(NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false);
+    }
+
+    public static Component createError(String message) {
+        return Component.text(message).color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false);
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
+        if (args.length == 1) {
+            List<String> result = new ArrayList<>();
+            String prefix = args[0].toLowerCase();
+            for (ICommand command : commands.values()) {
+                String name = command.getName().toLowerCase();
+                if (name.startsWith(prefix)) {
+                    if (command.getPermission() == null || sender.hasPermission(command.getPermission())) {
+                        result.add(name);
+                    }
+                }
+            }
+            Collections.sort(result);
+            return result;
+        }
+        return Collections.emptyList();
     }
 }

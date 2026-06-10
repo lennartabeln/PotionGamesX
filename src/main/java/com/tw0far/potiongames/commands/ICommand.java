@@ -17,11 +17,6 @@ public interface ICommand {
     String getPermission();
     
     /**
-     * Check if command requires a specific game state
-     */
-    boolean requiresGameServer();
-    
-    /**
      * Execute the command
      */
     boolean execute(Player player, String[] args);

@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
  * /pg pause - Pause the game timer
  */
 public class PauseCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public PauseCommand(PotionGames plugin) {
+    public PauseCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -23,11 +23,7 @@ public class PauseCommand implements ICommand {
     public String getPermission() {
         return "pg.pause";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

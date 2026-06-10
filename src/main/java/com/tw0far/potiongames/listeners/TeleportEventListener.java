@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
  * Manages spectator teleportation and game boundaries.
  */
 public class TeleportEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public TeleportEventListener(PotionGames plugin) {
+    public TeleportEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 
 public class Game {
     private ArrayList<Lobby> lobbies = new ArrayList<>();
@@ -47,8 +47,8 @@ public class Game {
             }
         }
 
-        if (PotionGames.getInstance() != null) {
-            ConfigurationSection lobbySection = PotionGames.getInstance().getConfig().getConfigurationSection("pg.lobbies");
+        if (PotionGamesX.getInstance() != null) {
+            ConfigurationSection lobbySection = PotionGamesX.getInstance().getConfig().getConfigurationSection("pg.lobbies");
             if (lobbySection != null) {
                 for (String key : lobbySection.getKeys(false)) {
                     try {
@@ -80,7 +80,7 @@ public class Game {
         }
 
         if (lobbies.isEmpty()) {
-            PotionGames.getInstance().getLogger().info("PotionGames: No lobbies configured.");
+            PotionGamesX.getInstance().getLogger().info("PotionGamesX: No lobbies configured.");
         }
     }
 
@@ -223,12 +223,12 @@ public class Game {
     public boolean addLobby(int lobbyId, Location location) {
         // Enforce 1-based lobby IDs. Do not allow lobby 0 or negative IDs.
         if (lobbyId < 1) {
-            PotionGames.getInstance().getLogger().warning("PotionGames: Invalid lobby id " + lobbyId + ". Lobby IDs must start at 1.");
+            PotionGamesX.getInstance().getLogger().warning("PotionGamesX: Invalid lobby id " + lobbyId + ". Lobby IDs must start at 1.");
             return false;
         }
         // Prevent duplicate lobby IDs
         if (getLobby(lobbyId) != null) {
-            PotionGames.getInstance().getLogger().warning("PotionGames: Lobby " + lobbyId + " already exists.");
+            PotionGamesX.getInstance().getLogger().warning("PotionGamesX: Lobby " + lobbyId + " already exists.");
             return false;
         }
 
@@ -256,7 +256,7 @@ public class Game {
         return lobbies;
     }
 
-    // ===== Player Management (Migrated from PotionGames) =====
+    // ===== Player Management (Migrated from PotionGamesX) =====
     
     /**
      * Get list of active game players
@@ -331,9 +331,6 @@ public class Game {
         return count;
     }
     
-    /**
-     * Get count of spectator players
-     */
     /**
      * Check if player is active
      */

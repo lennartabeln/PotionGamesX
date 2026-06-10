@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
  * /pg join [lobby] - Join a game
  */
 public class JoinCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public JoinCommand(PotionGames plugin) {
+    public JoinCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -25,11 +25,7 @@ public class JoinCommand implements ICommand {
     public String getPermission() {
         return "pg.join";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return true;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

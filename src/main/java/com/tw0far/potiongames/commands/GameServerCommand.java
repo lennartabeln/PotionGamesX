@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
  * /pg gameserver - Toggle gameserver mode
  */
 public class GameServerCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public GameServerCommand(PotionGames plugin) {
+    public GameServerCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -25,11 +25,7 @@ public class GameServerCommand implements ICommand {
     public String getPermission() {
         return "pg.gameserver";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {
@@ -54,6 +50,7 @@ public class GameServerCommand implements ICommand {
         
         // Broadcast to all ops
         for (Player op : plugin.getServer().getOnlinePlayers()) {
+            if (op == null) continue;
             if (op.isOp() && !op.equals(player)) {
                 op.sendMessage(Component.text(player.getName() + " turned " + statusText + " GameServer mode!")
                     .color(NamedTextColor.YELLOW));

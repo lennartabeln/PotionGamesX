@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.bootstrap;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.managers.IItemStateManager;
 import com.tw0far.potiongames.models.Settings;
 import org.bukkit.Material;
@@ -10,9 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public final class ChestLootInitializer {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
 
-    public ChestLootInitializer(PotionGames plugin) {
+    public ChestLootInitializer(PotionGamesX plugin) {
         this.plugin = plugin;
     }
 

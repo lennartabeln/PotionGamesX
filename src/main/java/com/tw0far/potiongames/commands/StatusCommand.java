@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -10,9 +10,9 @@ import org.bukkit.entity.Player;
  * /pg status - Show active lobbies, player counts, and database connection status
  */
 public class StatusCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public StatusCommand(PotionGames plugin) {
+    public StatusCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -25,11 +25,7 @@ public class StatusCommand implements ICommand {
     public String getPermission() {
         return "pg.status";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {
@@ -39,7 +35,7 @@ public class StatusCommand implements ICommand {
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
         
-        player.sendMessage(Component.text("PotionGames Status").color(NamedTextColor.GOLD));
+        player.sendMessage(Component.text("PotionGamesX Status").color(NamedTextColor.GOLD));
         
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("Server:").color(NamedTextColor.GOLD)));

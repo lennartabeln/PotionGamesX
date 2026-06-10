@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
  * /pg config - View current plugin configuration settings
  */
 public class ConfigCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public ConfigCommand(PotionGames plugin) {
+    public ConfigCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -24,11 +24,7 @@ public class ConfigCommand implements ICommand {
     public String getPermission() {
         return "pg.config";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {
@@ -37,7 +33,7 @@ public class ConfigCommand implements ICommand {
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
         
-        player.sendMessage(Component.text("PotionGames Configuration").color(NamedTextColor.GOLD));
+        player.sendMessage(Component.text("PotionGamesX Configuration").color(NamedTextColor.GOLD));
         
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("Core:").color(NamedTextColor.GOLD)));

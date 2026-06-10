@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
  * Manages player damage, damage cancellation, and damage tracking.
  */
 public class DamageEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public DamageEventListener(PotionGames plugin) {
+    public DamageEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

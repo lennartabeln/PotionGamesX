@@ -42,7 +42,8 @@ public class PlayerState {
         level = player.getLevel();
         exp = player.getExp();
         gameMode = player.getGameMode();
-        location = player.getLocation().clone();
+        org.bukkit.Location loc = player.getLocation();
+        location = loc != null ? loc.clone() : null;
         potionEffects = new ArrayList<>(player.getActivePotionEffects());
         allowFlight = player.getAllowFlight();
         isFlying = player.isFlying();
@@ -69,13 +70,17 @@ public class PlayerState {
             }
         }
 
-        player.setGameMode(gameMode);
+        if (gameMode != null) {
+            player.setGameMode(gameMode);
+        }
         player.setHealth(health);
         player.setFoodLevel(foodLevel);
         player.setSaturation(saturation);
         player.setLevel(level);
         player.setExp(exp);
-        player.teleport(location);
+        if (location != null) {
+            player.teleport(location);
+        }
         player.setAllowFlight(allowFlight);
         player.setFlying(isFlying);
     }

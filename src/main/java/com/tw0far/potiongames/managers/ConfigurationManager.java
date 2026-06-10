@@ -1,14 +1,14 @@
 package com.tw0far.potiongames.managers;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * Centralized configuration manager.
- * Extracts all config getters/setters from main PotionGames class.
+ * Extracts all config getters/setters from main PotionGamesX class.
  */
 public class ConfigurationManager implements IConfigurationManager {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     private final FileConfiguration config;
     
     // Game settings
@@ -58,10 +58,10 @@ public class ConfigurationManager implements IConfigurationManager {
     private String language = "en_US";
     private String host = "localhost";
     private String port = "3306";
-    private String database = "potiongames";
+    private String database = "PotionGamesX";
     private String user = "root";
     
-    public ConfigurationManager(PotionGames plugin) {
+    public ConfigurationManager(PotionGamesX plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfig();
         // Calculate derived values
@@ -110,7 +110,7 @@ public class ConfigurationManager implements IConfigurationManager {
         compassOnSpawn = config.getBoolean("pg.compassOnSpawn", false);
         allowOutsideChat = config.getBoolean("pg.allowOutsideChat", false);
         changeGamerules = config.getBoolean("pg.changeGamerules", true);
-        gameServer = config.getBoolean("pg.gameServer", true);
+        gameServer = config.getBoolean("pg.gameServer", false);
         mysql = config.getBoolean("pg.mysql", false);
         deathmatch = config.getBoolean("pg.deathmatch", false);
         joinable = config.getBoolean("pg.joinable", true);
@@ -126,7 +126,7 @@ public class ConfigurationManager implements IConfigurationManager {
         language = config.getString("pg.language", "en_US");
         host = config.getString("pg.mysql.host", "localhost");
         port = config.getString("pg.mysql.port", "3306");
-        database = config.getString("pg.mysql.database", "potiongames");
+        database = config.getString("pg.mysql.database", "PotionGamesX");
         user = config.getString("pg.mysql.user", "root");
     }
     

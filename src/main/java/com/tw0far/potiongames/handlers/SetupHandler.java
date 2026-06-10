@@ -9,7 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Arena;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
@@ -17,9 +17,9 @@ import com.tw0far.potiongames.models.Settings;
 
 public class SetupHandler implements ISetupHandler {
 
-    private final PotionGames pg;
+    private final PotionGamesX pg;
 
-    public SetupHandler(PotionGames pg) {
+    public SetupHandler(PotionGamesX pg) {
         this.pg = pg;
     }
 
@@ -360,7 +360,8 @@ public class SetupHandler implements ISetupHandler {
         p.teleport(pg.getSetupStateManager().getPlayerLocation(p));
         p.setLevel(pg.getSetupStateManager().getPlayerLevel(p));
         p.setExp(pg.getSetupStateManager().getPlayerExp(p));
-        p.setGameMode(pg.getSetupStateManager().getPlayerGameMode(p));
+        GameMode gm = pg.getSetupStateManager().getPlayerGameMode(p);
+        p.setGameMode(gm != null ? gm : GameMode.SURVIVAL);
         
         Double health = pg.getSetupStateManager().getPlayerHealth(p);
         p.setHealth(health != null ? health : 20.0);

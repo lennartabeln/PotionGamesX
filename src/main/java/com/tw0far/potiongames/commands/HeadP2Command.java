@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
  * /pg headp2 - Set player head for 2nd place on stats wall
  */
 public class HeadP2Command implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public HeadP2Command(PotionGames plugin) {
+    public HeadP2Command(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -23,11 +23,7 @@ public class HeadP2Command implements ICommand {
     public String getPermission() {
         return "pg.setup";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -18,9 +18,9 @@ import java.util.UUID;
  * Permission: pg.top
  */
 public class TopCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public TopCommand(PotionGames plugin) {
+    public TopCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -33,11 +33,7 @@ public class TopCommand implements ICommand {
     public String getPermission() {
         return "pg.top";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {
@@ -111,11 +107,11 @@ public class TopCommand implements ICommand {
         try {
             UUID uuid = UUID.fromString(uuidValue);
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-            if (offlinePlayer.getName() != null && !offlinePlayer.getName().isBlank()) {
-                return offlinePlayer.getName();
+            String name = offlinePlayer.getName();
+            if (name != null && !name.isBlank()) {
+                return name;
             }
         } catch (IllegalArgumentException ignored) {
-            // Fall back to the stored UUID prefix below.
         }
 
         if (uuidValue == null || uuidValue.isBlank()) {

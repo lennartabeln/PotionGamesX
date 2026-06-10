@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,9 +15,9 @@ import org.bukkit.entity.Player;
  * Manages team/spectator chat separation, message filtering, and setup mode input.
  */
 public class ChatEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public ChatEventListener(PotionGames plugin) {
+    public ChatEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -75,7 +75,12 @@ public class ChatEventListener implements Listener {
                 String teamName = chatLobby != null ? chatLobby.getPlayerTeam(p) : null;
                 if (teamName != null) {
                     Component currentMessage = e.message();
-                    e.message(Component.text("[" + teamName + "] ").color(NamedTextColor.YELLOW).append(currentMessage));
+                    if (currentMessage != null) {
+                        Component prefixed = Component.text("[" + teamName + "] ").color(NamedTextColor.YELLOW).append(currentMessage);
+                        if (prefixed != null) {
+                            e.message(prefixed);
+                        }
+                    }
                 }
             }
         }

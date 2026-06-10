@@ -5,7 +5,7 @@ import java.util.*;
 
 /**
  * Implementation of IArenaStateManager.
- * Consolidates 9 HashMaps for arena voting from PotionGames:
+ * Consolidates 9 HashMaps for arena voting from PotionGamesX:
  * - arenas (list)
  * - votes, voteplayernames (global voting)
  * - voted (marked voters)

@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import org.bukkit.entity.Player;
@@ -11,9 +11,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
  * /pg help - Show help message
  */
 public class HelpCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public HelpCommand(PotionGames plugin) {
+    public HelpCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -26,11 +26,7 @@ public class HelpCommand implements ICommand {
     public String getPermission() {
         return null; // Everyone can use
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {

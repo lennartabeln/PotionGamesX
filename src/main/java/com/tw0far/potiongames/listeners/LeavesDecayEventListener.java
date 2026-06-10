@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.LeavesDecayEvent;
@@ -10,9 +10,9 @@ import org.bukkit.event.block.LeavesDecayEvent;
  * Prevents leaves from decaying during active games.
  */
 public class LeavesDecayEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public LeavesDecayEventListener(PotionGames plugin) {
+    public LeavesDecayEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

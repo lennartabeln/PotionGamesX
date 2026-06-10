@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -10,9 +10,9 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
  * Prevents mobs from spawning during games if configured.
  */
 public class CreatureSpawnEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public CreatureSpawnEventListener(PotionGames plugin) {
+    public CreatureSpawnEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

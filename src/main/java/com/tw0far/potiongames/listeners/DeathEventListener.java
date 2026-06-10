@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
@@ -9,6 +9,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,9 +29,9 @@ import java.util.logging.Logger;
  */
 public class DeathEventListener implements Listener {
     private static final Logger LOGGER = Logger.getLogger("Minecraft");
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public DeathEventListener(PotionGames plugin) {
+    public DeathEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -68,11 +69,11 @@ public class DeathEventListener implements Listener {
                 
                 // Economy reward for killer
                 if (plugin.getConfigManager().isEnableRewards()) {
-                    if (PotionGames.getEconomy() != null) {
-                        EconomyResponse r = PotionGames.getEconomy().depositPlayer(killer, plugin.getConfigManager().getKillReward());
+                    if (PotionGamesX.getEconomy() != null) {
+                        EconomyResponse r = PotionGamesX.getEconomy().depositPlayer(killer, plugin.getConfigManager().getKillReward());
                         if (r.transactionSuccess()) {
                             killer.sendMessage(Messages.KillReward(plugin.getConfigManager().getKillReward())
-                                .append(Component.text(" " + PotionGames.getEconomy().format(r.amount)).color(NamedTextColor.LIGHT_PURPLE)));
+                                .append(Component.text(" " + PotionGamesX.getEconomy().format(r.amount)).color(NamedTextColor.LIGHT_PURPLE)));
                         }
                     }
                 }
@@ -91,7 +92,13 @@ public class DeathEventListener implements Listener {
                 }
                 
                 killer.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30 * 20, 0, true, true, true));
-                killer.playSound(killer.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 1, 1);
+                Location loc = killer.getLocation();
+                if (loc != null) {
+                    Sound sound = Sound.ENTITY_ENDER_DRAGON_HURT;
+                    if (sound != null) {
+                        killer.playSound(loc, sound, 1, 1);
+                    }
+                }
             }
             
             // Update team counts if teams enabled
@@ -203,7 +210,7 @@ public class DeathEventListener implements Listener {
                 }
             }
                 } catch (NumberFormatException ex) {
-                    LOGGER.log(Level.WARNING, "[PotionGames] Invalid team ID in death event", ex);
+                    LOGGER.log(Level.WARNING, "[PotionGamesX] Invalid team ID in death event", ex);
                 }
     }
 }

@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * Implementation of IBlockStateManager.
- * Consolidates 12 HashMaps for block/chest tracking from PotionGames:
+ * Consolidates 12 HashMaps for block/chest tracking from PotionGamesX:
  * - Global: chests, placedBlocks, breakedBlocks, waterBlocks, liquidPlaced
  * - Per-lobby: lobbychests, lobbychestsdata, lobbyPlacedBlocks, lobbyBreakedBlocks,
  *              lobbyWaterBlocks, lobbyLiquidPlaced, lobbyLiquidPlacedData

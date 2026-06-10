@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.listeners;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.LightningStrike;
@@ -17,9 +17,9 @@ import java.util.Objects;
  * Extracted from monolithic Events.java.
  */
 public class CombatEventListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public CombatEventListener(PotionGames plugin) {
+    public CombatEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -27,7 +27,7 @@ public class CombatEventListener implements Listener {
         try {
             Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
             if (lobby != null) return lobby.getPlayerTeam(player);
-        } catch (NumberFormatException e) { }
+        } catch (NumberFormatException ignored) { }
         return null;
     }
 
@@ -36,11 +36,7 @@ public class CombatEventListener implements Listener {
         if (plugin.getConfigManager().isGameServer()) {
             e.setCancelled(e.getDamager() instanceof LightningStrike || e.getDamager() instanceof Firework);
             if (e.getEntity() instanceof Player p && e.getDamager() instanceof TNTPrimed) {
-                if (p.getHealth() - 4 <= 0) {
-                    p.setHealth(p.getHealth() - 4);
-                } else {
-                    p.setHealth(p.getHealth() - 4 <= 0 ? 0D : p.getHealth() - 4);
-                }
+                p.setHealth(Math.max(0, p.getHealth() - 4));
             }
             if (!plugin.getConfigManager().isFriendlyFire()) {
                 if (e.getEntity() instanceof Player p && e.getDamager() instanceof Player d) {

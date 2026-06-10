@@ -2,7 +2,7 @@ package com.tw0far.potiongames.models;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 
 /**
  * Manages configuration for a single lobby with inheritance from global defaults.
@@ -97,7 +97,7 @@ public class LobbyConfig {
         if (lobbies.contains(path)) {
             return lobbies.getInt(path);
         }
-        PotionGames plugin = PotionGames.getInstance();
+        PotionGamesX plugin = PotionGamesX.getInstance();
         if (plugin != null && plugin.getConfig().contains(path)) {
             return plugin.getConfig().getInt(path);
         }
@@ -111,7 +111,7 @@ public class LobbyConfig {
         if (lobbies.contains(path)) {
             return lobbies.getBoolean(path);
         }
-        PotionGames plugin = PotionGames.getInstance();
+        PotionGamesX plugin = PotionGamesX.getInstance();
         if (plugin != null && plugin.getConfig().contains(path)) {
             return plugin.getConfig().getBoolean(path);
         }

@@ -1,6 +1,6 @@
 name: PotionGamesX
 author: Tw0Far
-main: com.tw0far.potiongames.main.PotionGames
+main: com.tw0far.potiongames.PotionGamesX
 version: 1.0.0
 api-version: 26.1.2
 softdepend:

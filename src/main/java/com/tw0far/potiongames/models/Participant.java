@@ -12,7 +12,6 @@ import net.kyori.adventure.text.Component;
 public class Participant {
     private Lobby lobby;
     private Kit kit;
-    private Team team;
     private Arena votedArena;
     private Player player;
     private PlayerState savedState;
@@ -76,7 +75,6 @@ public class Participant {
 
     private void clearPlayer() {
         kit = null;
-        team = null;
         votedArena = null;
         player.getInventory().clear();
     }
@@ -99,14 +97,6 @@ public class Participant {
 
     public void setKit(Kit kit) {
         this.kit = kit;
-    }
-
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
     }
 
     public Arena getVotedArena() {

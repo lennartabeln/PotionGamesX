@@ -6,7 +6,7 @@ import java.util.*;
 
 /**
  * Implementation of IItemStateManager.
- * Consolidates 12 collections for loot and shop items from PotionGames:
+ * Consolidates 12 collections for loot and shop items from PotionGamesX:
  * - food1, food2, armour1-5, weapons1-2, potions (loot)
  * - shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale (shop config)
  */

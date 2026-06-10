@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.commands;
 
-import com.tw0far.potiongames.main.PotionGames;
+import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
  * /pg start - Set game countdown to 10 seconds
  */
 public class StartCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public StartCommand(PotionGames plugin) {
+    public StartCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -24,11 +24,7 @@ public class StartCommand implements ICommand {
     public String getPermission() {
         return "pg.start";
     }
-    
-    @Override
-    public boolean requiresGameServer() {
-        return false;
-    }
+
     
     @Override
     public boolean execute(Player player, String[] args) {
