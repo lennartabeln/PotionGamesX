@@ -198,7 +198,7 @@ public class InventoryEventListener implements Listener {
     }
     
     private void handleArenaVoting(InventoryClickEvent e, Player p, String s) {
-        if (e.getView().title().equals(Messages.ArenaSelector())) {
+        if (e.getView().title().equals(Messages.ArenaSelectorTitle())) {
             String displayname = getPlainDisplayName(e.getCurrentItem());
             if (displayname != null) {
                     
@@ -673,7 +673,6 @@ public class InventoryEventListener implements Listener {
             }
         }
 
-        if (plugin.getConfigManager().isGameServer()) {
             if (plugin.getGame().isActivePlayer(p) || plugin.getGame().isInLobby(p)) {
                 if (e.getAction() == Action.PHYSICAL) {
                     var clicked = e.getClickedBlock();
@@ -1257,13 +1256,11 @@ public class InventoryEventListener implements Listener {
                     }
                 }
             }
-        }
     }
     
     @EventHandler
     public void onDropItem(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
-        if (plugin.getConfigManager().isGameServer()) {
             if (plugin.getGame().getActivePlayers().contains(p) || plugin.getGame().getPlayerLobby(p) != null) {
                 
                     String s = null;
@@ -1275,6 +1272,5 @@ public class InventoryEventListener implements Listener {
                     GameStates state = plugin.getLobbyStateManager().getGameState(s); e.setCancelled(state != GameStates.INGAME && !Objects.equals(plugin.getGame().getPlayerLobby(p), s));
                 
             }
-        }
     }
 }

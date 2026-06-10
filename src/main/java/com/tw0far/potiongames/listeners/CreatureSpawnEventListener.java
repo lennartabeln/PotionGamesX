@@ -18,10 +18,6 @@ public class CreatureSpawnEventListener implements Listener {
     
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e) {
-        if (!plugin.getConfigManager().isGameServer()) {
-            return;
-        }
-        
         // Prevent mob spawning during active games
         if (plugin.getGame().getActivePlayerCount() > 0) {
             e.setCancelled(true);

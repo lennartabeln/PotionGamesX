@@ -91,12 +91,20 @@ public class SetupHandler implements ISetupHandler {
             inventory.setItem(5, addspawn);
         }
 
+        ItemStack adddeathmatchspawn = new ItemStack(Material.STICK);
+        ItemMeta adddeathmatchspawnmeta = adddeathmatchspawn.getItemMeta();
+        if (adddeathmatchspawnmeta != null) {
+            adddeathmatchspawnmeta.displayName(Messages.SetupAddDeleteDeathmatchSpawnLabel());
+            adddeathmatchspawn.setItemMeta(adddeathmatchspawnmeta);
+            inventory.setItem(6, adddeathmatchspawn);
+        }
+
         ItemStack signsetup = new ItemStack(Material.OAK_SIGN);
         ItemMeta signsetupmeta = signsetup.getItemMeta();
         if (signsetupmeta != null) {
             signsetupmeta.displayName(Messages.SetupJoinSignLabel());
             signsetup.setItemMeta(signsetupmeta);
-            inventory.setItem(6, signsetup);
+            inventory.setItem(7, signsetup);
         }
 
         ItemStack leavesetup = new ItemStack(Material.BARRIER);
@@ -104,7 +112,7 @@ public class SetupHandler implements ISetupHandler {
         if (leavesetupmeta != null) {
             leavesetupmeta.displayName(Messages.SetupLeaveModeLabel());
             leavesetup.setItemMeta(leavesetupmeta);
-            inventory.setItem(7, leavesetup);
+            inventory.setItem(8, leavesetup);
         }
     }
 
@@ -274,8 +282,8 @@ public class SetupHandler implements ISetupHandler {
             p.sendMessage(Messages.ArenaDoesNotExist());
             return;
         }
-        int spawnId = arena.getSpawns().size() - 1;
-        if (spawnId < 0) {
+        int spawnId = arena.getSpawns().size();
+        if (spawnId < 1) {
             p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.no_spawns", "No spawns are configured for that arena.")).color(NamedTextColor.RED)));
             return;
         }
@@ -330,8 +338,8 @@ public class SetupHandler implements ISetupHandler {
             p.sendMessage(Messages.ArenaDoesNotExist());
             return;
         }
-        int spawnId = arena.getDeathmatchSpawns().size() - 1;
-        if (spawnId < 0) {
+        int spawnId = arena.getDeathmatchSpawns().size();
+        if (spawnId < 1) {
             p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.no_deathmatch_spawns", "No deathmatch spawns are configured for that arena.")).color(NamedTextColor.RED)));
             return;
         }

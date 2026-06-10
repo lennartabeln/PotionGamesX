@@ -39,10 +39,6 @@ public class DeathEventListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
         
-        if (!plugin.getConfigManager().isGameServer()) {
-            return;
-        }
-        
         String lobbyId = plugin.getGame().getPlayerLobby(p);
         if (lobbyId == null) {
             return;

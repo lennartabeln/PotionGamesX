@@ -19,7 +19,7 @@ pg:
 
   # BungeeCord / Proxy network support
   # When game ends, players are sent back to this server
-  bungeeServer: lobby
+  bungeeServer: hub
 
   # ═══════════════════════════════════════════════════════
   # DATABASE CONFIGURATION

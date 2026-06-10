@@ -17,11 +17,7 @@ public class BlockFadeEventListener implements Listener {
     }
     
     @EventHandler
-    public void onBlockFade(BlockFadeEvent e) {
-        if (!plugin.getConfigManager().isGameServer()) {
-            return;
-        }
-        
+    public void onBlockFade(BlockFadeEvent e) {        
         // Prevent block fade during active games
         if (plugin.getGame().getActivePlayerCount() > 0) {
             e.setCancelled(true);

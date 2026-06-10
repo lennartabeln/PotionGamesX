@@ -27,7 +27,6 @@ public class BlockEventListener implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         var p = e.getPlayer();
-        if (plugin.getConfigManager().isGameServer()) {
             String s = plugin.getGame().getPlayerLobby(p);
             if (s != null) {
                 if (!plugin.getLobbyStateManager().isBuildAllowed(s)) {
@@ -41,13 +40,11 @@ public class BlockEventListener implements Listener {
                     }
                 }
             }
-        }
     }
     
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         var p = e.getPlayer();
-        if (plugin.getConfigManager().isGameServer()) {
             String s = plugin.getGame().getPlayerLobby(p);
             if (s != null) {
                 if (!plugin.getLobbyStateManager().isBuildAllowed(s)) {
@@ -67,13 +64,11 @@ public class BlockEventListener implements Listener {
                     }
                 }
             }
-        }
     }
     
     @EventHandler
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
         var p = e.getPlayer();
-        if (plugin.getConfigManager().isGameServer()) {
             String s = plugin.getGame().getPlayerLobby(p);
             if (s != null) {
                 if (!plugin.getLobbyStateManager().isBuildAllowed(s)) {
@@ -86,7 +81,6 @@ public class BlockEventListener implements Listener {
                     }
                 }
             }
-        }
     }
     
     private boolean isAllowedBreakBlock(Material material) {

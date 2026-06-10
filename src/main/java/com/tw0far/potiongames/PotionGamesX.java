@@ -143,7 +143,7 @@ public class PotionGamesX extends JavaPlugin {
         new EnableBootstrapInitializer(this).initialize();
 
         // Auto-join first lobby if enabled
-        if (configManager.isGameServer() && configManager.isStartOnJoin()) {
+        if (configManager.isGameServer() || configManager.isStartOnJoin()) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 game.autoJoinLobby(player);
             }
@@ -188,7 +188,7 @@ public class PotionGamesX extends JavaPlugin {
         if (blockStateManager != null) blockStateManager.onDisable();
         if (databaseManager != null) databaseManager.onDisable();
 
-        if (configManager.isGameServer() && configManager.isStartOnJoin()) {
+        if (configManager.isGameServer() || configManager.isStartOnJoin()) {
             for (Player all : Bukkit.getOnlinePlayers()) {
                 if (all == null) continue;
                 all.kick(Messages.ServerStopped());

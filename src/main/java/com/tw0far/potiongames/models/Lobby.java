@@ -669,10 +669,10 @@ public class Lobby {
             case RESET:
                 restoreBlocks();
                 for (Player player : new ArrayList<>(activePlayers)) {
-                    sendToServer(player, PotionGamesX.getInstance().getConfig().getString("pg.bungeeServer", "lobby"));
+                    sendToServer(player, PotionGamesX.getInstance().getConfig().getString("pg.bungeeServer", "hub"));
                 }
                 for (Player player : new ArrayList<>(spectatorPlayers)) {
-                    sendToServer(player, PotionGamesX.getInstance().getConfig().getString("pg.bungeeServer", "lobby"));
+                    sendToServer(player, PotionGamesX.getInstance().getConfig().getString("pg.bungeeServer", "hub"));
                 }
                 PotionGamesX.getInstance().getGame().clearAllPlayers();
                 setCurrentArena(null);

@@ -33,7 +33,6 @@ public class CombatEventListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-        if (plugin.getConfigManager().isGameServer()) {
             e.setCancelled(e.getDamager() instanceof LightningStrike || e.getDamager() instanceof Firework);
             if (e.getEntity() instanceof Player p && e.getDamager() instanceof TNTPrimed) {
                 p.setHealth(Math.max(0, p.getHealth() - 4));
@@ -54,6 +53,5 @@ public class CombatEventListener implements Listener {
                     }
                 }
             }
-        }
     }
 }

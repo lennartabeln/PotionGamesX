@@ -18,10 +18,6 @@ public class LeavesDecayEventListener implements Listener {
     
     @EventHandler
     public void onLeavesDecay(LeavesDecayEvent e) {
-        if (!plugin.getConfigManager().isGameServer()) {
-            return;
-        }
-        
         // Prevent leaves decay during active games
         if (plugin.getGame().getActivePlayerCount() > 0) {
             e.setCancelled(true);

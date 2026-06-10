@@ -18,10 +18,6 @@ public class ExplosionEventListener implements Listener {
     
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e) {
-        if (!plugin.getConfigManager().isGameServer()) {
-            return;
-        }
-        
         // Check if there's an active game
         boolean gameActive = plugin.getGame().getActivePlayerCount() > 0;
         

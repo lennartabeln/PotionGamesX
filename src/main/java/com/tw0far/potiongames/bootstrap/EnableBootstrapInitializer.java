@@ -108,10 +108,7 @@ public final class EnableBootstrapInitializer {
     }
 
     private void initializeLobbies() {
-        if (!plugin.getConfigManager().isGameServer()) {
-            new RankWallUpdater(plugin).start();
-            return;
-        }
+        new RankWallUpdater(plugin).start();
 
         for (int lobby = 1; lobby <= 27; lobby++) {
             if (!Settings.lobbies.contains("pg.lobbies." + lobby)) {

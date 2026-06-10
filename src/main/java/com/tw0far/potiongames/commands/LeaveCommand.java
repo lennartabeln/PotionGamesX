@@ -40,8 +40,12 @@ public class LeaveCommand implements ICommand {
         }
 
         if (plugin.getConfigManager().isGameServer()) {
-            String hub = plugin.getConfig().getString("pg.bungeeServer", "lobby");
-            sendToServer(player, hub);
+            String hub = plugin.getConfig().getString("pg.bungeeServer", "hub");
+            if (plugin.getConfigManager().isStartOnJoin()) {
+                player.kick(Component.text("Connecting to " + hub + "...").color(NamedTextColor.GREEN));
+            } else {
+                sendToServer(player, hub);
+            }
         }
 
         return true;

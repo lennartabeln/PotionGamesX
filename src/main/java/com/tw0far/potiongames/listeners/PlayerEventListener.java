@@ -39,14 +39,13 @@ public class PlayerEventListener implements Listener {
         }
         
         // Auto-join first lobby if configured
-        if (plugin.getConfigManager().isGameServer() && plugin.getConfigManager().isStartOnJoin()) {
+        if (plugin.getConfigManager().isGameServer() || plugin.getConfigManager().isStartOnJoin()) {
             plugin.getGame().autoJoinLobby(p);
         }
     }
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if (!plugin.getConfigManager().isGameServer()) return;
         Player p = e.getPlayer();
         String lobbyId = plugin.getGame().getPlayerLobby(p);
         if (lobbyId != null) {
@@ -69,7 +68,6 @@ public class PlayerEventListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        if (!plugin.getConfigManager().isGameServer()) return;
         Player p = e.getPlayer();
         String lobbyId = null;
         if (plugin.getGame().isInLobby(p)) {

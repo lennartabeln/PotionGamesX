@@ -18,10 +18,6 @@ public class BlockFlowEventListener implements Listener {
     
     @EventHandler
     public void onBlockFlow(BlockFromToEvent e) {
-        if (!plugin.getConfigManager().isGameServer()) {
-            return;
-        }
-        
         // Prevent water/lava flow during active games
         if (plugin.getGame().getActivePlayerCount() > 0) {
             e.setCancelled(true);

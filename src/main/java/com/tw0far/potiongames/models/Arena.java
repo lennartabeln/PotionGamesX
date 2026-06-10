@@ -273,7 +273,8 @@ public class Arena {
      * @return true if successfully removed and saved to config
      */
     public boolean removeSpawn(int spawnId) {
-        if (spawnId < 0 || spawnId >= spawns.size()) {
+        int index = spawnId - 1;
+        if (index < 0 || index >= spawns.size()) {
             return false;
         }
         
@@ -281,7 +282,7 @@ public class Arena {
         Settings.lobbies.set(spawnPath, null);
         
         try {
-            spawns.remove(spawnId);
+            spawns.remove(index);
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {
@@ -370,7 +371,8 @@ public class Arena {
      * @return true if successfully removed and saved to config
      */
     public boolean removeDeathmatchSpawn(int spawnId) {
-        if (spawnId < 0 || spawnId >= deathmatchSpawns.size()) {
+        int index = spawnId - 1;
+        if (index < 0 || index >= deathmatchSpawns.size()) {
             return false;
         }
         
@@ -378,7 +380,7 @@ public class Arena {
         Settings.lobbies.set(spawnPath, null);
         
         try {
-            deathmatchSpawns.remove(spawnId);
+            deathmatchSpawns.remove(index);
             Settings.lobbies.save(Settings.lobbiesFile);
             return true;
         } catch (Exception ex) {

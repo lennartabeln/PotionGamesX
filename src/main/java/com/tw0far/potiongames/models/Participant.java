@@ -35,7 +35,7 @@ public class Participant {
         // Map/Arena selector
         ItemStack map = new ItemStack(Material.PAPER);
         ItemMeta mapMeta = map.getItemMeta();
-        mapMeta.displayName(Messages.ArenaSelector());
+        mapMeta.displayName(Messages.ArenaSelectorTitle());
         map.setItemMeta(mapMeta);
         inv.setItem(0, map);
         

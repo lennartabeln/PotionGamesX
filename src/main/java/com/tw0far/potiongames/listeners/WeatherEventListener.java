@@ -19,10 +19,6 @@ public class WeatherEventListener implements Listener {
     
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent e) {
-        if (!plugin.getConfigManager().isGameServer()) {
-            return;
-        }
-        
         // Check if there's an active game
         boolean gameActive = plugin.getGame().getActivePlayerCount() > 0;
         
@@ -39,10 +35,6 @@ public class WeatherEventListener implements Listener {
     
     @EventHandler
     public void onLightningStrike(LightningStrikeEvent e) {
-        if (!plugin.getConfigManager().isGameServer()) {
-            return;
-        }
-        
         // Check if there's an active game
         boolean gameActive = plugin.getGame().getActivePlayerCount() > 0;
         

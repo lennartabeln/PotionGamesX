@@ -98,9 +98,11 @@ public class Messages {
         addDefault(lang, "choose.arena_first", "Choose an arena first!");
         addDefault(lang, "permission.no_use", "You don't have permission to use this!");
         addDefault(lang, "spawn.none_to_remove", "No spawns to remove!");
+        addDefault(lang, "deathmatch_spawn.none_to_remove", "No deathmatch spawns to remove!");
         addDefault(lang, "setup.add_delete_lobby", "Add(Left)/Del(Right) Lobby");
         addDefault(lang, "setup.add_delete_arena", "Add(Left)/Del(Right) Arena");
         addDefault(lang, "setup.add_delete_spawn", "Add(Left)/Del(Right) Spawn");
+        addDefault(lang, "setup.add_delete_deathmatch_spawn", "Add(Left)/Del(Right) Deathmatch-Spawn");
         addDefault(lang, "setup.join_sign", "Set Join-Sign");
         addDefault(lang, "setup.leave_mode", "Leave Setup-Mode");
         addDefault(lang, "sign.prefix", "[PG]");
@@ -498,6 +500,10 @@ public class Messages {
         return prefix(Component.text(get("spawn.none_to_remove", "No spawns to remove!")).color(NamedTextColor.YELLOW));
     }
 
+    public static Component NoDeathmatchSpawnsToRemove() {
+        return prefix(Component.text(get("deathmatch_spawn.none_to_remove", "No deathmatch spawns to remove!")).color(NamedTextColor.YELLOW));
+    }
+
     public static Component SetupAddDeleteLobbyLabel() {
         return Component.text(get("setup.add_delete_lobby", "Add(Left)/Del(Right) Lobby")).color(NamedTextColor.DARK_AQUA);
     }
@@ -508,6 +514,10 @@ public class Messages {
 
     public static Component SetupAddDeleteSpawnLabel() {
         return Component.text(get("setup.add_delete_spawn", "Add(Left)/Del(Right) Spawn")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component SetupAddDeleteDeathmatchSpawnLabel() {
+        return Component.text(get("setup.add_delete_deathmatch_spawn", "Add(Left)/Del(Right) Deathmatch-Spawn")).color(NamedTextColor.DARK_AQUA);
     }
 
     public static Component SetupJoinSignLabel() {
