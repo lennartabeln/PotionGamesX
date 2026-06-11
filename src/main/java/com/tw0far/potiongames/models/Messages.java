@@ -3,6 +3,8 @@ package com.tw0far.potiongames.models;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
+import java.io.IOException;
+
 public class Messages {
     private static String get(String key, String def) {
         String lang = Settings.language != null ? Settings.language : "en_US";
@@ -16,10 +18,6 @@ public class Messages {
 
     private static Component prefix(Component message) {
         return Settings.prefix.append(message);
-    }
-
-    public static String raw(String key, String def) {
-        return get(key, def);
     }
 
     public static void seed() {
@@ -66,6 +64,7 @@ public class Messages {
         addDefault(lang, "head.set", "Head successfully set!");
         addDefault(lang, "help.use_pg_help", "Use /pg help for help!");
         addDefault(lang, "join.could_not_join_lobby", "Could not join lobby!");
+        addDefault(lang, "join.already_in_lobby", "You are already in a lobby!");
         addDefault(lang, "join.success", "Successfully joined lobby");
         addDefault(lang, "kd.label", "K/D");
         addDefault(lang, "kill.reward", "For killing a player you get");
@@ -154,11 +153,11 @@ public class Messages {
         addDefault(lang, "join.leave_success", "Successfully left lobby");
         addDefault(lang, "you.not_empty_bottle", "You not have an empty bottle!");
         addDefault(lang, "you.not_enough_coins", "You not have enough Coins!");
-        
+
         Settings.messages.options().copyDefaults(true);
         try {
             Settings.messages.save(Settings.messagesFile);
-        } catch (java.io.IOException ignored) {
+        } catch (IOException ignored) {
         }
     }
 
@@ -241,8 +240,16 @@ public class Messages {
         return prefix(Component.text("--------------" + get("arena.selector", "Arena-Selector") + "--------------").color(NamedTextColor.GRAY));
     }
 
+    public static String ArenaSelectorText() {
+        return get("arena.selector", "Arena-Selector");
+    }
+
     public static Component ArenaSelectorTitle() {
-        return prefix(Component.text(get("arena.selector", "Arena-Selector")).color(NamedTextColor.DARK_AQUA));
+        return Component.text(ArenaSelectorText()).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component ArenaSelectorItem() {
+        return Component.text(ArenaSelectorText()).color(NamedTextColor.DARK_AQUA);
     }
 
     public static Component BuildToggle(boolean enabled) {
@@ -256,6 +263,10 @@ public class Messages {
 
     public static Component CoinsLabel() {
         return prefix(Component.text(get("coins.label", "Coins")).color(NamedTextColor.GOLD));
+    }
+
+    public static String CoinsText() {
+        return get("coins.label", "Coins");
     }
 
     public static Component CommandsLabel() {
@@ -306,6 +317,10 @@ public class Messages {
         return prefix(Component.text(get("duration.label", "Duration")).color(NamedTextColor.AQUA));
     }
 
+    public static String DurationText() {
+        return get("duration.label", "Duration");
+    }
+
     public static Component ErrorGeneric() {
         return prefix(Component.text(get("error.generic", "An error occurred")).color(NamedTextColor.RED));
     }
@@ -350,6 +365,10 @@ public class Messages {
         return prefix(Component.text(get("join.could_not_join_lobby", "Could not join lobby!")).color(NamedTextColor.RED));
     }
 
+    public static Component JoinAlreadyInLobby() {
+        return prefix(Component.text(get("join.already_in_lobby", "You are already in a lobby!")).color(NamedTextColor.RED));
+    }
+
     public static Component JoinSuccess() {
         return prefix(Component.text(get("join.success", "Successfully joined lobby")).color(NamedTextColor.GREEN));
     }
@@ -386,12 +405,28 @@ public class Messages {
         return prefix(Component.text(get("kit.now_have", "You now have the kit") + " " + kitName).color(NamedTextColor.GREEN));
     }
 
+    public static String KitSelectorText() {
+        return get("kit.selector", "Kit-Selector");
+    }
+
     public static Component KitSelector() {
-        return prefix(Component.text(get("kit.selector", "Kit-Selector")).color(NamedTextColor.AQUA));
+        return Component.text(KitSelectorText()).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component KitSelectorItem() {
+        return Component.text(KitSelectorText()).color(NamedTextColor.DARK_AQUA);
     }
 
     public static Component LeaveLabel() {
         return prefix(Component.text(get("leave.label", "Leave")).color(NamedTextColor.RED));
+    }
+
+    public static String LeaveText() {
+        return get("leave.label", "Leave");
+    }
+
+    public static Component LeaveItem() {
+        return Component.text(LeaveText()).color(NamedTextColor.DARK_AQUA);
     }
 
     public static Component LobbyCouldNotSpawn() {
@@ -472,6 +507,10 @@ public class Messages {
         return Component.text(get("choose.arena", "Choose Arena")).color(NamedTextColor.DARK_AQUA);
     }
 
+    public static String ChooseArenaText() {
+        return get("choose.arena", "Choose Arena");
+    }
+
     public static Component ChooseLobbyTitle() {
         return prefix(Component.text(get("choose.lobby", "Choose Lobby")).color(NamedTextColor.DARK_AQUA));
     }
@@ -481,7 +520,7 @@ public class Messages {
     }
 
     public static Component LobbyListTitle() {
-        return prefix(Component.text(get("lobby.list", "Lobby List")).color(NamedTextColor.DARK_AQUA));
+        return Component.text(get("lobby.list", "Lobby List")).color(NamedTextColor.DARK_AQUA);
     }
 
     public static Component ChooseLobbyFirst() {
@@ -552,6 +591,10 @@ public class Messages {
         return prefix(Component.text(get("players.label", "Players")).color(NamedTextColor.GRAY));
     }
 
+    public static String PlayersText() {
+        return get("players.label", "Players");
+    }
+
     public static Component PluginReloaded() {
         return prefix(Component.text(get("plugin.reloaded", "Plugin successfully reloaded!")).color(NamedTextColor.GREEN));
     }
@@ -569,11 +612,15 @@ public class Messages {
     }
 
     public static Component RandomLabel() {
-        return prefix(Component.text(get("random.label", "Random")).color(NamedTextColor.AQUA));
+        return prefix(Component.text(RandomText()).color(NamedTextColor.AQUA));
     }
 
     public static String RandomText() {
         return get("random.label", "Random");
+    }
+
+    public static Component RandomItem() {
+        return Component.text(RandomText()).color(NamedTextColor.DARK_PURPLE);
     }
 
     public static Component RankwallCouldNotUpdate() {
@@ -601,11 +648,19 @@ public class Messages {
     }
 
     public static Component SelectorTeam() {
-        return prefix(Component.text(get("selector.team", "Team-Selector")).color(NamedTextColor.AQUA));
+        return prefix(Component.text(SelectorTeamText()).color(NamedTextColor.AQUA));
+    }
+
+    public static Component SelectorTeamTitle() {
+        return Component.text(SelectorTeamText()).color(NamedTextColor.DARK_AQUA);
     }
 
     public static String SelectorTeamText() {
         return get("selector.team", "Team-Selector");
+    }
+
+    public static Component SelectorTeamItem() {
+        return Component.text(SelectorTeamText()).color(NamedTextColor.DARK_AQUA);
     }
 
     public static Component ServerStopped() {
@@ -628,8 +683,16 @@ public class Messages {
         return prefix(Component.text(get("spawn.invalid", "is not a valid spawn!")).color(NamedTextColor.RED));
     }
 
+    public static String StatsText() {
+        return get("stats.label", "Stats");
+    }
+
     public static Component StatsLabel() {
-        return prefix(Component.text("--------------" + get("stats.label", "Stats") + "--------------").color(NamedTextColor.GRAY));
+        return prefix(Component.text("--------------" + StatsText() + "--------------").color(NamedTextColor.GRAY));
+    }
+
+    public static Component StatsItem() {
+        return Component.text(StatsText()).color(NamedTextColor.DARK_AQUA);
     }
 
     public static Component TeamAlreadyFull() {
@@ -638,6 +701,10 @@ public class Messages {
 
     public static Component TeamNowIn(String teamName) {
         return prefix(Component.text(get("team.now_in", "You are now in team") + " " + teamName).color(NamedTextColor.GREEN));
+    }
+
+    public static String TeamNowInText() {
+        return get("team.now_in", "You are now in team");
     }
 
     public static Component TeleportToArenaFailed() {
@@ -739,4 +806,90 @@ public class Messages {
     public static Component YouNotEnoughCoins() {
         return prefix(Component.text(get("you.not_enough_coins", "You not have enough Coins!")).color(NamedTextColor.RED));
     }
+
+    public static String BucketWaterNotAllowedText() { return get("bucket.water_not_allowed", "Water buckets are not allowed during games!"); }
+    public static String CommandAddarenaUsageText() { return get("command.addarena.usage", "Usage: /pg addarena <lobbynumber> <arenaname>"); }
+    public static String CommandAdddeathmatchUsageText() { return get("command.adddeathmatch.usage", "Usage: /pg adddeathmatch <lobbynumber> <arenaname>"); }
+    public static String CommandAddlobbyUsageText() { return get("command.addlobby.usage", "Usage: /pg addlobby <lobbynumber>"); }
+    public static String CommandAddspawnUsageText() { return get("command.addspawn.usage", "Usage: /pg addspawn <lobbynumber> <arenaname>"); }
+    public static String CommandDelarenaUsageText() { return get("command.delarena.usage", "Usage: /pg delarena <lobbynumber> <arenaname>"); }
+    public static String CommandDeldeathmatchUsageText() { return get("command.deldeathmatch.usage", "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"); }
+    public static String CommandDellobbyUsageText() { return get("command.dellobby.usage", "Usage: /pg dellobby <lobbynumber>"); }
+    public static String CommandDelspawnUsageText() { return get("command.delspawn.usage", "Usage: /pg delspawn <lobbynumber> <arenaname>"); }
+    public static String CommandExecutionErrorText() { return get("command.execution_error", "An error occurred while executing this command!"); }
+    public static String CommandJoinsignUsageText() { return get("command.joinsign.usage", "Usage: /pg joinsign <lobbynumber>"); }
+    public static String CommandUnknownText() { return get("command.unknown", "Unknown command! Use /pg help for help."); }
+    public static String DiedText() { return get("died", "died"); }
+    public static String HeadLookBlock1Text() { return get("head.look_block_1", "Look at a block to set the 1st place head."); }
+    public static String HeadLookBlock2Text() { return get("head.look_block_2", "Look at a block to set the 2nd place head."); }
+    public static String HeadLookBlock3Text() { return get("head.look_block_3", "Look at a block to set the 3rd place head."); }
+    public static String HeadSet1Text() { return get("head.set_1", "1st place head set."); }
+    public static String HeadSet2Text() { return get("head.set_2", "2nd place head set."); }
+    public static String HeadSet3Text() { return get("head.set_3", "3rd place head set."); }
+    public static String HelpAddarenaText() { return get("help.addarena", "/pg addarena [lobbynumber] [arenaname] - Add an arena"); }
+    public static String HelpAdddeathmatchText() { return get("help.adddeathmatch", "/pg adddeathmatch [lobbynumber] [arenaname] - Add a deathmatch spawn"); }
+    public static String HelpAddlobbyText() { return get("help.addlobby", "/pg addlobby [lobbynumber] - Add a lobby"); }
+    public static String HelpAddspawnText() { return get("help.addspawn", "/pg addspawn [lobbynumber] [arenaname] - Add a spawn"); }
+    public static String HelpBroadcastText() { return get("help.broadcast", "/pg broadcast <message> - Send announcement to all players"); }
+    public static String HelpBuildText() { return get("help.build", "/pg build - Activate build mode"); }
+    public static String HelpBuildUsageText() { return get("help.build_usage", "/pg build - Enable/disable build mode (requires pg.build)"); }
+    public static String HelpConfigText() { return get("help.config", "/pg config - View current configuration"); }
+    public static String HelpDatabaseText() { return get("help.database", "/pg database - Toggle database mode (MySQL/SQLite)"); }
+    public static String HelpDatabaseUsageText() { return get("help.database_usage", "/pg database - Toggle database mode MySQL/SQLite (requires pg.database)"); }
+    public static String HelpDebugText() { return get("help.debug", "/pg debug - Toggle debug logging mode"); }
+    public static String HelpDellobbyText() { return get("help.dellobby", "/pg dellobby [lobbynumber] - Remove a lobby"); }
+    public static String HelpForceText() { return get("help.force", "/pg force [arenaname] - Force an arena"); }
+    public static String HelpForceUsageText() { return get("help.force_usage", "/pg force <arena_name> - Force a specific arena (requires pg.force)"); }
+    public static String HelpGameserverText() { return get("help.gameserver", "/pg gameserver - Toggle gameserver mode (online/offline)"); }
+    public static String HelpGameserverUsageText() { return get("help.gameserver_usage", "/pg gameserver - Toggle gameserver mode (requires pg.gameserver)"); }
+    public static String HelpHeadText() { return get("help.head", "/pg headp1(2;3) - Add Player Head to Stats-Wall"); }
+    public static String HelpHeadp1UsageText() { return get("help.headp1_usage", "/pg headp1 (Look at 1st place head)"); }
+    public static String HelpHeadp2UsageText() { return get("help.headp2_usage", "/pg headp2 (Look at 2nd place head)"); }
+    public static String HelpHeadp3UsageText() { return get("help.headp3_usage", "/pg headp3 (Look at 3rd place head)"); }
+    public static String HelpHelpUsageText() { return get("help.help_usage", "/pg help - Show this help message"); }
+    public static String HelpJoinText() { return get("help.join", "/pg join # - Join a game"); }
+    public static String HelpJoinUsageText() { return get("help.join_usage", "/pg join <lobby_number> - Join a specific lobby"); }
+    public static String HelpJoinsignText() { return get("help.joinsign", "/pg joinsign [lobbynumber] - Add Join-Sign"); }
+    public static String HelpKickText() { return get("help.kick", "/pg kick <player> - Remove player from lobby"); }
+    public static String HelpLeaveText() { return get("help.leave", "/pg leave - Leave the game"); }
+    public static String HelpLeaveUsageText() { return get("help.leave_usage", "/pg leave - Leave the current game"); }
+    public static String HelpListText() { return get("help.list", "/pg list - List of all lobbies"); }
+    public static String HelpListUsageText() { return get("help.list_usage", "/pg list"); }
+    public static String HelpPauseText() { return get("help.pause", "/pg pause - Pause timer/countdown"); }
+    public static String HelpPauseUsageText() { return get("help.pause_usage", "/pg pause - Pause/resume the game (requires pg.pause)"); }
+    public static String HelpReloadText() { return get("help.reload", "/pg reload - Reload all configs"); }
+    public static String HelpReloadUsageText() { return get("help.reload_usage", "/pg reload - Reload all configurations and stop all games (requires pg.setup)"); }
+    public static String HelpRemovedeathmatchText() { return get("help.removedeathmatch", "/pg removedeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn"); }
+    public static String HelpRemoverenaText() { return get("help.removerena", "/pg removerena [lobbynumber] [arenaname] - Remove an arena"); }
+    public static String HelpRemovespawnText() { return get("help.removespawn", "/pg removespawn [lobbynumber] [arenaname] - Remove last spawn"); }
+    public static String HelpSetupText() { return get("help.setup", "/pg setup - Set up plugin"); }
+    public static String HelpSetupUsageText() { return get("help.setup_usage", "/pg setup - Start setup mode (requires pg.setup)"); }
+    public static String HelpSignText() { return get("help.sign", "/pg signp1(2;3) - Add Player Sign to Stats-Wall"); }
+    public static String HelpSignp1UsageText() { return get("help.signp1_usage", "/pg signp1 (Look at 1st place sign)"); }
+    public static String HelpSignp2UsageText() { return get("help.signp2_usage", "/pg signp2 (Look at 2nd place sign)"); }
+    public static String HelpSignp3UsageText() { return get("help.signp3_usage", "/pg signp3 (Look at 3rd place sign)"); }
+    public static String HelpStartText() { return get("help.start", "/pg start - Set lobby countdown to 10"); }
+    public static String HelpStartUsageText() { return get("help.start_usage", "/pg start - Set lobby countdown to 10 seconds (requires pg.start)"); }
+    public static String HelpStatsText() { return get("help.stats", "/pg stats [player] - Show player stats"); }
+    public static String HelpStatsUsageText() { return get("help.stats_usage", "/pg stats [player] - Show player statistics"); }
+    public static String HelpStatusText() { return get("help.status", "/pg status - Show server status and active lobbies"); }
+    public static String HelpTopText() { return get("help.top", "/pg top [type] - Show leaderboard (kills/deaths/wins/kd)"); }
+    public static String HelpVersionText() { return get("help.version", "/pg version - Show your and latest version of plugin"); }
+    public static String HelpVersionUsageText() { return get("help.version_usage", "/pg version - Check plugin version and updates (requires pg.update)"); }
+    public static String KilledByText() { return get("killed.by", "was killed by"); }
+    public static String ListNoLobbiesText() { return get("list.no_lobbies", "No lobbies available."); }
+    public static String SetupDisabledText() { return get("setup.disabled", "Setup mode disabled."); }
+    public static String SetupEnabledText() { return get("setup.enabled", "Setup mode enabled."); }
+    public static String SetupIncompleteText() { return get("setup.incomplete", "Lobby setup is incomplete: add at least one arena with one spawn before enabling the lobby."); }
+    public static String SetupNoBlockInRangeText() { return get("setup.no_block_in_range", "No block in range to set as join sign."); }
+    public static String SetupNoDeathmatchSpawnsText() { return get("setup.no_deathmatch_spawns", "No deathmatch spawns are configured for that arena."); }
+    public static String SetupNoSpawnsText() { return get("setup.no_spawns", "No spawns are configured for that arena."); }
+    public static String SignLookSign1Text() { return get("sign.look_sign_1", "Look at a sign to set the 1st place sign."); }
+    public static String SignLookSign2Text() { return get("sign.look_sign_2", "Look at a sign to set the 2nd place sign."); }
+    public static String SignLookSign3Text() { return get("sign.look_sign_3", "Look at a sign to set the 3rd place sign."); }
+    public static String SignSet1Text() { return get("sign.set_1", "1st place sign set."); }
+    public static String SignSet2Text() { return get("sign.set_2", "2nd place sign set."); }
+    public static String SignSet3Text() { return get("sign.set_3", "3rd place sign set."); }
+
 }
+

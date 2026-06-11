@@ -9,37 +9,38 @@ import org.bukkit.entity.Player;
  */
 public class SignP1Command implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public SignP1Command(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "signp1";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         org.bukkit.block.Block target = player.getTargetBlockExact(5);
         if (target == null || !(target.getState() instanceof org.bukkit.block.Sign)) {
-            player.sendMessage(Messages.raw("sign.look_sign_1", "Look at a sign to set the 1st place sign."));
+            player.sendMessage(Messages.SignLookSign1Text());
             return false;
         }
         plugin.getConfig().set("pg.RankWall.signp1", target.getLocation());
         plugin.saveConfig();
-        player.sendMessage(Messages.raw("sign.set_1", "1st place sign set."));
+        player.sendMessage(Messages.SignSet1Text());
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.signp1_usage", "/pg signp1 (Look at 1st place sign)");
+        return Messages.HelpSignp1UsageText();
     }
 }
+

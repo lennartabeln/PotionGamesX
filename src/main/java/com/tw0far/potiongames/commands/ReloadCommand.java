@@ -7,37 +7,37 @@ import org.bukkit.entity.Player;
 
 /**
  * /pg reload - Reload all configurations
- * 
+ *
  * FIXED: Now properly stops all games, clears memory, closes resources
  */
 public class ReloadCommand implements ICommand {
     private final PotionGamesX plugin;
     private final ReloadHandler reloadHandler;
-    
+
     public ReloadCommand(PotionGamesX plugin) {
         this.plugin = plugin;
         this.reloadHandler = new ReloadHandler(plugin);
     }
-    
+
     @Override
     public String getName() {
         return "reload";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         try {
             player.sendMessage(CommandDispatcher.createInfo("Starting plugin reload... this may take a moment."));
-            
+
             // Perform comprehensive reload
             boolean success = reloadHandler.performReload();
-            
+
             if (success) {
                 player.sendMessage(CommandDispatcher.createSuccess("Plugin successfully reloaded!"));
                 plugin.getLogger().info("Plugin reloaded by " + player.getName());
@@ -45,9 +45,9 @@ public class ReloadCommand implements ICommand {
                 player.sendMessage(CommandDispatcher.createError("Plugin reload failed! Check console for details."));
                 plugin.getLogger().severe("Plugin reload failed - partial state may remain");
             }
-            
+
             return true;
-            
+
         } catch (Exception e) {
             player.sendMessage(CommandDispatcher.createError("Unexpected error during reload!"));
             plugin.getLogger().severe("Reload failed with exception: " + e.getMessage());
@@ -55,9 +55,10 @@ public class ReloadCommand implements ICommand {
             return true;
         }
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.reload_usage", "/pg reload - Reload all configurations and stop all games (requires pg.setup)");
+        return Messages.HelpReloadUsageText();
     }
 }
+

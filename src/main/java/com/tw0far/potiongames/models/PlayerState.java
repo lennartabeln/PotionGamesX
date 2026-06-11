@@ -42,7 +42,7 @@ public class PlayerState {
         level = player.getLevel();
         exp = player.getExp();
         gameMode = player.getGameMode();
-        org.bukkit.Location loc = player.getLocation();
+        Location loc = player.getLocation();
         location = loc != null ? loc.clone() : null;
         potionEffects = new ArrayList<>(player.getActivePotionEffects());
         allowFlight = player.getAllowFlight();
@@ -52,7 +52,7 @@ public class PlayerState {
     public void restore(Player player) {
         if (player == null) return;
 
-        if (contents != null) {                         
+        if (contents != null) {
             player.getInventory().setContents(copy(contents));
         }
 

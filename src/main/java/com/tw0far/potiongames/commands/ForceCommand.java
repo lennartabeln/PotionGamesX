@@ -11,36 +11,36 @@ import org.bukkit.entity.Player;
  */
 public class ForceCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public ForceCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "force";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.force";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length < 2) {
             return false;
         }
-        
+
         String arena = args[1];
-        
+
         // Multi-lobby mode
         String lobbyId = plugin.getGame().getPlayerLobby(player);
         if (lobbyId == null) {
             lobbyId = plugin.getGame().getSpectatorLobby(player);
         }
-        
+
         if (lobbyId != null) {
             try {
                 Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
@@ -49,8 +49,8 @@ public class ForceCommand implements ICommand {
                     if (targetArena != null) {
                         plugin.getLobbyStateManager().setForcearena(lobbyId, true);
                         lobby.setCurrentArena(targetArena);
-                        lobby.setVotedArenaName(arena);
-                        
+                        plugin.getLobbyStateManager().setVotedArena(lobbyId, arena);
+
                         // Broadcast to all players in this lobby
                         for (Player all : plugin.getGame().getPlayersInLobby(lobbyId)) {
                             all.sendMessage(Messages.ArenaForced(arena));
@@ -65,9 +65,10 @@ public class ForceCommand implements ICommand {
         }
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.force_usage", "/pg force <arena_name> - Force a specific arena (requires pg.force)");
+        return Messages.HelpForceUsageText();
     }
 }
+

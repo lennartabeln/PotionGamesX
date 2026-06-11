@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
@@ -10,22 +11,22 @@ import org.bukkit.entity.Player;
  */
 public class StartCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public StartCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "start";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.start";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         // Multi-lobby mode
@@ -33,14 +34,14 @@ public class StartCommand implements ICommand {
         if (lobbyId == null) {
             lobbyId = plugin.getGame().getSpectatorLobby(player);
         }
-        
+
         if (lobbyId != null) {
             try {
                 Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
                 if (lobby != null) {
                     // Check if enough players
                     if (lobby.getPlayerCount() >= lobby.getMinPlayers()) {
-                        if (lobby.getState() == com.tw0far.potiongames.models.GameStates.WAITING) {
+                        if (lobby.getState() == GameStates.WAITING) {
                             lobby.setCountdown(10);
                             lobby.startCountdown();
                             // Broadcast to all players in this lobby
@@ -60,9 +61,10 @@ public class StartCommand implements ICommand {
         }
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.start_usage", "/pg start - Set lobby countdown to 10 seconds (requires pg.start)");
+        return Messages.HelpStartUsageText();
     }
 }
+

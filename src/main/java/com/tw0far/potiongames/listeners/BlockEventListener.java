@@ -19,11 +19,11 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
  */
 public class BlockEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public BlockEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         var p = e.getPlayer();
@@ -41,7 +41,7 @@ public class BlockEventListener implements Listener {
                 }
             }
     }
-    
+
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         var p = e.getPlayer();
@@ -65,7 +65,7 @@ public class BlockEventListener implements Listener {
                 }
             }
     }
-    
+
     @EventHandler
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
         var p = e.getPlayer();
@@ -82,22 +82,22 @@ public class BlockEventListener implements Listener {
                 }
             }
     }
-    
+
     private boolean isAllowedBreakBlock(Material material) {
-        return material == Material.COBWEB || material == Material.FIRE || material == Material.CAKE 
-            || material == Material.SHORT_GRASS || material == Material.TALL_GRASS || material == Material.DEAD_BUSH 
-            || material == Material.ACACIA_LEAVES || material == Material.BIRCH_LEAVES || material == Material.DARK_OAK_LEAVES 
-            || material == Material.JUNGLE_LEAVES || material == Material.OAK_LEAVES || material == Material.SPRUCE_LEAVES 
-            || material == Material.WARPED_FUNGUS || material == Material.CRIMSON_FUNGUS || material == Material.BROWN_MUSHROOM 
+        return material == Material.COBWEB || material == Material.FIRE || material == Material.CAKE
+            || material == Material.SHORT_GRASS || material == Material.TALL_GRASS || material == Material.DEAD_BUSH
+            || material == Material.ACACIA_LEAVES || material == Material.BIRCH_LEAVES || material == Material.DARK_OAK_LEAVES
+            || material == Material.JUNGLE_LEAVES || material == Material.OAK_LEAVES || material == Material.SPRUCE_LEAVES
+            || material == Material.WARPED_FUNGUS || material == Material.CRIMSON_FUNGUS || material == Material.BROWN_MUSHROOM
             || material == Material.RED_MUSHROOM;
     }
-    
+
     private boolean isAllowedPlaceBlock(Material material) {
-        return material == Material.COBWEB || material == Material.FIRE || material == Material.CAKE 
-            || material == Material.SHORT_GRASS || material == Material.TALL_GRASS || material == Material.DEAD_BUSH 
-            || material == Material.ACACIA_LEAVES || material == Material.BIRCH_LEAVES || material == Material.DARK_OAK_LEAVES 
-            || material == Material.JUNGLE_LEAVES || material == Material.OAK_LEAVES || material == Material.SPRUCE_LEAVES 
-            || material == Material.WARPED_FUNGUS || material == Material.CRIMSON_FUNGUS || material == Material.BROWN_MUSHROOM 
+        return material == Material.COBWEB || material == Material.FIRE || material == Material.CAKE
+            || material == Material.SHORT_GRASS || material == Material.TALL_GRASS || material == Material.DEAD_BUSH
+            || material == Material.ACACIA_LEAVES || material == Material.BIRCH_LEAVES || material == Material.DARK_OAK_LEAVES
+            || material == Material.JUNGLE_LEAVES || material == Material.OAK_LEAVES || material == Material.SPRUCE_LEAVES
+            || material == Material.WARPED_FUNGUS || material == Material.CRIMSON_FUNGUS || material == Material.BROWN_MUSHROOM
             || material == Material.RED_MUSHROOM;
     }
 }

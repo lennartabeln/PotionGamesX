@@ -4,14 +4,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -40,7 +39,7 @@ public class Lobby {
     private int minPlayers = 2;
     private int teamSize = 2;
     private int teamAmount = teamSize > 0 ? maxPlayers / teamSize : maxPlayers;
-    
+
     private int playerCount = 0;
     private ArrayList<Participant> participants = new ArrayList<>();
     private ArrayList<Player> activePlayers = new ArrayList<>();
@@ -57,42 +56,32 @@ public class Lobby {
     private int prepareTimer = 60;
     private int gameTimer = roundTime * 60;
     private int[] announceRoundTimes = new int[] { 0, 1, 2, 3, 4, 5, 10, 30, 60, 60 * 5, 60 * 10, 60 * 30 };
-    
+
     // ===== PHASE 7.2: Runtime State (Countdown, Flags, etc.) =====
     // Countdown timers
     private int countdown = 60;
     private int reset = 10;
-    
+
     // Runtime boolean flags (per-lobby state)
     private boolean deathmatch = false;
     private boolean move = true;
     private boolean joinable = true;
-    private boolean forcearena = false;
-    private boolean voteallowed = false;
-    private boolean teamallowed = false;
-    private boolean kitallowed = false;
-    private boolean tickstarted = false;
-    private boolean build = false;
     private boolean pause = false;
-    private boolean checkArenas = false;
-    private boolean singleArena = false;
-    
+
     // Per-lobby chests
     private HashMap<Location, ItemStack[]> chests = new HashMap<>();
-    
+
     // Per-lobby block tracking
-    private HashMap<Location, java.lang.Object> placedBlocks = new HashMap<>();    // Location -> Material
-    private HashMap<Location, java.lang.Object> breakedBlocks = new HashMap<>();    // Location -> Material
+    private HashMap<Location, Object> placedBlocks = new HashMap<>();    // Location -> Material
+    private HashMap<Location, Object> breakedBlocks = new HashMap<>();    // Location -> Material
     private HashMap<Location, Object> waterBlocks = new HashMap<>();               // Location -> BlockData
     private HashMap<Location, Object> liquidPlaced = new HashMap<>();              // Location -> Block
-    
+
     // Per-lobby voting
     private HashMap<String, Integer> lobbyvotes = new HashMap<>();                 // arena -> count
     private HashMap<Player, String> lobbyvoteplayernames = new HashMap<>();        // player -> voted arena
-    private HashMap<Player, String> lobbyVoted = new HashMap<>();                  // player -> vote status
-    private String lobbyVote = null;                                              // current vote in progress
-    private String lobbyVotedArena = null;                                        // final voted arena
-    
+
+
     // Per-lobby teams
     private HashMap<Integer, Integer> lobbyteams = new HashMap<>();               // team id -> player count
     private HashMap<Player, String> lobbyteamplayernames = new HashMap<>();       // player -> team id
@@ -104,11 +93,11 @@ public class Lobby {
         this.id = id;
         this.lobbyConfig = null;
     }
-    
+
     /**
      * Create a Lobby with configuration management via LobbyConfig.
      * This constructor enables per-lobby setting overrides with global defaults.
-     * 
+     *
      * @param id The lobby ID
      * @param lobbyConfig The configuration for this lobby (with inheritance from global defaults)
      */
@@ -151,7 +140,7 @@ public class Lobby {
 
     public void load() {
         arenas.clear();
-        
+
         // Load configuration from LobbyConfig if available
         if (lobbyConfig != null) {
             // Configuration is already loaded in the constructor
@@ -175,7 +164,7 @@ public class Lobby {
             minPlayers = Settings.lobbies.getInt("pg.lobbies." + id + ".minPlayers");
             teamSize = Settings.lobbies.getInt("pg.lobbies." + id + ".teamSize");
         }
-        
+
         enabled = Settings.lobbies.getBoolean("pg.lobbies." + id + ".enabled");
         spawn = Settings.lobbies.getLocation("pg.lobbies." + id + ".spawn");
         joinSign = null;
@@ -189,7 +178,7 @@ public class Lobby {
 
         if (Settings.lobbies.contains("pg.lobbies." + id + ".arenas")) {
             for (String key : Settings.lobbies.getConfigurationSection("pg.lobbies." + id + ".arenas").getKeys(false)) {
-                Arena arena = new Arena(key, id, lobbyConfig);
+                Arena arena = new Arena(key, id);
                 arena.load();
                 arenas.add(arena);
             }
@@ -272,7 +261,7 @@ public class Lobby {
             setState(GameStates.RESET);
         }
     }
-    
+
     public Participant getParticipant(Player p) {
         if (p == null || participants == null) return null;
         return participants.stream()
@@ -462,21 +451,6 @@ public class Lobby {
         }
     }
 
-    public void pauseGame() {
-        pause = true;
-    }
-
-    public void resumeGame() {
-        pause = false;
-    }
-
-    public void selectArena(Arena arena) {
-        if (arena != null && arenas.contains(arena)) {
-            setCurrentArena(arena);
-            lobbyVotedArena = arena.getName();
-        }
-    }
-
     public void recordVote(Player player, String arenaName) {
         if (player == null || arenaName == null || arenaName.isBlank()) {
             return;
@@ -491,7 +465,6 @@ public class Lobby {
         }
 
         lobbyvoteplayernames.put(player, arenaName);
-        lobbyVoted.put(player, "true");
         lobbyvotes.put(arenaName, lobbyvotes.getOrDefault(arenaName, 0) + 1);
 
         Participant participant = getParticipant(player);
@@ -527,23 +500,6 @@ public class Lobby {
             incrementTeamCount(Integer.parseInt(teamName));
         } catch (NumberFormatException ignored) {
         }
-    }
-
-    public void activateTeam(Player player, String teamName) {
-        recordTeamAssignment(player, teamName);
-    }
-
-    public List<Player> getTeamMembers(String teamName) {
-        if (teamName == null) {
-            return Collections.emptyList();
-        }
-        List<Player> members = new ArrayList<>();
-        for (Map.Entry<Player, String> entry : lobbyteamplayernames.entrySet()) {
-            if (teamName.equals(entry.getValue())) {
-                members.add(entry.getKey());
-            }
-        }
-        return members;
     }
 
     public void distributeTeams() {
@@ -699,7 +655,7 @@ public class Lobby {
         int aliveCount = 0;
         Player lastAlive = null;
         for (Player player : activePlayers) {
-            if (player != null && player.isOnline() && player.getGameMode() != org.bukkit.GameMode.SPECTATOR) {
+            if (player != null && player.isOnline() && player.getGameMode() != GameMode.SPECTATOR) {
                 aliveCount++;
                 lastAlive = player;
             }
@@ -822,13 +778,13 @@ public class Lobby {
             GameStates oldState = this.state;
             this.state = newState;
             updateJoinSign();
-            
+
             PotionGamesX plugin = PotionGamesX.getInstance();
-            
+
             // Game just ended (transitioned to RESET) - move players via BungeeCord
             if (newState == GameStates.RESET && oldState != GameStates.RESET && plugin.getConfigManager().isGameServer()) {
                 PotionGamesX.getInstance().getComponentLogger().info(
-                    com.tw0far.potiongames.models.Settings.prefix
+                    Settings.prefix
                         .append(Component.text("Game finished. Sending players back to hub...").color(NamedTextColor.YELLOW)));
             }
         }
@@ -859,20 +815,20 @@ public class Lobby {
     public int getPlayerCount() {
         return this.playerCount;
     }
-    
+
     public int getMinPlayers() {
         return this.minPlayers;
     }
-    
+
     // ===== PHASE 7.2: Runtime State Accessors =====
-    
+
     /**
      * Get countdown timer
      */
     public int getCountdown() {
         return countdown;
     }
-    
+
     /**
      * Set countdown timer
      */
@@ -880,373 +836,112 @@ public class Lobby {
         this.countdown = countdown;
         this.prepareTimer = countdown;
     }
-    
-    /**
-     * Get reset timer
-     */
-    public int getReset() {
-        return reset;
-    }
-    
-    /**
-     * Set reset timer
-     */
-    public void setReset(int reset) {
-        this.reset = reset;
-        this.endingTimer = reset;
-    }
 
-    public int getPrepareTimer() {
-        return prepareTimer;
-    }
-
-    public void setPrepareTimer(int prepareTimer) {
-        this.prepareTimer = prepareTimer;
-    }
-
-    public int getGameTimer() {
-        return gameTimer;
-    }
-
-    public void setGameTimer(int gameTimer) {
-        this.gameTimer = gameTimer;
-    }
-
-    public int getEndingTimer() {
-        return endingTimer;
-    }
-
-    public void setEndingTimer(int endingTimer) {
-        this.endingTimer = endingTimer;
-    }
-    
-    /**
-     * Check if teams are activated for this lobby
-     */
     public boolean isActivateTeams() {
         return activateTeams;
     }
-    
+
     /**
      * Set teams activation for this lobby
-     */
-    public void setActivateTeams(boolean value) {
-        this.activateTeams = value;
-    }
-    
-    /**
-     * Check if kits are activated for this lobby
-     */
-    public boolean isActivateKits() {
-        return activateKits;
-    }
-    
-    /**
-     * Set kits activation for this lobby
-     */
-    public void setActivateKits(boolean value) {
-        this.activateKits = value;
-    }
-    
-    /**
-     * Check if airdrops are activated for this lobby
      */
     public boolean isActivateAirdrops() {
         return activateAirdrops;
     }
-    
-    /**
-     * Set airdrops activation for this lobby
-     */
-    public void setActivateAirdrops(boolean value) {
-        this.activateAirdrops = value;
-    }
 
-    /**
-     * Check if shop is activated for this lobby
-     */
     public boolean isActivateShop() {
         return activateShop;
     }
-    
-    /**
-     * Set shop activation for this lobby
-     */
-    public void setActivateShop(boolean value) {
-        this.activateShop = value;
-    }
 
-    
+
+
+
     // ===== PHASE 7.2: Boolean Flags =====
-    
+
     public boolean isDeathmatch() { return deathmatch; }
     public void setDeathmatch(boolean value) { this.deathmatch = value; }
-    
+
     public boolean isMoveAllowed() { return move; }
-    public void setMoveAllowed(boolean value) { this.move = value; }
-    
+
     public boolean isJoinable() { return joinable; }
     public void setJoinable(boolean value) { this.joinable = value; }
-    
-    public boolean isForcearena() { return forcearena; }
-    public void setForcearena(boolean value) { this.forcearena = value; }
-    
-    public boolean isVoteallowed() { return voteallowed; }
-    public void setVoteallowed(boolean value) { this.voteallowed = value; }
-    
-    public boolean isTeamallowed() { return teamallowed; }
-    public void setTeamallowed(boolean value) { this.teamallowed = value; }
-    
-    public boolean isKitallowed() { return kitallowed; }
-    public void setKitallowed(boolean value) { this.kitallowed = value; }
-    
-    public boolean isTickstarted() { return tickstarted; }
-    public void setTickstarted(boolean value) { this.tickstarted = value; }
-    
-    public boolean isBuildAllowed() { return build; }
-    public void setBuildAllowed(boolean value) { this.build = value; }
-    
+
     public boolean isPaused() { return pause; }
     public void setPaused(boolean value) { this.pause = value; }
-    
-    public boolean isCheckArenas() { return checkArenas; }
-    public void setCheckArenas(boolean value) { this.checkArenas = value; }
-    
-    public boolean isSingleArena() { return singleArena; }
-    public void setSingleArena(boolean value) { this.singleArena = value; }
-    
+
     // ===== PHASE 7.2: Chest Accessors =====
-    
-    /**
-     * Get chests map for this lobby
-     */
-    public HashMap<Location, ItemStack[]> getChests() {
-        return chests;
-    }
-    
-    /**
-     * Store chest inventory at location
-     */
+
     public void setChestInventory(Location loc, ItemStack[] items) {
         chests.put(loc, items);
     }
-    
+
     /**
      * Get chest inventory at location
      */
     public ItemStack[] getChestInventory(Location loc) {
         return chests.get(loc);
     }
-    
+
     /**
      * Check if location has chest inventory stored
      */
     public boolean hasChestInventory(Location loc) {
         return chests.containsKey(loc);
     }
-    
-    /**
-     * Remove chest inventory at location
-     */
-    public void removeChestInventory(Location loc) {
-        chests.remove(loc);
-    }
-    
-    /**
-     * Clear all chests in this lobby
-     */
+
     public void clearChests() {
         chests.clear();
     }
 
-    
-    // ===== PHASE 7.2: Block Tracking Accessors =====
-    
-    /**
-     * Get placed blocks map
-     */
-    public HashMap<Location, java.lang.Object> getPlacedBlocks() {
-        return placedBlocks;
-    }
-    
-    /**
-     * Get broken blocks map
-     */
-    public HashMap<Location, java.lang.Object> getBreakeedBlocks() {
-        return breakedBlocks;
-    }
-    
-    /**
-     * Get water blocks map
-     */
-    public HashMap<Location, Object> getWaterBlocks() {
-        return waterBlocks;
-    }
-    
-    /**
-     * Get liquid placed map
-     */
-    public HashMap<Location, Object> getLiquidPlaced() {
-        return liquidPlaced;
-    }
-    
-    /**
-     * Clear all block tracking
-     */
+
     public void clearBlockTracking() {
         placedBlocks.clear();
         breakedBlocks.clear();
         waterBlocks.clear();
         liquidPlaced.clear();
     }
-    
+
     // ===== PHASE 7.2: Voting Accessors =====
-    
-    /**
-     * Get voting map (arena -> votes)
-     */
-    public HashMap<String, Integer> getVotingMap() {
-        return lobbyvotes;
-    }
-    
-    /**
-     * Get player vote player names map
-     */
-    public HashMap<Player, String> getVotePlayerNamesMap() {
-        return lobbyvoteplayernames;
-    }
-    
-    /**
-     * Get player voted map
-     */
-    public HashMap<Player, String> getVotedMap() {
-        return lobbyVoted;
-    }
-    
-    /**
-     * Get current vote
-     */
-    public String getCurrentVote() {
-        return lobbyVote;
-    }
-    
-    /**
-     * Set current vote
-     */
-    public void setCurrentVote(String vote) {
-        this.lobbyVote = vote;
-    }
-    
-    /**
-     * Get voted arena
-     */
-    public String getVotedArenaName() {
-        return lobbyVotedArena;
-    }
-    
-    /**
-     * Set voted arena
-     */
-    public void setVotedArenaName(String arena) {
-        this.lobbyVotedArena = arena;
-    }
-    
-    /**
-     * Clear all voting data
-     */
+
     public void clearVoting() {
         lobbyvotes.clear();
         lobbyvoteplayernames.clear();
-        lobbyVoted.clear();
-        lobbyVote = null;
-        lobbyVotedArena = null;
     }
-    
+
     // ===== PHASE 7.2: Team Accessors =====
-    
-    /**
-     * Get teams map (team id -> player count)
-     */
-    public HashMap<Integer, Integer> getTeamsMap() {
-        return lobbyteams;
-    }
-    
-    /**
-     * Get team player names map (player -> team id)
-     */
+
     public HashMap<Player, String> getTeamPlayerNamesMap() {
         return lobbyteamplayernames;
     }
-    
-    /**
-     * Get teamed map (player -> team status)
-     */
-    public HashMap<Player, String> getTeamedMap() {
-        return lobbyTeamed;
-    }
-    
-    /**
-     * Get team size
-     */
-    public int getTeamSize() {
-        return lobbyteamSize;
-    }
-    
-    /**
-     * Set team size
-     */
-    public void setTeamSize(int size) {
-        this.teamSize = size;
-        this.lobbyteamSize = size;
-    }
-    
-    /**
-     * Get team amount
-     */
-    public int getTeamAmount() {
-        return lobbyteamAmount;
-    }
-    
-    /**
-     * Set team amount
-     */
-    public void setTeamAmount(int amount) {
-        this.teamAmount = amount;
-        this.lobbyteamAmount = amount;
-    }
-    
-    /**
-     * Clear all team data
-     */
+
     public void clearTeams() {
         lobbyteams.clear();
         lobbyteamplayernames.clear();
         lobbyTeamed.clear();
     }
-    
+
     // ===== PHASE 7.5: Team Operations =====
-    
+
     /**
      * Get player's team ID
      */
     public String getPlayerTeam(Player player) {
         return lobbyteamplayernames.get(player);
     }
-    
+
     /**
      * Set player's team ID
      */
     public void setPlayerTeam(Player player, String teamId) {
         lobbyteamplayernames.put(player, teamId);
     }
-    
+
     /**
      * Remove player from team
      */
     public void removePlayerTeam(Player player) {
         lobbyteamplayernames.remove(player);
     }
-    
+
     /**
      * Increment team player count
      */
@@ -1254,7 +949,7 @@ public class Lobby {
         int count = lobbyteams.getOrDefault(teamId, 0);
         lobbyteams.put(teamId, count + 1);
     }
-    
+
     /**
      * Decrement team player count
      */
@@ -1269,21 +964,21 @@ public class Lobby {
             }
         }
     }
-    
+
     // ===== PHASE 8.6: Arena Accessors =====
-    
+
     /**
      * Get all arenas in this lobby.
-     * 
+     *
      * @return A list of all arenas (may be empty)
      */
     public ArrayList<Arena> getArenas() {
         return new ArrayList<>(arenas);
     }
-    
+
     /**
      * Get a random arena from available arenas.
-     * 
+     *
      * @return A random arena, or null if no arenas exist
      */
     public Arena getRandomArena() {
@@ -1292,26 +987,7 @@ public class Lobby {
         }
         return arenas.get((int)(Math.random() * arenas.size()));
     }
-    
-    /**
-     * Get the number of arenas in this lobby.
-     * 
-     * @return The arena count
-     */
-    public int getArenaCount() {
-        return arenas.size();
-    }
-    
-    /**
-     * Check if an arena exists by name.
-     * 
-     * @param name The arena name
-     * @return true if the arena exists
-     */
-    public boolean hasArena(String name) {
-        return getArena(name) != null;
-    }
-    
+
     /**
      * Clear all votes for all arenas.
      * Call this at the start of a voting phase.

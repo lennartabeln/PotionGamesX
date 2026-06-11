@@ -10,22 +10,22 @@ import org.bukkit.entity.Player;
  */
 public class VersionCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public VersionCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "version";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.update";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         new UpdateChecker(plugin, 87633).getVersion(version -> {
@@ -38,9 +38,10 @@ public class VersionCommand implements ICommand {
         });
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.version_usage", "/pg version - Check plugin version and updates (requires pg.update)");
+        return Messages.HelpVersionUsageText();
     }
 }
+

@@ -10,17 +10,17 @@ public interface ICommand {
      * Get the command name
      */
     String getName();
-    
+
     /**
      * Get the required permission node
      */
     String getPermission();
-    
+
     /**
      * Execute the command
      */
     boolean execute(Player player, String[] args);
-    
+
     /**
      * Get usage information
      */

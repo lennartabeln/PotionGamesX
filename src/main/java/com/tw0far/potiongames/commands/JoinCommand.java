@@ -4,6 +4,8 @@ import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -11,22 +13,22 @@ import org.bukkit.entity.Player;
  */
 public class JoinCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public JoinCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "join";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.join";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         // Multi-lobby system: args should contain lobby ID
@@ -35,8 +37,14 @@ public class JoinCommand implements ICommand {
                 int lobbyId = Integer.parseInt(args[1]);
                 if (Settings.lobbies.contains("pg.lobbies." + lobbyId)) {
                     if (plugin.getGame().getLobbies().size() > 0) {
+                        if (plugin.getGame().getPlayerLobby(player) != null || plugin.getGame().getSpectatorLobby(player) != null) {
+                            player.sendMessage(Messages.JoinAlreadyInLobby());
+                            return true;
+                        }
                         Lobby lobby = plugin.getGame().getLobby(lobbyId);
-                        lobby.join(player);
+                        if (lobby != null) {
+                            lobby.join(player);
+                        }
                     }
                 } else {
                     player.sendMessage(Messages.LobbyDoesNotExist());
@@ -45,14 +53,15 @@ public class JoinCommand implements ICommand {
                 player.sendMessage(Messages.HelpUsePgHelp());
             }
         } else {
-            player.sendMessage(Settings.prefix.append(net.kyori.adventure.text.Component.text(Messages.raw("help.join", "/pg join # - Join a game")).color(net.kyori.adventure.text.format.NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpJoinText()).color(NamedTextColor.GRAY)));
         }
-        
+
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.join_usage", "/pg join <lobby_number> - Join a specific lobby");
+        return Messages.HelpJoinUsageText();
     }
 }
+

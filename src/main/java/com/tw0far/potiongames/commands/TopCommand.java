@@ -19,22 +19,22 @@ import java.util.UUID;
  */
 public class TopCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public TopCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "top";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.top";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         if (!plugin.getDatabaseManager().isConnected()) {

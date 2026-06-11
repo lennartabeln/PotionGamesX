@@ -12,25 +12,25 @@ import org.bukkit.entity.Player;
  */
 public class ItemDropEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public ItemDropEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
-        
+
         if (!plugin.getGame().isActivePlayer(p) && !plugin.getGame().isInLobby(p)) {
             return;
         }
-        
+
         // During lobby phase, prevent dropping items
         if (plugin.getGame().isInLobby(p) && !plugin.getGame().isActivePlayer(p)) {
             e.setCancelled(true);
             return;
         }
-        
+
         // During active games, allow item dropping (for PvP purposes)
         if (plugin.getGame().isActivePlayer(p)) {
             return;

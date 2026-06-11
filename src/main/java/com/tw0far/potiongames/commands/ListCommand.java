@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import net.kyori.adventure.text.Component;
@@ -12,33 +13,36 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.Material;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * /pg list - Open GUI with all lobbies
  */
 public class ListCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public ListCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "list";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.join";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         // Build an inventory GUI listing all lobbies with basic info
-        java.util.List<Lobby> lobbies = plugin.getGame().getLobbies();
+        List<Lobby> lobbies = plugin.getGame().getLobbies();
         if (lobbies == null || lobbies.isEmpty()) {
-            player.sendMessage(Messages.raw("list.no_lobbies", "No lobbies available."));
+            player.sendMessage(Messages.ListNoLobbiesText());
             return true;
         }
 
@@ -55,10 +59,15 @@ public class ListCommand implements ICommand {
             if (meta != null) {
                 // Display name MUST be the numeric lobby id so existing click handler can parse it
                 meta.displayName(Component.text(Integer.toString(id)).color(NamedTextColor.GOLD));
-                java.util.List<Component> lore = new java.util.ArrayList<>();
-                lore.add(Component.text(Messages.raw("list.lobby", "Lobby") + " #"+id).color(NamedTextColor.GRAY));
-                lore.add(Component.text(Messages.raw("list.state", "State") + ": ").color(NamedTextColor.GREEN).append(Component.text(lobby.getState().name()).color(NamedTextColor.AQUA)));
-                lore.add(Component.text(Messages.raw("list.players", "Players") + ": ").color(NamedTextColor.GREEN).append(Component.text(active + "/" + max).color(NamedTextColor.AQUA)));
+                List<Component> lore = new ArrayList<>();
+                NamedTextColor stateColor = lobby.getState() == GameStates.WAITING || lobby.getState() == GameStates.PREPARING ? NamedTextColor.GREEN : NamedTextColor.RED;
+                lore.add(Component.text(lobby.getState().toString()).color(stateColor));
+                if (lobby.getCurrentArena() != null) {
+                    lore.add(Component.text(lobby.getCurrentArena().getName()).color(NamedTextColor.GOLD));
+                } else {
+                    lore.add(Component.text("VOTING").color(NamedTextColor.AQUA));
+                }
+                lore.add(Component.text("[" + active + "/" + max + "]").color(NamedTextColor.GRAY));
                 meta.lore(lore);
                 item.setItemMeta(meta);
             }
@@ -70,9 +79,10 @@ public class ListCommand implements ICommand {
         }
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.list_usage", "/pg list");
+        return Messages.HelpListUsageText();
     }
 }
+

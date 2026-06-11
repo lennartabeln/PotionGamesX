@@ -9,22 +9,22 @@ import org.bukkit.entity.Player;
  */
 public class BuildCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public BuildCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "build";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.build";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         // Multi-lobby mode: get player's lobby and toggle build mode for that lobby
@@ -32,12 +32,12 @@ public class BuildCommand implements ICommand {
         if (lobbyId == null) {
             lobbyId = plugin.getGame().getSpectatorLobby(player);
         }
-        
+
         if (lobbyId != null) {
             // Toggle build mode
             boolean currentBuild = plugin.getLobbyStateManager().isBuildAllowed(lobbyId);
             plugin.getLobbyStateManager().setBuildAllowed(lobbyId, !currentBuild);
-            
+
             // Broadcast to all players in this lobby
             boolean buildEnabled = plugin.getLobbyStateManager().isBuildAllowed(lobbyId);
             for (Player p : plugin.getGame().getPlayersInLobby(lobbyId)) {
@@ -49,9 +49,10 @@ public class BuildCommand implements ICommand {
         }
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.build_usage", "/pg build - Enable/disable build mode (requires pg.build)");
+        return Messages.HelpBuildUsageText();
     }
 }
+

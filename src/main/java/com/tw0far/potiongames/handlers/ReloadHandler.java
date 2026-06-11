@@ -13,7 +13,7 @@ import java.util.logging.Level;
 
 /**
  * Comprehensive reload handler that properly stops all game activities before reloading.
- * 
+ *
  * This fixes the critical bug where reload command:
  * - Doesn't stop active lobbies
  * - Doesn't clear player data
@@ -23,61 +23,61 @@ import java.util.logging.Level;
  */
 public class ReloadHandler {
     private final PotionGamesX plugin;
-    
+
     public ReloadHandler(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     /**
      * Perform a complete plugin reload with proper cleanup
-     * 
+     *
      * @return true if reload succeeded
      */
     public boolean performReload() {
         try {
             plugin.getLogger().info("=== Starting Plugin Reload ===");
-            
+
             // Step 1: Stop all active games and lobbies
             plugin.getLogger().info("1. Stopping all active games and lobbies...");
             stopAllGames();
-            
+
             // Step 2: Clear all player data
             plugin.getLogger().info("2. Clearing player data...");
             clearPlayerData();
-            
+
             // Step 3: Cancel all scheduled tasks
             plugin.getLogger().info("3. Canceling scheduled tasks...");
             cancelScheduledTasks();
-            
+
             // Step 4: Close database connection
             plugin.getLogger().info("4. Closing database connection...");
             closeDatabase();
-            
+
             // Step 5: Clear all collections to free memory
             plugin.getLogger().info("5. Clearing collections...");
             clearCollections();
-            
+
             // Step 6: Reload configuration files
             plugin.getLogger().info("6. Reloading configuration files...");
             reloadConfiguration();
-            
+
             // Step 7: Reconnect to database
             plugin.getLogger().info("7. Reconnecting to database...");
             reconnectDatabase();
-            
+
             // Step 8: Reload game data
             plugin.getLogger().info("8. Reloading game data...");
             reloadGameData();
-            
+
             plugin.getLogger().info("=== Plugin Reload Complete ===");
             return true;
-            
+
         } catch (Exception e) {
             plugin.getLogger().log(Level.SEVERE, "Plugin reload failed! Errors:", e);
             return false;
         }
     }
-    
+
     /**
      * Step 1: Stop all active games and lobbies
      */
@@ -111,7 +111,7 @@ public class ReloadHandler {
             plugin.getLogger().log(Level.WARNING, "Error in stopAllGames", e);
         }
     }
-    
+
     /**
      * Step 2: Clear all player data and restore inventories
      */
@@ -125,19 +125,19 @@ public class ReloadHandler {
                     if (plugin.getSetupStateManager().getPlayerInventory(player) != null) {
                         ItemStack[] inventory = plugin.getSetupStateManager().getPlayerInventory(player);
                         ItemStack[] armor = plugin.getSetupStateManager().getPlayerArmor(player);
-                        
+
                         if (inventory != null) {
                             player.getInventory().setContents(inventory);
                         }
                         if (armor != null) {
                             player.getInventory().setArmorContents(armor);
                         }
-                        
+
                         plugin.getSetupStateManager().removeSavedInventory(player);
                         plugin.getSetupStateManager().removeSavedArmor(player);
                     }
-                    
-                    
+
+
                 } catch (Exception e) {
                     plugin.getLogger().log(Level.WARNING, "Error restoring player " + player.getName(), e);
                 }
@@ -146,7 +146,7 @@ public class ReloadHandler {
             plugin.getLogger().log(Level.WARNING, "Error in clearPlayerData", e);
         }
     }
-    
+
     /**
      * Step 3: Cancel all scheduled tasks
      */
@@ -160,7 +160,7 @@ public class ReloadHandler {
             plugin.getLogger().log(Level.WARNING, "Error canceling tasks", e);
         }
     }
-    
+
     /**
      * Step 4: Close database connection
      */
@@ -171,7 +171,7 @@ public class ReloadHandler {
             plugin.getLogger().log(Level.WARNING, "Error closing database", e);
         }
     }
-    
+
     /**
      * Step 5: Clear all collections to free memory
      * Uses manager delegation to clear all state managers instead of direct HashMap access.
@@ -188,14 +188,14 @@ public class ReloadHandler {
             plugin.getGame().clearShopItems();
             plugin.getGame().clearAllLoot();
             plugin.getSetupStateManager().clearAllSetupPlayers();
-            
+
             plugin.getLogger().info("All collections cleared");
-            
+
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error clearing collections", e);
         }
     }
-    
+
     /**
      * Step 6: Reload configuration files
      */
@@ -207,7 +207,7 @@ public class ReloadHandler {
             plugin.getLogger().log(Level.WARNING, "Error reloading configuration", e);
         }
     }
-    
+
     /**
      * Step 7: Reconnect to database
      */
@@ -219,7 +219,7 @@ public class ReloadHandler {
             plugin.getLogger().log(Level.WARNING, "Error reconnecting database", e);
         }
     }
-    
+
     /**
      * Step 8: Reload game data (lobbies, arenas, etc.)
      */

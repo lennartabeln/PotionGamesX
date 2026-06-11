@@ -11,11 +11,11 @@ import org.bukkit.event.block.BlockFromToEvent;
  */
 public class BlockFlowEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public BlockFlowEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onBlockFlow(BlockFromToEvent e) {
         // Prevent water/lava flow during active games

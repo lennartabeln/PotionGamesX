@@ -12,10 +12,12 @@ public class JoinLobbyHandler {
     }
 
     public void onJoinLobby(Player player, String lobbyId) {
+        if (plugin.getGame().getPlayerLobby(player) != null || plugin.getGame().getSpectatorLobby(player) != null) {
+            return;
+        }
         try {
             Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
             if (lobby != null) {
-                plugin.getGame().setPlayerLobby(player, lobbyId);
                 lobby.join(player);
             }
         } catch (NumberFormatException ignored) { }

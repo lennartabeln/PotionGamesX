@@ -3,6 +3,7 @@ package com.tw0far.potiongames.handlers;
 import org.bukkit.entity.Player;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -49,7 +50,6 @@ public class SetupHandler implements ISetupHandler {
         p.setFireTicks(0);
         p.setAllowFlight(true);
         p.setFlying(true);
-        // ... (remaining items setup)
 
         ItemStack addlobby = new ItemStack(Material.STICK);
         ItemMeta addlobbymeta = addlobby.getItemMeta();
@@ -117,11 +117,6 @@ public class SetupHandler implements ISetupHandler {
     }
 
     @Override
-    public void enableLobby(Player p) {
-        enableLobby(p, 1);
-    }
-
-    @Override
     public void enableLobby(Player p, int lobbyId) {
         Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
@@ -129,7 +124,7 @@ public class SetupHandler implements ISetupHandler {
             return;
         }
         if (lobby.getArenas().isEmpty() || lobby.getArenas().stream().noneMatch(arena -> !arena.getSpawns().isEmpty())) {
-            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.incomplete", "Lobby setup is incomplete: add at least one arena with one spawn before enabling the lobby.")).color(NamedTextColor.RED)));
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.SetupIncompleteText()).color(NamedTextColor.RED)));
             return;
         }
         boolean success = lobby.enable();
@@ -145,11 +140,6 @@ public class SetupHandler implements ISetupHandler {
     }
 
     @Override
-    public void addLobby(Player p) {
-        addLobby(p, 1);
-    }
-
-    @Override
     public void addLobby(Player p, int lobbyId) {
         boolean success = pg.getGame().addLobby(lobbyId, p.getLocation());
         if (success) {
@@ -157,11 +147,6 @@ public class SetupHandler implements ISetupHandler {
         } else {
             p.sendMessage(Messages.FileSaveFailed());
         }
-    }
-
-    @Override
-    public void removeLobby(Player p) {
-        removeLobby(p, 1);
     }
 
     @Override
@@ -186,9 +171,9 @@ public class SetupHandler implements ISetupHandler {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
         }
-        org.bukkit.block.Block target = p.getTargetBlockExact(5);
+        Block target = p.getTargetBlockExact(5);
         if (target == null) {
-            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.no_block_in_range", "No block in range to set as join sign.")).color(NamedTextColor.RED)));
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.SetupNoBlockInRangeText()).color(NamedTextColor.RED)));
             return;
         }
         boolean success = lobby.setJoinSign(target.getLocation());
@@ -197,11 +182,6 @@ public class SetupHandler implements ISetupHandler {
         } else {
             p.sendMessage(Messages.FileSaveFailed());
         }
-    }
-
-    @Override
-    public void addArena(Player p, String arenaName) {
-        addArena(p, arenaName, 1);
     }
 
     @Override
@@ -220,11 +200,6 @@ public class SetupHandler implements ISetupHandler {
     }
 
     @Override
-    public void removeArena(Player p, String arenaName) {
-        removeArena(p, arenaName, 1);
-    }
-
-    @Override
     public void removeArena(Player p, String arenaName, int lobbyId) {
         Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
@@ -237,11 +212,6 @@ public class SetupHandler implements ISetupHandler {
         } else {
             p.sendMessage(Messages.FileSaveFailed());
         }
-    }
-
-    @Override
-    public void addSpawn(Player p, String arenaName) {
-        addSpawn(p, arenaName, 1);
     }
 
     @Override
@@ -266,11 +236,6 @@ public class SetupHandler implements ISetupHandler {
     }
 
     @Override
-    public void removeSpawn(Player p, String arenaName) {
-        removeSpawn(p, arenaName, 1);
-    }
-
-    @Override
     public void removeSpawn(Player p, String arenaName, int lobbyId) {
         Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
@@ -284,7 +249,7 @@ public class SetupHandler implements ISetupHandler {
         }
         int spawnId = arena.getSpawns().size();
         if (spawnId < 1) {
-            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.no_spawns", "No spawns are configured for that arena.")).color(NamedTextColor.RED)));
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.SetupNoSpawnsText()).color(NamedTextColor.RED)));
             return;
         }
         boolean success = arena.removeSpawn(spawnId);
@@ -293,11 +258,6 @@ public class SetupHandler implements ISetupHandler {
         } else {
             p.sendMessage(Messages.FileSaveFailed());
         }
-    }
-
-    @Override
-    public void addDeathmatchSpawn(Player p, String arenaName) {
-        addDeathmatchSpawn(p, arenaName, 1);
     }
 
     @Override
@@ -322,11 +282,6 @@ public class SetupHandler implements ISetupHandler {
     }
 
     @Override
-    public void removeDeathmatchSpawn(Player p, String arenaName) {
-        removeDeathmatchSpawn(p, arenaName, 1);
-    }
-
-    @Override
     public void removeDeathmatchSpawn(Player p, String arenaName, int lobbyId) {
         Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
@@ -340,7 +295,7 @@ public class SetupHandler implements ISetupHandler {
         }
         int spawnId = arena.getDeathmatchSpawns().size();
         if (spawnId < 1) {
-            p.sendMessage(Settings.prefix.append(Component.text(Messages.raw("setup.no_deathmatch_spawns", "No deathmatch spawns are configured for that arena.")).color(NamedTextColor.RED)));
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.SetupNoDeathmatchSpawnsText()).color(NamedTextColor.RED)));
             return;
         }
         boolean success = arena.removeDeathmatchSpawn(spawnId);
@@ -355,12 +310,12 @@ public class SetupHandler implements ISetupHandler {
     public void exitSetup(Player p) {
         p.getInventory().clear();
         p.getInventory().setArmorContents(new ItemStack[] { null, null, null, null });
-        
+
         ItemStack[] savedInv = pg.getSetupStateManager().getPlayerInventory(p);
         if (savedInv != null) {
             p.getInventory().setContents(savedInv);
         }
-        
+
         ItemStack[] savedArmor = pg.getSetupStateManager().getPlayerArmor(p);
         if (savedArmor != null) {
             p.getInventory().setArmorContents(savedArmor);
@@ -370,7 +325,7 @@ public class SetupHandler implements ISetupHandler {
         p.setExp(pg.getSetupStateManager().getPlayerExp(p));
         GameMode gm = pg.getSetupStateManager().getPlayerGameMode(p);
         p.setGameMode(gm != null ? gm : GameMode.SURVIVAL);
-        
+
         Double health = pg.getSetupStateManager().getPlayerHealth(p);
         p.setHealth(health != null ? health : 20.0);
         Integer food = pg.getSetupStateManager().getPlayerFoodLevel(p);
@@ -379,7 +334,7 @@ public class SetupHandler implements ISetupHandler {
         p.setFireTicks(0);
         p.setAllowFlight(false);
         p.setFlying(false);
-        
+
         pg.getSetupStateManager().removeSavedInventory(p);
         pg.getSetupStateManager().removeSavedArmor(p);
         pg.getSetupStateManager().removeSavedLocation(p);

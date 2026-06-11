@@ -14,29 +14,29 @@ import org.bukkit.inventory.meta.PotionMeta;
  */
 public class ItemConsumeEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public ItemConsumeEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onItemConsume(PlayerItemConsumeEvent e) {
         Player p = e.getPlayer();
-        
+
         if (!plugin.getGame().isActivePlayer(p) && !plugin.getGame().isInLobby(p)) {
             return;
         }
-        
+
         // Allow soup healing during games
-        if (e.getItem().getType() == Material.MUSHROOM_STEW 
-            || e.getItem().getType() == Material.RABBIT_STEW 
+        if (e.getItem().getType() == Material.MUSHROOM_STEW
+            || e.getItem().getType() == Material.RABBIT_STEW
             || e.getItem().getType() == Material.BEETROOT_SOUP) {
-            
+
             // Item consumption allowed - soup will heal player
             // This is handled by Bukkit normally, we just allow it
             return;
         }
-        
+
         // Handle potion consumption
         if (e.getItem().hasItemMeta() && e.getItem().getItemMeta() instanceof PotionMeta) {
             // Potions are allowed during games

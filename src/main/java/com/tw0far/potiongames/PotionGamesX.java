@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 
 public class PotionGamesX extends JavaPlugin {
 
-    //New
     private static PotionGamesX instance;
     private final Game game = new Game();
     private IConfigurationManager configManager;
@@ -70,7 +69,7 @@ public class PotionGamesX extends JavaPlugin {
         setupHandler = new SetupHandler(this);
         joinLobbyHandler = new JoinLobbyHandler(this);
         saveDefaultConfig();
-        
+
         // Initialize configuration manager
         configManager = new ConfigurationManager(this);
         configManager.onEnable();
@@ -88,13 +87,13 @@ public class PotionGamesX extends JavaPlugin {
         blockStateManager.onEnable();
         setupStateManager = new SetupStateManager();
         setupStateManager.onEnable();
-        
+
         // Initialize database manager
         databaseManager = new DatabaseManager(this, configManager);
         databaseManager.onEnable();
-        
+
         PluginManager pm = Bukkit.getPluginManager();
-        
+
         // Register new event listeners (refactored from monolithic Events.java)
         // Player-related events
         pm.registerEvents(new PlayerEventListener(this), this);
@@ -105,29 +104,28 @@ public class PotionGamesX extends JavaPlugin {
         pm.registerEvents(new ItemDropEventListener(this), this);
         pm.registerEvents(new ItemConsumeEventListener(this), this);
         pm.registerEvents(new FoodLevelEventListener(this), this);
-        
+
         // Block-related events
         pm.registerEvents(new BlockEventListener(this), this);
         pm.registerEvents(new BlockFadeEventListener(this), this);
         pm.registerEvents(new LeavesDecayEventListener(this), this);
         pm.registerEvents(new BlockFlowEventListener(this), this);
         pm.registerEvents(new BucketEventListener(this), this);
-        pm.registerEvents(new InteractEventListener(this), this);
-        
+
         // Combat-related events
         pm.registerEvents(new CombatEventListener(this), this);
         pm.registerEvents(new DamageEventListener(this), this);
         pm.registerEvents(new DeathEventListener(this), this);
-        
+
         // Environmental events
         pm.registerEvents(new WeatherEventListener(this), this);
         pm.registerEvents(new ExplosionEventListener(this), this);
         pm.registerEvents(new CreatureSpawnEventListener(this), this);
         pm.registerEvents(new SignChangeEventListener(), this);
-        
+
         // Inventory events
         pm.registerEvents(new InventoryEventListener(this), this);
-        
+
         // Register new command dispatcher (refactored from monolithic Commands.java)
         CommandDispatcher dispatcher = new CommandDispatcher(this);
         dispatcher.register();
@@ -173,12 +171,10 @@ public class PotionGamesX extends JavaPlugin {
 
 
 
-    // onReload() deleted - moved to ReloadHandler/ConfigurationManager
-
     @Override
     public void onDisable() {
         log.info(String.format("[%s] Disabled Version %s", getPluginMeta().getName(), getPluginMeta().getVersion()));
-        
+
         // Disable state managers and database manager
         if (configManager != null) configManager.onDisable();
         if (lobbyStateManager != null) lobbyStateManager.onDisable();

@@ -11,11 +11,11 @@ import org.bukkit.event.block.LeavesDecayEvent;
  */
 public class LeavesDecayEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public LeavesDecayEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onLeavesDecay(LeavesDecayEvent e) {
         // Prevent leaves decay during active games

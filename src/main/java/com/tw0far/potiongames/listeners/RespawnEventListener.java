@@ -12,19 +12,19 @@ import org.bukkit.entity.Player;
  */
 public class RespawnEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public RespawnEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent e) {
         Player p = e.getPlayer();
-        
+
         if (!plugin.getGame().isSpectatorPlayer(p)) {
             return;
         }
-        
+
         // Spectators respawn at their current location (no special handling needed)
         // The spectator respawn location is handled by the game state system
     }

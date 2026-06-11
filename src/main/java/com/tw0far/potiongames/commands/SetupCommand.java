@@ -9,40 +9,41 @@ import org.bukkit.entity.Player;
  */
 public class SetupCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public SetupCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "setup";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         try {
             if (plugin.getSetupStateManager().isSetupPlayer(player)) {
                 plugin.getSetupHandler().exitSetup(player);
-                player.sendMessage(Messages.raw("setup.disabled", "Setup mode disabled."));
+                player.sendMessage(Messages.SetupDisabledText());
             } else {
                 plugin.getSetupHandler().setup(player);
-                player.sendMessage(Messages.raw("setup.enabled", "Setup mode enabled."));
+                player.sendMessage(Messages.SetupEnabledText());
             }
         } catch (Exception ex) {
             player.sendMessage(Messages.ErrorGeneric());
         }
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.setup_usage", "/pg setup - Start setup mode (requires pg.setup)");
+        return Messages.HelpSetupUsageText();
     }
 }
+

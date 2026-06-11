@@ -11,43 +11,43 @@ import org.bukkit.entity.Player;
  */
 public class GameServerCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public GameServerCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "gameserver";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.gameserver";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         // Get current state
         boolean currentState = plugin.getConfigManager().isGameServer();
         boolean newState = !currentState;
-        
+
         // Update config manager
         plugin.getConfigManager().setGameServer(newState);
-        
+
         // Also update the plugin's config file so it persists on reload
         plugin.getConfig().set("pg.gameServer", newState);
         plugin.saveConfig();
-        
+
         // Send message to player
         String statusText = newState ? "enabled" : "disabled";
         Component message = Component.text("GameServer mode is now ")
             .color(NamedTextColor.AQUA)
             .append(Component.text(statusText).color(newState ? NamedTextColor.GREEN : NamedTextColor.RED));
-        
+
         player.sendMessage(message);
-        
+
         // Broadcast to all ops
         for (Player op : plugin.getServer().getOnlinePlayers()) {
             if (op == null) continue;
@@ -56,13 +56,14 @@ public class GameServerCommand implements ICommand {
                     .color(NamedTextColor.YELLOW));
             }
         }
-        
+
         plugin.getLogger().info("GameServer mode toggled to " + newState + " by " + player.getName());
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.gameserver_usage", "/pg gameserver - Toggle gameserver mode (requires pg.gameserver)");
+        return Messages.HelpGameserverUsageText();
     }
 }
+

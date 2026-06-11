@@ -15,28 +15,28 @@ import org.bukkit.potion.PotionEffectType;
  */
 public class SpectatorEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public SpectatorEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onSpectatorMove(PlayerMoveEvent e) {
         Player p = e.getPlayer();
-        
+
         if (!plugin.getGame().isSpectatorPlayer(p)) {
             return;
         }
-        
+
         // Ensure spectators remain invisible and in spectator mode
         if (p.getGameMode() != GameMode.SPECTATOR) {
             p.setGameMode(GameMode.SPECTATOR);
         }
-        
+
         if (!p.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
             p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false));
         }
-        
+
         // Spectators can move freely and see all players
         p.setCanPickupItems(false);
     }

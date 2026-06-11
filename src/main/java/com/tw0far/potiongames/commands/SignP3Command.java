@@ -9,37 +9,38 @@ import org.bukkit.entity.Player;
  */
 public class SignP3Command implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public SignP3Command(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "signp3";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         org.bukkit.block.Block target = player.getTargetBlockExact(5);
         if (target == null || !(target.getState() instanceof org.bukkit.block.Sign)) {
-            player.sendMessage(Messages.raw("sign.look_sign_3", "Look at a sign to set the 3rd place sign."));
+            player.sendMessage(Messages.SignLookSign3Text());
             return false;
         }
         plugin.getConfig().set("pg.RankWall.signp3", target.getLocation());
         plugin.saveConfig();
-        player.sendMessage(Messages.raw("sign.set_3", "3rd place sign set."));
+        player.sendMessage(Messages.SignSet3Text());
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.signp3_usage", "/pg signp3 (Look at 3rd place sign)");
+        return Messages.HelpSignp3UsageText();
     }
 }
+

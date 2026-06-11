@@ -10,26 +10,26 @@ import org.bukkit.entity.Player;
  */
 public class DelDeathmatchCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public DelDeathmatchCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "deldeathmatch";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length < 3) {
-            player.sendMessage(Messages.raw("command.deldeathmatch.usage", "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandDeldeathmatchUsageText());
             return false;
         }
         try {
@@ -38,13 +38,14 @@ public class DelDeathmatchCommand implements ICommand {
             plugin.getSetupHandler().removeDeathmatchSpawn(player, arenaName, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.raw("command.deldeathmatch.usage", "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandDeldeathmatchUsageText());
             return false;
         }
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("command.deldeathmatch.usage", "/pg deldeathmatch <lobbynumber> <arenaname>");
+        return Messages.CommandDeldeathmatchUsageText();
     }
 }
+

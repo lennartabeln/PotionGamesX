@@ -11,20 +11,20 @@ import org.bukkit.event.entity.EntityExplodeEvent;
  */
 public class ExplosionEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public ExplosionEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent e) {
         // Check if there's an active game
         boolean gameActive = plugin.getGame().getActivePlayerCount() > 0;
-        
+
         if (!gameActive) {
             return;
         }
-        
+
         // During games, allow explosions but prevent block destruction if configured
         // TNT explosions should be allowed for PvP purposes
         // This allows players to damage each other with explosives

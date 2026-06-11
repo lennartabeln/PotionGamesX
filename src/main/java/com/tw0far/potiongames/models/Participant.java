@@ -28,42 +28,36 @@ public class Participant {
         clearPlayer();
         player.teleport(lobby.getSpawn());
         player.setGameMode(GameMode.ADVENTURE);
-        
-        // Give lobby items
+
         PlayerInventory inv = player.getInventory();
-        
-        // Map/Arena selector
+
         ItemStack map = new ItemStack(Material.PAPER);
         ItemMeta mapMeta = map.getItemMeta();
-        mapMeta.displayName(Messages.ArenaSelectorTitle());
+        mapMeta.displayName(Messages.ArenaSelectorItem());
         map.setItemMeta(mapMeta);
         inv.setItem(0, map);
-        
-        // Kit selector
+
         ItemStack kitItem = new ItemStack(Material.ENDER_CHEST);
         ItemMeta kitMeta = kitItem.getItemMeta();
-        kitMeta.displayName(Messages.KitSelector());
+        kitMeta.displayName(Messages.KitSelectorItem());
         kitItem.setItemMeta(kitMeta);
         inv.setItem(1, kitItem);
-        
-        // Team selector
+
         ItemStack teamItem = new ItemStack(Material.CLOCK);
         ItemMeta teamMeta = teamItem.getItemMeta();
-        teamMeta.displayName(Messages.SelectorTeam());
+        teamMeta.displayName(Messages.SelectorTeamItem());
         teamItem.setItemMeta(teamMeta);
         inv.setItem(2, teamItem);
-        
-        // Stats
+
         ItemStack statsItem = new ItemStack(Material.EMERALD);
         ItemMeta statsMeta = statsItem.getItemMeta();
-        statsMeta.displayName(Messages.StatsLabel());
+        statsMeta.displayName(Messages.StatsItem());
         statsItem.setItemMeta(statsMeta);
         inv.setItem(7, statsItem);
-        
-        // Leave
+
         ItemStack leaveItem = new ItemStack(Material.MAGMA_CREAM);
         ItemMeta leaveMeta = leaveItem.getItemMeta();
-        leaveMeta.displayName(Messages.LeaveLabel());
+        leaveMeta.displayName(Messages.LeaveItem());
         leaveItem.setItemMeta(leaveMeta);
         inv.setItem(8, leaveItem);
     }
@@ -105,9 +99,5 @@ public class Participant {
 
     public void setVotedArena(Arena votedArena) {
         this.votedArena = votedArena;
-    }
-
-    public Lobby getLobby() {
-        return lobby;
     }
 }

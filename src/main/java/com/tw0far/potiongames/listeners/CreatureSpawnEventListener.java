@@ -11,11 +11,11 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
  */
 public class CreatureSpawnEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public CreatureSpawnEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e) {
         // Prevent mob spawning during active games

@@ -10,21 +10,21 @@ import org.bukkit.entity.Player;
  */
 public class DebugCommand implements ICommand {
     private boolean debugMode = false;
-    
+
     public DebugCommand(PotionGamesX plugin) {
     }
-    
+
     @Override
     public String getName() {
         return "debug";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.debug";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         if (!player.hasPermission("pg.admin")) {
@@ -32,31 +32,31 @@ public class DebugCommand implements ICommand {
                 .color(NamedTextColor.RED));
             return true;
         }
-        
+
         debugMode = !debugMode;
-        
+
         Component message = Component.text("Debug Mode: ").color(NamedTextColor.GOLD)
             .append(Component.text(debugMode ? "ENABLED" : "DISABLED")
                 .color(debugMode ? NamedTextColor.GREEN : NamedTextColor.RED));
-        
+
         player.sendMessage(message);
-        
+
         if (debugMode) {
             player.sendMessage(Component.text("Verbose logging enabled. Check server console for debug output.")
                 .color(NamedTextColor.GRAY));
         }
-        
+
         return true;
     }
-    
+
     public boolean isDebugMode() {
         return debugMode;
     }
-    
+
     public void setDebugMode(boolean mode) {
         this.debugMode = mode;
     }
-    
+
     @Override
     public String getUsage() {
         return "/pg debug";

@@ -9,26 +9,26 @@ import org.bukkit.entity.Player;
  */
 public class DelLobbyCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public DelLobbyCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "dellobby";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(Messages.raw("command.dellobby.usage", "Usage: /pg dellobby <lobbynumber>"));
+            player.sendMessage(Messages.CommandDellobbyUsageText());
             return false;
         }
         try {
@@ -36,13 +36,14 @@ public class DelLobbyCommand implements ICommand {
             plugin.getSetupHandler().removeLobby(player, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.raw("command.dellobby.usage", "Usage: /pg dellobby <lobbynumber>"));
+            player.sendMessage(Messages.CommandDellobbyUsageText());
             return false;
         }
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("command.dellobby.usage", "/pg dellobby <lobbynumber>");
+        return Messages.CommandDellobbyUsageText();
     }
 }
+

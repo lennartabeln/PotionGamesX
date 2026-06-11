@@ -37,7 +37,7 @@ public class PlayerEventListener implements Listener {
                 }
             });
         }
-        
+
         // Auto-join first lobby if configured
         if (plugin.getConfigManager().isGameServer() || plugin.getConfigManager().isStartOnJoin()) {
             plugin.getGame().autoJoinLobby(p);

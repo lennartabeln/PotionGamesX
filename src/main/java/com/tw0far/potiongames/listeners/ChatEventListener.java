@@ -16,29 +16,29 @@ import org.bukkit.entity.Player;
  */
 public class ChatEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public ChatEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onPlayerChat(AsyncChatEvent e) {
         Player p = e.getPlayer();
-        
+
         // Handle setup mode chat input first
         if (plugin.getSetupStateManager().isSetupPlayer(p)) {
             String messageText = PlainTextComponentSerializer.plainText().serialize(e.message());
             handleSetupChatInput(e, p, messageText);
             return;
         }
-        
+
         boolean isActive = plugin.getGame().isActivePlayer(p);
         boolean isSpectator = plugin.getGame().isSpectatorPlayer(p);
-        
+
         if (!isActive && !isSpectator) {
             return;
         }
-        
+
         // Multi-lobby mode: get lobby ID and filter chat per lobby
         String lobbyId = null;
         if (isActive) {
@@ -46,21 +46,21 @@ public class ChatEventListener implements Listener {
         } else if (isSpectator) {
             lobbyId = plugin.getGame().getSpectatorLobby(p);
         }
-        
+
         if (lobbyId != null) {
             // Filter recipients: only players in the same lobby
             e.viewers().clear();
-            
+
             // Add active players in same lobby
             for (Player active : plugin.getGame().getPlayersInLobby(lobbyId)) {
                 e.viewers().add(active);
             }
-            
+
             // Add spectators in same lobby
             for (Player spec : plugin.getGame().getSpectatorsInLobby(lobbyId)) {
                 e.viewers().add(spec);
             }
-            
+
             // Add colored name prefix based on team
             boolean activateTeams;
             try {
@@ -85,16 +85,16 @@ public class ChatEventListener implements Listener {
             }
         }
     }
-    
+
     /**
      * Handle chat input during setup mode
      */
     private void handleSetupChatInput(AsyncChatEvent e, Player p, String input) {
         // Cancel the chat message from being sent
         e.setCancelled(true);
-        
+
         Integer selectedLobby = plugin.getSetupStateManager().getSelectedLobby(p);
-        
+
         // Handle add lobby
         if (plugin.getSetupStateManager().isAddlobby()) {
             // Input is the lobby ID to add
@@ -105,7 +105,7 @@ public class ChatEventListener implements Listener {
             } catch (NumberFormatException ex) {
                 p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
             }
-        } 
+        }
         // Handle delete lobby
         else if (plugin.getSetupStateManager().isDellobby()) {
             // Input is the lobby ID to delete
@@ -116,7 +116,7 @@ public class ChatEventListener implements Listener {
             } catch (NumberFormatException ex) {
                 p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
             }
-        } 
+        }
         // Handle add arena
         else if (plugin.getSetupStateManager().isAddarena()) {
             // Input is the arena name to add
@@ -126,7 +126,7 @@ public class ChatEventListener implements Listener {
             } else {
                 p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
             }
-        } 
+        }
         // Handle delete arena
         else if (plugin.getSetupStateManager().isDelarena()) {
             // Input is the arena name to delete

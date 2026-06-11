@@ -10,7 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull; 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import java.util.*;
 public class CommandDispatcher implements CommandExecutor, TabCompleter {
     private final PotionGamesX plugin;
     private final Map<String, ICommand> commands = new HashMap<>();
-    
+
     public CommandDispatcher(PotionGamesX plugin) {
         this.plugin = plugin;
     }
@@ -30,7 +30,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
     public void register() {
         registerCommands();
     }
-    
+
     /**
      * Register all command handlers
      */
@@ -51,7 +51,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
         registerCommand(new BroadcastCommand(plugin));
         registerCommand(new KickCommand(plugin));
         registerCommand(new TopCommand(plugin));
-        
+
         // Admin commands - Setup
         registerCommand(new SetupCommand(plugin));
         registerCommand(new AddLobbyCommand(plugin));
@@ -69,25 +69,25 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
         registerCommand(new SignP1Command(plugin));
         registerCommand(new SignP2Command(plugin));
         registerCommand(new SignP3Command(plugin));
-        
+
         // Admin commands - Game control
         registerCommand(new BuildCommand(plugin));
         registerCommand(new PauseCommand(plugin));
         registerCommand(new ForceCommand(plugin));
         registerCommand(new StartCommand(plugin));
     }
-    
+
     /**
      * Register a command handler
      */
     public void registerCommand(ICommand command) {
         commands.put(command.getName().toLowerCase(), command);
     }
-    
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         boolean isPlayer = (sender instanceof Player);
-        
+
         // Show help if no args
         if (args.length == 0) {
             ICommand helpCmd = commands.get("help");
@@ -103,37 +103,37 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
             }
             return true;
         }
-        
+
         String subCommand = args[0].toLowerCase();
-        
+
         // Get and execute command
         ICommand command = commands.get(subCommand);
         if (command == null) {
-            String msg = Messages.raw("command.unknown", "Unknown command! Use /pg help for help.");
+            String msg = Messages.CommandUnknownText();
             sender.sendMessage(Component.text(msg).color(NamedTextColor.RED));
             return true;
         }
-        
+
         // Check if command requires a player
         if (!isPlayer) {
             sender.sendMessage(Component.text("This command can only be used by players!").color(NamedTextColor.RED));
             return true;
         }
-        
+
         Player player = (Player) sender;
-        
+
         // Check permission
         if (command.getPermission() != null && !player.hasPermission(command.getPermission())) {
             player.sendMessage(createError("You don't have permission to use this command!"));
             return true;
         }
-        
-        
+
+
         // Execute command
         try {
             return command.execute(player, args);
         } catch (Exception e) {
-            player.sendMessage(createError(Messages.raw("command.execution_error", "An error occurred while executing this command!")));
+            player.sendMessage(createError(Messages.CommandExecutionErrorText()));
             plugin.getLogger().severe("Error executing command " + subCommand + ": " + e.getMessage());
             e.printStackTrace();
             return true;
@@ -171,3 +171,4 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
         return Collections.emptyList();
     }
 }
+

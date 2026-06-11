@@ -8,11 +8,13 @@ import com.tw0far.potiongames.models.Settings;
 import com.tw0far.potiongames.util.PotionSerialization;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public final class EnableBootstrapInitializer {
     private final PotionGamesX plugin;
@@ -168,10 +170,10 @@ public final class EnableBootstrapInitializer {
 
             if (!lsm.isVoteallowed(s)) {
                 lsm.setVoteallowed(s, true);
-                for (int max = 1; max < 27; max++) {
-                    String arenaPath = "pg.lobbies." + s + "." + max + ".name";
-                    if (Settings.lobbies.contains(arenaPath)) {
-                        String arenaName = Settings.lobbies.getString(arenaPath);
+                String arenasPath = "pg.lobbies." + s + ".arenas";
+                if (Settings.lobbies.contains(arenasPath)) {
+                    ConfigurationSection arenasSection = Settings.lobbies.getConfigurationSection(arenasPath);
+                    for (String arenaName : arenasSection.getKeys(false)) {
                         asm.addLobbyVote(s, arenaName);
                         asm.removeLobbyVote(s, arenaName); // keep at 0
                     }
@@ -199,7 +201,7 @@ public final class EnableBootstrapInitializer {
         }
     }
 
-    private <T> void syncLobbyConfig(String lobbyId, String key, T defaultValue, java.util.function.Consumer<T> setter) {
+    private <T> void syncLobbyConfig(String lobbyId, String key, T defaultValue, Consumer<T> setter) {
         String path = "pg.lobbies." + lobbyId + "." + key;
         if (Settings.lobbies.get(path) == null) {
             Settings.lobbies.addDefault(path, defaultValue);

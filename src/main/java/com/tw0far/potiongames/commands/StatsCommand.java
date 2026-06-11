@@ -10,22 +10,22 @@ import org.bukkit.entity.Player;
  */
 public class StatsCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public StatsCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "stats";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.stats";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length == 0) {
@@ -36,7 +36,7 @@ public class StatsCommand implements ICommand {
             int kills = plugin.getDatabaseManager().getKills(player.getUniqueId().toString());
             int deaths = plugin.getDatabaseManager().getDeaths(player.getUniqueId().toString());
             double kd = plugin.getDatabaseManager().getKD(player.getUniqueId().toString());
-            
+
             player.sendMessage(Messages.StatsLabel());
             player.sendMessage(Messages.RoundsLabel(rounds));
             player.sendMessage(Messages.WinsLabel(wins));
@@ -56,7 +56,7 @@ public class StatsCommand implements ICommand {
                 int kills = plugin.getDatabaseManager().getKills(target.getUniqueId().toString());
                 int deaths = plugin.getDatabaseManager().getDeaths(target.getUniqueId().toString());
                 double kd = plugin.getDatabaseManager().getKD(target.getUniqueId().toString());
-                
+
                 player.sendMessage(Messages.RoundsLabel(rounds));
                 player.sendMessage(Messages.WinsLabel(wins));
                 player.sendMessage(Messages.LossesLabel(losses));
@@ -70,9 +70,10 @@ public class StatsCommand implements ICommand {
         }
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.stats_usage", "/pg stats [player] - Show player statistics");
+        return Messages.HelpStatsUsageText();
     }
 }
+

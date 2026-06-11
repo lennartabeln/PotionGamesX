@@ -22,35 +22,16 @@ public final class Settings {
     public static FileConfiguration messages;
     public static FileConfiguration shopdata;
     public static Component prefix = Component.text("[").color(NamedTextColor.DARK_GRAY).append(Component.text("Potion").color(NamedTextColor.DARK_PURPLE)).append(Component.text("Games").color(NamedTextColor.GOLD)).append(Component.text("]").color(NamedTextColor.DARK_GRAY)).append(Component.text(" ").color(NamedTextColor.GRAY));
-    public static boolean activateMySQL = false;
-    public static boolean startOnJoin = false;
-    public static boolean compassOnSpawn = false;
-    public static boolean allowOutsideChat = false;
-    public static boolean changeGamerules = true;
     public static boolean activateTeams = true;
     public static boolean activateKits = true;
     public static boolean activateShop = true;
     public static boolean activateAirdrops = true;
-    public static boolean gameServer = true;
-    public static boolean activateScoreboard = true;
-    public static boolean friendlyFire = false;
-    public static boolean joinStarted = false;
     public static boolean activateDeathmatch = true;
-    public static boolean enableRewards = false;
-    // Legacy flags missing in refactor; keep defaults for compatibility
-    public static boolean move = false;
-    public static boolean checkArenas = false;
-    public static boolean broadcastStarting = false;
     public static int maxPlayers = 24;
     public static int minPlayers = 2;
     public static int teamSize = 2;
-    public static int teamAmount = teamSize > 0 ? maxPlayers / teamSize : maxPlayers;
     public static int roundTime = 30;
     public static int countdown = 60;
-    public static int activePotions = 19;
-    public static int activeKits = 6;
-    public static int winningReward = 100;
-    public static int killReward = 10;
     public static String language = "en_US";
 
 
@@ -69,47 +50,12 @@ public final class Settings {
 
     public static void loadSettings(PotionGamesX pg) {
         FileConfiguration cfg = pg.getConfig();
-        if (cfg.get("pg.activateMySQL") == null) {
-            cfg.addDefault("pg.activateMySQL", activateMySQL);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            activateMySQL = cfg.getBoolean("pg.activateMySQL");
-        }
         if (cfg.get("pg.countdown") == null) {
             cfg.addDefault("pg.countdown", countdown);
             cfg.options().copyDefaults(true);
             pg.saveConfig();
         } else {
             countdown = cfg.getInt("pg.countdown");
-        }
-        if (cfg.get("pg.startOnJoin") == null) {
-            cfg.addDefault("pg.startOnJoin", startOnJoin);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            startOnJoin = cfg.getBoolean("pg.startOnJoin");
-        }
-        if (cfg.get("pg.compassOnSpawn") == null) {
-            cfg.addDefault("pg.compassOnSpawn", compassOnSpawn);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            compassOnSpawn = cfg.getBoolean("pg.compassOnSpawn");
-        }
-        if (cfg.get("pg.allowOutsideChat") == null) {
-            cfg.addDefault("pg.allowOutsideChat", allowOutsideChat);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            allowOutsideChat = cfg.getBoolean("pg.allowOutsideChat");
-        }
-        if (cfg.get("pg.changeGamerules") == null) {
-            cfg.addDefault("pg.changeGamerules", changeGamerules);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            changeGamerules = cfg.getBoolean("pg.changeGamerules");
         }
         if (cfg.get("pg.activateTeams") == null) {
             cfg.addDefault("pg.activateTeams", activateTeams);
@@ -139,13 +85,6 @@ public final class Settings {
         } else {
             activateAirdrops = cfg.getBoolean("pg.activateAirdrops");
         }
-        if (cfg.get("pg.gameServer") == null) {
-            cfg.addDefault("pg.gameServer", gameServer);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            gameServer = cfg.getBoolean("pg.gameServer");
-        }
         if (cfg.get("pg.maxPlayers") == null) {
             cfg.addDefault("pg.maxPlayers", maxPlayers);
             cfg.options().copyDefaults(true);
@@ -174,75 +113,12 @@ public final class Settings {
         } else {
             roundTime = cfg.getInt("pg.roundTime") * 60;
         }
-        if (cfg.get("pg.activePotions") == null) {
-            cfg.addDefault("pg.activePotions", activePotions);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            activePotions = cfg.getInt("pg.activePotions");
-        }
-        if (cfg.get("pg.activeKits") == null) {
-            cfg.addDefault("pg.activeKits", activeKits);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            activeKits = cfg.getInt("pg.activeKits");
-        }
-        if (cfg.get("pg.activateScoreboard") == null) {
-            cfg.addDefault("pg.activateScoreboard", activateScoreboard);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            activateScoreboard = cfg.getBoolean("pg.activateScoreboard");
-        }
-        if (cfg.get("pg.friendlyFire") == null) {
-            cfg.addDefault("pg.friendlyFire", friendlyFire);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            friendlyFire = cfg.getBoolean("pg.friendlyFire");
-        }
-        if (cfg.get("pg.joinStarted") == null) {
-            cfg.addDefault("pg.joinStarted", joinStarted);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            joinStarted = cfg.getBoolean("pg.joinStarted");
-        }
         if (cfg.get("pg.activateDeathmatch") == null) {
             cfg.addDefault("pg.activateDeathmatch", activateDeathmatch);
             cfg.options().copyDefaults(true);
             pg.saveConfig();
         } else {
             activateDeathmatch = cfg.getBoolean("pg.activateDeathmatch");
-        }
-        if (cfg.get("pg.enableRewards") == null) {
-            cfg.addDefault("pg.enableRewards", enableRewards);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            enableRewards = cfg.getBoolean("pg.enableRewards");
-        }
-        if (cfg.get("pg.broadcastStarting") == null) {
-            cfg.addDefault("pg.broadcastStarting", broadcastStarting);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            broadcastStarting = cfg.getBoolean("pg.broadcastStarting");
-        }
-        if (cfg.get("pg.winningReward") == null) {
-            cfg.addDefault("pg.winningReward", winningReward);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            winningReward = cfg.getInt("pg.winningReward");
-        }
-        if (cfg.get("pg.killReward") == null) {
-            cfg.addDefault("pg.killReward", killReward);
-            cfg.options().copyDefaults(true);
-            pg.saveConfig();
-        } else {
-            killReward = cfg.getInt("pg.killReward");
         }
         if (cfg.get("pg.language") == null) {
             cfg.addDefault("pg.language", language);

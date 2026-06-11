@@ -10,26 +10,26 @@ import org.bukkit.entity.Player;
  */
 public class AddDeathmatchCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public AddDeathmatchCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "adddeathmatch";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length < 3) {
-            player.sendMessage(Messages.raw("command.adddeathmatch.usage", "Usage: /pg adddeathmatch <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandAdddeathmatchUsageText());
             return false;
         }
         try {
@@ -38,13 +38,14 @@ public class AddDeathmatchCommand implements ICommand {
             plugin.getSetupHandler().addDeathmatchSpawn(player, arenaName, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.raw("command.adddeathmatch.usage", "Usage: /pg adddeathmatch <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandAdddeathmatchUsageText());
             return false;
         }
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("command.adddeathmatch.usage", "/pg adddeathmatch <lobbynumber> <arenaname>");
+        return Messages.CommandAdddeathmatchUsageText();
     }
 }
+

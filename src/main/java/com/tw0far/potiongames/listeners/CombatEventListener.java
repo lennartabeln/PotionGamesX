@@ -18,11 +18,11 @@ import java.util.Objects;
  */
 public class CombatEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public CombatEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     private String getPlayerTeam(String lobbyId, Player player) {
         try {
             Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));

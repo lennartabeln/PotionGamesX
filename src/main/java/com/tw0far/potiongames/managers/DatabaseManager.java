@@ -1,13 +1,14 @@
 package com.tw0far.potiongames.managers;
 
 import com.tw0far.potiongames.PotionGamesX;
-import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,12 +35,6 @@ public class DatabaseManager implements IDatabaseManager {
         closeConnection();
     }
 
-    @Override
-    public void reload() {
-        closeConnection();
-        onEnable();
-    }
-
     private void connectMySQL() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -62,7 +57,7 @@ public class DatabaseManager implements IDatabaseManager {
 
     private void connectSQLite() {
         try {
-            String dbPath = plugin.getDataFolder() + java.io.File.separator + "stats.db";
+            String dbPath = plugin.getDataFolder() + File.separator + "stats.db";
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbPath);
             connected = true;
             LOGGER.info("[PotionGamesX] Connected to SQLite database");
@@ -142,7 +137,7 @@ public class DatabaseManager implements IDatabaseManager {
         for (int i = 0; i < params.length; i++) {
             Object param = params[i];
             if (param == null) {
-                stmt.setNull(i + 1, java.sql.Types.NULL);
+                stmt.setNull(i + 1, Types.NULL);
             } else if (param instanceof String) {
                 stmt.setString(i + 1, (String) param);
             } else if (param instanceof Integer) {
@@ -367,78 +362,5 @@ public class DatabaseManager implements IDatabaseManager {
             createPlayer(uuid);
             addLosses(uuid, losses);
         }
-    }
-
-    public void createPlayer(Player player) {
-        if (player != null) {
-            createPlayer(player.getUniqueId().toString());
-        }
-    }
-
-    public void updateStat(String uuid, String stat, int value) {
-        String sql = "UPDATE Stats SET " + stat + " = ? WHERE UUID = ?";
-        executeUpdate(sql, value, uuid);
-    }
-
-    public void incrementStat(String uuid, String stat) {
-        String sql = "UPDATE Stats SET " + stat + " = " + stat + " + 1 WHERE UUID = ?";
-        executeUpdate(sql, uuid);
-    }
-
-    public int getStat(String uuid, String stat) {
-        if (!playerExists(uuid)) {
-            createPlayer(uuid);
-            return getStat(uuid, stat);
-        }
-        String sql = "SELECT " + stat + " FROM Stats WHERE UUID = ?";
-        try (ResultSet rs = executeQuery(sql, uuid)) {
-            if (rs != null && rs.next()) {
-                return rs.getInt(stat);
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, "[PotionGamesX] Failed to get stat: " + stat, e);
-        }
-        return 0;
-    }
-
-    public void updateStat(Player player, String stat, int value) {
-        if (player != null) {
-            updateStat(player.getUniqueId().toString(), stat, value);
-        }
-    }
-
-    public void incrementStat(Player player, String stat) {
-        if (player != null) {
-            incrementStat(player.getUniqueId().toString(), stat);
-        }
-    }
-
-    public int getStat(Player player, String stat) {
-        if (player != null) {
-            return getStat(player.getUniqueId().toString(), stat);
-        }
-        return 0;
-    }
-
-    public int getKills(Player player) { return getStat(player, "KILLS"); }
-    public int getDeaths(Player player) { return getStat(player, "DEATHS"); }
-    public int getWins(Player player) { return getStat(player, "WINS"); }
-    public int getLosses(Player player) { return getStat(player, "LOSSES"); }
-
-    public void setKills(Player player, int value) { updateStat(player, "KILLS", value); }
-    public void setDeaths(Player player, int value) { updateStat(player, "DEATHS", value); }
-    public void setWins(Player player, int value) { updateStat(player, "WINS", value); }
-    public void setLosses(Player player, int value) { updateStat(player, "LOSSES", value); }
-
-    public void addKills(Player player) { incrementStat(player, "KILLS"); }
-    public void addDeaths(Player player) { incrementStat(player, "DEATHS"); }
-    public void addWins(Player player) { incrementStat(player, "WINS"); }
-    public void addLosses(Player player) { incrementStat(player, "LOSSES"); }
-
-    public double getKDRatio(Player player) {
-        int kills = getKills(player);
-        int deaths = getDeaths(player);
-        if (deaths == 0) return (double) kills;
-        return (double) kills / deaths;
     }
 }

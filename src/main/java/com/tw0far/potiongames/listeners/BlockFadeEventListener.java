@@ -11,13 +11,13 @@ import org.bukkit.event.block.BlockFadeEvent;
  */
 public class BlockFadeEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public BlockFadeEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
-    public void onBlockFade(BlockFadeEvent e) {        
+    public void onBlockFade(BlockFadeEvent e) {
         // Prevent block fade during active games
         if (plugin.getGame().getActivePlayerCount() > 0) {
             e.setCancelled(true);

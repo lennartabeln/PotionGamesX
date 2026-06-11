@@ -11,30 +11,30 @@ import org.bukkit.entity.Player;
  */
 public class AddSpawnCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public AddSpawnCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "addspawn";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         // Multi-lobby system: /pg addspawn <lobbynumber> <arenaname>
         if (args.length < 3) {
-            player.sendMessage(Messages.raw("command.addspawn.usage", "Usage: /pg addspawn <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandAddspawnUsageText());
             return false;
         }
-        
+
         try {
             int lobbyId = Integer.parseInt(args[1]);
             String arenaName = args[2];
@@ -46,13 +46,14 @@ public class AddSpawnCommand implements ICommand {
             plugin.getSetupHandler().addSpawn(player, arenaName, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.raw("command.addspawn.usage", "Usage: /pg addspawn <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandAddspawnUsageText());
             return false;
         }
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("command.addspawn.usage", "/pg addspawn <lobbynumber> <arenaname>");
+        return Messages.CommandAddspawnUsageText();
     }
 }
+

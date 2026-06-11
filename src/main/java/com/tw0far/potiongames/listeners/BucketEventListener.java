@@ -13,35 +13,36 @@ import org.bukkit.entity.Player;
  */
 public class BucketEventListener implements Listener {
     private final PotionGamesX plugin;
-    
+
     public BucketEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @EventHandler
     public void onBucketEmpty(PlayerBucketEmptyEvent e) {
         Player p = e.getPlayer();
-        
+
         if (!plugin.getGame().isActivePlayer(p)) {
             return;
         }
-        
+
         // Get the player's lobby
         String lobbyId = plugin.getGame().getPlayerLobby(p);
-        
+
         if (lobbyId == null) {
             return;
         }
-        
+
         // Prevent water bucket placement during games
         // Water can be used for escape/defensive purposes, which may be too powerful
         if (e.getBucket().toString().contains("WATER")) {
             e.setCancelled(true);
-            p.sendMessage(Messages.raw("bucket.water_not_allowed", "Water buckets are not allowed during games!"));
+            p.sendMessage(Messages.BucketWaterNotAllowedText());
             return;
         }
-        
+
         // Allow lava bucket (for damage purposes)
         // Allow milk bucket (for potion effects)
     }
 }
+

@@ -66,6 +66,7 @@ public class LeaveCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.raw("help.leave_usage", "/pg leave - Leave the current game");
+        return Messages.HelpLeaveUsageText();
     }
 }
+

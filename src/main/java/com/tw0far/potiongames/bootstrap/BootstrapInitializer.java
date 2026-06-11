@@ -14,7 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import com.tw0far.potiongames.util.PotionSerialization;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class BootstrapInitializer {
     private final PotionGamesX plugin;
@@ -160,7 +162,7 @@ public final class BootstrapInitializer {
             kits.add("kit" + i);
         }
 
-        java.util.Map<String, Integer> kitplayers = new java.util.HashMap<>();
+        Map<String, Integer> kitplayers = new HashMap<>();
         kitplayers.put(Messages.RandomText(), 0);
         for (String all : kits) {
             kitplayers.put(all, 0);

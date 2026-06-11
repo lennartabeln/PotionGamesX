@@ -9,26 +9,26 @@ import org.bukkit.entity.Player;
  */
 public class AddLobbyCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public AddLobbyCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "addlobby";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(Messages.raw("command.addlobby.usage", "Usage: /pg addlobby <lobbynumber>"));
+            player.sendMessage(Messages.CommandAddlobbyUsageText());
             return false;
         }
         try {
@@ -36,13 +36,14 @@ public class AddLobbyCommand implements ICommand {
             plugin.getSetupHandler().addLobby(player, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.raw("command.addlobby.usage", "Usage: /pg addlobby <lobbynumber>"));
+            player.sendMessage(Messages.CommandAddlobbyUsageText());
             return false;
         }
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("command.addlobby.usage", "/pg addlobby <lobbynumber>");
+        return Messages.CommandAddlobbyUsageText();
     }
 }
+

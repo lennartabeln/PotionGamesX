@@ -9,22 +9,22 @@ import org.bukkit.entity.Player;
  */
 public class PauseCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public PauseCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "pause";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.pause";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         // Multi-lobby mode: get player's lobby and toggle pause for that lobby
@@ -47,9 +47,10 @@ public class PauseCommand implements ICommand {
         }
         return true;
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("help.pause_usage", "/pg pause - Pause/resume the game (requires pg.pause)");
+        return Messages.HelpPauseUsageText();
     }
 }
+

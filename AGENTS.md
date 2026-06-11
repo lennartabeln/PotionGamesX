@@ -17,3 +17,57 @@
 - Development: `mvn compile` -> `mvn test` -> `java -jar target/PotionGamesX-1.0.0.jar`
 - Testing: Skip `mvn package` if only running unit tests
 - Failure Handling: `mvn clean` always resolves transient build errors
+
+## Session Summary (2026-06-11)
+
+### Completed: Lobby GUI & Inventory Overhaul
+
+**Arena Selector Fixes:**
+- Fixed "Random" option displaying 0 votes — now shows actual vote count via `getLobbyVoteCount`
+- Random item uses `Messages.RandomItem()` for proper naming
+
+**Kit Selector Fix:**
+- Added `handleKitSelection` listener method — now properly applies kit+items on selection
+
+**Inventory Style Unification:**
+- Arena selector, kit selector, team selector, stats, leave items all use `DARK_AQUA`, no prefix
+- Inventory titles (ArenaSelectorTitle, KitSelector, SelectorTeamTitle) no longer use prefix line
+
+**Messages.java Refactoring:**
+- Eliminated all 107 `Messages.raw("key", "default")` calls project-wide
+- Replaced with 86 typed `*Text()` methods in `Messages.java` (`Messages.SomethingText()`)
+- Existing parameterized methods (`get(key, default, args...)`) left unchanged
+- Methods that had both `raw` and parameterized usage were preserved as the parameterized versions are still needed.
+
+### Completed: Dead Code Cleanup
+
+**Removed 5 unused files:**
+- `BlockTracker.java`, `PotionChest.java`, `LootTable.java` — never imported or instantiated
+- `LobbySettings.java` — entire class dead (zero imports project-wide)
+- `ConfigKeys.java` — 36/37 enum values dead; single live use inlined at call site
+
+**Lobby.java cleanup (~30 dead methods removed):**
+- Dead voting/team getters (`getVotingMap`, `getTeamsMap`, `getCurrentVote`, etc.) — migration to ArenaStateManager complete
+- Dead flag getters/setters (`isForcearena`, `isVoteallowed`, `isKitallowed`, `isBuildAllowed`, `isSingleArena`, etc.) — state managed via LobbyStateManager
+- Dead accessors (`getChests`, `getPlacedBlocks`, `getBreakeedBlocks`, `getArenaCount`, `hasArena`, etc.)
+- Dead operations (`pauseGame`, `resumeGame`, `activateTeam`, `getTeamMembers`)
+
+**Model cleanup (Arena, Game, LobbyConfig, Participant):**
+- `Arena.java` — removed 13 dead methods (stale voting/chest/loot/settings accessors)
+- `Game.java` — removed 8 dead orchestration methods + 10 empty loot/shop fields (data lives in ItemStateManager)
+- `LobbyConfig.java` — removed 10 dead getters/setters (setters were also buggy — wrong config path)
+- `Participant.java` — removed dead `getLobby()`
+
+**Manager cleanup:**
+- `ILobbyStateManager` / `LobbyStateManager` — removed 21 dead method declarations
+- `IArenaStateManager` / `ArenaStateManager` — removed global voting (dead) + `clearLobbyVotes`, `getWinningArenaForLobby`, `getLobbyTeamAmount`, `markPlayerVotedInLobby`, `clearLobbyTeams`
+- `IConfigurationManager` / `ConfigurationManager` — removed ~65 dead getter/setter methods; kept live ones
+- `IBlockStateManager` / `BlockStateManager` — removed 28 dead methods, 5 unused fields
+- `IPlayerStateManager` / `PlayerStateManager` — removed 22 dead methods, 3 unused fields
+- `IDatabaseManager` / `DatabaseManager` — removed 20 dead Player-based convenience methods
+- `IManager` — removed `reload()` (zero callers); removed `reload()` from 8 implementations
+- `ISetupHandler` / `SetupHandler` — removed 9 dead parameterless overloads
+- `Messages.raw()` — removed (zero callers after Text method migration)
+
+**Settings.java cleanup:**
+- Removed 19 dead static fields (all written but never read; duplicate of ConfigurationManager values)

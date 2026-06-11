@@ -11,30 +11,30 @@ import org.bukkit.entity.Player;
  */
 public class AddArenaCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public AddArenaCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "addarena";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         // Multi-lobby system: /pg addarena <lobbynumber> <arenaname>
         if (args.length < 3) {
-            player.sendMessage(Messages.raw("command.addarena.usage", "Usage: /pg addarena <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandAddarenaUsageText());
             return false;
         }
-        
+
         try {
             int lobbyId = Integer.parseInt(args[1]);
             String arenaName = args[2];
@@ -50,13 +50,14 @@ public class AddArenaCommand implements ICommand {
             player.sendMessage(Messages.ArenaCouldNotLoad());
             return false;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.raw("command.addarena.usage", "Usage: /pg addarena <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandAddarenaUsageText());
             return false;
         }
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("command.addarena.usage", "/pg addarena <lobbynumber> <arenaname>");
+        return Messages.CommandAddarenaUsageText();
     }
 }
+

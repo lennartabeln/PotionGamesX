@@ -11,30 +11,30 @@ import org.bukkit.entity.Player;
  */
 public class DelSpawnCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public DelSpawnCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "delspawn";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.setup";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         // Multi-lobby system: /pg delspawn <lobbynumber> <arenaname>
         if (args.length < 3) {
-            player.sendMessage(Messages.raw("command.delspawn.usage", "Usage: /pg delspawn <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandDelspawnUsageText());
             return false;
         }
-        
+
         try {
             int lobbyId = Integer.parseInt(args[1]);
             String arenaName = args[2];
@@ -46,13 +46,14 @@ public class DelSpawnCommand implements ICommand {
             plugin.getSetupHandler().removeSpawn(player, arenaName, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.raw("command.delspawn.usage", "Usage: /pg delspawn <lobbynumber> <arenaname>"));
+            player.sendMessage(Messages.CommandDelspawnUsageText());
             return false;
         }
     }
-    
+
     @Override
     public String getUsage() {
-        return Messages.raw("command.delspawn.usage", "/pg delspawn <lobbynumber> <arenaname>");
+        return Messages.CommandDelspawnUsageText();
     }
 }
+

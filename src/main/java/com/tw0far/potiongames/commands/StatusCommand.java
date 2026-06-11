@@ -11,42 +11,42 @@ import org.bukkit.entity.Player;
  */
 public class StatusCommand implements ICommand {
     private final PotionGamesX plugin;
-    
+
     public StatusCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
-    
+
     @Override
     public String getName() {
         return "status";
     }
-    
+
     @Override
     public String getPermission() {
         return "pg.status";
     }
 
-    
+
     @Override
     public boolean execute(Player player, String[] args) {
         var game = plugin.getGame();
         var lobbies = game.getLobbies();
-        
+
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
-        
+
         player.sendMessage(Component.text("PotionGamesX Status").color(NamedTextColor.GOLD));
-        
+
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("Server:").color(NamedTextColor.GOLD)));
-        
+
         player.sendMessage(formatStatusLine("  Players Active", game.getActivePlayers().size() + ""));
         player.sendMessage(formatStatusLine("  Players Spectating", game.getSpectatorPlayers().size() + ""));
         player.sendMessage(formatStatusLine("  Total Players", (game.getActivePlayers().size() + game.getSpectatorPlayers().size()) + ""));
-        
+
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("Lobbies:").color(NamedTextColor.GOLD)));
-        
+
         if (lobbies.isEmpty()) {
             player.sendMessage(Component.text("  No active lobbies").color(NamedTextColor.GRAY));
         } else {
@@ -55,37 +55,37 @@ public class StatusCommand implements ICommand {
                 int activePlayers = lobby.getActivePlayers().size();
                 int spectators = lobby.getSpectatorPlayers().size();
                 String state = lobby.getState().name();
-                
+
                 Component lobbyInfo = Component.text("  Lobby: ").color(NamedTextColor.GRAY)
                     .append(Component.text(lobbyId + "").color(NamedTextColor.AQUA))
                     .append(Component.text(" | ").color(NamedTextColor.DARK_GRAY))
                     .append(Component.text(activePlayers + "/" + spectators).color(NamedTextColor.YELLOW))
                     .append(Component.text(" | ").color(NamedTextColor.DARK_GRAY))
                     .append(Component.text(state).color(getStateColor(state)));
-                
+
                 player.sendMessage(lobbyInfo);
             }
         }
-        
+
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("Database:").color(NamedTextColor.GOLD)));
-        
+
         boolean mysqlActive = plugin.getConfigManager().isActivateMysql();
         player.sendMessage(formatStatusLine("  Mode", mysqlActive ? "MySQL" : "SQLite"));
         player.sendMessage(formatStatusLine("  Connection", "✓ Connected"));
-        
+
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
-        
+
         return true;
     }
-    
+
     private Component formatStatusLine(String key, String value) {
         return Component.text(key).color(NamedTextColor.GRAY)
             .append(Component.text(": ").color(NamedTextColor.DARK_GRAY))
             .append(Component.text(value).color(NamedTextColor.GREEN));
     }
-    
+
     private NamedTextColor getStateColor(String state) {
         return switch (state) {
             case "LOBBY" -> NamedTextColor.BLUE;
@@ -95,7 +95,7 @@ public class StatusCommand implements ICommand {
             default -> NamedTextColor.WHITE;
         };
     }
-    
+
     @Override
     public String getUsage() {
         return "/pg status";
