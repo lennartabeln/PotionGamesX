@@ -10,6 +10,7 @@ concurrency:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   release:
@@ -73,12 +74,17 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
-    - name: Sync dev with main
+    - name: Create sync PR (main → dev)
       if: github.ref_name == 'main'
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git fetch origin dev
-        git checkout -b dev origin/dev
-        git merge origin/main -m "Merge main into dev [skip ci]"
-        git push origin dev
+        BRANCH="sync/main-into-dev-$(date +%s)"
+        git checkout -b "$BRANCH"
+        git push origin "$BRANCH"
+        gh pr create \
+          --base dev \
+          --head "$BRANCH" \
+          --title "Sync main into dev" \
+          --body "Automated sync after merge into main." \
+          --label "dependencies" || echo "PR already exists or creation skipped"
+      env:
+        GH_TOKEN: ${{ github.token }}
