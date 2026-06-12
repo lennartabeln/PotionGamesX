@@ -16,7 +16,7 @@ Do **not** open a public issue. See [`SECURITY.md`](SECURITY.md) for private dis
 
 ## Pull Requests
 
-1. Fork the repo and create your branch from `master`.
+1. Fork the repo and create your branch from `main`.
 2. Run `mvn clean package` locally — ensure it builds without errors.
 3. Keep changes focused; avoid unrelated formatting or noise.
 4. Fill out the pull request template with what changed and how it was tested.

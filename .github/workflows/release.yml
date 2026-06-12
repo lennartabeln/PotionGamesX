@@ -2,7 +2,7 @@ name: Auto Release
 
 on:
   push:
-    branches: [master, dev]
+    branches: [main, dev]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -39,9 +39,9 @@ jobs:
         echo "tag=$TAG" >> "$GITHUB_OUTPUT"
         echo "Version: $TAG"
 
-    - name: Check tag existence (master only)
+    - name: Check tag existence (main only)
       id: check_tag
-      if: github.ref_name == 'master'
+      if: github.ref_name == 'main'
       run: |
         if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
           echo "exists=true" >> "$GITHUB_OUTPUT"
