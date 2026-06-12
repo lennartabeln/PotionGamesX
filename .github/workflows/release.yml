@@ -48,7 +48,7 @@ jobs:
       if: steps.check.outputs.exists != 'true'
       run: |
         BASE="${{ steps.version.outputs.base }}"
-        if [[ "$BASE" == *-pre* ]] || [[ "$BASE" == *-rc* ]] || [[ "$BASE" == *-alpha* ]] || [[ "$BASE" == *-beta* ]]; then
+        if [[ "$BASE" == *-* ]]; then
           echo "value=true" >> "$GITHUB_OUTPUT"
         else
           echo "value=false" >> "$GITHUB_OUTPUT"
