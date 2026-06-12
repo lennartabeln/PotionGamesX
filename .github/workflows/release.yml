@@ -74,7 +74,7 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
 
     - name: Sync dev with main
-      if: github.ref_name == 'main' && steps.check_tag.outputs.exists == 'false'
+      if: github.ref_name == 'main'
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
