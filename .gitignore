@@ -24,7 +24,6 @@ buildNumber.properties
 *.swp
 *.swo
 *~
-.DS_Store
 
 # Build
 build/
@@ -49,12 +48,6 @@ coverage/
 *.log
 logs/
 
-# OS
-.DS_Store
-Thumbs.db
-.AppleDouble
-.LSOverride
-
 # Java
 .javahistory
 *.lock
@@ -78,12 +71,9 @@ env/
 # Temporary files
 *.tmp
 *.bak
-*.swp
 .tmp/
 
 # IDE specific
-.vscode/settings.json
-.vscode/extensions.json
 .idea/shelf
 .idea/workspace.xml
 .idea/tasks.xml
@@ -91,6 +81,7 @@ env/
 .idea/modules/
 
 # MacOS
+.DS_Store
 .AppleDouble
 .LSOverride
 ._*

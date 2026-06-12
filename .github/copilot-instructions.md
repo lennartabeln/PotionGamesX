@@ -83,10 +83,8 @@ Manual integration tests only (no automated unit tests). See TEST_README.md for 
 
 ### Utility Classes
 
-- **ItemBuilder**: Fluent item creation
-- **MessageUtil**: Component/text formatting
-- **LocationUtil**: Serialization utilities
-- **BlockTracker**: Persistent block tracking
+- **PotionSerialization**: Potion effect serialization
+- **UpdateChecker**: GitHub version check
 
 ### Lobby-Based Configuration Model
 
@@ -141,7 +139,7 @@ String team = plugin.lobbyteamplayernames.get(lobbyId).get(player);
 - CombatEventListener: Team checks, spectator state
 - ChatEventListener: Team chat filtering
 
-**Remaining direct accesses** in PotionGames.java are intentional:
+**Remaining direct accesses** in PotionGamesX.java are intentional:
 - Global config fields (to be accessed via ConfigurationManager)
 - Message templates (not per-lobby state)
 - Potion definitions (global constants)
@@ -324,101 +322,68 @@ lobby.trackBlockBreak(player, block);
 
 ```
 src/main/java/com/tw0far/potiongames/
-├── main/
-│   └── PotionGames.java                 # Main plugin class (1502 lines, delegating)
-│
+├── PotionGamesX.java                    # Main plugin class
+
 ├── models/                              # Domain model classes (own state)
-│   ├── Game.java                        # Global player/lobby tracking (~350 lines)
-│   ├── Lobby.java                       # Per-lobby game state & tick loop (~600 lines)
+│   ├── Game.java                        # Global player/lobby tracking
+│   ├── Lobby.java                       # Per-lobby game state & tick loop
+│   ├── LobbyConfig.java                 # Per-lobby config
 │   ├── Participant.java                 # Player wrapper (team, kit, kills, deaths)
+│   ├── ParticipantType.java             # Player type enum
 │   ├── Arena.java                       # Arena definition (spawns, metadata)
-│   ├── Shop.java                        # Shop UI & logic
-│   ├── Team.java                        # Team data
 │   ├── Kit.java                         # Kit data
-│   ├── RankWall.java                    # Top 3 players display
-│   ├── BlockTracker.java                # Block tracking per player
-│   ├── GameStates.java                  # State enum (LOBBY, GAME_RUNNING, DEATHMATCH, ENDED)
-│   ├── ParticipantType.java             # Player type enum (ACTIVE, SPECTATOR)
+│   ├── GameStates.java                  # State enum
 │   ├── Messages.java                    # Message key constants
 │   ├── Settings.java                    # Global settings
-│   ├── LobbyConfig.java                 # Per-lobby config
-│   ├── LootTable.java                   # Loot definitions
-│   ├── PotionChest.java                 # Chest metadata
-│   ├── RankWallItem.java                # RankWall item
-│   ├── MySqlConfiguration.java          # Database config
 │   └── PlayerState.java                 # Player inv/level save
-│
+
 ├── managers/                            # Coordination classes
-│   ├── IConfigurationManager            # Interface
-│   ├── ConfigurationManager             # Config loading/access
-│   ├── IDatabaseManager                 # Interface
-│   ├── DatabaseManager                  # Player stats storage
-│   ├── ILobbyStateManager               # Interface
-│   ├── LobbyStateManager                # Per-lobby settings
-│   ├── IPlayerStateManager              # Interface
-│   ├── PlayerStateManager               # Player inv/level
-│   ├── IArenaStateManager               # Interface
-│   ├── ArenaStateManager                # Arena voting
-│   ├── IItemStateManager                # Interface
-│   ├── ItemStateManager                 # Loot/shop items
-│   ├── IBlockStateManager               # Interface
-│   ├── BlockStateManager                # Block tracking
-│   ├── ISetupStateManager               # Interface
-│   └── SetupStateManager                # Setup mode temp state
-│
+│   ├── IManager.java                    # Base interface
+│   ├── IConfigurationManager / ConfigurationManager
+│   ├── IDatabaseManager / DatabaseManager
+│   ├── ILobbyStateManager / LobbyStateManager
+│   ├── IPlayerStateManager / PlayerStateManager
+│   ├── IArenaStateManager / ArenaStateManager
+│   ├── IItemStateManager / ItemStateManager
+│   ├── IBlockStateManager / BlockStateManager
+│   └── ISetupStateManager / SetupStateManager
+
 ├── commands/                            # Command handlers
 │   ├── ICommand.java                    # Command interface
 │   ├── CommandDispatcher.java           # Routes /pg subcommands
-│   ├── JoinCommand.java
-│   ├── LeaveCommand.java
-│   ├── StartCommand.java
-│   ├── PauseCommand.java
-│   ├── BuildCommand.java
-│   ├── ForceCommand.java
-│   ├── StatsCommand.java
-│   ├── HelpCommand.java
-│   ├── VersionCommand.java
-│   ├── SetupCommand.java
-│   └── ReloadCommand.java
-│
+│   ├── AddArenaCommand, AddDeathmatchCommand, AddLobbyCommand, AddSpawnCommand
+│   ├── BroadcastCommand, BuildCommand, ConfigCommand, DatabaseCommand
+│   ├── DebugCommand, DelArenaCommand, DelDeathmatchCommand, DelLobbyCommand
+│   ├── DelSpawnCommand, ForceCommand, GameServerCommand
+│   ├── HeadP1Command, HeadP2Command, HeadP3Command
+│   ├── HelpCommand, JoinCommand, JoinSignCommand, KickCommand
+│   ├── LeaveCommand, ListCommand, PauseCommand, ReloadCommand
+│   ├── SetupCommand, SignP1Command, SignP2Command, SignP3Command
+│   ├── StartCommand, StatsCommand, StatusCommand, TopCommand, VersionCommand
+
 ├── listeners/                           # Event handlers
-│   ├── PlayerEventListener.java         # Join, quit, move
-│   ├── BlockEventListener.java          # Block break/place/fade
-│   ├── CombatEventListener.java         # Death, damage
-│   └── InventoryEventListener.java      # Shop, teams, voting, kits
-│
+│   ├── BlockEventListener, BlockFadeEventListener, BlockFlowEventListener
+│   ├── BucketEventListener, ChatEventListener, CombatEventListener
+│   ├── CreatureSpawnEventListener, DamageEventListener, DeathEventListener
+│   ├── ExplosionEventListener, FoodLevelEventListener, InventoryEventListener
+│   ├── ItemConsumeEventListener, ItemDropEventListener, LeavesDecayEventListener
+│   ├── PlayerEventListener, RespawnEventListener, SignChangeEventListener
+│   ├── SpectatorEventListener, TeleportEventListener, WeatherEventListener
+
 ├── bootstrap/                           # Startup logic
-│   ├── EnableBootstrapInitializer       # Load lobbies/arenas
-│   ├── ChestLootInitializer             # Init chest loot
-│   ├── RankWallUpdater                  # Init rank walls
-│   ├── BootstrapInitializer             # Bootstrap base
-│   └── EnableBootstrapContext           # Setup context
-│
+│   ├── BootstrapInitializer
+│   ├── EnableBootstrapInitializer
+│   ├── ChestLootInitializer
+│   └── RankWallUpdater
+
 ├── handlers/                            # Complex workflows
-│   ├── ISetupHandler.java               # Setup interface
-│   ├── SetupHandler.java                # Interactive setup flow
-│   └── JoinLobbyHandler.java            # Player join logic
-│
-├── config/                              # Config optimization
-│   ├── ConfigKeys.java                  # Translation keys
-│   ├── LobbySettings.java               # Per-lobby settings
-│   └── YamlConfigLoader.java            # Cached config loading
-│
-├── database/                            # Database utilities
-│   └── DatabaseQueryBuilder.java        # Prepared statement builder
-│
-├── util/                                # Shared utilities
-│   ├── ItemBuilder.java                 # Fluent item creation
-│   ├── MessageUtil.java                 # Component helpers
-│   └── LocationUtil.java                # Location utilities
-│
-├── error/                               # Error handling
-│   ├── ErrorContext.java                # Error builder
-│   ├── PotionGamesError.java            # Error codes
-│   └── ErrorHandler.java                # Error facade
-│
-└── updatechecker/
-    └── UpdateChecker.java               # GitHub version check
+│   ├── ISetupHandler.java / SetupHandler.java
+│   ├── JoinLobbyHandler.java
+│   └── ReloadHandler.java
+
+└── util/                                # Shared utilities
+    ├── PotionSerialization.java
+    └── UpdateChecker.java
 ```
 
 ## Common Tasks
@@ -548,17 +513,7 @@ Component msg2 = Messages.getFormatted("player.joined", player.getName());
 Bukkit.broadcastMessage(msg2);
 ```
 
-### Item & Inventory Helpers
 
-Use ItemBuilder:
-```java
-ItemStack sword = new ItemBuilder(Material.IRON_SWORD)
-    .setName("§6Legendary Blade")
-    .addEnchantment(Enchantment.SHARPNESS, 3)
-    .addLore("§7A powerful weapon")
-    .setUnbreakable(true)
-    .build();
-```
 
 ### Error Handling
 
@@ -587,26 +542,26 @@ if (!plugin.getGame().isActivePlayer(player)) {
 - [x] **Event System**: 4+ listener classes (PlayerEventListener, BlockEventListener, CombatEventListener, InventoryEventListener)
 - [x] **Delegation**: 45+ HashMap accesses migrated from direct access to delegation methods
 - [x] **Compilation**: 0 errors, 32 safe warnings (deprecated Bukkit APIs)
-- [x] **Code Reduction**: PotionGames.java reduced from ~5,200 to 1,502 lines (71% reduction)
+- [x] **Code Reduction**: PotionGamesX.java reduced from ~5,200 to 1,502 lines (71% reduction)
 - [x] **Bootstrap**: Lobby loading, chest loot init, rank wall setup
 - [x] **Handlers**: JoinLobbyHandler, SetupHandler for complex workflows
 
 ### In Progress 🔄
 
-- [ ] Phase 7.6: Remove 100+ legacy fields from PotionGames.java
+- [ ] Phase 7.6: Remove 100+ legacy fields from PotionGamesX.java
 - [ ] Phase 8: Further simplification and architectural cleanup
 
 ### Known Issues
 
-1. **Legacy Code Still Present**: Old Events.java and Commands.java remain but are superseded
-2. **Direct HashMap Fields**: PotionGames.java still contains 60+ fields that should be manager-owned (Phase 7.6 target)
+1. **Legacy Code Removed**: Old monolithic Events.java and Commands.java have been deleted
+2. **Direct HashMap Fields**: PotionGamesX.java still contains 60+ fields that should be manager-owned (Phase 7.6 target)
 3. **No Automated Tests**: Manual integration testing only
 
 ## Code Metrics (Phase 7 vs Phase 1)
 
 | Metric | Phase 1 | Phase 7 | Reduction |
 |--------|---------|---------|-----------|
-| PotionGames.java lines | 5,205 | 1,502 | 71% ↓ |
+| PotionGamesX.java lines | 5,205 | 1,502 | 71% ↓ |
 | Event handler class | 2,673 (monolithic) | ~400 (split 4 ways) | 85% ↓ |
 | Command class | 822 (monolithic) | ~100 (dispatcher) | 90% ↓ |
 | Methods in main class | 259 | ~50 | 81% ↓ |

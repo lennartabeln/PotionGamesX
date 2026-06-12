@@ -94,7 +94,7 @@ src/main/java/com/tw0far/potiongames/
 ├── bootstrap/           # Startup initialization
 ├── util/                # Utilities and helpers
 ├── error/               # Error handling
-└── main/PotionGames.java # Main plugin class
+└── PotionGamesX.java # Main plugin class
 ```
 
 ## 📝 Key Files

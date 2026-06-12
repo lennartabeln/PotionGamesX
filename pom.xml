@@ -79,6 +79,7 @@
             <groupId>com.github.milkbowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
