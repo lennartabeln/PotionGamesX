@@ -270,14 +270,10 @@ public class DatabaseManager implements IDatabaseManager {
         if (playerExists(uuid)) {
             int kills = getKills(uuid);
             int deaths = getDeaths(uuid);
-            if (deaths != 0) {
-                kd = ((double) kills) / ((double) deaths);
-            } else {
-                kd = kills;
-            }
-            kd = Math.round(kd * 1000) / 1000.0;
+            double computed = deaths != 0 ? ((double) kills) / ((double) deaths) : kills;
+            computed = Math.round(computed * 1000) / 1000.0;
             String sql = "UPDATE Stats SET KD = ? WHERE UUID = ?";
-            executeUpdate(sql, kd, uuid);
+            executeUpdate(sql, computed, uuid);
         } else {
             createPlayer(uuid);
             setKD(uuid, kd);
@@ -311,9 +307,9 @@ public class DatabaseManager implements IDatabaseManager {
         if (playerExists(uuid)) {
             int wins = getWins(uuid);
             int losses = getLosses(uuid);
-            rounds = wins + losses;
+            int computed = wins + losses;
             String sql = "UPDATE Stats SET ROUNDS = ? WHERE UUID = ?";
-            executeUpdate(sql, rounds, uuid);
+            executeUpdate(sql, computed, uuid);
         } else {
             createPlayer(uuid);
             setRounds(uuid, rounds);

@@ -38,7 +38,7 @@ public class Lobby {
     private int maxPlayers = 24;
     private int minPlayers = 2;
     private int teamSize = 2;
-    private int teamAmount = teamSize > 0 ? maxPlayers / teamSize : maxPlayers;
+    private int teamAmount = Math.max(1, teamSize > 0 ? maxPlayers / teamSize : maxPlayers);
 
     private int playerCount = 0;
     private ArrayList<Participant> participants = new ArrayList<>();

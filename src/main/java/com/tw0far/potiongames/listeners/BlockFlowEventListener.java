@@ -1,6 +1,8 @@
 package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.models.GameStates;
+import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -18,9 +20,13 @@ public class BlockFlowEventListener implements Listener {
 
     @EventHandler
     public void onBlockFlow(BlockFromToEvent e) {
-        // Prevent water/lava flow during active games
-        if (plugin.getGame().getActivePlayerCount() > 0) {
-            e.setCancelled(true);
+        for (Lobby lobby : plugin.getGame().getLobbies()) {
+            if (lobby.getState() == GameStates.INGAME
+                    && lobby.getSpawn() != null
+                    && lobby.getSpawn().getWorld().equals(e.getBlock().getWorld())) {
+                e.setCancelled(true);
+                return;
+            }
         }
     }
 }

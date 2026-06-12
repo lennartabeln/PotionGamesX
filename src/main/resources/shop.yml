@@ -111,38 +111,3 @@ pg:
       kit: Fighter
       cost: 4
       sale: 2
-    21:
-      name: "BAD_OMEN2"
-      kit: Fighter
-      cost: 4
-      sale: 2
-    22:
-      name: "BAD_OMEN3"
-      kit: Fighter
-      cost: 4
-      sale: 2
-    23:
-      name: "BAD_OMEN4"
-      kit: Fighter
-      cost: 4
-      sale: 2
-    24:
-      name: "BAD_OMEN5"
-      kit: Fighter
-      cost: 4
-      sale: 2
-    25:
-      name: "BAD_OMEN6"
-      kit: Fighter
-      cost: 4
-      sale: 2
-    26:
-      name: "BAD_OMEN7"
-      kit: Fighter
-      cost: 4
-      sale: 2
-    27:
-      name: "BAD_OMEN8"
-      kit: Fighter
-      cost: 4
-      sale: 2

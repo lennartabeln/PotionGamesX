@@ -95,13 +95,6 @@ public final class BootstrapInitializer {
         addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BLINDNESS", "BLINDNESS", Material.SPLASH_POTION, "Fighter");
         addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "NAUSEA", "NAUSEA", Material.SPLASH_POTION, "Fighter");
         addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN2", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN3", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN4", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN5", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN6", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN7", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
-        addShopEntry(shop, shoppotion, shoppotiontype, shopkit, shopcost, shopsale, "BAD_OMEN8", "BAD_OMEN", Material.SPLASH_POTION, "Fighter");
 
         for (int i = 0; i < shop.size(); i++) {
             String potionPath = "pg.potions." + (i + 1);

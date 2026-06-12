@@ -211,8 +211,7 @@ public class Game {
 
     public void clearAllPlayers() {
         for (Lobby lobby : lobbies) {
-            lobby.getActivePlayers().clear();
-            lobby.getSpectatorPlayers().clear();
+            lobby.clearParticipants();
         }
     }
 
