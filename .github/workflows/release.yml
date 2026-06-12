@@ -1,4 +1,4 @@
-name: Auto Release
+name: Release
 
 on:
   push:
@@ -31,31 +31,41 @@ jobs:
       run: |
         BASE=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         echo "base=$BASE" >> "$GITHUB_OUTPUT"
-        TAG="v${BASE}"
-        echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-        echo "Version: $TAG"
+        echo "tag=${BASE}" >> "$GITHUB_OUTPUT"
 
     - name: Check tag existence
-      id: check_tag
+      id: check
       run: |
         if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
           echo "exists=true" >> "$GITHUB_OUTPUT"
-          echo "Tag ${{ steps.version.outputs.tag }} already exists — skipping release."
+          echo "Tag ${{ steps.version.outputs.tag }} already exists — skipping."
         else
           echo "exists=false" >> "$GITHUB_OUTPUT"
         fi
 
+    - name: Determine prerelease
+      id: prerelease
+      if: steps.check.outputs.exists != 'true'
+      run: |
+        BASE="${{ steps.version.outputs.base }}"
+        if [[ "$BASE" == *-pre* ]] || [[ "$BASE" == *-rc* ]] || [[ "$BASE" == *-alpha* ]] || [[ "$BASE" == *-beta* ]]; then
+          echo "value=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "value=false" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Build
+      if: steps.check.outputs.exists != 'true'
       run: mvn clean package
 
     - name: Create Release
-      if: steps.check_tag.outputs.exists != 'true'
+      if: steps.check.outputs.exists != 'true'
       uses: softprops/action-gh-release@v3
       with:
         tag_name: ${{ steps.version.outputs.tag }}
-        name: "PotionGamesX-${{ steps.version.outputs.tag }}"
+        name: PotionGamesX-${{ steps.version.outputs.base }}
         files: target/PotionGamesX-*.jar
-        prerelease: false
+        prerelease: ${{ steps.prerelease.outputs.value }}
         generate_release_notes: true
         fail_on_unmatched_files: true
       env:
