@@ -72,13 +72,3 @@ jobs:
         fail_on_unmatched_files: true
       env:
         GITHUB_TOKEN: ${{ github.token }}
-
-    - name: Sync dev with main
-      if: github.ref_name == 'main'
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git fetch origin dev
-        git checkout -b dev origin/dev
-        git merge origin/main -m "Merge main into dev [skip ci]"
-        git push origin dev
