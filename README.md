@@ -2,6 +2,11 @@
 
 > A Minecraft minigames plugin for Bukkit servers!
 
+[![CI Build](https://github.com/andersspielen/PotionGames/actions/workflows/ci.yml/badge.svg)](https://github.com/andersspielen/PotionGames/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/andersspielen/PotionGames/actions/workflows/codeql.yml/badge.svg)](https://github.com/andersspielen/PotionGames/actions/workflows/codeql.yml)
+[![Release](https://img.shields.io/github/v/release/andersspielen/PotionGames)](https://github.com/andersspielen/PotionGames/releases/latest)
+
+
 PotionGames is a minigames plugin that works like SurvivalGames but with potions and effects!
 
 ## Functions

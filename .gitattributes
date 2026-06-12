@@ -1,0 +1,24 @@
+# Normalize line endings
+* text=auto eol=lf
+
+# Java source
+*.java text diff=java
+
+# YAML/JSON config
+*.yml text
+*.yaml text
+*.json text
+
+# Markdown
+*.md text
+
+# Maven
+pom.xml text
+*.xml text
+
+# Images (binary)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary

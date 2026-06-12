@@ -1,0 +1,32 @@
+'area: commands':
+  - any: ['src/main/java/com/tw0far/potiongames/commands/**/*']
+
+'area: listeners':
+  - any: ['src/main/java/com/tw0far/potiongames/listeners/**/*']
+
+'area: managers':
+  - any: ['src/main/java/com/tw0far/potiongames/managers/**/*']
+
+'area: models':
+  - any: ['src/main/java/com/tw0far/potiongames/models/**/*']
+
+'area: handlers':
+  - any: ['src/main/java/com/tw0far/potiongames/handlers/**/*']
+
+'area: bootstrap':
+  - any: ['src/main/java/com/tw0far/potiongames/bootstrap/**/*']
+
+'area: config':
+  - any: ['src/main/resources/**/*']
+
+'area: ci':
+  - any: ['.github/workflows/**/*']
+
+dependencies:
+  - any: ['pom.xml']
+
+tests:
+  - any: ['src/test/**/*']
+
+documentation:
+  - any: ['*.md', 'CHANGELOG.md', 'DOCUMENTATION.md']

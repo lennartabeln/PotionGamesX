@@ -1,7 +1,7 @@
 name: PotionGamesX
 author: Tw0Far
 main: com.tw0far.potiongames.PotionGamesX
-version: 1.0.0
+version: ${project.version}
 api-version: 26.1.2
 softdepend:
   - Multiverse-Core
