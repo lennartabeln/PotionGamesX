@@ -4,11 +4,11 @@ Thanks for considering contributing to PotionGames!
 
 ## Reporting Bugs
 
-Open a [bug report](https://github.com/andersspielen/PotionGames/issues/new?labels=bug&template=bug_report.yml) with your server software, plugin version, and steps to reproduce.
+Open a [bug report](https://github.com/lennartabeln/PotionGamesX/issues/new?labels=bug&template=bug_report.yml) with your server software, plugin version, and steps to reproduce.
 
 ## Feature Requests
 
-Open a [feature request](https://github.com/andersspielen/PotionGames/issues/new?labels=enhancement&template=feature_request.yml) describing the problem and your proposed solution.
+Open a [feature request](https://github.com/lennartabeln/PotionGamesX/issues/new?labels=enhancement&template=feature_request.yml) describing the problem and your proposed solution.
 
 ## Security Issues
 
