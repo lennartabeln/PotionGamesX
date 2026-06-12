@@ -8,8 +8,7 @@ updates:
     ignore:
       - dependency-name: "io.papermc.paper:paper-api"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "org.spigotmc:spigot-api"
-        update-types: ["version-update:semver-major"]
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
