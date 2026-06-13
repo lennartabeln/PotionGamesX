@@ -1,6 +1,9 @@
-# Changelog - PotionGamesX
+# Changelog
 
-All notable changes to PotionGamesX are documented in this file.
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
@@ -83,16 +86,3 @@ All notable changes to PotionGamesX are documented in this file.
 - 13 dead methods from `Arena.java`, 8 from `Game.java`, 10 from `LobbyConfig.java`
 - ~160 dead method declarations across all 8 managers
 - BAD_OMEN entries 21-27 from `shop.yml` and `BootstrapInitializer.java` shop seeding
-
-## Known Issues
-
-None currently reported.
-
-## Contributors
-
-- lennartabeln - Original author
-
----
-
-**Format**: This changelog follows [Keep a Changelog](https://keepachangelog.com/)  
-**Versioning**: This project follows [Semantic Versioning](https://semver.org/)
