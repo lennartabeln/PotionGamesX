@@ -76,7 +76,7 @@ All config files in `plugins/PotionGamesX/`:
 
 ## 🔗 Requirements
 
-- **Java 21+**
+- **Java 25+**
 - **Maven 3.8+**
 - **Paper 26.1.x**
 - **VaultAPI 1.7.1** (optional, for economy)
