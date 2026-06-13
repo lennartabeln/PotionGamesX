@@ -57,7 +57,6 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 
 | Command | Description | Permission |
 |---------|-------------|------------|
-| `/pg setup` | Interactive setup wizard | `pg.setup` |
 | `/pg join <id>` | Join a lobby | `pg.join` |
 | `/pg leave` | Leave current lobby | — |
 | `/pg list` | Open lobby GUI | `pg.join` |
@@ -65,11 +64,13 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 | `/pg build` | Toggle build mode | `pg.build` |
 | `/pg pause` | Pause countdown | `pg.pause` |
 | `/pg force <arena>` | Force an arena | `pg.force` |
+| `/pg stats [player]` | Show player stats | `pg.stats` |
 
 ### Admin Commands
 
 | Command | Description | Permission |
 |---------|-------------|------------|
+| `/pg setup` | Interactive setup wizard | `pg.setup` |
 | `/pg config` | View current configuration | `pg.setup` |
 | `/pg status` | Show server status and lobbies | `pg.setup` |
 | `/pg debug` | Toggle debug logging | `pg.setup` |
@@ -79,8 +80,7 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 | `/pg gameserver` | Toggle game/hub mode | `pg.setup` |
 | `/pg database` | Switch MySQL/SQLite | `pg.setup` |
 | `/pg reload` | Reload config files | `pg.setup` |
-| `/pg version` | Show plugin version | `pg.update` |
-| `/pg stats [player]` | Show player stats | `pg.stats` |
+| `/pg version` | Show plugin version | `pg.setup` |
 
 ### Advanced Setup Commands
 
