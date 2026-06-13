@@ -56,18 +56,18 @@ All config files in `plugins/PotionGamesX/`:
 
 | File | Purpose |
 |------|---------|
-| **config.yml** | Global settings, database, shops, kits |
+| **config.yml** | Global settings |
 | **lobbies.yml** | Lobbies, arenas, spawn locations |
 | **chests.yml** | Chest loot item definitions |
-| **messages.yml** | Localized text messages |
-| **kits.yml** | Kit configurations |
 | **shop.yml** | Shop item definitions |
+| **kits.yml** | Kit definitions |
+| **messages.yml** | Localized text messages |
 
 ## 📊 Build Status
 
 | Metric | Status |
 |--------|--------|
-| Java | 21+ required |
+| Java | 25+ required |
 | Paper | 26.1.x required |
 | Code Warnings | ✅ 0 |
 | Code Errors | ✅ 0 |
@@ -101,7 +101,7 @@ src/main/java/com/tw0far/potiongames/
 | File | Purpose |
 |------|---------|
 | pom.xml | Maven build configuration |
-| plugin.yml | Bukkit plugin metadata |
+| plugin.yml | Minecraft plugin metadata |
 
 ## 🚨 Support
 
