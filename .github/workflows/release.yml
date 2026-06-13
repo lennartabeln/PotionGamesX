@@ -58,19 +58,6 @@ jobs:
       if: steps.check.outputs.exists != 'true'
       run: mvn clean package
 
-    - name: Get previous tag and release body
-      id: prev_release
-      if: steps.check.outputs.exists != 'true' && steps.prerelease.outputs.value == 'true'
-      run: |
-        VERSION="${{ steps.version.outputs.base }}"
-        NUM="${VERSION##*-dev.}"
-        PREV_NUM=$((NUM - 1))
-        PREV_TAG="${VERSION%-dev.*}-dev.${PREV_NUM}"
-        echo "previous_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
-        gh release view "$PREV_TAG" --json body --jq '.body' > /tmp/prev_body.txt 2>/dev/null || true
-      env:
-        GH_TOKEN: ${{ github.token }}
-
     - name: Extract changelog for release
       id: changelog
       if: steps.check.outputs.exists != 'true'
@@ -102,66 +89,13 @@ jobs:
         is_prerelease=$(echo "$VERSION" | grep -q '-' && echo "true" || echo "false")
 
         if [ "$is_prerelease" = "true" ]; then
-          PREV_TAG='${{ steps.prev_release.outputs.previous_tag }}'
-          # Extract current [Unreleased]
-          extract_section "Unreleased" > /tmp/current_unreleased.txt
-
-          # Extract [Unreleased] from previous tag's CHANGELOG.md
-          if [ -n "$PREV_TAG" ] && git rev-parse "$PREV_TAG" >/dev/null 2>&1; then
-            git show "$PREV_TAG:CHANGELOG.md" 2>/dev/null | python3 -c "
-        import re, sys
-        target = 'Unreleased'
-        header = re.compile(r'^##\s+\[' + re.escape(target) + r'\]')
-        end = re.compile(r'^##\s')
-        lines = sys.stdin.readlines()
-        capture = False
-        body = []
-        for line in lines:
-            if end.match(line):
-                if capture:
-                    break
-                if header.match(line):
-                    capture = True
-                    continue
-            if capture:
-                body.append(line)
-        sys.stdout.write(''.join(body).strip())
-        " > /tmp/prev_unreleased.txt 2>/dev/null || true
-          fi
-
-          # Diff to find only new lines
-          if [ -s /tmp/prev_unreleased.txt ]; then
-            python3 -c "
-        import sys
-        old = set(open('/tmp/prev_unreleased.txt').read().splitlines())
-        new = open('/tmp/current_unreleased.txt').read().splitlines()
-        out = [l for l in new if l.strip() and l not in old]
-        sys.stdout.write('\n'.join(out))
-        " > /tmp/new_entries.txt
-          else
-            cp /tmp/current_unreleased.txt /tmp/new_entries.txt
-          fi
-
-          # Build release body: previous body + new entries
-          PREV_BODY=$(cat /tmp/prev_body.txt 2>/dev/null || echo "")
-          NEW_ENTRIES=$(cat /tmp/new_entries.txt)
-          if [ -n "$PREV_BODY" ]; then
-            if [ -n "$NEW_ENTRIES" ]; then
-              printf '%s\n\n### New in this release\n%s\n' "$PREV_BODY" "$NEW_ENTRIES" > /tmp/release_body.txt
-            else
-              echo "$PREV_BODY" > /tmp/release_body.txt
-            fi
-          elif [ -n "$NEW_ENTRIES" ]; then
-            printf '%s\n' "$NEW_ENTRIES" > /tmp/release_body.txt
-          else
-            echo "No changelog entry found for [Unreleased]" > /tmp/release_body.txt
-          fi
+          extract_section "Unreleased" > /tmp/release_body.txt
         else
-          # Full release: extract version section
           extract_section "$VERSION" > /tmp/release_body.txt
-          if [ ! -s /tmp/release_body.txt ]; then
-            echo "No changelog entry found for version $VERSION" > /tmp/release_body.txt
-          fi
+        fi
+
+        if [ ! -s /tmp/release_body.txt ]; then
+          echo "No changelog entry found" > /tmp/release_body.txt
         fi
 
     - name: Create Release
