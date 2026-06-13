@@ -39,8 +39,6 @@ en_US:
         usage: "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"
       dellobby:
         usage: "Usage: /pg dellobby <lobbynumber>"
-      setlobby:
-        usage: "Usage: /pg setlobby <lobbynumber>"
       addlobby:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
@@ -317,8 +315,6 @@ de_DE:
         usage: "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"
       dellobby:
         usage: "Usage: /pg dellobby <lobbynumber>"
-      setlobby:
-        usage: "Usage: /pg setlobby <lobbynumber>"
       addlobby:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
