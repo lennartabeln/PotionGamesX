@@ -62,12 +62,14 @@ jobs:
       id: changelog
       if: steps.check.outputs.exists != 'true'
       run: |
-        VERSION="${{ steps.version.outputs.base }}"
-        VERSION="${VERSION%%-*}"
+        FULL_VERSION="${{ steps.version.outputs.base }}"
+        BASE_VERSION="${FULL_VERSION%%-*}"
         python3 -c "
         import re, sys
-        version = '$VERSION'
-        header = re.compile(r'^##\s+\[' + re.escape(version) + r'\]')
+        full = '$FULL_VERSION'
+        base = '$BASE_VERSION'
+        header = re.compile(r'^##\s+\[' + re.escape(full) + r'\]')
+        fallback = re.compile(r'^##\s+\[' + re.escape(base) + r'\]')
         end = re.compile(r'^##\s')
         with open('CHANGELOG.md') as f:
             lines = f.readlines()
@@ -77,7 +79,7 @@ jobs:
             if end.match(line):
                 if capture:
                     break
-                if header.match(line):
+                if header.match(line) or (full != base and fallback.match(line)):
                     capture = True
                     continue
             if capture:
@@ -85,7 +87,7 @@ jobs:
         if body:
             sys.stdout.write(''.join(body).strip())
         else:
-            sys.stdout.write('No changelog entry found for version $VERSION')
+            sys.stdout.write('No changelog entry found for version $FULL_VERSION')
         " > /tmp/release_body.txt
 
     - name: Create Release

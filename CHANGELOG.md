@@ -2,6 +2,38 @@
 
 All notable changes to PotionGamesX are documented in this file.
 
+## [1.0.0-dev.2] - 2026-06-13
+
+### Changed
+
+- release.yml: reads release body from `CHANGELOG.md` instead of auto-generated notes
+- CHANGELOG.md: restructured to [Keep a Changelog](https://keepachangelog.com/) format with per pre-release entries
+
+## [1.0.0-dev.1] - 2026-06-11
+
+### Added
+
+- Arena selector: fixed "Random" vote count display
+- Kit selector: `handleKitSelection` listener method
+- Messages.java: 86 typed `*Text()` methods replacing 107 `raw()` calls
+
+### Changed
+
+- Inventory GUI: arena selector, kit selector, team selector, stats, leave items unified to DARK_AQUA
+- Inventory titles: ArenaSelectorTitle, KitSelector, SelectorTeamTitle no longer use prefix line
+
+### Removed
+
+- `BlockTracker.java`, `PotionChest.java`, `LootTable.java`
+- `LobbySettings.java` (entire class unused)
+- `ConfigKeys.java` (36/37 dead enum values inlined)
+- 19 dead static fields from `Settings.java`
+- `IManager.reload()` from interface and all 8 implementations
+- ~30 dead methods from `Lobby.java`
+- 13 dead methods from `Arena.java`, 8 from `Game.java`, 10 from `LobbyConfig.java`
+- ~160 dead method declarations across all 8 managers
+- BAD_OMEN entries 21-27 from `shop.yml` and `BootstrapInitializer.java` shop seeding
+
 ## [1.0.0] - 2026-05-29
 
 ### Added
@@ -45,15 +77,12 @@ All notable changes to PotionGamesX are documented in this file.
 - Pull request template with build checklist
 - CODEOWNERS, SECURITY.md, CONTRIBUTING.md
 - AGENTS.md to guide AI tooling workflows
-- release.yml now reads release body from `CHANGELOG.md` instead of auto-generated notes
 
 ### Fixed
 
 - Setup mode chat input handling (now uses ConfigurationManager delegation)
 - Messages file duplicate error on second startup
 - Configuration loading from separate YAML files
-- "Random" arena option showing 0 votes
-- Kit selector not applying kit+items on selection
 - Missing `ensureFileExists()` for safe file initialization
 
 ### Changed
@@ -61,7 +90,6 @@ All notable changes to PotionGamesX are documented in this file.
 - Inventory GUI: arena selector, kit selector, team selector, stats, leave items unified to DARK_AQUA
 - Inventory titles: ArenaSelectorTitle, KitSelector, SelectorTeamTitle no longer use prefix line
 - Messages: all 107 `Messages.raw()` calls replaced with 86 typed `*Text()` methods
-- CHANGELOG.md: restructured to [Keep a Changelog](https://keepachangelog.com/) format
 
 ### Removed
 
