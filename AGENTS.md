@@ -18,6 +18,16 @@
 - Testing: Skip `mvn package` if only running unit tests
 - Failure Handling: `mvn clean` always resolves transient build errors
 
+## Release Process
+- Release triggers on push to `main` when version changes in pom.xml
+- Release body is extracted from CHANGELOG.md:
+  - Pre-release versions (contain `-`, e.g. `1.0.0-dev.2`): extracts `## [Unreleased]` section
+  - Full releases (no `-`, e.g. `1.0.0`): extracts `## [version]` section
+- **Before cutting a full release**, the CHANGELOG.md must be updated:
+  1. Rename `## [Unreleased]` to `## [version] - YYYY-MM-DD`
+  2. Add a fresh `## [Unreleased]` section at the top for future development
+  3. Set pom.xml version to the release version (remove `-dev.X` suffix)
+
 ## Session Summary (2026-06-11)
 
 ### Completed: Lobby GUI & Inventory Overhaul
