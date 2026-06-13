@@ -67,7 +67,7 @@ All config files in `plugins/PotionGamesX/`:
 
 | Metric | Status |
 |--------|--------|
-| Java | 25+ required |
+| Java | 21+ required |
 | Paper | 26.1.x required |
 | Code Warnings | ✅ 0 |
 | Code Errors | ✅ 0 |
@@ -76,7 +76,7 @@ All config files in `plugins/PotionGamesX/`:
 
 ## 🔗 Requirements
 
-- **Java 25+**
+- **Java 21+**
 - **Maven 3.8+**
 - **Paper 26.1.x**
 - **VaultAPI 1.7.1** (optional, for economy)

@@ -859,9 +859,9 @@ public class Messages {
     public static String HelpPauseUsageText() { return get("help.pause_usage", "/pg pause - Pause/resume the game (requires pg.pause)"); }
     public static String HelpReloadText() { return get("help.reload", "/pg reload - Reload all configs"); }
     public static String HelpReloadUsageText() { return get("help.reload_usage", "/pg reload - Reload all configurations and stop all games (requires pg.setup)"); }
-    public static String HelpRemovedeathmatchText() { return get("help.removedeathmatch", "/pg removedeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn"); }
-    public static String HelpRemoverenaText() { return get("help.removerena", "/pg removerena [lobbynumber] [arenaname] - Remove an arena"); }
-    public static String HelpRemovespawnText() { return get("help.removespawn", "/pg removespawn [lobbynumber] [arenaname] - Remove last spawn"); }
+    public static String HelpDelarenaText() { return get("help.delarena", "/pg delarena [lobbynumber] [arenaname] - Remove an arena"); }
+    public static String HelpDelspawnText() { return get("help.delspawn", "/pg delspawn [lobbynumber] [arenaname] - Remove last spawn"); }
+    public static String HelpDeldeathmatchText() { return get("help.deldeathmatch", "/pg deldeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn"); }
     public static String HelpSetupText() { return get("help.setup", "/pg setup - Set up plugin"); }
     public static String HelpSetupUsageText() { return get("help.setup_usage", "/pg setup - Start setup mode (requires pg.setup)"); }
     public static String HelpSignText() { return get("help.sign", "/pg signp1(2;3) - Add Player Sign to Stats-Wall"); }

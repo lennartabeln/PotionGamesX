@@ -30,7 +30,7 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 
 ## Requirements
 
-- **Java 25+**
+- **Java 21+**
 - **Paper 26.1.x**
 - **Maven 3.8+** (for building)
 - **Multiverse-Core** (soft dependency)
@@ -88,7 +88,7 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 
 | Command | Description | Permission |
 |---------|-------------|------------|
-| `/pg setlobby <id>` | Create lobby | `pg.setup` |
+| `/pg addlobby <id>` | Create lobby | `pg.setup` |
 | `/pg dellobby <id>` | Remove lobby | `pg.setup` |
 | `/pg addarena <lobby> <name>` | Add arena | `pg.setup` |
 | `/pg delarena <lobby> <name>` | Remove arena | `pg.setup` |

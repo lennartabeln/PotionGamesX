@@ -41,6 +41,8 @@ en_US:
         usage: "Usage: /pg dellobby <lobbynumber>"
       setlobby:
         usage: "Usage: /pg setlobby <lobbynumber>"
+      addlobby:
+        usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
     coin:
@@ -74,7 +76,7 @@ en_US:
       started: "The game has been started!"
       starts_in: "The game starts in"
       starts_now: "The game starts now!"
-      waiting: "Waiting for players!"
+      waiting: "Waiting for players! [%d/%d]"
     head:
       set: "Head successfully set!"
     help:
@@ -90,12 +92,12 @@ en_US:
       addspawn_usage: "/pg addspawn <lobbynumber> <arenaname>"
       adddeathmatch: "/pg adddeathmatch [lobbynumber] [arenaname] - Add a deathmatch spawn"
       adddeathmatch_usage: "/pg adddeathmatch <lobbynumber> <arenaname>"
-      removerena: "/pg removerena [lobbynumber] [arenaname] - Remove an arena"
-      removespawn: "/pg removespawn [lobbynumber] [arenaname] - Remove last spawn"
-      removedeathmatch: "/pg removedeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn"
-      removerena_usage: "/pg removerena <lobbynumber> <arenaname>"
-      removespawn_usage: "/pg removespawn <lobbynumber> <arenaname>"
-      removedeathmatch_usage: "/pg removedeathmatch <lobbynumber> <arenaname>"
+      delarena: "/pg delarena [lobbynumber] [arenaname] - Remove an arena"
+      delspawn: "/pg delspawn [lobbynumber] [arenaname] - Remove last spawn"
+      deldeathmatch: "/pg deldeathmatch [lobbynumber] [arenaname] - Remove last deathmatch spawn"
+      delarena_usage: "/pg delarena <lobbynumber> <arenaname>"
+      delspawn_usage: "/pg delspawn <lobbynumber> <arenaname>"
+      deldeathmatch_usage: "/pg deldeathmatch <lobbynumber> <arenaname>"
       head: "/pg headp1(2;3) - Add Player Head to Stats-Wall"
       headp1_usage: "/pg headp1 (Look at 1st place head)"
       headp2_usage: "/pg headp2 (Look at 2nd place head)"
@@ -133,9 +135,6 @@ en_US:
       join_success: "Successfully joined lobby"
     list:
       no_lobbies: "No lobbies available."
-      lobby: "Lobby"
-      state: "State"
-      players: "Players"
     choose:
       arena: "Choose Arena"
       lobby: "Choose Lobby"
@@ -167,7 +166,7 @@ en_US:
       removed: "Lobby %d removed successfully."
       removed_failed: "Failed to remove lobby %d."
       removed_success: "Lobby successfully removed!"
-      starting_broadcast: "Lobby %d is starting! Join with /pg join %d"
+      starting_broadcast: "Lobby %s is starting! Join with /pg join %s"
       success_set: "Lobby successfully set!"
       list: "Lobby List"
       selected: "Lobby %d selected!"
@@ -320,6 +319,8 @@ de_DE:
         usage: "Usage: /pg dellobby <lobbynumber>"
       setlobby:
         usage: "Usage: /pg setlobby <lobbynumber>"
+      addlobby:
+        usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
     coin:
@@ -354,7 +355,7 @@ de_DE:
       started: "Das Spiel wurde gestartet!"
       starts_in: "Das Spiel startet in"
       starts_now: "Das Spiel startet jetzt!"
-      waiting: "Warte auf Spieler!"
+      waiting: "Warte auf Spieler! [%d/%d]"
     head:
       set: "Kopf erfolgreich gesetzt!"
     help:
@@ -370,12 +371,12 @@ de_DE:
       addspawn_usage: "/pg addspawn <lobbynumber> <arenaname>"
       adddeathmatch: "/pg adddeathmatch [lobbynumber] [arenaname] - Deathmatch-Spawn hinzufügen"
       adddeathmatch_usage: "/pg adddeathmatch <lobbynumber> <arenaname>"
-      removerena: "/pg removerena [lobbynumber] [arenaname] - Arena entfernen"
-      removespawn: "/pg removespawn [lobbynumber] [arenaname] - Letzten Spawn entfernen"
-      removedeathmatch: "/pg removedeathmatch [lobbynumber] [arenaname] - Letzten Deathmatch-Spawn entfernen"
-      removerena_usage: "/pg removerena <lobbynumber> <arenaname>"
-      removespawn_usage: "/pg removespawn <lobbynumber> <arenaname>"
-      removedeathmatch_usage: "/pg removedeathmatch <lobbynumber> <arenaname>"
+      delarena: "/pg delarena [lobbynumber] [arenaname] - Arena entfernen"
+      delspawn: "/pg delspawn [lobbynumber] [arenaname] - Letzten Spawn entfernen"
+      deldeathmatch: "/pg deldeathmatch [lobbynumber] [arenaname] - Letzten Deathmatch-Spawn entfernen"
+      delarena_usage: "/pg delarena <lobbynumber> <arenaname>"
+      delspawn_usage: "/pg delspawn <lobbynumber> <arenaname>"
+      deldeathmatch_usage: "/pg deldeathmatch <lobbynumber> <arenaname>"
       head: "/pg headp1(2;3) - Spielerkopf auf Statistik-Wand hinzufügen"
       headp1_usage: "/pg headp1 (Look at 1st place head)"
       headp2_usage: "/pg headp2 (Look at 2nd place head)"
@@ -412,9 +413,6 @@ de_DE:
       join_success: "Successfully joined lobby"
     list:
       no_lobbies: "Keine Lobbies verfügbar."
-      lobby: "Lobby"
-      state: "Status"
-      players: "Spieler"
     choose:
       arena: "Arena auswählen"
       lobby: "Lobby auswählen"
@@ -446,7 +444,7 @@ de_DE:
       removed: "Lobby %d erfolgreich entfernt."
       removed_failed: "Lobby %d konnte nicht entfernt werden."
       removed_success: "Lobby erfolgreich entfernt!"
-      starting_broadcast: "Lobby %d startet! Trete mit /pg join %d bei"
+      starting_broadcast: "Lobby %s startet! Trete mit /pg join %s bei"
       success_set: "Lobby erfolgreich gesetzt!"
       list: "Lobby-Liste"
       selected: "Lobby %d ausgewählt!"
