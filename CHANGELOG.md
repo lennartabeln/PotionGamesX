@@ -63,7 +63,7 @@ All notable changes to PotionGamesX are documented in this file.
 - Java 21 → 25 across all build configs and CI workflows
 - `maven-resources-plugin` pinned to 3.5.0 for Eclipse M2E compat
 - release.yml: reads release body from `CHANGELOG.md` instead of auto-generated notes
-- release.yml: pre-release accumulation diffs `[Unreleased]` against previous tag's changelog to find truly new entries
+- release.yml: pre-release changelog uses category-aware diff against previous tag to show only new entries with headers
 - CHANGELOG.md: restructured to [Keep a Changelog](https://keepachangelog.com/) format
 - Inventory GUI: arena selector, kit selector, team selector, stats, leave items unified to DARK_AQUA
 - Inventory titles: ArenaSelectorTitle, KitSelector, SelectorTeamTitle no longer use prefix line
