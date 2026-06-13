@@ -125,12 +125,12 @@ Config files in `plugins/PotionGamesX/`:
 
 | File | Purpose |
 |------|---------|
-| **config.yml** | Global settings, database, shops, kits |
+| **config.yml** | Global settings |
 | **lobbies.yml** | Lobbies, arenas, spawn locations |
 | **chests.yml** | Chest loot item definitions |
-| **messages.yml** | Localized text messages |
+| **shop.yml** | Shop item definitions |
 | **kits.yml** | Kit definitions |
-| **shop.yml** | Shop items |
+| **messages.yml** | Localized text messages |
 
 Settings use a lobby-first model:
 - `pg.defaults.*` stores global defaults for every lobby
