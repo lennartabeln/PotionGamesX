@@ -58,6 +58,36 @@ jobs:
       if: steps.check.outputs.exists != 'true'
       run: mvn clean package
 
+    - name: Extract changelog for release
+      id: changelog
+      if: steps.check.outputs.exists != 'true'
+      run: |
+        VERSION="${{ steps.version.outputs.base }}"
+        VERSION="${VERSION%%-*}"
+        python3 -c "
+        import re, sys
+        version = '$VERSION'
+        header = re.compile(r'^##\s+\[' + re.escape(version) + r'\]')
+        end = re.compile(r'^##\s')
+        with open('CHANGELOG.md') as f:
+            lines = f.readlines()
+        capture = False
+        body = []
+        for line in lines:
+            if end.match(line):
+                if capture:
+                    break
+                if header.match(line):
+                    capture = True
+                    continue
+            if capture:
+                body.append(line)
+        if body:
+            sys.stdout.write(''.join(body).strip())
+        else:
+            sys.stdout.write('No changelog entry found for version $VERSION')
+        " > /tmp/release_body.txt
+
     - name: Create Release
       if: steps.check.outputs.exists != 'true'
       uses: softprops/action-gh-release@v3
@@ -66,7 +96,7 @@ jobs:
         name: PotionGamesX-${{ steps.version.outputs.base }}
         files: target/PotionGamesX-*.jar
         prerelease: ${{ steps.prerelease.outputs.value }}
-        generate_release_notes: true
+        body_path: /tmp/release_body.txt
         fail_on_unmatched_files: true
       env:
         GITHUB_TOKEN: ${{ github.token }}

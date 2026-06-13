@@ -1,143 +1,83 @@
-# Changelog - PotionGames v1.0
+# Changelog - PotionGamesX
 
-All notable changes to PotionGames are documented in this file.
+All notable changes to PotionGamesX are documented in this file.
 
 ## [1.0.0] - 2026-05-29
 
-### ✨ New Features
+### Added
 
 #### Admin Commands
-- Added `/pg config` - View current configuration settings
-- Added `/pg status` - Show server status and active lobbies  
-- Added `/pg debug` - Toggle debug logging mode
-- Added `/pg broadcast` - Send server-wide announcements
-- Added `/pg kick` - Remove players from lobbies
-- Added `/pg top` - Leaderboard system (placeholder)
-- Added `/pg gameserver` - Toggle gameserver mode without reload
-- Added `/pg database` - Switch between MySQL/SQLite without reload
+- `/pg config` - View current configuration settings
+- `/pg status` - Show server status and active lobbies  
+- `/pg debug` - Toggle debug logging mode
+- `/pg broadcast` - Send server-wide announcements
+- `/pg kick` - Remove players from lobbies
+- `/pg top` - Leaderboard system (placeholder)
+- `/pg gameserver` - Toggle gameserver mode without reload
+- `/pg database` - Switch between MySQL/SQLite without reload
 
 #### Configuration
-- New `logging` section - Control log levels (INFO/DEBUG/TRACE)
-- New `performance` section - Tune update rates and limits
-- New `security` section - Configure player limits and banned items
+- `logging` section - Control log levels (INFO/DEBUG/TRACE)
+- `performance` section - Tune update rates and limits
+- `security` section - Configure player limits and banned items
 - Configuration validator on startup - Warns about invalid settings
 - Consolidated config structure (config.yml, lobbies.yml, chests.yml, messages.yml)
 
 #### Architecture
-- Refactored to class-based OOP (no monolithic patterns)
-- Introduced 8+ manager classes for state delegation
+- Class-based OOP (no monolithic patterns)
+- 8+ manager classes for state delegation
 - Separated event handlers into 4+ listener classes
 - Individual command classes (34+ command handlers)
 - Delegation methods throughout codebase
 
-### 🐛 Bug Fixes
+#### Build & Documentation
+- Maven configuration for clean builds
+- BUILD.md and DOCUMENTATION.md
 
-- Fixed setup mode chat input handling (now uses ConfigurationManager delegation)
-- Fixed messages file duplicate error on second startup
-- Fixed configuration loading from separate YAML files
-- Added ensureFileExists() for safe file initialization
+#### CI/CD & GitHub Config
+- release.yml - Automated GitHub releases on version change
+- ci.yml - Build and test on push/PR
+- codeql.yml - Code security analysis
+- stale.yml - Auto-close stale issues and PRs
+- labeler.yml - Auto-label PRs by file paths
+- dependabot.yml - Weekly dependency updates
+- Issue templates (bug report, feature request)
+- Pull request template with build checklist
+- CODEOWNERS, SECURITY.md, CONTRIBUTING.md
+- AGENTS.md to guide AI tooling workflows
+- release.yml now reads release body from `CHANGELOG.md` instead of auto-generated notes
 
-### 🔧 Improvements
+### Fixed
 
-- **Code Quality**: 0 warnings, 0 errors, 125 files compile cleanly
-- **Configuration**: All settings now configuration-driven (no hardcoding)
-- **State Management**: Proper delegation pattern throughout
-- **Build**: Added Maven configuration for clean builds
-- **Documentation**: Comprehensive docs with BUILD.md and DOCUMENTATION.md
+- Setup mode chat input handling (now uses ConfigurationManager delegation)
+- Messages file duplicate error on second startup
+- Configuration loading from separate YAML files
+- "Random" arena option showing 0 votes
+- Kit selector not applying kit+items on selection
+- Missing `ensureFileExists()` for safe file initialization
 
-### 🗑️ Deprecations
+### Changed
 
-- Removed hardcoded chest loot (now config-driven)
-- Removed hardcoded shop data (now in config)
-- Removed direct HashMap access (delegated to managers)
-- Removed monolithic event/command classes
+- Inventory GUI: arena selector, kit selector, team selector, stats, leave items unified to DARK_AQUA
+- Inventory titles: ArenaSelectorTitle, KitSelector, SelectorTeamTitle no longer use prefix line
+- Messages: all 107 `Messages.raw()` calls replaced with 86 typed `*Text()` methods
+- CHANGELOG.md: restructured to [Keep a Changelog](https://keepachangelog.com/) format
 
-## Phase Summary
+### Removed
 
-### Phase 7 (Class-Based OOP)
-- ✅ Game.java owns global state (~350 lines)
-- ✅ Lobby.java owns per-lobby state (~600 lines)
-- ✅ Manager classes coordinate logic (8+ managers)
-- ✅ Individual command classes (34+ handlers)
-- ✅ Separated event listeners (4+ classes)
-
-### Configuration Consolidation
-- ✅ Main config for global settings and shops/kits
-- ✅ lobbies.yml for lobbies, arenas, spawns
-- ✅ chests.yml for chest loot definitions
-- ✅ messages.yml for localization
-
-### Build & Quality
-- ✅ Maven build system (5s compile time)
-- ✅ 0 code warnings, 0 errors
-- ✅ Build scripts for Windows/Linux/Mac
-- ✅ Comprehensive documentation
-
-## Migration from Previous Versions
-
-### From v0.x to v1.0
-
-1. **Configuration**: Manually migrate old config to new structure
-2. **Commands**: All commands now use `/pg` prefix with subcommands
-3. **Data Files**: Statistics database unchanged (auto-migrates)
-4. **Permissions**: Update to new permission nodes (pg.*, pg.admin, etc)
-
-### Breaking Changes
-
-- Old `kitdata.yml` and `shopdata.yml` → now in `config.yml`
-- Monolithic event system → separated listeners
-- Monolithic command system → CommandDispatcher + individual classes
-- Direct HashMap access → manager delegation methods
-
-## Technical Details
-
-### Dependencies
-
-| Dependency | Version | Purpose |
-|------------|---------|---------|
-| Paper API | 26.1.x | Bukkit API |
-| VaultAPI | 1.7.1 | Economy system (optional) |
-| Java | 25+ | Language runtime |
-| Maven | 3.8+ | Build tool |
-
-### Code Metrics
-
-| Metric | Value | Status |
-|--------|-------|--------|
-| Java Files | 125 | ✅ |
-| Total Lines | ~15,000 | ✅ |
-| Code Warnings | 0 | ✅ |
-| Code Errors | 0 | ✅ |
-| JAR Size | 0.31 MB | ✅ |
-| Compile Time | ~5s | ✅ |
-
-### Architecture
-
-```
-Plugin.java (1,500 lines)
-├── Game.java (350 lines, global state)
-├── Lobby.java (600 lines, per-lobby state)
-├── Managers (8+ classes, delegation)
-├── Commands (34+ classes, handlers)
-├── Listeners (4+ classes, events)
-└── Utils (helpers, builders)
-```
-
-## Future Roadmap
-
-### Phase 8 (Planned)
-- [ ] Advanced statistics/leaderboards
-- [ ] Custom potions system
-- [ ] Tournament mode
-- [ ] Performance profiling
-- [ ] Database query optimization
-
-### Under Consideration
-- [ ] WebAPI for external stats
-- [ ] Discord bot integration
-- [ ] Custom item textures
-- [ ] Advanced scripting system
-- [ ] Multi-server support
+- Hardcoded chest loot (now config-driven)
+- Hardcoded shop data (now in config)
+- Direct HashMap access (delegated to managers)
+- Monolithic event/command classes
+- `BlockTracker.java`, `PotionChest.java`, `LootTable.java`
+- `LobbySettings.java` (entire class unused)
+- `ConfigKeys.java` (36/37 dead enum values inlined)
+- 19 dead static fields from `Settings.java`
+- `IManager.reload()` from interface and all 8 implementations
+- ~30 dead methods from `Lobby.java`
+- 13 dead methods from `Arena.java`, 8 from `Game.java`, 10 from `LobbyConfig.java`
+- ~160 dead method declarations across all 8 managers
+- BAD_OMEN entries 21-27 from `shop.yml` and `BootstrapInitializer.java` shop seeding
 
 ## Known Issues
 
@@ -145,8 +85,7 @@ None currently reported.
 
 ## Contributors
 
-- andersspielen - Original author
-- Copilot - Modernization and refactoring (v1.0)
+- lennartabeln - Original author
 
 ---
 
