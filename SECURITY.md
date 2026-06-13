@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in PotionGames, please do **not** open a public issue. Instead, send a private report to the repository maintainer via GitHub's private vulnerability reporting at:
+If you discover a security vulnerability in PotionGamesX, please do **not** open a public issue. Instead, send a private report to the repository maintainer via GitHub's private vulnerability reporting at:
 
 https://github.com/lennartabeln/PotionGamesX/security/advisories/new
 

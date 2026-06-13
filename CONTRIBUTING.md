@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for considering contributing to PotionGames!
+Thanks for considering contributing to PotionGamesX!
 
 ## Reporting Bugs
 

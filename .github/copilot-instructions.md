@@ -2,7 +2,7 @@
 
 ## Overview
 
-PotionGames is a Minecraft Paper 26.1.x plugin that implements a minigames system similar to SurvivalGames but with potion effects. The plugin supports multi-lobby systems, custom shops, team-based gameplay, and persistent statistics storage via SQLite or MySQL.
+PotionGamesX is a Minecraft Paper 26.1.x plugin that implements a minigames system similar to SurvivalGames but with potion effects. The plugin supports multi-lobby systems, custom shops, team-based gameplay, and persistent statistics storage via SQLite or MySQL.
 
 **Current Architecture**: Fully refactored to class-based OOP (Phase 7 complete). No monolithic singleton patterns.
 
@@ -109,7 +109,7 @@ The plugin uses per-lobby configuration:
 - Per-lobby player assignments (teams, kits, votes)
 - Per-lobby shop data, chests, loot tables
 - Per-lobby block tracking
-- Tick-based game loop (update method called by PotionGames)
+- Tick-based game loop (update method called by PotionGamesX)
 
 **Manager Classes** coordinate domain logic:
 - ConfigurationManager: Provides read-only access to config
@@ -174,7 +174,7 @@ databaseManager.addKill(player);
 All commands extend ICommand interface:
 ```java
 public class MyCommand implements ICommand {
-    public MyCommand(PotionGames plugin) { this.plugin = plugin; }
+    public MyCommand(PotionGamesX plugin) { this.plugin = plugin; }
     
     @Override
     public String getName() { return "mycommand"; }
@@ -206,7 +206,7 @@ Commands are auto-registered in CommandDispatcher constructor.
 
 ### 3. Implementing Event Listeners
 
-All listeners are registered in PotionGames.onEnable():
+All listeners are registered in PotionGamesX.onEnable():
 ```java
 pm.registerEvents(new PlayerEventListener(plugin), plugin);
 pm.registerEvents(new BlockEventListener(plugin), plugin);
@@ -217,7 +217,7 @@ pm.registerEvents(new InventoryEventListener(plugin), plugin);
 Use @EventHandler annotation:
 ```java
 public class MyListener implements Listener {
-    public MyListener(PotionGames plugin) { this.plugin = plugin; }
+    public MyListener(PotionGamesX plugin) { this.plugin = plugin; }
     
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent e) {
@@ -398,9 +398,9 @@ src/main/java/com/tw0far/potiongames/
 Example:
 ```java
 public class MyCommand implements ICommand {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public MyCommand(PotionGames plugin) {
+    public MyCommand(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     
@@ -432,13 +432,13 @@ public class MyCommand implements ICommand {
 
 ### Implementing Event Listeners (Phase 7 Pattern)
 
-Register in `PotionGames.onEnable()`, then use delegation:
+Register in `PotionGamesX.onEnable()`, then use delegation:
 
 ```java
 public class MyListener implements Listener {
-    private final PotionGames plugin;
+    private final PotionGamesX plugin;
     
-    public MyListener(PotionGames plugin) {
+    public MyListener(PotionGamesX plugin) {
         this.plugin = plugin;
     }
     

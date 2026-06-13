@@ -8,6 +8,9 @@
 - Tests in `src/test` require JVM setup (no Node runtime needed)
 - Game executable path is `target/PotionGamesX-*.jar` (version matches pom.xml)
 
+## Important Rules
+- NEVER commit changes unless explicitly asked. Stage with `git add` and wait for user confirmation before committing.
+
 ## Repo-Specific Quirks
 - Plugin configuration in `src/main/resources/plugin.yml` requires `mvn package` to generate JAR
 - CI/CD uses `mvn` for all builds

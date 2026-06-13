@@ -42,7 +42,7 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 2. Place the `.jar` in your server's `plugins/` folder
 3. Install Multiverse-Core if using multi-world setups
 4. Restart your server
-5. Configure via `plugins/PotionGames/config.yml`
+5. Configure via `plugins/PotionGamesX/config.yml`
 6. Run `/pg setup` to set up the plugin
 
 ## Setup
@@ -110,7 +110,7 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 ### Signs
 
 * **Join Sign**: Place a sign, look at it, use `/pg joinsign <lobby>`
-* **Stats Sign**: Place a sign, write `PotionGames` on line 2 and `Stats` on line 3
+* **Stats Sign**: Place a sign, write `PotionGamesX` on line 2 and `Stats` on line 3
 
 ### Stats Wall
 
@@ -121,7 +121,7 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 
 ## Configuration
 
-Config files in `plugins/PotionGames/`:
+Config files in `plugins/PotionGamesX/`:
 
 | File | Purpose |
 |------|---------|

@@ -21,7 +21,7 @@ All notable changes to PotionGamesX are documented in this file.
 - `performance` section - Tune update rates and limits
 - `security` section - Configure player limits and banned items
 - Configuration validator on startup - Warns about invalid settings
-- Consolidated config structure (config.yml, lobbies.yml, chests.yml, messages.yml)
+- Consolidated config structure (config.yml, chests.yml, kits.yml, messages.yml, shop.yml)
 
 #### Architecture
 - Class-based OOP (no monolithic patterns)
@@ -32,7 +32,7 @@ All notable changes to PotionGamesX are documented in this file.
 
 #### Build & Documentation
 - Maven configuration for clean builds
-- BUILD.md and DOCUMENTATION.md
+- DOCUMENTATION.md
 
 #### CI/CD & GitHub Config
 - release.yml - Automated GitHub releases on version change
