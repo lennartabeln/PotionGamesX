@@ -6,33 +6,6 @@ All notable changes to PotionGamesX are documented in this file.
 
 ### Added
 
-- Arena selector: "Random" vote count now shows actual votes
-- Kit selector: `handleKitSelection` applies kit+items on selection
-- Messages.java: 86 typed `*Text()` methods replacing 107 `raw()` calls
-
-### Changed
-
-- release.yml: reads release body from `CHANGELOG.md` instead of auto-generated notes
-- CHANGELOG.md: restructured to [Keep a Changelog](https://keepachangelog.com/) format
-- Inventory GUI: arena selector, kit selector, team selector, stats, leave items unified to DARK_AQUA
-- Inventory titles: ArenaSelectorTitle, KitSelector, SelectorTeamTitle no longer use prefix line
-
-### Removed
-
-- `BlockTracker.java`, `PotionChest.java`, `LootTable.java`
-- `LobbySettings.java` (entire class unused)
-- `ConfigKeys.java` (36/37 dead enum values inlined)
-- 19 dead static fields from `Settings.java`
-- `IManager.reload()` from interface and all 8 implementations
-- ~30 dead methods from `Lobby.java`
-- 13 dead methods from `Arena.java`, 8 from `Game.java`, 10 from `LobbyConfig.java`
-- ~160 dead method declarations across all 8 managers
-- BAD_OMEN entries 21-27 from `shop.yml` and `BootstrapInitializer.java` shop seeding
-
-## [1.0.0] - 2026-05-29
-
-### Added
-
 #### Admin Commands
 - `/pg config` - View current configuration settings
 - `/pg status` - Show server status and active lobbies  
@@ -73,6 +46,11 @@ All notable changes to PotionGamesX are documented in this file.
 - CODEOWNERS, SECURITY.md, CONTRIBUTING.md
 - AGENTS.md to guide AI tooling workflows
 
+#### Inventory & Messages
+- Arena selector: "Random" vote count now shows actual votes
+- Kit selector: `handleKitSelection` applies kit+items on selection
+- Messages.java: 86 typed `*Text()` methods replacing 107 `raw()` calls
+
 ### Fixed
 
 - Setup mode chat input handling (now uses ConfigurationManager delegation)
@@ -82,9 +60,10 @@ All notable changes to PotionGamesX are documented in this file.
 
 ### Changed
 
+- release.yml: reads release body from `CHANGELOG.md` instead of auto-generated notes
+- CHANGELOG.md: restructured to [Keep a Changelog](https://keepachangelog.com/) format
 - Inventory GUI: arena selector, kit selector, team selector, stats, leave items unified to DARK_AQUA
 - Inventory titles: ArenaSelectorTitle, KitSelector, SelectorTeamTitle no longer use prefix line
-- Messages: all 107 `Messages.raw()` calls replaced with 86 typed `*Text()` methods
 
 ### Removed
 
