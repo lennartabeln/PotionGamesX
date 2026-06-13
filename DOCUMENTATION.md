@@ -1,13 +1,11 @@
-# PotionGames v1.0 - Official Documentation
+# PotionGamesX - Official Documentation
 
 > A modern Minecraft minigames plugin for Paper 26.1.x servers with potions, loot, and team-based gameplay.
 
 ## 📋 Documentation Index
 
 - **[README.md](README.md)** - Main plugin features and installation
-- **[BUILD.md](BUILD.md)** - Build instructions and troubleshooting
-- **[TEST_README.md](TEST_README.md)** - Testing and validation guide
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Technical architecture (if available in custom_instruction)
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and release notes
 
 ## 🚀 Quick Start
 
@@ -62,6 +60,8 @@ All config files in `plugins/PotionGames/`:
 | **lobbies.yml** | Lobbies, arenas, spawn locations |
 | **chests.yml** | Chest loot item definitions |
 | **messages.yml** | Localized text messages |
+| **kits.yml** | Kit configurations |
+| **shop.yml** | Shop item definitions |
 
 ## 📊 Build Status
 
@@ -78,7 +78,7 @@ All config files in `plugins/PotionGames/`:
 
 - **Java 25+**
 - **Maven 3.8+**
-- **Paper 26.1.x** (from papermc.io)
+- **Paper 26.1.x**
 - **VaultAPI 1.7.1** (optional, for economy)
 - **Multiverse-Core** (soft dependency)
 
@@ -93,8 +93,7 @@ src/main/java/com/tw0far/potiongames/
 ├── handlers/            # Complex workflows
 ├── bootstrap/           # Startup initialization
 ├── util/                # Utilities and helpers
-├── error/               # Error handling
-└── PotionGamesX.java # Main plugin class
+└── PotionGamesX.java    # Main plugin class
 ```
 
 ## 📝 Key Files
@@ -103,23 +102,14 @@ src/main/java/com/tw0far/potiongames/
 |------|---------|
 | pom.xml | Maven build configuration |
 | plugin.yml | Bukkit plugin metadata |
-| build.ps1 | PowerShell build script |
-| build.bat | Windows batch build script |
 
 ## 🚨 Support
 
 For issues, features, or questions:
-1. Check [TEST_README.md](TEST_README.md) for testing procedures
-2. Review [BUILD.md](BUILD.md) for build troubleshooting
-3. Check console logs for error messages
-4. Verify config files are valid YAML
+1. Check console logs for error messages
+2. Verify config files are valid YAML
+3. Open an issue on the [GitHub repository](https://github.com/lennartabeln/PotionGamesX/issues)
 
 ## 📜 License
 
-See LICENSE file (if present) for licensing information.
-
----
-
-**Version**: 1.0  
-**Last Updated**: 2026-05-29  
-**Status**: Production Ready ✅
+Licensed under the [MIT License](LICENSE).

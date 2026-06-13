@@ -1,250 +1,195 @@
-# PotionGames
+# PotionGamesX
 
-> A Minecraft minigames plugin for Bukkit servers!
+> A Minecraft minigames plugin for Paper 26.1.x servers!
 
-[![CI Build](https://github.com/andersspielen/PotionGames/actions/workflows/ci.yml/badge.svg)](https://github.com/andersspielen/PotionGames/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/andersspielen/PotionGames/actions/workflows/codeql.yml/badge.svg)](https://github.com/andersspielen/PotionGames/actions/workflows/codeql.yml)
-[![Release](https://img.shields.io/github/v/release/andersspielen/PotionGames)](https://github.com/andersspielen/PotionGames/releases/latest)
+[![CI Build](https://github.com/lennartabeln/PotionGamesX/actions/workflows/ci.yml/badge.svg)](https://github.com/lennartabeln/PotionGamesX/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/lennartabeln/PotionGamesX/actions/workflows/codeql.yml/badge.svg)](https://github.com/lennartabeln/PotionGamesX/actions/workflows/codeql.yml)
+[![Release](https://img.shields.io/github/v/release/lennartabeln/PotionGamesX)](https://github.com/lennartabeln/PotionGamesX/releases/latest)
 
+PotionGamesX is a minigames plugin that works like SurvivalGames but with potions and effects!
 
-PotionGames is a minigames plugin that works like SurvivalGames but with potions and effects!
+## Features
 
-## Functions
-
-* Set up your own loot table for the normal chest type
-* Set up your own potion effects for looting the normal chests
-* Set up your own chest types
-* Airdrops (Activate with redstone torch)
+* Custom loot tables with probability-weighted chests
+* Custom potion effects from looting chests
+* Custom chest types (Normal, Target, Netherite, Composter)
+* Airdrops (activate with redstone torch)
 * Loot coins and glass bottles to use in the shop
-* Setup 27 potions for the shop
-* Setup 26 kits to give sale prices for certain potions from the shop
-* Setup 27 lobbies with 26 arenas to vote for every round
-* Setup teams with your own team size
-* Use milk buckets to clear all of your potion effects
-* Eat soups with one click to also heal some health
-* Use stats with SQLite or MySQL
-* Use the stats wall to show the best three players
-* Use startOnJoin option to use this plugin with BungeeCord
-* Use GUI or sign to join a lobby
-* Deathmatch
-* Rewards (Vault needed)
-    * [Download the latest release here!](https://www.spigotmc.org/resources/vault.34315/)
+* 27 potions in the shop
+* 26 kits with sale prices for potions
+* 27 lobbies with 26 arenas for voting each round
+* Teams with custom team sizes
+* Deathmatch mode for final battles
+* Player statistics (SQLite or MySQL)
+* Top 3 stats wall display
+* Join signs with live player count updates
+* BungeeCord / proxy support
+* GUI or sign to join lobbies
+* Rewards system (Vault)
+* Class-based architecture with manager delegation
+
+## Requirements
+
+- **Java 25+**
+- **Paper 26.1.x**
+- **Maven 3.8+** (for building)
+- **Multiverse-Core** (soft dependency)
+- **Vault** (optional, for economy rewards)
 
 ## Installation
 
-1. Download the plugin
+1. Download the latest release from the [releases page](https://github.com/lennartabeln/PotionGamesX/releases)
+2. Place the `.jar` in your server's `plugins/` folder
+3. Install Multiverse-Core if using multi-world setups
+4. Restart your server
+5. Configure via `plugins/PotionGames/config.yml`
+6. Run `/pg setup` to set up the plugin
 
-* [Download the latest release here!](https://github.com/andersspielen/PotionGamesIssues/releases/latest)
+## Setup
 
-2. Put the .jar in your plugins folder
-3. Download Multiverse-Core
+### Quick Start
+1. Create a lobby: `/pg setup`
+2. Add arenas and spawns through the setup wizard
+3. Add chests to your arenas
+4. Configure settings in `config.yml`
 
-* [Download the latest release here!](https://www.spigotmc.org/resources/multiverse-core.390/)
+### Lobby Commands
 
-4. Put the .jar in your plugins folder
-5. Add `mv.bypass.gamemode.*: true` to your permissions.yml
-6. Start your server
-7. Import your worlds with `/mv import [worldname] NORMAL`
-8. Change the .yml files in the PotionGames folder like you want them
-9. Restart your server to reload the changed plugin files
+| Command | Description | Permission |
+|---------|-------------|------------|
+| `/pg setup` | Interactive setup wizard | `pg.setup` |
+| `/pg join <id>` | Join a lobby | `pg.join` |
+| `/pg leave` | Leave current lobby | — |
+| `/pg list` | Open lobby GUI | `pg.join` |
+| `/pg start` | Start countdown | `pg.start` |
+| `/pg build` | Toggle build mode | `pg.build` |
+| `/pg pause` | Pause countdown | `pg.pause` |
+| `/pg force <arena>` | Force an arena | `pg.force` |
 
-## Usage
+### Admin Commands
 
-### Setup
+| Command | Description | Permission |
+|---------|-------------|------------|
+| `/pg config` | View current configuration | `pg.setup` |
+| `/pg status` | Show server status and lobbies | `pg.setup` |
+| `/pg debug` | Toggle debug logging | `pg.setup` |
+| `/pg broadcast` | Send server announcement | `pg.setup` |
+| `/pg kick <player>` | Remove player from lobby | `pg.setup` |
+| `/pg top` | Show leaderboards | `pg.setup` |
+| `/pg gameserver` | Toggle game/hub mode | `pg.setup` |
+| `/pg database` | Switch MySQL/SQLite | `pg.setup` |
+| `/pg reload` | Reload config files | `pg.setup` |
+| `/pg version` | Show plugin version | `pg.update` |
+| `/pg stats [player]` | Show player stats | `pg.stats` |
 
-#### Use `/pg setup` to set up the plugin!
+### Advanced Setup Commands
 
-#### Multi-Lobby-System
+Alternative to the `/pg setup` wizard — individual commands for manual setup:
 
-1. You need to be op or have the permission `pg.setup`
-2. Create lobby `/pg setlobby [lobbynumber]`
-3. Create arena `/pg addarena [lobbynumber] [arenaname]`
-4. Add arena spawns `/pg addspawn [lobbynumber] [arenaname]`
-5. Add chests to your arena
-6. Add deathmatch spawns `/pg adddeathmatch [lobbynumber] [arenaname]` (activateDeathmatch = true)
+| Command | Description | Permission |
+|---------|-------------|------------|
+| `/pg setlobby <id>` | Create lobby | `pg.setup` |
+| `/pg dellobby <id>` | Remove lobby | `pg.setup` |
+| `/pg addarena <lobby> <name>` | Add arena | `pg.setup` |
+| `/pg delarena <lobby> <name>` | Remove arena | `pg.setup` |
+| `/pg addspawn <lobby> <arena>` | Add spawn | `pg.setup` |
+| `/pg delspawn <lobby> <arena>` | Remove last spawn | `pg.setup` |
+| `/pg adddeathmatch <lobby> <arena>` | Add deathmatch spawn | `pg.setup` |
+| `/pg deldeathmatch <lobby> <arena>` | Remove deathmatch spawn | `pg.setup` |
+| `/pg joinsign <lobby>` | Set join sign | `pg.setup` |
+| `/pg headp1\|p2\|p3` | Set stats wall head | `pg.setup` |
+| `/pg signp1\|p2\|p3` | Set stats wall sign | `pg.setup` |
 
-#### Chest-Types
+### Chest Types
 
-* End Portal Frame: Normal chest like in SurvivalGames (With different item probabilities)
-    * food1 20%
-    * food2 10%
-    * armour1 15%
-    * armour2 15%
-    * armour3 7%
-    * armour4 5%
-    * armour5 3%
-    * weapons1 20%
-    * weapons2 5%
-* Target: A special chest with Flame-Bow and Arrows
-* Netherite Block: A special chest with Netherite Ingots
-    * Smithing Table: Upgrade Diamond- to Netherite Items (Build a Beacon next to the Smithing Table to make it shown on
-      the whole map)
-* Composter: Shop with potions (Build a Beacon under the Composter to make it shown on the whole map)
+* **End Portal Frame**: Normal chest with probability-weighted loot (food, armour, weapons)
+* **Target**: Special chest with Flame Bow and Arrows
+* **Netherite Block**: Special chest with Netherite Ingots (Smithing Table upgrades diamond → netherite)
+* **Composter**: Potion shop (build a beacon under it to show on the map)
 
-#### Create Join and Stats Signs
+### Signs
 
-* Join Sign
-    * Place a Sign and look at it, then use the lobby command for that sign
-* Stats Sign
-    * Place a Sign and type in the second line `PotionGames` and in the third line `Stats`
+* **Join Sign**: Place a sign, look at it, use `/pg joinsign <lobby>`
+* **Stats Sign**: Place a sign, write `PotionGames` on line 2 and `Stats` on line 3
 
-#### Create Stats-Wall
+### Stats Wall
 
-1. Place 3 Player Heads on a block next to each other
-2. Place 3 Signs at the front of the block
-3. Now use the commands listed below to create a podium
-4. Look at the head of the 1(2;3) player on the podium and do: `/pg headp1(2;3)`
-5. Look at the sign of the 1(2;3) player on the podium and do: `/pg signp1(2;3)`
+1. Place 3 player heads on blocks next to each other
+2. Place 3 signs at the front
+3. Look at head #1 and run `/pg headp1` (repeat for p2, p3)
+4. Look at sign #1 and run `/pg signp1` (repeat for p2, p3)
 
-### Commands and Permissions
+## Configuration
 
-#### Multi-Lobby-System
+Config files in `plugins/PotionGames/`:
 
-* `/pg` or `/pg help` or `/pg commands` - Get list of commands + permissions - Permission: `none`
-* `/pg setlobby [lobbynumber]` - Set lobby - Permission: `pg.setup`
-* `/pg dellobby [lobbynumber]` - Remove lobby - Permission: `pg.setup`
-* `/pg addarena [lobbynumber] [arenaname]` - Add an arena - Permission: `pg.setup`
-* `/pg addspawn [lobbynumber] [arenaname]` - Add a spawn - Permission: `pg.setup`
-* `/pg adddeathmatch [lobbynumber] [arenaname]` - Add a deathmatch spawn - Permission: `pg.setup`
-* `/pg delarena [lobbynumber] [arenaname]` - Remove an arena - Permission: `pg.setup`
-* `/pg delspawn [lobbynumber] [arenaname]` - Remove last spawn - Permission: `pg.setup`
-* `/pg deldeathmatch [lobbynumber] [arenaname]` - Remove last deathmatch spawn - Permission: `pg.setup`
-* `/pg build` - Activate build mode - Permission: `pg.build`
-* `/pg pause` - Pause timer/countdown - Permission: `pg.pause`
-* `/pg force [arenaname]` - Force an arena - Permission: `pg.force`
-* `/pg start` - Set lobby countdown to 10 - Permission: `pg.start`
-* `/pg join [lobbynumber]` - Join the game (`startOnJoin = false`) - Permission: `pg.join`
-* `/pg list` - Open GUI with all lobbies (`startOnJoin = false`) - Permission: `pg.join`
-* `/pg leave` - Leave the game (`startOnJoin = false`)
-* `/pg stats [player]` - Show player stats - Permission: `pg.stats`
-* `/pg version` - Show your and latest version of plugin - Permission: `pg.update`
-* `/pg reload` - Reload all config files - Permission: `pg.setup`
-* `/pg headp1(2;3)` - Add Player Head to Stats-Wall - Permission: `pg.setup`
-* `/pg signp1(2;3)` - Add Player Sign to Stats-Wall - Permission: `pg.setup`
-* `/pg joinsign [lobbynumber]` - Set Join-Sign - Permission: `pg.setup`
-* `/pg setup` - Set up the plugin - Permission: `pg.setup`
+| File | Purpose |
+|------|---------|
+| **config.yml** | Global settings, database, shops, kits |
+| **lobbies.yml** | Lobbies, arenas, spawn locations |
+| **chests.yml** | Chest loot item definitions |
+| **messages.yml** | Localized text messages |
+| **kits.yml** | Kit definitions |
+| **shop.yml** | Shop items |
 
-####
-
-* Colored name in player and spectator chat - Permission: `pg.admin`
-* Error messages - Permission: `pg.admin`
-* Update Checker - Permission: `pg.update`
-
-### Config
-
-Lobby-first config model (new):
-* `pg.defaults.*` stores global defaults for every lobby.
-* `pg.lobbies.<id>.settings.*` stores per-lobby overrides.
-* If a lobby setting is missing, it falls back to `pg.defaults.*` (and remains compatible with legacy `pg.*` keys).
-
-* `activateMySQL: false` - Change between SQLite `false` and MySQL `true` database
-* `mysql:` - Setup your mysql database
-* `gameServer: true` - Change between Game-Server `true` and Hub-Server `false`
-* `countdown: 60` - Set the lobby countdown
-* `maxPlayers: 24` - Set the amount of maximum amount of players
-* `minPlayers: 12` - Set the amount of minimal amount of players to start the game
-* `teamSize: 2` - Set amount of players in one team
-* `roundTime: 30` - Set duration of the round in minutes
-* `activateTeams: true` - Teams allowed `false` or `true`
-* `activateKits: true` - Kits allowed `false` or `true`
-* `activateShop: true` - Shop allowed `false` or `true`
-* `activateAirdrops: true` - Airdrops allowed `false` or `true`
-* `startOnJoin: false` - Join the lobby when joining the server `false` or `true` (Example: BungeeCord)
-* `language: en_US` - Change language to one of the defined ones in the `messages.yml` file
-* `activePotions: 19` - Change amount of used slots in the Potion-Shop (Maximum: `27`)
-* `activeKits: 6` - Change amount of used slots in the Kit-Chooser (Maximum: `26`)
-    * `Rich Kid` is hard coded and can only be deactivated
-* `compassOnSpawn: false` - Add Player-Finder to inventory on round start `false` or `true`
-* `allowOutsideChat: false` - Allows chatting with all players on the server `false` or `true`
-* `changeGamerules: true` - Decide if the plugin changes gamerules `true` or `false`
-* `activateScoreboard: true` - Activate scoreboard `true` or `false`
-* `friendlyFire: false` - Allows friendly fire on teammates `true` or `false`
-* `joinStarted: true` - Allows joining a match that has already started `true` or `false`
-* `activateDeathmatch: true` - Activate deathmatch when only two players are left `true` or `false`
-* `enableRewards: true` - Enable rewards `true` or `false`
-* `winningReward: 100` - Set reward amount for winning
-* `killReward: 10` - Set reward amount for kills (Vault needed)
-    * [Download the latest release here!](https://www.spigotmc.org/resources/vault.34315/)
-* `broadcastStarting: false` - Broadcast when a lobby reached minimal amount of players `false` or `true`
-
-### Messages
-
-* To change a message just change the text in the `messages.yml` file
-* To add a language copy the existing lines and paste them below it and change the `en_US` to your language.
-* Also change the `en_US` in the `config.yml` to your language.
-    * [Download the latest German and Chinese translation here!](https://github.com/andersspielen/PotionGamesIssues/releases/latest)
+Settings use a lobby-first model:
+- `pg.defaults.*` stores global defaults for every lobby
+- `pg.lobbies.<id>.settings.*` stores per-lobby overrides
+- Falls back to defaults if per-lobby setting is missing
 
 ## Release History
 
-* 7.0
-    * ADD: Support for Minecraft 1.13+
-* 6.0
-    * ADD: Airdrops
-* 5.2
-    * ADD: Sounds
-* 5.1
-    * ADD: Rewards for kills and winning (Vault)
-* 5.0
-    * ADD: Deathmatch
-* 4.9.5
-    * ADD: Team-Mode
-* 4.9
-    * ADD: Scoreboard
-* 4.8
-    * ADD: One arena lobbies
-* 4.7
-    * ADD: Primed TNT to loot table
-* 4.6
-    * ADD: /pg reload command
-* 4.5
-    * ADD: /pg version command
-* 4.4
-    * ADD: Join lobby via gui
-* 4.3
-    * ADD: Support for 1.17
-* 4.2
-    * ADD: Bungee Hub-Server setting
-* 4.1
-    * ADD: Option to change all chest blocks
-* 4.0
-    * ADD: Option to add own blocks with their own loot table
-* 3.1
-    * ADD: Own settings per a lobby (Now every setting)
-* 3.0
-    * ADD: Inventory set up
-* 2.3
-    * ADD: Round-Time
-* 2.2
-    * ADD: Own settings per a lobby
-* 2.1
-    * ADD: Join-Sings with updating information
-* 2.0
-    * ADD: Multi-Arena-System
-* 1.0
-    * ADD: Option to change chest items and effects
-* 0.9
-    * ADD: Option to change database type between MySQL and SQLite
-* 0.8.5
-    * ADD: Option to deactivate mysql/stats
-* 0.8
-    * ADD: Option to change kits
-* 0.7
-    * ADD: Option to change shop items
-* 0.6
-    * ADD: Option to turn Teams, Kits and Shop on or off
-* 0.5
-    * ADD: Teams
-* 0.4
-    * ADD: Kits
-* 0.3
-    * ADD: Shop
-* 0.2
-    * ADD: ArenaVote-System
-* 0.1
-    * ADD: SurvivalGames-System with chests giving PotionEffects
+### v1.0 — PotionGamesX (Rework)
+Complete rework of the original PotionGames, now rebuilt as PotionGamesX.
+* Full class-based OOP refactor with manager delegation
+* 8+ manager classes for state management
+* Separated event listeners and command classes
+* Configuration-driven design (logging, performance, security sections)
+* Consolidated config structure (config.yml, chests.yml, kits.yml, messages.yml, shop.yml)
+* GitHub CI/CD pipeline (build, test, CodeQL, automated releases)
+* 0 code warnings, production-ready
 
-## TODO
+### Original PotionGames
+Previous versions of the original PotionGames plugin before the rework:
+
+* **v7.0** — Support for Minecraft 1.13+
+* **v6.0** — Airdrops
+* **v5.2** — Sounds
+* **v5.1** — Rewards for kills and winning (Vault)
+* **v5.0** — Deathmatch
+* **v4.9.5** — Team-Mode
+* **v4.9** — Scoreboard
+* **v4.8** — One arena lobbies
+* **v4.7** — Primed TNT to loot table
+* **v4.6** — `/pg reload` command
+* **v4.5** — `/pg version` command
+* **v4.4** — Join lobby via GUI
+* **v4.3** — Support for 1.17
+* **v4.2** — Bungee Hub-Server setting
+* **v4.1** — Option to change all chest blocks
+* **v4.0** — Option to add own blocks with their own loot table
+* **v3.1** — Own settings per lobby
+* **v3.0** — Inventory setup
+* **v2.3** — Round-Time
+* **v2.2** — Own settings per lobby
+* **v2.1** — Join signs with live updates
+* **v2.0** — Multi-Arena-System
+* **v1.0** — Option to change chest items and effects
+* **v0.9** — Option to change database type (MySQL/SQLite)
+* **v0.8.5** — Option to deactivate MySQL/stats
+* **v0.8** — Option to change kits
+* **v0.7** — Option to change shop items
+* **v0.6** — Option to turn Teams, Kits and Shop on/off
+* **v0.5** — Teams
+* **v0.4** — Kits
+* **v0.3** — Shop
+* **v0.2** — ArenaVote-System
+* **v0.1** — SurvivalGames-System with chests giving potion effects
+
+## License
+
+Licensed under the [MIT License](LICENSE).
 
 ## Issues / Ideas
 
-[Report bugs / request features here!](https://github.com/andersspielen/PotionGamesIssues/issues)
+[Report bugs / request features here!](https://github.com/lennartabeln/PotionGamesX/issues)
