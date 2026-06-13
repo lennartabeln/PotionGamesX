@@ -15,9 +15,9 @@ mvn -DskipTests clean package
 ```
 
 ### Deploy
-1. Copy `target/PotionGamesX-1.0.0.jar` to server `plugins/`
+1. Copy `target/PotionGamesX-*.jar` to server `plugins/`
 2. Restart server
-3. Configure in `plugins/PotionGames/config.yml`
+3. Configure in `plugins/PotionGamesX/config.yml`
 4. Use `/pg help` for commands
 
 ## 📦 What's Included
@@ -52,7 +52,7 @@ mvn -DskipTests clean package
 
 ## 🛠️ Configuration
 
-All config files in `plugins/PotionGames/`:
+All config files in `plugins/PotionGamesX/`:
 
 | File | Purpose |
 |------|---------|
@@ -71,8 +71,8 @@ All config files in `plugins/PotionGames/`:
 | Paper | 26.1.x required |
 | Code Warnings | ✅ 0 |
 | Code Errors | ✅ 0 |
-| JAR Size | 0.31 MB |
-| Build Time | ~5s |
+| JAR Size | 0.22 MB |
+| Build Time | ~6s |
 
 ## 🔗 Requirements
 
