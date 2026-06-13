@@ -2,23 +2,18 @@
 
 All notable changes to PotionGamesX are documented in this file.
 
-## [1.0.0-dev.2] - 2026-06-13
-
-### Changed
-
-- release.yml: reads release body from `CHANGELOG.md` instead of auto-generated notes
-- CHANGELOG.md: restructured to [Keep a Changelog](https://keepachangelog.com/) format with per pre-release entries
-
-## [1.0.0-dev.1] - 2026-06-11
+## [Unreleased]
 
 ### Added
 
-- Arena selector: fixed "Random" vote count display
-- Kit selector: `handleKitSelection` listener method
+- Arena selector: "Random" vote count now shows actual votes
+- Kit selector: `handleKitSelection` applies kit+items on selection
 - Messages.java: 86 typed `*Text()` methods replacing 107 `raw()` calls
 
 ### Changed
 
+- release.yml: reads release body from `CHANGELOG.md` instead of auto-generated notes
+- CHANGELOG.md: restructured to [Keep a Changelog](https://keepachangelog.com/) format
 - Inventory GUI: arena selector, kit selector, team selector, stats, leave items unified to DARK_AQUA
 - Inventory titles: ArenaSelectorTitle, KitSelector, SelectorTeamTitle no longer use prefix line
 
