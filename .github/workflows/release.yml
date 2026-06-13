@@ -89,7 +89,80 @@ jobs:
         is_prerelease=$(echo "$VERSION" | grep -q '-' && echo "true" || echo "false")
 
         if [ "$is_prerelease" = "true" ]; then
-          extract_section "Unreleased" > /tmp/release_body.txt
+          extract_section "Unreleased" > /tmp/current_unreleased.txt
+
+          PREV_NUM=$((${VERSION##*-dev.} - 1))
+          PREV_TAG="${VERSION%-dev.*}-dev.${PREV_NUM}"
+
+          if git rev-parse "$PREV_TAG" >/dev/null 2>&1; then
+            git show "$PREV_TAG:CHANGELOG.md" 2>/dev/null | python3 -c "
+        import re, sys
+        target = 'Unreleased'
+        header = re.compile(r'^##\s+\[' + re.escape(target) + r'\]')
+        end = re.compile(r'^##\s')
+        lines = sys.stdin.readlines()
+        capture = False
+        body = []
+        for line in lines:
+            if end.match(line):
+                if capture:
+                    break
+                if header.match(line):
+                    capture = True
+                    continue
+            if capture:
+                body.append(line)
+        sys.stdout.write(''.join(body).strip())
+        " > /tmp/prev_unreleased.txt 2>/dev/null || true
+          fi
+
+          python3 -c "
+        import sys
+
+        def collect_entries(lines):
+            entries = set()
+            for line in lines:
+                s = line.strip()
+                if s and not s.startswith('### '):
+                    entries.add(s)
+            return entries
+
+        with open('/tmp/current_unreleased.txt') as f:
+            current = f.readlines()
+
+        prev = set()
+        try:
+            with open('/tmp/prev_unreleased.txt') as f:
+                prev = collect_entries(f.readlines())
+        except FileNotFoundError:
+            prev = set()
+
+        if not prev:
+            sys.stdout.write(''.join(current).strip())
+        else:
+            out = []
+            in_cat = None
+            cat_active = False
+
+            for line in current:
+                s = line.strip()
+                if s.startswith('### '):
+                    in_cat = s
+                    cat_active = False
+                elif s and not s.startswith('### '):
+                    if s not in prev:
+                        if not cat_active:
+                            if out:
+                                out.append('\n')
+                            out.append(in_cat + '\n')
+                            cat_active = True
+                        out.append(line)
+                else:
+                    if cat_active:
+                        out.append(line)
+
+            sys.stdout.write(''.join(out).strip())
+        " > /tmp/release_body.txt
         else
           extract_section "$VERSION" > /tmp/release_body.txt
         fi
