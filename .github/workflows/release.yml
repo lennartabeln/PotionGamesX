@@ -132,6 +132,7 @@ jobs:
           # Diff to find only new lines
           if [ -s /tmp/prev_unreleased.txt ]; then
             python3 -c "
+        import sys
         old = set(open('/tmp/prev_unreleased.txt').read().splitlines())
         new = open('/tmp/current_unreleased.txt').read().splitlines()
         out = [l for l in new if l.strip() and l not in old]
