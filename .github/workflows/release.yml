@@ -58,16 +58,33 @@ jobs:
       if: steps.check.outputs.exists != 'true'
       run: mvn clean package
 
+    - name: Get previous pre-release body
+      id: prev_release
+      if: steps.check.outputs.exists != 'true' && steps.prerelease.outputs.value == 'true'
+      run: |
+        VERSION="${{ steps.version.outputs.base }}"
+        BASE="${VERSION%-dev.*}"
+        NUM="${VERSION##*-dev.}"
+        PREV_NUM=$((NUM - 1))
+        PREV_TAG="${BASE}-dev.${PREV_NUM}"
+        if gh release view "$PREV_TAG" --json body --jq '.body' > /tmp/prev_body.txt 2>/dev/null; then
+          echo "previous_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
+        else
+          echo "previous_tag=" >> "$GITHUB_OUTPUT"
+        fi
+      env:
+        GH_TOKEN: ${{ github.token }}
+
     - name: Extract changelog for release
       id: changelog
       if: steps.check.outputs.exists != 'true'
       run: |
         VERSION="${{ steps.version.outputs.base }}"
+        is_prerelease=$(echo "$VERSION" | grep -q '-' && echo "true" || echo "false")
         python3 -c "
         import re, sys
         version = '$VERSION'
         is_prerelease = '-' in version
-        # Pre-release: extract [Unreleased]; full release: extract [version]
         target = 'Unreleased' if is_prerelease else version
         header = re.compile(r'^##\s+\[' + re.escape(target) + r'\]')
         end = re.compile(r'^##\s')
@@ -84,11 +101,24 @@ jobs:
                     continue
             if capture:
                 body.append(line)
-        if body:
-            sys.stdout.write(''.join(body).strip())
-        else:
-            sys.stdout.write('No changelog entry found for ' + ('[Unreleased]' if is_prerelease else 'version ' + version))
-        " > /tmp/release_body.txt
+        sys.stdout.write(''.join(body).strip())
+        " > /tmp/new_changelog.txt
+
+        PREV_TAG='${{ steps.prev_release.outputs.previous_tag }}'
+        if [ "$is_prerelease" = "true" ] && [ -n "$PREV_TAG" ] && [ -s /tmp/prev_body.txt ]; then
+          PREV_BODY=$(cat /tmp/prev_body.txt)
+          NEW_CHANGES=$(cat /tmp/new_changelog.txt)
+          case "$PREV_BODY" in *"$NEW_CHANGES"*) ;; *) contained="false" ;; esac
+          if [ -z "${contained:-}" ]; then
+            echo "$PREV_BODY" > /tmp/release_body.txt
+          else
+            printf '%s\n\n### New in this release\n%s' "$PREV_BODY" "$NEW_CHANGES" > /tmp/release_body.txt
+          fi
+        elif [ -s /tmp/new_changelog.txt ]; then
+          cat /tmp/new_changelog.txt > /tmp/release_body.txt
+        else
+          echo "No changelog entry found for $( [ "$is_prerelease" = 'true' ] && echo '[Unreleased]' || echo \"version $VERSION\" )" > /tmp/release_body.txt
+        fi
 
     - name: Create Release
       if: steps.check.outputs.exists != 'true'
