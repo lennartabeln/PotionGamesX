@@ -1,6 +1,6 @@
 package com.tw0far.potiongames.managers;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.HashMap;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class SetupStateManager implements ISetupStateManager {
 
-    private ArrayList<Player> setupPlayers = new ArrayList<>();
+    private final CopyOnWriteArrayList<Player> setupPlayers = new CopyOnWriteArrayList<>();
 
     // State backups for setup players
     private HashMap<String, ItemStack[]> inv = new HashMap<>();         // player name -> inventory
@@ -284,10 +284,10 @@ public class SetupStateManager implements ISetupStateManager {
     }
 
     // ===== Setup Flow Flags =====
-    private boolean addlobby = false;
-    private boolean addarena = false;
-    private boolean dellobby = false;
-    private boolean delarena = false;
+    private volatile boolean addlobby = false;
+    private volatile boolean addarena = false;
+    private volatile boolean dellobby = false;
+    private volatile boolean delarena = false;
 
     @Override
     public boolean isAddlobby() { return addlobby; }

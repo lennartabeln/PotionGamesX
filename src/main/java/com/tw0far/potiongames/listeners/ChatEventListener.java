@@ -11,6 +11,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 
+import com.tw0far.potiongames.util.PlayerTaskDispatcher;
+
 /**
  * Handles player chat events.
  * Manages team/spectator chat separation, message filtering, and setup mode input.
@@ -93,16 +95,28 @@ public class ChatEventListener implements Listener {
      */
     private void handleSetupChatInput(AsyncChatEvent e, Player p, String input) {
         // No pending input mode: let normal chat through instead of swallowing it
-        if (!plugin.getSetupStateManager().isAddlobby()
-                && !plugin.getSetupStateManager().isDellobby()
-                && !plugin.getSetupStateManager().isAddarena()
-                && !plugin.getSetupStateManager().isDelarena()) {
+        if (!hasPendingSetupInput()) {
             return;
         }
 
-        // Cancel the chat message from being sent
+        // AsyncChatEvent runs asynchronously. Cancel here, then perform all player,
+        // world, and configuration work on the player's owning region thread.
         e.setCancelled(true);
+        PlayerTaskDispatcher.dispatch(
+                action -> p.getScheduler().run(plugin, task -> action.run(), null),
+                () -> processSetupChatInput(p, input));
+    }
 
+    private boolean hasPendingSetupInput() {
+        var state = plugin.getSetupStateManager();
+        return state.isAddlobby() || state.isDellobby() || state.isAddarena() || state.isDelarena();
+    }
+
+    private void processSetupChatInput(Player p, String input) {
+        // The pending mode may have changed before the entity task ran.
+        if (!hasPendingSetupInput()) {
+            return;
+        }
         Integer selectedLobby = plugin.getSetupStateManager().getSelectedLobby(p);
 
         // Handle add lobby
