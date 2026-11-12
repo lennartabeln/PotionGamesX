@@ -243,7 +243,8 @@ public class ReloadHandler {
     private void reloadConfiguration() {
         plugin.reloadConfig();
         plugin.getConfigManager().reload();
-        com.tw0far.potiongames.models.Settings.loadSettings(plugin);
+        new com.tw0far.potiongames.bootstrap.BootstrapInitializer(plugin).reload();
+        new com.tw0far.potiongames.bootstrap.ChestLootInitializer(plugin).seed();
         plugin.getLogger().info("Configuration reloaded");
     }
 
@@ -260,13 +261,8 @@ public class ReloadHandler {
     private void reloadGameData() {
         if (plugin.getGame() != null) {
             plugin.getGame().load();
-            // Restart the per-lobby tick loops (cancelled in step 3)
-            for (Lobby lobby : plugin.getGame().getLobbies()) {
-                lobby.startTick();
-            }
+            new com.tw0far.potiongames.bootstrap.EnableBootstrapInitializer(plugin).initialize();
         }
-        // Restart the rank wall updater (cancelled in step 3)
-        new com.tw0far.potiongames.bootstrap.RankWallUpdater(plugin).start();
         plugin.getLogger().info("Game data reloaded");
     }
 }
