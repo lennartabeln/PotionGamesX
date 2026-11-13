@@ -7,7 +7,6 @@ import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -17,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Team;
 
 import java.util.Objects;
 
@@ -125,18 +123,11 @@ public class DeathEventListener implements Listener {
         }
         e.deathMessage(null);
 
-        // Update scoreboard kill counter for killer
-        if (killer != null && plugin.getConfigManager().isActivateScoreboard()) {
-            Team killsTeam = killer.getScoreboard().getTeam("kills");
-            if (killsTeam != null) {
-                String currentValue = PlainTextComponentSerializer.plainText().serialize(killsTeam.prefix());
-                try {
-                    int tempInt = Integer.parseInt(currentValue) + 1;
-                    killsTeam.prefix(Component.text(String.valueOf(tempInt)).color(NamedTextColor.DARK_AQUA));
-                } catch (NumberFormatException ignored) {
-                }
-            }
+        // Track per-round kill/death counters; the sidebar renders them
+        if (killer != null) {
+            lobby.addKill(killer);
         }
+        lobby.addDeath(p);
     }
 
     private Component buildDeathMessage(Player victim, Player killer, String verb, int aliveCount, int playerCount) {

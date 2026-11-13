@@ -149,6 +149,7 @@ en_US:
     kills:
       label: "Kills"
     kit:
+      label: "Kit"
       now_have: "You now have the kit"
       selector: "Kit-Selector"
     leave:
@@ -177,6 +178,9 @@ en_US:
       no_deathmatch_spawns: "No deathmatch spawns are configured for that arena."
     lost:
       label: "Lost"
+    map:
+      label: "Map"
+      voting: "Voting"
     no_player_found: "No player found!"
     pause:
       toggle: "Pause"
@@ -203,6 +207,8 @@ en_US:
       seconds_remaining: "seconds remaining to end this round!"
     rounds:
       label: "Rounds"
+    scoreboard:
+      none: "none"
     selector:
       team: "Team-Selector"
     server:
@@ -234,6 +240,7 @@ en_US:
     stats:
       label: "Stats"
     team:
+      label: "Team"
       already_full: "This team is already full!"
       now_in: "You are now in team"
     teleport:
@@ -241,6 +248,8 @@ en_US:
       to_dm_failed: "Could not teleport to deathmatch arena!"
       to_lobby_in: "Teleporting to lobby in"
       to_lobby_now: "Teleporting to lobby now!"
+    time:
+      label: "Time"
     tnt:
       extremely_explosive: "Extremely explosive TNT"
     type:
@@ -426,6 +435,7 @@ de_DE:
     kills:
       label: "Kills"
     kit:
+      label: "Kit"
       now_have: "Du hast jetzt das Kit"
       selector: "Kit-Auswahl"
     leave:
@@ -454,6 +464,9 @@ de_DE:
       no_deathmatch_spawns: "Für diese Arena sind keine Deathmatch-Spawns konfiguriert."
     lost:
       label: "Verloren"
+    map:
+      label: "Karte"
+      voting: "Abstimmung"
     no_player_found: "Kein Spieler gefunden!"
     pause:
       toggle: "Pause"
@@ -480,6 +493,8 @@ de_DE:
       seconds_remaining: "Sekunden verbleiben bis zum Ende dieser Runde!"
     rounds:
       label: "Runden"
+    scoreboard:
+      none: "keins"
     selector:
       team: "Team-Auswahl"
     server:
@@ -511,6 +526,7 @@ de_DE:
     stats:
       label: "Statistiken"
     team:
+      label: "Team"
       already_full: "Dieses Team ist bereits voll!"
       now_in: "Du bist jetzt im Team"
     teleport:
@@ -518,6 +534,8 @@ de_DE:
       to_dm_failed: "Konnte nicht zur Deathmatch-Arena teleportieren!"
       to_lobby_in: "Teleportiere in die Lobby in"
       to_lobby_now: "Teleportiere jetzt in die Lobby!"
+    time:
+      label: "Zeit"
     tnt:
       extremely_explosive: "Extrem explosives TNT"
     type:

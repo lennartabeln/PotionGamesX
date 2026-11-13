@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `permissions` section in plugin.yml with sane defaults (`pg.join`/`pg.leave`/`pg.stats` for everyone, admin nodes op-only)
 - Unit tests (JUnit 5): arena spawn ID math and per-lobby config resolution/normalization
 
+#### Scoreboard
+- `pg.activateScoreboard` works again: players get a per-player sidebar with map, team, kit and player count while a lobby waits, and remaining time plus kills during a round; leaving the lobby restores the server scoreboard
+- `messages.yml` gains `map`, `team`, `kit`, `time` and `scoreboard.none` labels (en_US/de_DE)
+
 #### Configuration
 - Consolidated config structure (config.yml, chests.yml, kits.yml, messages.yml, shop.yml)
 
@@ -49,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/pg reload` reports failed reload steps instead of claiming success when configuration, database or game data reloading failed
 - `/pg stats <player>` also resolves offline players whose profile is cached by Paper
 - `/pg join <id>` now goes through the shared lobby join validation (capacity, state, `pg.joinStarted`) instead of adding the player to `activePlayers` unconditionally; a full lobby can no longer leave a player half-joined
+- Per-round kills are tracked through `Lobby#addKill` again (previously the scoreboard kill counter parsed its own team prefix, and `Lobby#getKills` was always 0)
 
 ### Changed
 
