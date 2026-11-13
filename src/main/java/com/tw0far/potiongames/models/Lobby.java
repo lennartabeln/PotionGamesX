@@ -79,6 +79,9 @@ public class Lobby {
     private boolean joinable = true;
     private boolean pause = false;
 
+    /** Guards {@link #startTick()} against a second concurrent scheduling. */
+    private boolean tickStarting = false;
+
     // Gamerule restore points (pg.changeGamerules)
     private World gameruleWorld = null;
     private Boolean prevDaylight = null;
@@ -310,7 +313,30 @@ public class Lobby {
             }
         }
         if (playerCount == 0) {
-            setState(GameStates.RESET);
+            onLobbyEmptied();
+        }
+    }
+
+    /**
+     * Handles the last player leaving the lobby. A running round must not be
+     * reset on the spot: it ends through ENDING like a normal round end, so the
+     * draw is announced, the blocks are restored and the lobby returns to
+     * WAITING. Only an empty countdown is reset directly.
+     */
+    private void onLobbyEmptied() {
+        switch (state) {
+            case INGAME:
+            case DEATHMATCH:
+                announceDraw();
+                endRound();
+                break;
+            case PREPARING:
+            case ENDING:
+                setState(GameStates.RESET);
+                break;
+            default:
+                // WAITING/RESET: nothing to tear down.
+                break;
         }
     }
 
@@ -340,6 +366,58 @@ public class Lobby {
         playerKills.clear();
         playerDeaths.clear();
         setPlayerCount(0);
+    }
+
+    /**
+     * Puts everyone of this lobby back into the hub after a finished round, the
+     * way the legacy release did: eliminated players become players again, each
+     * one keeps the pre-join snapshot (restored by /pg leave) and gets the
+     * lobby inventory. Only this lobby is touched; players of other lobbies stay
+     * where and as they are.
+     */
+    private void returnPlayersToLobby() {
+        for (Player spectator : new ArrayList<>(spectatorPlayers)) {
+            PlayerState state = spectatorStates.remove(spectator.getUniqueId());
+            spectatorPlayers.remove(spectator);
+            spectator.setCanPickupItems(true);
+            spectator.setCollidable(true);
+            spectator.setFireTicks(0);
+            spectator.setGameMode(GameMode.ADVENTURE);
+            Participant participant = getParticipant(spectator);
+            if (participant == null) {
+                participant = new Participant(this, spectator);
+                participant.adoptSavedState(state);
+                participants.add(participant);
+            }
+            if (!activePlayers.contains(spectator)) {
+                activePlayers.add(spectator);
+            }
+        }
+
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (getSpawn() == null) {
+            // No hub configured: fall back to the pre-join location.
+            clearParticipants();
+            return;
+        }
+        for (Participant participant : new ArrayList<>(participants)) {
+            Player player = participant.getPlayer();
+            if (player == null || !player.isOnline()) {
+                participants.remove(participant);
+                activePlayers.remove(player);
+                continue;
+            }
+            participant.setKit(null);
+            participant.teleportToLobby();
+            if (plugin != null && plugin.getScoreboardManager() != null) {
+                plugin.getScoreboardManager().show(player);
+            }
+        }
+        spectatorStates.clear();
+        if (plugin != null && plugin.getScoreboardManager() != null) {
+            plugin.getScoreboardManager().update(this);
+        }
+        setPlayerCount(participants.size());
     }
 
     public boolean containsPlayer(Player player) {
@@ -590,8 +668,23 @@ public class Lobby {
         return leader;
     }
 
-    public void startTick() {
-        tickTask = PotionGamesX.getInstance().getServer().getGlobalRegionScheduler().runAtFixedRate(PotionGamesX.getInstance(), scheduledTask -> runGameTick(), 1, 20);
+    /**
+     * Starts the state machine task, at most once. The field used to be
+     * assigned after scheduling, so two joins handled on different threads
+     * could both pass the {@code tickTask == null} check and run the state
+     * machine at double speed.
+     */
+    public synchronized void startTick() {
+        if (tickStarting || (tickTask != null && !tickTask.isCancelled())) {
+            return;
+        }
+        tickStarting = true;
+        try {
+            tickTask = PotionGamesX.getInstance().getServer().getGlobalRegionScheduler()
+                    .runAtFixedRate(PotionGamesX.getInstance(), scheduledTask -> runGameTick(), 1, 20);
+        } finally {
+            tickStarting = false;
+        }
     }
 
     public void startCountdown() {
@@ -872,7 +965,13 @@ public class Lobby {
 
     public void runGameTick() {
         if (pause) {
-            return;
+            // Pausing freezes the round, never the reset. An emptied lobby used
+            // to stay paused forever: RESET never ran, WAITING was never
+            // restored and canJoin() rejected everybody ("lobby full").
+            if (playerCount > 0 && state != GameStates.WAITING && state != GameStates.RESET) {
+                return;
+            }
+            pause = false;
         }
 
         switch (state) {
@@ -984,13 +1083,18 @@ public class Lobby {
                     for (Player player : new ArrayList<>(spectatorPlayers)) {
                         sendToServer(player, hubServer);
                     }
+                    // The players leave this server, so there is nothing to keep.
+                    clearParticipants();
+                } else {
+                    returnPlayersToLobby();
                 }
-                plugin.getGame().clearAllPlayers();
                 setCurrentArena(null);
                 clearVoting();
                 clearTeams();
                 clearBlockTracking();
                 clearChests();
+                playerKills.clear();
+                playerDeaths.clear();
                 setState(GameStates.WAITING);
                 if (playerCount == 0 && tickTask != null && !tickTask.isCancelled()) {
                     tickTask.cancel();
@@ -1004,10 +1108,6 @@ public class Lobby {
         PotionGamesX gamePlugin = PotionGamesX.getInstance();
         if (gamePlugin != null && gamePlugin.getScoreboardManager() != null) {
             gamePlugin.getScoreboardManager().update(this);
-        }
-
-        if (playerCount == 0 && state != GameStates.WAITING) {
-            setState(GameStates.RESET);
         }
     }
 
@@ -1073,9 +1173,7 @@ public class Lobby {
 
     private void announceWinner(Player winner) {
         String winnerName = winner == null ? "Unknown" : winner.getName();
-        for (Participant participant : participants) {
-            participant.sendMessage(Messages.WinnerHasWonTheGame(winnerName));
-        }
+        sendToLobby(Messages.WinnerHasWonTheGame(winnerName));
         for (Player player : activePlayers) {
             if (player != null && player.equals(winner)) {
                 rewardWin(player);
@@ -1087,9 +1185,7 @@ public class Lobby {
 
     private void announceTeamWin(String teamId, List<Player> winningTeam) {
         String teamName = "Team " + teamId;
-        for (Participant participant : participants) {
-            participant.sendMessage(Messages.WinnerHasWonTheGame(teamName));
-        }
+        sendToLobby(Messages.WinnerHasWonTheGame(teamName));
         for (Player player : activePlayers) {
             if (player == null) continue;
             if (winningTeam.contains(player)) {
@@ -1144,8 +1240,18 @@ public class Lobby {
     }
 
     private void announceDraw() {
+        sendToLobby(Messages.RoundNobodyWon());
+    }
+
+    /** Sends a round message to the remaining players and to the spectators. */
+    private void sendToLobby(Component message) {
         for (Participant participant : participants) {
-            participant.sendMessage(Messages.RoundNobodyWon());
+            participant.sendMessage(message);
+        }
+        for (Player spectator : new ArrayList<>(spectatorPlayers)) {
+            if (spectator != null && spectator.isOnline()) {
+                spectator.sendMessage(message);
+            }
         }
     }
 
