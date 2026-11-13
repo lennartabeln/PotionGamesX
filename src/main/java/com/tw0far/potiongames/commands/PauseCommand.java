@@ -49,9 +49,14 @@ public class PauseCommand implements ICommand {
                     for (Player p : plugin.getGame().getSpectatorsInLobby(lobbyId)) {
                         p.sendMessage(Messages.PauseToggle(paused));
                     }
+                } else {
+                    player.sendMessage(Messages.NotInLobby());
                 }
             } catch (NumberFormatException ignored) {
+                player.sendMessage(Messages.NotInLobby());
             }
+        } else {
+            player.sendMessage(Messages.NotInLobby());
         }
         return true;
     }

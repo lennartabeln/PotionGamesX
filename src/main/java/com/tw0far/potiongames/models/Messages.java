@@ -549,6 +549,11 @@ public class Messages {
         return prefix(Component.text(get("lobby.full", "This lobby is full!")).color(NamedTextColor.RED));
     }
 
+    /** Shown by commands that need the sender to be in a lobby. */
+    public static Component NotInLobby() {
+        return line(get("lobby.not_in_lobby", "You are not in a lobby!"), NamedTextColor.RED);
+    }
+
     public static String LobbyNoSpawnText() {
         return get("lobby.no_spawn", "This lobby has no usable spawn - please tell an admin.");
     }

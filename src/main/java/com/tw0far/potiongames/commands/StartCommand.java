@@ -59,6 +59,8 @@ public class StartCommand implements ICommand {
             } catch (NumberFormatException e) {
                 player.sendMessage(Messages.CommandHelp("start"));
             }
+        } else {
+            player.sendMessage(Messages.NotInLobby());
         }
         return true;
     }

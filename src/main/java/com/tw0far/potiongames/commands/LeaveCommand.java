@@ -43,6 +43,10 @@ public class LeaveCommand implements ICommand {
         if (lobby != null) {
             lobby.leave(player);
             player.sendMessage(Messages.LeaveSuccess());
+        } else if (!plugin.getConfigManager().isGameServer()) {
+            // Nothing to leave: say so instead of failing silently.
+            player.sendMessage(Messages.NotInLobby());
+            return true;
         }
 
         if (plugin.getConfigManager().isGameServer()) {

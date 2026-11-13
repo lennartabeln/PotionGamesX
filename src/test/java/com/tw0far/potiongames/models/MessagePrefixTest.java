@@ -36,6 +36,12 @@ class MessagePrefixTest {
     }
 
     @Test
+    void notInLobbyIsPrefixed() {
+        assertTrue(plain(Messages.NotInLobby()).startsWith(PREFIX));
+        assertTrue(plain(Messages.NotInLobby()).contains("not in a lobby"));
+    }
+
+    @Test
     void commandHelpIsPrefixed() {
         assertTrue(plain(Messages.CommandHelp("list")).startsWith(PREFIX));
     }
