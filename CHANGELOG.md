@@ -49,6 +49,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Team selector: `Random` spread players over every free team instead of always landing in the team that already had a player (candidates came from the sparse per-team count map, so empty teams were invisible)
+- Sidebar rendered the internal entry keys (`pg-label-map`, ...) instead of the configured labels; each field is now one line (`Map: Voting`), and the round timer shows `m:ss`
+- `/pg broadcast` used a hardcoded gold `[PotionGamesX]` prefix instead of the purple/gold plugin prefix; its usage/confirmation and the remaining hardcoded command output (`/pg top`, `/pg config`, `/pg gameserver`, setup chat) are localized now
+- A single-map lobby shows its arena name in the sidebar and on the join sign instead of the `Voting` placeholder
 - Game state is now propagated from the `Lobby` model to listeners; previously deaths/kills/rewards were never recorded and in-game block rules never applied
 - Shop GUI was unreachable (title mismatch + wrong state gate); purchases now count real coin items and can no longer loop forever
 - Random team assignment froze the server when all teams were full; switching teams validates capacity first so nobody ends up teamless
