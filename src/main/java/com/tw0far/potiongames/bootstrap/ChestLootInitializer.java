@@ -5,8 +5,10 @@ import com.tw0far.potiongames.managers.IItemStateManager;
 import com.tw0far.potiongames.models.Settings;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.util.List;
 
 public final class ChestLootInitializer {
@@ -25,6 +27,8 @@ public final class ChestLootInitializer {
             return;
         }
 
+        seedChestBlocks(config);
+
         ConfigurationSection itemsConfig = config.getConfigurationSection("pg.chestloot.normal.items");
         if (itemsConfig == null) {
             plugin.getLogger().warning("No pg.chestloot.normal.items section found in chests.yml, using fallback defaults");
@@ -42,6 +46,36 @@ public final class ChestLootInitializer {
         seedLootPool(itemsConfig, "armour5", 5, false, true, false);
         seedLootPool(itemsConfig, "weapons1", 1, false, false, true);
         seedLootPool(itemsConfig, "weapons2", 2, false, false, true);
+    }
+
+    /**
+     * Older/empty configs ship `chestblocks` as empty lists, which made loot
+     * and shop chests impossible to open. Seed the legacy defaults so a fresh
+     * install works without manual edits.
+     */
+    private void seedChestBlocks(FileConfiguration config) {
+        boolean changed = ensureChestBlock(config, "pg.chestblocks.normal", Material.END_PORTAL_FRAME);
+        changed |= ensureChestBlock(config, "pg.chestblocks.shop", Material.COMPOSTER);
+        if (!changed) {
+            return;
+        }
+        try {
+            config.save(Settings.chestsFile);
+        } catch (IOException e) {
+            plugin.getLogger().warning("Could not save chest block defaults: " + e.getMessage());
+        }
+    }
+
+    private boolean ensureChestBlock(FileConfiguration config, String key, Material fallback) {
+        Object configured = config.get(key);
+        if (configured instanceof String name && !name.isBlank()) {
+            return false;
+        }
+        if (configured instanceof List<?> names && !names.isEmpty()) {
+            return false;
+        }
+        config.set(key, List.of(fallback.name()));
+        return true;
     }
 
     /**

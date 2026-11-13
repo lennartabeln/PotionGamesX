@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Per-round kills are tracked through `Lobby#addKill` again (previously the scoreboard kill counter parsed its own team prefix, and `Lobby#getKills` was always 0)
 - Server list now reflects the plugin state again: the MOTD shows `WAITING`/`VOTING`/the voted arena/`INGAME` for the busiest lobby and the max player count is the summed capacity of all lobbies
 - Restored the legacy in-game audio cues: countdown bells in the last five seconds, a launch firework when the countdown starts, blast/dragon sounds at round start, a dragon growl when a round ends, a death sound for the eliminated player, and click/error sounds in the arena, kit, team and shop GUIs
+- Loot and shop chests work on a fresh install again: `chests.yml` ships usable `chestblocks` defaults (`END_PORTAL_FRAME`/`COMPOSTER`), empty values are seeded on startup, and the matcher accepts both the legacy string and the new list format
 
 ### Changed
 
