@@ -87,7 +87,7 @@ class LegacyConfigMigratorTest {
     }
 
     @Test
-    void globalArenasGoIntoEveryLobbyWithoutArenas() {
+    void globalArenasGoIntoEveryLobbyWithoutOverwriting() {
         YamlConfiguration legacy = new YamlConfiguration();
         legacy.set("pg.arenas.1.name", "Arena One");
         legacy.set("pg.arenas.1.spawns.1", "spawn-1");
@@ -99,11 +99,11 @@ class LegacyConfigMigratorTest {
         LegacyConfigMigrator.ArenaImport imported = LegacyConfigMigrator.importGlobalArenas(
                 legacy.getConfigurationSection("pg.arenas"), lobbies);
 
-        assertEquals(1, imported.lobbies());
-        assertEquals(1, imported.arenas());
+        assertEquals(2, imported.lobbies());
+        assertEquals(2, imported.arenas());
         assertEquals("spawn-1", lobbies.getString("pg.lobbies.1.arenas.Arena One.spawns.1"));
-        // lobby 2 was already configured and is not touched
-        assertFalse(lobbies.contains("pg.lobbies.2.arenas.Arena One"));
+        // the configured lobby keeps its own arena and gains the legacy one
+        assertEquals("spawn-1", lobbies.getString("pg.lobbies.2.arenas.Arena One.spawns.1"));
         assertEquals("own-spawn", lobbies.getString("pg.lobbies.2.arenas.Own Arena.spawns.1"));
     }
 

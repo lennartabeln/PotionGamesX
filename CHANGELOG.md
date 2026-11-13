@@ -39,8 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Legacy compatibility
 - `pg.singleLobby`: single-lobby mode accepts the legacy short setup forms (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg joinsign`, …) and targets lobby 1, while the long form keeps working
-- Automatic legacy migration on startup: an existing `arenadata.yml` is migrated without any command — lobbies from `pg.lobbies.<id>` are created (spawn from `coords`, settings moved into `settings.*`), a legacy single-lobby server gets `pg.Lobby.coords`/`pg.Lobby.sign` from `config.yml` as lobby 1, the global `pg.arenas.<n>` are copied into every lobby that has no arena yet, and a legacy `pg.lobbySystem` value is turned into `pg.singleLobby`. Existing entries are never overwritten
-- `/pg importarenas <lobby> [file]`: imports arenas from a legacy `arenadata.yml` (`pg.arenas.<n>` with `name`, `spawns`, `deathmatch`) into a lobby of the current `lobbies.yml` layout, skips existing arenas and keeps the spawn locations verbatim; usable from the console
+- Automatic legacy migration on startup: an existing `arenadata.yml` is migrated without any command — lobbies from `pg.lobbies.<id>` are created (spawn from `coords`, settings moved into `settings.*`), a legacy single-lobby server gets `pg.Lobby.coords`/`pg.Lobby.sign` from `config.yml` as lobby 1, the global `pg.arenas.<n>` are copied into every lobby (existing arena names are skipped, spawns/deathmatch verbatim), and a legacy `pg.lobbySystem` value is turned into `pg.singleLobby`. Existing entries are never overwritten; the console tells you to delete `arenadata.yml` when the migration is complete
 - `pg.activePotions`: caps how many entries of `shop.yml` are shown and buyable (`0` = all), the legacy `activePotions` knob
 - The arena selector paper is only handed out when the lobby has more than one arena, like the legacy `singleArena` behaviour
 
@@ -138,4 +137,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Never-functional move-freeze flag (cost a lobby lookup on every move event)
 - Write-only voting/team maps in `Lobby` and mirror flags in `LobbyStateManager`
 - BAD_OMEN entries 21-27 from `shop.yml` and `BootstrapInitializer.java` shop seeding
+- `/pg importarenas` and its message keys — the startup migration imports the legacy arenas into every lobby, so the command was redundant
 - `/pg debug` and the `pg.debug` permission (the command toggled a field that nothing read)

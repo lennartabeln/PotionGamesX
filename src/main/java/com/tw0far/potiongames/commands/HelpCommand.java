@@ -45,7 +45,6 @@ public class HelpCommand implements ICommand {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpHeadText()).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpSignText()).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpJoinsignText()).color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpImportarenasText()).color(NamedTextColor.GRAY)));
         }
 
         if (player.hasPermission("pg.reload")) {
