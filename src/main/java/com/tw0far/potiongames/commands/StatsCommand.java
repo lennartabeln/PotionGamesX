@@ -38,6 +38,12 @@ public class StatsCommand implements ICommand {
             sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
+        // Without a database every getter returns 0 and would print an empty
+        // stat sheet; say what is actually wrong instead.
+        if (!plugin.getDatabaseManager().isConnected()) {
+            player.sendMessage(Messages.DatabaseNotConnected());
+            return true;
+        }
         if (args.length < 2) {
             // Show stats for command sender
             int wins = plugin.getDatabaseManager().getWins(player.getUniqueId().toString());

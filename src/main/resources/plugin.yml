@@ -6,6 +6,11 @@ api-version: 26.1.2
 softdepend:
   - Multiverse-Core
   - Vault
+# Downloaded by the server on first start. Without them the stats backend has
+# no JDBC driver and every query fails silently.
+libraries:
+  - com.mysql:mysql-connector-j:9.1.0
+  - org.xerial:sqlite-jdbc:3.47.1.0
 commands:
   pg:
     description: Get list of commands + permissions

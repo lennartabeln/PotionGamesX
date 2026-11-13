@@ -57,6 +57,7 @@ en_US:
       close_failed: "Failed to close connection to database! For more information see console."
       connect_failed: "Connection to database failed! For more information see console."
       connected: "Connection to database established!"
+      not_connected: "Statistics database is not connected. Check the database settings and the console."
     dead:
       label: "Dead"
     deathmatch:
@@ -369,6 +370,7 @@ de_DE:
       close_failed: "Schließen der Datenbankverbindung fehlgeschlagen! Weitere Informationen in der Konsole."
       connect_failed: "Verbindung zur Datenbank fehlgeschlagen! Weitere Informationen in der Konsole."
       connected: "Verbindung zur Datenbank hergestellt!"
+      not_connected: "Die Statistik-Datenbank ist nicht verbunden. Prüfe die Datenbank-Einstellungen und die Konsole."
     dead:
       label: "Tot"
     deathmatch:
