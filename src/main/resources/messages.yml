@@ -294,6 +294,9 @@ en_US:
       deaths: "Deaths"
       wins: "Wins"
       kd: "K/D Ratio"
+      no_data: "Unable to read leaderboard data right now."
+      empty: "No leaderboard entries found yet."
+      failed: "Failed to load leaderboard data."
     type:
       arena_name_add: "Type arena name in chat to add it!"
     bucket:
@@ -612,6 +615,9 @@ de_DE:
       deaths: "Tode"
       wins: "Siege"
       kd: "K/D-Verhältnis"
+      no_data: "Ranglistendaten können gerade nicht gelesen werden."
+      empty: "Noch keine Ranglisten-Einträge vorhanden."
+      failed: "Ranglistendaten konnten nicht geladen werden."
     type:
       arena_name_add: "Gib den Arenanamen im Chat ein, um ihn hinzuzufügen!"
     bucket:

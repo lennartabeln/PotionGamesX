@@ -43,41 +43,32 @@ public class Participant {
         // Voting is pointless with a single arena, so the paper is only handed
         // out when there is something to choose (legacy behaviour).
         if (lobby.hasArenaChoice()) {
-            ItemStack map = new ItemStack(Material.PAPER);
-            ItemMeta mapMeta = map.getItemMeta();
-            if (mapMeta != null) {
-                mapMeta.displayName(Messages.ArenaSelectorItem());
-                map.setItemMeta(mapMeta);
-            }
-            inv.setItem(SLOT_ARENA_SELECTOR, map);
+            inv.setItem(SLOT_ARENA_SELECTOR, item(Material.PAPER, Messages.ArenaSelectorItem()));
         }
 
         // The kit selector is only handed out when kits are enabled.
         if (lobby.isActivateKits()) {
-            ItemStack kitItem = new ItemStack(Material.ENDER_CHEST);
-            ItemMeta kitMeta = kitItem.getItemMeta();
-            kitMeta.displayName(Messages.KitSelectorItem());
-            kitItem.setItemMeta(kitMeta);
-            inv.setItem(SLOT_KIT_SELECTOR, kitItem);
+            inv.setItem(SLOT_KIT_SELECTOR, item(Material.ENDER_CHEST, Messages.KitSelectorItem()));
         }
 
-        ItemStack teamItem = new ItemStack(Material.CLOCK);
-        ItemMeta teamMeta = teamItem.getItemMeta();
-        teamMeta.displayName(Messages.SelectorTeamItem());
-        teamItem.setItemMeta(teamMeta);
-        inv.setItem(SLOT_TEAM_SELECTOR, teamItem);
+        inv.setItem(SLOT_TEAM_SELECTOR, item(Material.CLOCK, Messages.SelectorTeamItem()));
+        inv.setItem(SLOT_STATS, item(Material.EMERALD, Messages.StatsItem()));
+        inv.setItem(SLOT_LEAVE, item(Material.MAGMA_CREAM, Messages.LeaveItem()));
+    }
 
-        ItemStack statsItem = new ItemStack(Material.EMERALD);
-        ItemMeta statsMeta = statsItem.getItemMeta();
-        statsMeta.displayName(Messages.StatsItem());
-        statsItem.setItemMeta(statsMeta);
-        inv.setItem(SLOT_STATS, statsItem);
-
-        ItemStack leaveItem = new ItemStack(Material.MAGMA_CREAM);
-        ItemMeta leaveMeta = leaveItem.getItemMeta();
-        leaveMeta.displayName(Messages.LeaveItem());
-        leaveItem.setItemMeta(leaveMeta);
-        inv.setItem(SLOT_LEAVE, leaveItem);
+    /**
+     * Lobby item carrying its display name. A missing {@link ItemMeta} is not
+     * fatal (an item keeps working, it just stays unnamed), which is why this
+     * never dereferences the meta unguarded.
+     */
+    private static ItemStack item(Material material, Component name) {
+        ItemStack stack = new ItemStack(material);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta != null) {
+            meta.displayName(name);
+            stack.setItemMeta(meta);
+        }
+        return stack;
     }
 
     /**

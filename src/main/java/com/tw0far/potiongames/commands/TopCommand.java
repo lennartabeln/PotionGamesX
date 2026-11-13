@@ -72,7 +72,7 @@ public class TopCommand implements ICommand {
             List<String> lines = new ArrayList<>();
             try (ResultSet resultSet = plugin.getDatabaseManager().query(query)) {
                 if (resultSet == null) {
-                    lines.add("!Unable to read leaderboard data right now.");
+                    lines.add("!" + Messages.TopNoDataText());
                 } else {
                     int rank = 1;
                     boolean hasEntries = false;
@@ -83,12 +83,12 @@ public class TopCommand implements ICommand {
                         rank++;
                     }
                     if (!hasEntries) {
-                        lines.add("No leaderboard entries found yet.");
+                        lines.add(Messages.TopEmptyText());
                     }
                 }
             } catch (SQLException e) {
                 plugin.getLogger().warning("Failed to build leaderboard for type " + queryType + ": " + e.getMessage());
-                lines.add("!Failed to load leaderboard data.");
+                lines.add("!" + Messages.TopFailedText());
             }
 
             Runnable deliver = () -> {

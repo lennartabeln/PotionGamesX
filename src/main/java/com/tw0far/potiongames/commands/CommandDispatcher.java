@@ -130,8 +130,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
             return command.execute(sender, args);
         } catch (Exception e) {
             sender.sendMessage(createError(Messages.CommandExecutionErrorText()));
-            plugin.getLogger().severe("Error executing command " + subCommand + ": " + e.getMessage());
-            e.printStackTrace();
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, "Error executing command " + subCommand, e);
             return true;
         }
     }
