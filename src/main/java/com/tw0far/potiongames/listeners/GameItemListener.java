@@ -15,6 +15,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
@@ -400,9 +401,7 @@ public class GameItemListener implements Listener {
     }
 
     private void openNormalChest(PlayerInteractEvent e, Player p) {
-        var normalChestBlock = Settings.chests.get("pg.chestblocks.normal");
-        if (normalChestBlock == null
-                || !e.getClickedBlock().getType().toString().equals(normalChestBlock.toString())) {
+        if (!matchesChestBlock(e.getClickedBlock(), "pg.chestblocks.normal")) {
             return;
         }
         Location loc = e.getClickedBlock().getLocation();
@@ -475,9 +474,7 @@ public class GameItemListener implements Listener {
     }
 
     private void handleShopChest(PlayerInteractEvent e, Player p) {
-        var shopChestBlock = Settings.chests.get("pg.chestblocks.shop");
-        if (shopChestBlock == null
-                || !e.getClickedBlock().getType().toString().equals(shopChestBlock.toString())) {
+        if (!matchesChestBlock(e.getClickedBlock(), "pg.chestblocks.shop")) {
             return;
         }
         Location loc = e.getClickedBlock().getLocation();
@@ -522,6 +519,32 @@ public class GameItemListener implements Listener {
         }
         lobby.setChestInventory(loc, inv.getContents());
         p.openInventory(inv);
+    }
+
+    /**
+     * Returns whether the clicked block is configured as the given chest type.
+     * Accepts both a single material name (legacy format) and a list of names.
+     */
+    private boolean matchesChestBlock(Block block, String key) {
+        if (block == null || Settings.chests == null) {
+            return false;
+        }
+        Object configured = Settings.chests.get(key);
+        if (configured == null) {
+            return false;
+        }
+        String type = block.getType().name();
+        if (configured instanceof String name) {
+            return type.equalsIgnoreCase(name.trim());
+        }
+        if (configured instanceof List<?> names) {
+            for (Object entry : names) {
+                if (entry != null && type.equalsIgnoreCase(entry.toString().trim())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void reopenStoredChest(Player p, Lobby lobby, Location loc) {

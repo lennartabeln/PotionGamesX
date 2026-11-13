@@ -64,10 +64,13 @@ pg:
           - "DIAMOND_SWORD:1"
           - "IRON_AXE:1"
 
-  # Chest location tracking (populated at runtime)
+  # Chest block types: right-clicking one of these blocks opens a chest.
+  # A single material name or a list of material names is supported.
   chestblocks:
-    normal: []
-    shop: []
+    normal:
+      - "END_PORTAL_FRAME"
+    shop:
+      - "COMPOSTER"
 
   # Custom chest loot profiles
   customchests: {}
