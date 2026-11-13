@@ -1046,6 +1046,37 @@ public class Lobby {
         return this.gameTimer;
     }
 
+    /**
+     * True when the given world hosts one of this lobby's arenas.
+     * Used to contain explosions inside arena geometry.
+     */
+    public boolean isArenaWorld(World world) {
+        if (world == null) {
+            return false;
+        }
+        if (currentArena != null && arenaUsesWorld(currentArena, world)) {
+            return true;
+        }
+        for (Arena arena : arenas) {
+            if (arenaUsesWorld(arena, world)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean arenaUsesWorld(Arena arena, World world) {
+        if (arena == null) {
+            return false;
+        }
+        for (Location spawn : arena.getSpawns()) {
+            if (spawn != null && world.equals(spawn.getWorld())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setPlayerCount(int count) {
         if (this.playerCount != count) {
             this.playerCount = count;
