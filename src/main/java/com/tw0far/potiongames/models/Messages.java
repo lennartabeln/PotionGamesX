@@ -117,6 +117,11 @@ public class Messages {
         addDefault(lang, "status.connection", "Connection");
         addDefault(lang, "status.connected", "Connected");
         addDefault(lang, "status.disconnected", "Disconnected");
+        addDefault(lang, "setup.not_a_sign", "That is not a sign!");
+        addDefault(lang, "command.kick.usage", "Usage: /pg kick <player>");
+        addDefault(lang, "kick.not_in_lobby", "%s is not in a lobby!");
+        addDefault(lang, "kick.success", "%s has been kicked from lobby %s!");
+        addDefault(lang, "kick.notice", "You have been kicked from the lobby by an admin!");
         addDefault(lang, "plugin.started", "Plugin started successfully!");
         addDefault(lang, "plugin.stopped", "Plugin stopped successfully!");
         addDefault(lang, "price.label", "Price");
@@ -826,6 +831,19 @@ public class Messages {
     public static String HelpJoinText() { return get("help.join", "/pg join # - Join a game"); }
     public static String HelpJoinUsageText() { return get("help.join_usage", "/pg join <lobby_number> - Join a specific lobby"); }
     public static String HelpJoinsignText() { return get("help.joinsign", "/pg joinsign <lobbynumber> - Add Join-Sign"); }
+    public static String CommandKickUsageText() { return get("command.kick_usage", "Usage: /pg kick <player>"); }
+    public static Component KickNotInLobby(String player) {
+        return prefix(Component.text(String.format(get("kick.not_in_lobby", "%s is not in a lobby!"), player))
+            .color(NamedTextColor.RED));
+    }
+    public static Component KickSuccess(String player, String lobbyId) {
+        return prefix(Component.text(String.format(get("kick.success", "%s has been kicked from lobby %s!"), player, lobbyId))
+            .color(NamedTextColor.YELLOW));
+    }
+    public static Component KickedNotice() {
+        return prefix(Component.text(get("kick.notice", "You have been kicked from the lobby by an admin!"))
+            .color(NamedTextColor.RED));
+    }
     public static String HelpKickText() { return get("help.kick", "/pg kick <player> - Remove player from lobby"); }
     public static String HelpLeaveText() { return get("help.leave", "/pg leave - Leave the game"); }
     public static String HelpLeaveUsageText() { return get("help.leave_usage", "/pg leave - Leave the current game"); }
@@ -879,6 +897,7 @@ public class Messages {
     public static String ListNoLobbiesText() { return get("list.no_lobbies", "No lobbies available."); }
     public static String SetupDisabledText() { return get("setup.disabled", "Setup mode disabled."); }
     public static String SetupEnabledText() { return get("setup.enabled", "Setup mode enabled."); }
+    public static String SetupNotASignText() { return get("setup.not_a_sign", "That is not a sign!"); }
     public static String SetupNoBlockInRangeText() { return get("setup.no_block_in_range", "No block in range to set as join sign."); }
     public static String SetupNoDeathmatchSpawnsText() { return get("setup.no_deathmatch_spawns", "No deathmatch spawns are configured for that arena."); }
     public static String SetupNoSpawnsText() { return get("setup.no_spawns", "No spawns are configured for that arena."); }
