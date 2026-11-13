@@ -349,6 +349,10 @@ public class Lobby {
     }
 
     public void join(Player p) {
+        // Never leave a player half-joined (active, but without a participant)
+        if (p == null || !canJoin()) {
+            return;
+        }
         activePlayers.add(p);
         addParticipant(p);
     }

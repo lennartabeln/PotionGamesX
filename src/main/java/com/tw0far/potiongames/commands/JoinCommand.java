@@ -1,15 +1,11 @@
 package com.tw0far.potiongames.commands;
 
-import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.PotionGamesX;
-import org.bukkit.command.CommandSender;
-import com.tw0far.potiongames.models.Lobby;
-import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.models.Messages;
-import org.bukkit.command.CommandSender;
-import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import com.tw0far.potiongames.models.Settings;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -35,35 +31,31 @@ public class JoinCommand implements ICommand {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!(sender instanceof org.bukkit.entity.Player player)) {
-            sender.sendMessage(net.kyori.adventure.text.Component.text("This command can only be used by players!").color(net.kyori.adventure.text.format.NamedTextColor.RED));
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(Component.text("This command can only be used by players!").color(NamedTextColor.RED));
             return true;
         }
-        // Multi-lobby system: args should contain lobby ID
-        if (args.length > 1) {
-            try {
-                int lobbyId = Integer.parseInt(args[1]);
-                if (Settings.lobbies.contains("pg.lobbies." + lobbyId)) {
-                    if (plugin.getGame().getLobbies().size() > 0) {
-                        if (plugin.getGame().getPlayerLobby(player) != null) {
-                            player.sendMessage(Messages.JoinAlreadyInLobby());
-                            return true;
-                        }
-                        Lobby lobby = plugin.getGame().getLobby(lobbyId);
-                        if (lobby != null) {
-                            lobby.join(player);
-                        }
-                    }
-                } else {
-                    player.sendMessage(Messages.LobbyDoesNotExist());
-                }
-            } catch (NumberFormatException e) {
-                player.sendMessage(Messages.HelpUsePgHelp());
-            }
-        } else {
+        if (args.length <= 1) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpJoinText()).color(NamedTextColor.GRAY)));
+            return true;
         }
 
+        String lobbyId = args[1];
+        try {
+            Integer.parseInt(lobbyId);
+        } catch (NumberFormatException e) {
+            player.sendMessage(Messages.HelpUsePgHelp());
+            return true;
+        }
+
+        if (plugin.getGame().getPlayerLobby(player) != null || plugin.getGame().getSpectatorLobby(player) != null) {
+            player.sendMessage(Messages.JoinAlreadyInLobby());
+            return true;
+        }
+
+        // Share the validation (capacity, state, joinStarted, messages) with
+        // the join sign and lobby selector instead of joining unconditionally.
+        plugin.onJoinLobby(player, lobbyId);
         return true;
     }
 
@@ -72,4 +64,3 @@ public class JoinCommand implements ICommand {
         return Messages.HelpJoinUsageText();
     }
 }
-
