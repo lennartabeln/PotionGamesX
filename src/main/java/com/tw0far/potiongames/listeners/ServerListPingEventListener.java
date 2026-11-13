@@ -16,10 +16,11 @@ import java.util.Locale;
 /**
  * Reflects the plugin state in the server list entry.
  *
- * <p>The legacy release overrode the MOTD and max player count on every ping.
- * The rework tracks lobbies instead, so the ping shows the state of the most
- * relevant lobby (one with players, otherwise one that is not waiting) and
- * the summed capacity of all configured lobbies.</p>
+ * <p>The legacy release overrode the MOTD and max player count on every ping,
+ * but only in game server mode ({@code pg.gameServer}). The rework tracks
+ * lobbies instead, so the ping shows the state of the most relevant lobby (one
+ * with players, otherwise one that is not waiting) and the summed capacity of
+ * all configured lobbies. On a lobby/network server the entry is left alone.</p>
  */
 public class ServerListPingEventListener implements Listener {
     private final PotionGamesX plugin;
@@ -30,6 +31,14 @@ public class ServerListPingEventListener implements Listener {
 
     @EventHandler
     public void onServerListPing(ServerListPingEvent event) {
+        // Only a dedicated game server owns the server-list entry. A lobby or
+        // network server (pg.gameServer: false, typically with several lobbies)
+        // keeps the MOTD and slot count from server.properties - the legacy
+        // 7.0.1 release behaved the same way.
+        if (plugin.getConfigManager() == null || !plugin.getConfigManager().isGameServer()) {
+            return;
+        }
+
         ArrayList<Lobby> lobbies = plugin.getGame().getLobbies();
         if (lobbies == null || lobbies.isEmpty()) {
             return;
@@ -84,7 +93,9 @@ public class ServerListPingEventListener implements Listener {
     }
 
     private Component preparingMotd(Lobby lobby) {
-        Arena arena = lobby.getCurrentArena();
+        // getDisplayArena() also covers a single-map lobby, which never shows
+        // the VOTING placeholder.
+        Arena arena = lobby.getDisplayArena();
         if (arena != null && arena.getName() != null) {
             return Component.text(arena.getName().toUpperCase(Locale.ROOT)).color(NamedTextColor.GOLD);
         }
