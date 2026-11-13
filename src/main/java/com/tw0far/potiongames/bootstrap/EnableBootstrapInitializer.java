@@ -126,14 +126,11 @@ public final class EnableBootstrapInitializer {
             // per-lobby settings (loaded via LobbyConfig from lobbies.yml).
             plugin.getLobbyStateManager().setBuildAllowed(s, false);
 
-            // Team selector state: team size and one empty slot per team.
-            syncLobbyConfig(s, "teamSize", 2,
-                    value -> { int teamSize = Math.max(1, value);
-                               int maxPlayers = Math.max(1, Settings.lobbies.getInt("pg.lobbies." + s + ".maxPlayers", 24));
-                               int minPlayers = Math.max(1, Settings.lobbies.getInt("pg.lobbies." + s + ".minPlayers", 12));
-                               int capacity = Math.max(maxPlayers, minPlayers);
-                               asm.setLobbyTeamSize(s, teamSize);
-                               asm.initializeLobbyTeams(s, Math.max(1, capacity / teamSize)); });
+            // Team selector state: team size and one empty slot per team. The
+            // Lobby model owns the calculation, so runtime-created lobbies get
+            // the same state without a restart.
+            syncLobbyConfig(s, "teamSize", 2, value -> { });
+            gameLobby.syncTeamSelector();
 
             plugin.getLobbyStateManager().setGameState(s, GameStates.WAITING);
             gameLobby.startTick();

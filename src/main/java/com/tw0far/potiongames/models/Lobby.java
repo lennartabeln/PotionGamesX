@@ -189,6 +189,42 @@ public class Lobby {
                 arenas.add(arena);
             }
         }
+        syncTeamSelector();
+    }
+
+    /**
+     * Number of teams used by the round and the team selector. The legacy
+     * release derived it from the lobby capacity ({@code maxPlayers / teamSize})
+     * rather than from the players currently online, so a two-player round is a
+     * 1v1 instead of both players sharing team 1.
+     */
+    public int getTeamAmount() {
+        int size = Math.max(1, teamSize);
+        int capacity = Math.max(1, Math.max(maxPlayers, minPlayers));
+        return Math.max(2, capacity / size);
+    }
+
+    /**
+     * Publishes team size and team slots to the selector state, including for
+     * lobbies created at runtime (the selector used to stay empty until a
+     * restart because the bootstrap only ran once).
+     */
+    public void syncTeamSelector() {
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (plugin == null || plugin.getArenaStateManager() == null) {
+            return;
+        }
+        var asm = plugin.getArenaStateManager();
+        String lobbyId = Integer.toString(id);
+        asm.setLobbyTeamSize(lobbyId, Math.max(1, teamSize));
+        Map<Integer, Integer> existing = asm.getLobbyTeams(lobbyId);
+        if (existing.isEmpty()) {
+            asm.initializeLobbyTeams(lobbyId, getTeamAmount());
+            return;
+        }
+        for (int teamId = 1; teamId <= getTeamAmount(); teamId++) {
+            existing.putIfAbsent(teamId, 0);
+        }
     }
 
     public boolean add(Location spawn) {
@@ -205,6 +241,7 @@ public class Lobby {
         Settings.lobbies.set("pg.lobbies." + id + ".teamSize", teamSize);
         try {
             Settings.lobbies.save(Settings.lobbiesFile);
+            syncTeamSelector();
             return true;
         } catch (Exception ex) {
             PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
@@ -637,28 +674,101 @@ public class Lobby {
             return;
         }
 
-        clearTeams();
         int size = Math.max(1, teamSize);
-        int amount = Math.max(1, (int) Math.ceil((double) activePlayers.size() / size));
+        int amount = getTeamAmount();
 
+        // Keep the teams picked in the selector before rebuilding the counters.
+        Map<Player, String> picked = new HashMap<>(lobbyteamplayernames);
+        clearTeams();
         for (int i = 1; i <= amount; i++) {
             lobbyteams.put(i, 0);
         }
 
-        int teamId = 1;
+        // 1) Honour the manual choices that still fit.
         for (Player player : new ArrayList<>(activePlayers)) {
-            while (lobbyteams.getOrDefault(teamId, 0) >= size) {
-                teamId++;
-                if (teamId > amount) {
-                    teamId = 1;
-                }
+            String pick = picked.get(player);
+            if (pick == null) {
+                continue;
+            }
+            int teamId;
+            try {
+                teamId = Integer.parseInt(pick);
+            } catch (NumberFormatException ignored) {
+                continue;
+            }
+            if (teamId < 1 || teamId > amount || lobbyteams.getOrDefault(teamId, 0) >= size) {
+                continue;
             }
             recordTeamAssignment(player, Integer.toString(teamId));
-            teamId++;
-            if (teamId > amount) {
-                teamId = 1;
+        }
+
+        // 2) Spread the rest over the emptiest teams, so two players no longer
+        // end up in the same team and the round ends on its first tick.
+        for (Player player : new ArrayList<>(activePlayers)) {
+            if (lobbyteamplayernames.containsKey(player)) {
+                continue;
+            }
+            int teamId = findEmptiestTeam(size, amount);
+            if (teamId < 0) {
+                break;
+            }
+            recordTeamAssignment(player, Integer.toString(teamId));
+        }
+    }
+
+    /** Team with the fewest players that still has a free slot, or -1. */
+    private int findEmptiestTeam(int size, int amount) {
+        int bestTeam = -1;
+        int bestCount = Integer.MAX_VALUE;
+        for (int teamId = 1; teamId <= amount; teamId++) {
+            int count = lobbyteams.getOrDefault(teamId, 0);
+            if (count >= size) {
+                continue;
+            }
+            if (count < bestCount) {
+                bestCount = count;
+                bestTeam = teamId;
             }
         }
+        return bestTeam;
+    }
+
+    /** Copy of the current per-team player counts. */
+    public Map<Integer, Integer> getTeamCounts() {
+        return new HashMap<>(lobbyteams);
+    }
+
+    public boolean isTeamFull(int teamId, int maxTeamPlayers) {
+        return lobbyteams.getOrDefault(teamId, 0) >= Math.max(1, maxTeamPlayers);
+    }
+
+    /**
+     * Assigns a player to a team and keeps the lobby counters and the selector
+     * counters in sync, so the GUI capacity matches reality.
+     *
+     * @return false when the team does not exist or is already full
+     */
+    public boolean assignTeam(Player player, int teamId, int maxTeamPlayers) {
+        if (player == null || teamId < 1 || teamId > getTeamAmount() || isTeamFull(teamId, maxTeamPlayers)) {
+            return false;
+        }
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (plugin != null && plugin.getArenaStateManager() != null) {
+            var asm = plugin.getArenaStateManager();
+            String lobbyId = Integer.toString(id);
+            String previous = asm.getPlayerTeamInLobby(lobbyId, player);
+            if (previous != null) {
+                try {
+                    asm.decrementLobbyTeamPlayers(lobbyId, Integer.parseInt(previous));
+                } catch (NumberFormatException ignored) {
+                }
+                asm.removePlayerTeamInLobby(lobbyId, player);
+            }
+            asm.incrementLobbyTeamPlayers(lobbyId, teamId);
+            asm.recordPlayerTeamInLobby(lobbyId, player, Integer.toString(teamId));
+        }
+        recordTeamAssignment(player, Integer.toString(teamId));
+        return true;
     }
 
     public void endRound() {
@@ -1194,6 +1304,10 @@ public class Lobby {
 
     public int getPlayerCount() {
         return this.playerCount;
+    }
+
+    public int getTeamSize() {
+        return teamSize;
     }
 
     public int getMaxPlayers() {

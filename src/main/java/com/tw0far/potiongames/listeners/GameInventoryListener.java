@@ -117,13 +117,18 @@ public class GameInventoryListener implements Listener {
         if (displayname == null) {
             return;
         }
-        int maxteamplayers = plugin.getArenaStateManager().getLobbyTeamSize(s);
+        // The lobby owns the team size and the capacity check; the selector and
+        // the round logic must not drift apart.
+        int maxTeamPlayers = Math.max(1, lobby.getTeamSize());
 
-        if (!plugin.getArenaStateManager().hasPlayerTeamInLobby(s, p)) {
-            assignTeam(p, s, displayname, maxteamplayers);
-        } else {
-            switchTeam(p, s, displayname, maxteamplayers);
+        if (displayname.equals(Messages.RandomText())) {
+            assignRandomTeam(lobby, p, maxTeamPlayers);
+            return;
         }
+        if (!isNumericTeamId(displayname)) {
+            return;
+        }
+        assignSpecificTeam(lobby, p, Integer.parseInt(displayname), maxTeamPlayers);
     }
 
     private boolean isNumericTeamId(String displayname) {
@@ -135,26 +140,14 @@ public class GameInventoryListener implements Listener {
         }
     }
 
-    private void assignTeam(Player p, String s, String displayname, int maxteamplayers) {
-        if (displayname.equals(Messages.RandomText())) {
-            assignRandomTeam(p, s, maxteamplayers);
-        } else if (isNumericTeamId(displayname)) {
-            assignSpecificTeam(p, s, displayname, maxteamplayers);
-        }
-    }
-
-    private void assignRandomTeam(Player p, String s, int maxteamplayers) {
-        Map<Integer, Integer> lobbyTeamsMap = plugin.getArenaStateManager().getLobbyTeams(s);
-
-        if (lobbyTeamsMap == null || lobbyTeamsMap.isEmpty()) {
-            return;
-        }
-
-        // Collect teams with free capacity; abort gracefully when all are full
+    /**
+     * Picks a random team with free capacity. Teams without space are skipped,
+     * so the player is never assigned to a full team.
+     */
+    private void assignRandomTeam(Lobby lobby, Player p, int maxTeamPlayers) {
         List<Integer> available = new ArrayList<>();
-        for (Integer teamId : lobbyTeamsMap.keySet()) {
-            Integer teamPlayers = plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, teamId);
-            if (teamPlayers != null && teamPlayers < maxteamplayers) {
+        for (Integer teamId : lobby.getTeamCounts().keySet()) {
+            if (!lobby.isTeamFull(teamId, maxTeamPlayers)) {
                 available.add(teamId);
             }
         }
@@ -166,44 +159,30 @@ public class GameInventoryListener implements Listener {
             p.sendMessage(Messages.SelectorTeam());
             return;
         }
-
-        Random rnd = new Random();
-        int rndTeam = available.get(rnd.nextInt(available.size()));
-        p.closeInventory();
-        plugin.getArenaStateManager().incrementLobbyTeamPlayers(s, rndTeam);
-        plugin.getArenaStateManager().recordPlayerTeamInLobby(s, p, Integer.toString(rndTeam));
-
-        p.sendMessage(Messages.SelectorTeam());
-        p.sendMessage(Settings.prefix.append(Component.text(Messages.TeamNowInText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(rndTeam).color(NamedTextColor.LIGHT_PURPLE)));
-        p.sendMessage(Settings.prefix.append(Component.text(Messages.PlayersText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, rndTeam))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
-        p.sendMessage(Messages.SelectorTeam());
-
-        applyTeamScoreboardPrefix(p, Integer.toString(rndTeam));
+        int rndTeam = available.get(new Random().nextInt(available.size()));
+        assignSpecificTeam(lobby, p, rndTeam, maxTeamPlayers);
     }
 
-    private void assignSpecificTeam(Player p, String s, String displayname, int maxteamplayers) {
-        int teamId = Integer.parseInt(displayname);
-        Integer currentPlayers = plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, teamId);
-
-        if (currentPlayers != null && currentPlayers < maxteamplayers) {
-            p.closeInventory();
-            plugin.getArenaStateManager().incrementLobbyTeamPlayers(s, teamId);
-            plugin.getArenaStateManager().recordPlayerTeamInLobby(s, p, displayname);
-
-            p.sendMessage(Messages.SelectorTeam());
-            p.sendMessage(Settings.prefix.append(Component.text(Messages.TeamNowInText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
-            p.sendMessage(Settings.prefix.append(Component.text(Messages.PlayersText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, teamId))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
-            p.sendMessage(Messages.SelectorTeam());
-
-            p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
-            applyTeamScoreboardPrefix(p, displayname);
-        } else {
+    private void assignSpecificTeam(Lobby lobby, Player p, int teamId, int maxTeamPlayers) {
+        if (!lobby.assignTeam(p, teamId, maxTeamPlayers)) {
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
             p.sendMessage(Messages.SelectorTeam());
             p.sendMessage(Messages.TeamAlreadyFull());
             p.sendMessage(Messages.SelectorTeam());
+            return;
         }
+        p.closeInventory();
+        String teamName = Integer.toString(teamId);
+        p.sendMessage(Messages.SelectorTeam());
+        p.sendMessage(Settings.prefix.append(Component.text(Messages.TeamNowInText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(teamName).color(NamedTextColor.LIGHT_PURPLE)));
+        p.sendMessage(Settings.prefix.append(Component.text(Messages.PlayersText() + ": ").color(NamedTextColor.GREEN))
+                .append(Component.text(String.valueOf(lobby.getTeamCounts().getOrDefault(teamId, 0))).color(NamedTextColor.AQUA))
+                .append(Component.text("/").color(NamedTextColor.GRAY))
+                .append(Component.text(String.valueOf(maxTeamPlayers)).color(NamedTextColor.AQUA)));
+        p.sendMessage(Messages.SelectorTeam());
+        p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
+        applyTeamScoreboardPrefix(p, teamName);
     }
 
     private void applyTeamScoreboardPrefix(Player p, String teamName) {
@@ -212,43 +191,6 @@ public class GameInventoryListener implements Listener {
             if (team != null) {
                 team.prefix(Component.text(teamName).color(NamedTextColor.DARK_AQUA));
             }
-        }
-    }
-
-    private void switchTeam(Player p, String s, String displayname, int maxteamplayers) {
-        Map<Integer, Integer> lobbyTeamsMap = plugin.getArenaStateManager().getLobbyTeams(s);
-
-        // Validate the target team BEFORE leaving the old one so a full team
-        // cannot leave the player teamless.
-        boolean randomRequested = displayname.equals(Messages.RandomText());
-        if (!randomRequested) {
-            if (!isNumericTeamId(displayname)) {
-                return;
-            }
-            int targetTeam = Integer.parseInt(displayname);
-            Integer targetPlayers = plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, targetTeam);
-            if (targetPlayers == null || targetPlayers >= maxteamplayers) {
-                p.closeInventory();
-                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
-                p.sendMessage(Messages.SelectorTeam());
-                p.sendMessage(Messages.TeamAlreadyFull());
-                p.sendMessage(Messages.SelectorTeam());
-                return;
-            }
-        } else if (lobbyTeamsMap.isEmpty()) {
-            return;
-        }
-
-        String previousTeam = plugin.getArenaStateManager().getPlayerTeamInLobby(s, p);
-        if (previousTeam != null && isNumericTeamId(previousTeam)) {
-            plugin.getArenaStateManager().decrementLobbyTeamPlayers(s, Integer.parseInt(previousTeam));
-            plugin.getArenaStateManager().removePlayerTeamInLobby(s, p);
-        }
-
-        if (randomRequested) {
-            assignRandomTeam(p, s, maxteamplayers);
-        } else {
-            assignSpecificTeam(p, s, displayname, maxteamplayers);
         }
     }
 
