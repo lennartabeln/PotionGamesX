@@ -100,6 +100,7 @@ public class Messages {
         addDefault(lang, "arena.selected", "Arena %s selected!");
         addDefault(lang, "lobby.invalid_selection", "Invalid lobby selection!");
         addDefault(lang, "players.label", "Players");
+        addDefault(lang, "database.not_connected", "Statistics database is not connected. Check the database settings and the console.");
         addDefault(lang, "plugin.started", "Plugin started successfully!");
         addDefault(lang, "plugin.stopped", "Plugin stopped successfully!");
         addDefault(lang, "price.label", "Price");
@@ -724,6 +725,12 @@ public class Messages {
 
     public static Component YouNotEnoughCoins() {
         return prefix(Component.text(get("you.not_enough_coins", "You don't have enough coins!")).color(NamedTextColor.RED));
+    }
+
+    public static Component DatabaseNotConnected() {
+        return prefix(Component.text(get("database.not_connected",
+                "Statistics database is not connected. Check the database settings and the console."))
+            .color(NamedTextColor.RED));
     }
 
     public static String BucketWaterNotAllowedText() { return get("bucket.water_not_allowed", "Water buckets are not allowed during games!"); }

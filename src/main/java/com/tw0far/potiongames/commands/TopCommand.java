@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.models.Messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -41,7 +42,7 @@ public class TopCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!plugin.getDatabaseManager().isConnected()) {
-            sender.sendMessage(Component.text("Statistics database is not connected.").color(NamedTextColor.RED));
+            sender.sendMessage(Messages.DatabaseNotConnected());
             return true;
         }
 
