@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -844,9 +845,41 @@ public class Lobby {
         return bestTeam;
     }
 
-    /** Copy of the current per-team player counts. */
+    /**
+     * Complete per-team player counts, including teams that have no players yet.
+     *
+     * <p>The underlying map is sparse (a team drops out once its count reaches
+     * zero), so callers that need every slot - the selector counters and the
+     * random assignment - must not read it directly.</p>
+     */
     public Map<Integer, Integer> getTeamCounts() {
-        return new HashMap<>(lobbyteams);
+        Map<Integer, Integer> counts = new LinkedHashMap<>();
+        int amount = getTeamAmount();
+        for (int teamId = 1; teamId <= amount; teamId++) {
+            counts.put(teamId, lobbyteams.getOrDefault(teamId, 0));
+        }
+        return counts;
+    }
+
+    /**
+     * Team slots that still have room, in ascending id order.
+     *
+     * <p>Built from the full team range rather than from the sparse count map:
+     * an empty team is available, it simply has no entry in {@code lobbyteams}.</p>
+     */
+    public List<Integer> getAvailableTeams(int maxTeamPlayers) {
+        return availableTeams(getTeamAmount(), teamId -> isTeamFull(teamId, maxTeamPlayers));
+    }
+
+    /** Pure helper behind {@link #getAvailableTeams(int)}; testable without a server. */
+    static List<Integer> availableTeams(int teamAmount, java.util.function.IntPredicate full) {
+        List<Integer> available = new ArrayList<>();
+        for (int teamId = 1; teamId <= Math.max(0, teamAmount); teamId++) {
+            if (!full.test(teamId)) {
+                available.add(teamId);
+            }
+        }
+        return available;
     }
 
     public boolean isTeamFull(int teamId, int maxTeamPlayers) {

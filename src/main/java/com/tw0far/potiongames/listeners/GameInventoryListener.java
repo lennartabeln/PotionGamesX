@@ -145,12 +145,7 @@ public class GameInventoryListener implements Listener {
      * so the player is never assigned to a full team.
      */
     private void assignRandomTeam(Lobby lobby, Player p, int maxTeamPlayers) {
-        List<Integer> available = new ArrayList<>();
-        for (Integer teamId : lobby.getTeamCounts().keySet()) {
-            if (!lobby.isTeamFull(teamId, maxTeamPlayers)) {
-                available.add(teamId);
-            }
-        }
+        List<Integer> available = lobby.getAvailableTeams(maxTeamPlayers);
         if (available.isEmpty()) {
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
