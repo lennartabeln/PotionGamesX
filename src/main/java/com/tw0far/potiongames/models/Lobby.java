@@ -38,6 +38,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
 public class Lobby {
+    /** Coins a Rich Kid starts every round with (legacy value). */
+    private static final int RICH_KID_START_COINS = 5;
+
     private static final Logger LOGGER = Logger.getLogger("Minecraft");
     private int id;
     private Location spawn;
@@ -881,6 +884,31 @@ public class Lobby {
     }
 
     /**
+     * The Rich Kid kit starts the round with coins, like the legacy release.
+     * {@link Participant#startRound()} has already cleared the inventory, so the
+     * coins are the first items the player owns.
+     */
+    private void giveRichKidCoins() {
+        ItemStack coin = PotionGamesX.getInstance().getCoin();
+        if (coin == null) {
+            return;
+        }
+        for (Participant participant : participants) {
+            Kit kit = participant.getKit();
+            if (kit == null || !Kit.RICH_KID.equalsIgnoreCase(kit.getName())) {
+                continue;
+            }
+            Player player = participant.getPlayer();
+            if (player == null || !player.isOnline()) {
+                continue;
+            }
+            for (int i = 0; i < RICH_KID_START_COINS; i++) {
+                player.getInventory().addItem(coin.clone());
+            }
+        }
+    }
+
+    /**
      * Give gameplay items (player-finder compass) to everyone at round start.
      */
     private void giveSpawnItems() {
@@ -1004,6 +1032,7 @@ public class Lobby {
                         for (Participant participant : participants) {
                             participant.startRound();
                         }
+                        giveRichKidCoins();
                         applyGameRules();
                         giveSpawnItems();
                     }
