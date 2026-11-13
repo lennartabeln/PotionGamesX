@@ -807,6 +807,9 @@ public class Lobby {
             }
             recordTeamAssignment(player, Integer.toString(teamId));
         }
+        // distributeTeams() rebuilt the counters, so the selector state has to
+        // be re-published; otherwise it stays empty for the whole round.
+        publishTeamsToSelector();
     }
 
     /** Team with the fewest players that still has a free slot, or -1. */
@@ -1519,12 +1522,47 @@ public class Lobby {
         return lobbyteamplayernames;
     }
 
+    /**
+     * Clears the team assignment and re-creates the empty selector slots. The
+     * selector state must stay valid: removing the lobby entry without seeding
+     * the teams left the GUI with only the "Random" head after every round.
+     */
     public void clearTeams() {
         lobbyteams.clear();
         lobbyteamplayernames.clear();
         PotionGamesX plugin = PotionGamesX.getInstance();
-        if (plugin != null && plugin.getArenaStateManager() != null) {
-            plugin.getArenaStateManager().resetLobbyTeams(Integer.toString(id));
+        if (plugin == null || plugin.getArenaStateManager() == null) {
+            return;
+        }
+        var asm = plugin.getArenaStateManager();
+        String lobbyId = Integer.toString(id);
+        asm.resetLobbyTeams(lobbyId);
+        asm.setLobbyTeamSize(lobbyId, Math.max(1, teamSize));
+        asm.initializeLobbyTeams(lobbyId, getTeamAmount());
+    }
+
+    /**
+     * Mirrors the final team assignment into the selector state, so the GUI
+     * counts and the lobby counters cannot drift apart.
+     */
+    private void publishTeamsToSelector() {
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (plugin == null || plugin.getArenaStateManager() == null) {
+            return;
+        }
+        var asm = plugin.getArenaStateManager();
+        String lobbyId = Integer.toString(id);
+        asm.resetLobbyTeams(lobbyId);
+        asm.setLobbyTeamSize(lobbyId, Math.max(1, teamSize));
+        asm.initializeLobbyTeams(lobbyId, getTeamAmount());
+        for (Map.Entry<Player, String> entry : lobbyteamplayernames.entrySet()) {
+            try {
+                asm.incrementLobbyTeamPlayers(lobbyId, Integer.parseInt(entry.getValue()));
+            } catch (NumberFormatException ignored) {
+                // Team ids are numeric; a malformed one is dropped.
+                continue;
+            }
+            asm.recordPlayerTeamInLobby(lobbyId, entry.getKey(), entry.getValue());
         }
     }
 
