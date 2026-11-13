@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/pg reload` now re-reads `lobbies.yml`, `messages.yml`, `kits.yml`, `shop.yml` and `chests.yml` in addition to `config.yml`
 - `/pg reload` reports failed reload steps instead of claiming success when configuration, database or game data reloading failed
 - `/pg stats <player>` also resolves offline players whose profile is cached by Paper
+- `/pg join <id>` now goes through the shared lobby join validation (capacity, state, `pg.joinStarted`) instead of adding the player to `activePlayers` unconditionally; a full lobby can no longer leave a player half-joined
 
 ### Changed
 
