@@ -65,13 +65,9 @@ public interface ISetupStateManager extends IManager {
     Integer getPlayerFoodLevel(Player player);
     void removeSavedFoodLevel(Player player);
 
-    // Setup flow flags (transient, not configuration)
-    boolean isAddlobby();
-    void setAddlobby(boolean addlobby);
-    boolean isAddarena();
-    void setAddarena(boolean addarena);
-    boolean isDellobby();
-    void setDellobby(boolean dellobby);
-    boolean isDelarena();
-    void setDelarena(boolean delarena);
+    // Pending setup chat input, tracked per player (transient, not configuration)
+    void setInputMode(Player player, SetupInputMode mode);
+    SetupInputMode getInputMode(Player player);
+    boolean hasPendingInput(Player player);
+    void clearInputMode(Player player);
 }

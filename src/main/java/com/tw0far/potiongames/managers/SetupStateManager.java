@@ -30,6 +30,7 @@ public class SetupStateManager implements ISetupStateManager {
     private HashMap<String, Integer> food = new HashMap<>();            // player name -> food level
     private HashMap<String, Integer> selectedLobby = new HashMap<>();   // player name -> lobby id
     private HashMap<String, String> selectedArena = new HashMap<>();    // player name -> arena name
+    private final SetupInputModes inputModes = new SetupInputModes();   // player uuid -> pending chat input
 
     @Override
     public void onEnable() {
@@ -56,6 +57,7 @@ public class SetupStateManager implements ISetupStateManager {
         food.clear();
         selectedLobby.clear();
         selectedArena.clear();
+        inputModes.clear();
     }
 
     // ===== Setup Player Tracking =====
@@ -71,6 +73,7 @@ public class SetupStateManager implements ISetupStateManager {
     public void removeSetupPlayer(Player player) {
         setupPlayers.remove(player);
         clearSelection(player);
+        clearInputMode(player);
     }
 
     @Override
@@ -91,6 +94,7 @@ public class SetupStateManager implements ISetupStateManager {
         food.clear();
         selectedLobby.clear();
         selectedArena.clear();
+        inputModes.clear();
     }
 
     @Override
@@ -283,34 +287,28 @@ public class SetupStateManager implements ISetupStateManager {
         this.food.remove(player.getName());
     }
 
-    // ===== Setup Flow Flags =====
-    private volatile boolean addlobby = false;
-    private volatile boolean addarena = false;
-    private volatile boolean dellobby = false;
-    private volatile boolean delarena = false;
+    // ===== Pending Setup Input =====
 
     @Override
-    public boolean isAddlobby() { return addlobby; }
+    public void setInputMode(Player player, SetupInputMode mode) {
+        inputModes.set(player == null ? null : player.getUniqueId(), mode);
+    }
 
     @Override
-    public void setAddlobby(boolean addlobby) { this.addlobby = addlobby; }
+    public SetupInputMode getInputMode(Player player) {
+        return player == null ? null : inputModes.get(player.getUniqueId());
+    }
 
     @Override
-    public boolean isAddarena() { return addarena; }
+    public boolean hasPendingInput(Player player) {
+        return player != null && inputModes.has(player.getUniqueId());
+    }
 
     @Override
-    public void setAddarena(boolean addarena) { this.addarena = addarena; }
-
-    @Override
-    public boolean isDellobby() { return dellobby; }
-
-    @Override
-    public void setDellobby(boolean dellobby) { this.dellobby = dellobby; }
-
-    @Override
-    public boolean isDelarena() { return delarena; }
-
-    @Override
-    public void setDelarena(boolean delarena) { this.delarena = delarena; }
+    public void clearInputMode(Player player) {
+        if (player != null) {
+            inputModes.remove(player.getUniqueId());
+        }
+    }
 }
 
