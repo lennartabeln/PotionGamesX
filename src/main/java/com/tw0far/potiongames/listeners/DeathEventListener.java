@@ -111,6 +111,7 @@ public class DeathEventListener implements Listener {
         p.setFireTicks(0);
         p.setCanPickupItems(false);
         p.setCollidable(false);
+        p.playSound(p.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 1f, 1f);
 
         // Death message: one broadcast to players and spectators of this lobby
         int aliveCount = lobby.getActivePlayers().size();

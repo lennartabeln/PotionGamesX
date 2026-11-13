@@ -10,6 +10,7 @@ import com.tw0far.potiongames.models.Settings;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -70,6 +71,7 @@ public class GameInventoryListener implements Listener {
         }
 
         // Send feedback messages
+        p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
         p.sendMessage(Messages.ArenaSelector());
         p.sendMessage(Settings.prefix.append(Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
         p.sendMessage(Settings.prefix.append(Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getArenaStateManager().getLobbyVoteCount(s, displayname))).color(NamedTextColor.AQUA)));
@@ -132,6 +134,7 @@ public class GameInventoryListener implements Listener {
         }
         if (available.isEmpty()) {
             p.closeInventory();
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
             p.sendMessage(Messages.SelectorTeam());
             p.sendMessage(Messages.TeamAlreadyFull());
             p.sendMessage(Messages.SelectorTeam());
@@ -166,9 +169,11 @@ public class GameInventoryListener implements Listener {
             p.sendMessage(Settings.prefix.append(Component.text(Messages.PlayersText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, teamId))).color(NamedTextColor.AQUA)).append(Component.text("/").color(NamedTextColor.GRAY)).append(Component.text(String.valueOf(maxteamplayers)).color(NamedTextColor.AQUA)));
             p.sendMessage(Messages.SelectorTeam());
 
+            p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
             applyTeamScoreboardPrefix(p, displayname);
         } else {
             p.closeInventory();
+            p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
             p.sendMessage(Messages.SelectorTeam());
             p.sendMessage(Messages.TeamAlreadyFull());
             p.sendMessage(Messages.SelectorTeam());
@@ -198,6 +203,7 @@ public class GameInventoryListener implements Listener {
             Integer targetPlayers = plugin.getArenaStateManager().getLobbyTeamPlayerCount(s, targetTeam);
             if (targetPlayers == null || targetPlayers >= maxteamplayers) {
                 p.closeInventory();
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
                 p.sendMessage(Messages.SelectorTeam());
                 p.sendMessage(Messages.TeamAlreadyFull());
                 p.sendMessage(Messages.SelectorTeam());
@@ -241,6 +247,7 @@ public class GameInventoryListener implements Listener {
             if (kitName != null) {
                 participant.setKit(new Kit(kitName));
                 p.closeInventory();
+                p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
                 p.sendMessage(Messages.KitNowHave(kitName));
             }
         } else {
@@ -249,6 +256,7 @@ public class GameInventoryListener implements Listener {
                 if (kitName != null && kitName.equals(displayname)) {
                     participant.setKit(new Kit(kitName));
                     p.closeInventory();
+                    p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
                     p.sendMessage(Messages.KitNowHave(kitName));
                     break;
                 }
@@ -297,10 +305,12 @@ public class GameInventoryListener implements Listener {
                 : itemStateManager.getShopCost(idx);
 
             if (bottles < 1) {
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
                 p.sendMessage(Messages.YouNotEmptyBottle());
                 break;
             }
             if (coins < coinamount) {
+                p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
                 p.sendMessage(Messages.YouNotEnoughCoins());
                 break;
             }
