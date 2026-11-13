@@ -48,6 +48,8 @@ public class BuildCommand implements ICommand {
             for (Player p : plugin.getGame().getSpectatorsInLobby(lobbyId)) {
                 p.sendMessage(Messages.BuildToggle(buildEnabled));
             }
+        } else {
+            player.sendMessage(Messages.NotInLobby());
         }
         return true;
     }

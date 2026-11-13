@@ -64,9 +64,14 @@ public class ForceCommand implements ICommand {
                     } else {
                         player.sendMessage(Messages.ArenaNotArena(arena));
                     }
+                } else {
+                    player.sendMessage(Messages.NotInLobby());
                 }
             } catch (NumberFormatException ignored) {
+                player.sendMessage(Messages.NotInLobby());
             }
+        } else {
+            player.sendMessage(Messages.NotInLobby());
         }
         return true;
     }
