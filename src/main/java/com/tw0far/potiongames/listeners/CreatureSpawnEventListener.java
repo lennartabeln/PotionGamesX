@@ -18,8 +18,10 @@ public class CreatureSpawnEventListener implements Listener {
 
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent e) {
-        // Prevent mob spawning during active games
-        if (plugin.getGame().getActivePlayerCount() > 0) {
+        // Only the arena worlds of a running round are protected. The previous
+        // "any player is in a lobby" check froze mob spawning on the whole
+        // server, including worlds that have nothing to do with the plugin.
+        if (e.getLocation() != null && plugin.getGame().isRoundWorld(e.getLocation().getWorld())) {
             e.setCancelled(true);
         }
     }

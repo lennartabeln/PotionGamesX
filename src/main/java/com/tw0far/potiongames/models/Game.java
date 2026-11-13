@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -186,6 +187,26 @@ public class Game {
             count += lobby.getActivePlayers().size();
         }
         return count;
+    }
+
+    /**
+     * True when the world hosts the arena of a lobby with a running round.
+     * World-level guards (mob spawning, weather, lightning) use this instead of
+     * a global "anyone is in a lobby" check, which used to freeze unrelated
+     * worlds of the server.
+     */
+    public boolean isRoundWorld(World world) {
+        if (world == null) {
+            return false;
+        }
+        for (Lobby lobby : lobbies) {
+            GameStates state = lobby.getState();
+            if ((state == GameStates.INGAME || state == GameStates.DEATHMATCH)
+                    && lobby.isArenaWorld(world)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isActivePlayer(Player player) {
