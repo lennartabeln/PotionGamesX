@@ -1046,21 +1046,20 @@ public class Messages {
     public static String PluginReloadedText() { return get("plugin.reloaded", "Plugin successfully reloaded!"); }
     public static String SelectLobbyFirstText() { return get("setup.select_lobby_first", "Please select a lobby first!"); }
     /**
-     * Announcement that stands apart from normal chat: two dark aqua rules around a
-     * bold white message. The old gold text disappeared between chat lines.
+     * Announcement in the normal plugin prefix: [PotionGamesX] [Broadcast] text.
+     * The label is light purple, the brackets dark grey and the message aqua.
      */
     public static Component Broadcast(String message) {
-        Component rule = Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬").color(NamedTextColor.DARK_AQUA);
-        Component label = Component.text(" " + get("broadcast.label", "BROADCAST") + " ")
-            .color(NamedTextColor.AQUA).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD);
-        Component body = Component.text(message).color(NamedTextColor.WHITE)
-            .decorate(net.kyori.adventure.text.format.TextDecoration.BOLD);
-        return rule.append(Component.newline()).append(label).append(body)
-            .append(Component.newline()).append(rule);
+        return Settings.prefix
+            .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
+            .append(Component.text(get("broadcast.label", "Broadcast")).color(NamedTextColor.LIGHT_PURPLE))
+            .append(Component.text("]").color(NamedTextColor.DARK_GRAY))
+            .append(Component.text(" " + message).color(NamedTextColor.AQUA));
     }
 
     public static String BroadcastUsageText() { return get("command.broadcast_usage", "Usage: /pg broadcast <message>"); }
     public static String BroadcastSentText() { return get("command.broadcast_sent", "Broadcast sent to all players"); }
+    public static String BroadcastSentLobbyText() { return get("command.broadcast_sent_lobby", "Broadcast sent to lobby %s"); }
     public static String InvalidLobbyIdText() { return get("command.invalid_lobby_id", "Invalid lobby ID. Must be a number."); }
     public static String ConfigHeaderText() { return get("config.header", "PotionGamesX Configuration"); }
     public static String ConfigSectionCoreText() { return get("config.section_core", "Core"); }

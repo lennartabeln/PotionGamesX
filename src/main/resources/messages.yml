@@ -41,8 +41,9 @@ en_US:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
-      broadcast_usage: "Usage: /pg broadcast <message>"
-      broadcast_sent: "Broadcast sent to all players"
+      broadcast_usage: "Usage: /pg broadcast [-l <lobby>] <message>"
+      broadcast_sent: "Broadcast sent to %s players"
+      broadcast_sent_lobby: "Broadcast sent to lobby %s"
       invalid_lobby_id: "Invalid lobby ID. Must be a number."
       no_permission: "You don't have permission to use this command!"
       reloading: "Starting plugin reload... this may take a moment."
@@ -159,7 +160,7 @@ en_US:
       version_usage: "/pg version - Check plugin version and updates (requires pg.version)"
       kick: "/pg kick <player> - Remove player from lobby"
       kick_usage: "Usage: /pg kick <player>"
-      broadcast: "/pg broadcast <message> - Send announcement to all players"
+      broadcast: "/pg broadcast [-l <lobby>] <message> - Announcement to all players or one lobby"
       status: "/pg status - Show server status and active lobbies"
       config: "/pg config - View current configuration"
       database: "/pg database - Toggle database mode (MySQL/SQLite)"
@@ -331,7 +332,7 @@ en_US:
       checker_error: "Could not check for updates."
       not_available: "You are running the latest version."
     broadcast:
-      label: "BROADCAST"
+      label: "Broadcast"
     vote:
       label: "Votes"
     will_be_played: "will be played!"
@@ -388,8 +389,9 @@ de_DE:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
-      broadcast_usage: "Verwendung: /pg broadcast <nachricht>"
-      broadcast_sent: "Broadcast an alle Spieler gesendet"
+      broadcast_usage: "Verwendung: /pg broadcast [-l <lobby>] <nachricht>"
+      broadcast_sent: "Broadcast an %s Spieler gesendet"
+      broadcast_sent_lobby: "Broadcast an Lobby %s gesendet"
       invalid_lobby_id: "Ungültige Lobby-ID. Muss eine Zahl sein."
       no_permission: "Du hast keine Berechtigung für diesen Befehl!"
       reloading: "Plugin-Reload gestartet... das kann einen Moment dauern."
@@ -506,7 +508,7 @@ de_DE:
       dellobby: "/pg dellobby <lobbynumber> - Lobby entfernen"
       kick: "/pg kick <player> - Spieler aus der Lobby entfernen"
       kick_usage: "Verwendung: /pg kick <player>"
-      broadcast: "/pg broadcast <message> - Ankündigung an alle Spieler senden"
+      broadcast: "/pg broadcast [-l <lobby>] <message> - Ankündigung an alle Spieler oder eine Lobby"
       status: "/pg status - Serverstatus und aktive Lobbys anzeigen"
       config: "/pg config - Aktuelle Konfiguration anzeigen"
       database: "/pg database - Datenbankmodus umschalten (MySQL/SQLite)"
@@ -678,7 +680,7 @@ de_DE:
       checker_error: "Update-Prüfung fehlgeschlagen."
       not_available: "Du verwendest bereits die neueste Version."
     broadcast:
-      label: "ANKÜNDIGUNG"
+      label: "Ankündigung"
     vote:
       label: "Stimmen"
     will_be_played: "wird gespielt!"

@@ -72,7 +72,7 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 | `/pg setup` | Interactive setup wizard | `pg.setup` |
 | `/pg config` | View current configuration | `pg.config` |
 | `/pg status` | Show server status and lobbies | `pg.status` |
-| `/pg broadcast` | Send server announcement | `pg.broadcast` |
+| `/pg broadcast [-l <lobby>] <message>` | Announce to all PotionGamesX players, or only one lobby | `pg.broadcast` |
 | `/pg kick <player>` | Remove player from lobby | `pg.kick` |
 | `/pg top` | Show leaderboards | `pg.top` |
 | `/pg gameserver` | Toggle game/hub mode | `pg.gameserver` |
