@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
@@ -23,10 +25,14 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 
 import com.tw0far.potiongames.PotionGamesX;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -889,9 +895,44 @@ public class Lobby {
     private void rewardWin(Player player) {
         PotionGamesX plugin = PotionGamesX.getInstance();
         if (plugin.getConfigManager().isEnableRewards()) {
-            player.sendMessage(Messages.WinReward(plugin.getConfigManager().getWinningReward()));
+            Economy economy = PotionGamesX.getEconomy();
+            if (economy != null) {
+                int reward = plugin.getConfigManager().getWinningReward();
+                EconomyResponse response = economy.depositPlayer(player, reward);
+                if (response.transactionSuccess()) {
+                    player.sendMessage(Messages.WinReward(reward)
+                        .append(Component.text(" " + economy.format(response.amount)).color(NamedTextColor.LIGHT_PURPLE)));
+                } else {
+                    plugin.getLogger().warning("[PotionGamesX] Could not pay the win reward to "
+                        + player.getName() + ": " + response.errorMessage);
+                }
+            }
         }
         plugin.getDatabaseManager().addWins(player.getUniqueId().toString(), 1);
+        spawnWinFirework(player);
+    }
+
+    /** Celebratory firework on the winner's region thread (Folia-safe). */
+    private void spawnWinFirework(Player player) {
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        player.getScheduler().run(plugin, task -> {
+            Location loc = player.getLocation();
+            World world = loc.getWorld();
+            if (world == null) {
+                return;
+            }
+            Firework firework = world.spawn(loc, Firework.class, fw -> {
+                FireworkMeta meta = fw.getFireworkMeta();
+                meta.setPower(1);
+                meta.addEffect(FireworkEffect.builder()
+                    .flicker(true)
+                    .with(FireworkEffect.Type.STAR)
+                    .withColor(Color.GREEN, Color.AQUA, Color.RED, Color.PURPLE, Color.YELLOW)
+                    .build());
+                fw.setFireworkMeta(meta);
+            });
+            firework.detonate();
+        }, null);
     }
 
     private void announceDraw() {
