@@ -1,11 +1,15 @@
 package com.tw0far.potiongames.commands;
 
-import org.bukkit.command.CommandSender;
-import com.tw0far.potiongames.PotionGamesX;
-import org.bukkit.command.CommandSender;
-import com.tw0far.potiongames.models.Messages;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
+
+import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.util.PlayerUuidResolver;
 
 /**
  * /pg stats [player] - Show player statistics
@@ -52,16 +56,24 @@ public class StatsCommand implements ICommand {
             player.sendMessage(Messages.KDLabel(kd));
             player.sendMessage(Messages.StatsLabel());
         } else {
-            // Show stats for specified player (args[0] is the subcommand itself)
-            Player target = Bukkit.getPlayer(args[1]);
+            UUID targetUuid = PlayerUuidResolver.resolve(args[1],
+                    name -> {
+                        Player online = Bukkit.getPlayer(name);
+                        return online == null ? null : online.getUniqueId();
+                    },
+                    name -> {
+                        OfflinePlayer cached = Bukkit.getOfflinePlayerIfCached(name);
+                        return cached == null ? null : cached.getUniqueId();
+                    });
             player.sendMessage(Messages.StatsLabel());
-            if (target != null) {
-                int wins = plugin.getDatabaseManager().getWins(target.getUniqueId().toString());
-                int losses = plugin.getDatabaseManager().getLosses(target.getUniqueId().toString());
-                int rounds = plugin.getDatabaseManager().getRounds(target.getUniqueId().toString());
-                int kills = plugin.getDatabaseManager().getKills(target.getUniqueId().toString());
-                int deaths = plugin.getDatabaseManager().getDeaths(target.getUniqueId().toString());
-                double kd = plugin.getDatabaseManager().getKD(target.getUniqueId().toString());
+            if (targetUuid != null) {
+                String uuid = targetUuid.toString();
+                int wins = plugin.getDatabaseManager().getWins(uuid);
+                int losses = plugin.getDatabaseManager().getLosses(uuid);
+                int rounds = plugin.getDatabaseManager().getRounds(uuid);
+                int kills = plugin.getDatabaseManager().getKills(uuid);
+                int deaths = plugin.getDatabaseManager().getDeaths(uuid);
+                double kd = plugin.getDatabaseManager().getKD(uuid);
 
                 player.sendMessage(Messages.RoundsLabel(rounds));
                 player.sendMessage(Messages.WinsLabel(wins));
