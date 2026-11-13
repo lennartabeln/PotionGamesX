@@ -17,7 +17,7 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.GameMode;
-import org.bukkit.GameRule;
+import org.bukkit.GameRules;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -87,9 +87,10 @@ public class Lobby {
 
     // Gamerule restore points (pg.changeGamerules)
     private World gameruleWorld = null;
-    private Boolean prevDaylight = null;
-    private Boolean prevWeather = null;
-    private Boolean prevFireTick = null;
+    private Boolean prevAdvanceTime = null;
+    private Boolean prevAdvanceWeather = null;
+    /** The new gamerule replaced doFireTick; 0 means "no spread". */
+    private Integer prevFireSpreadRadius = null;
     private Boolean prevMobGriefing = null;
     private Boolean prevMobSpawning = null;
 
@@ -943,7 +944,9 @@ public class Lobby {
     }
 
     /**
-     * Freeze daylight/weather in the arena world while the round runs.
+     * Freeze time, weather, fire spread, mob grief and mob spawning in the arena
+     * world while the round runs. Uses the {@link GameRules} rules; the old
+     * {@code GameRule} constants are deprecated for removal.
      */
     private void applyGameRules() {
         if (!PotionGamesX.getInstance().getConfigManager().isChangeGamerules()) {
@@ -954,43 +957,43 @@ public class Lobby {
             return;
         }
         gameruleWorld = world;
-        prevDaylight = world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE);
-        prevWeather = world.getGameRuleValue(GameRule.DO_WEATHER_CYCLE);
-        prevFireTick = world.getGameRuleValue(GameRule.DO_FIRE_TICK);
-        prevMobGriefing = world.getGameRuleValue(GameRule.MOB_GRIEFING);
-        prevMobSpawning = world.getGameRuleValue(GameRule.DO_MOB_SPAWNING);
-        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-        world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+        prevAdvanceTime = world.getGameRuleValue(GameRules.ADVANCE_TIME);
+        prevAdvanceWeather = world.getGameRuleValue(GameRules.ADVANCE_WEATHER);
+        prevFireSpreadRadius = world.getGameRuleValue(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER);
+        prevMobGriefing = world.getGameRuleValue(GameRules.MOB_GRIEFING);
+        prevMobSpawning = world.getGameRuleValue(GameRules.SPAWN_MOBS);
+        world.setGameRule(GameRules.ADVANCE_TIME, false);
+        world.setGameRule(GameRules.ADVANCE_WEATHER, false);
         // Fire spread and mob grief would otherwise remove arena blocks that
         // the round cannot restore.
-        world.setGameRule(GameRule.DO_FIRE_TICK, false);
-        world.setGameRule(GameRule.MOB_GRIEFING, false);
-        world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
+        world.setGameRule(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, 0);
+        world.setGameRule(GameRules.MOB_GRIEFING, false);
+        world.setGameRule(GameRules.SPAWN_MOBS, false);
     }
 
     private void restoreGameRules() {
         if (gameruleWorld == null) {
             return;
         }
-        if (prevDaylight != null) {
-            gameruleWorld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, prevDaylight);
+        if (prevAdvanceTime != null) {
+            gameruleWorld.setGameRule(GameRules.ADVANCE_TIME, prevAdvanceTime);
         }
-        if (prevWeather != null) {
-            gameruleWorld.setGameRule(GameRule.DO_WEATHER_CYCLE, prevWeather);
+        if (prevAdvanceWeather != null) {
+            gameruleWorld.setGameRule(GameRules.ADVANCE_WEATHER, prevAdvanceWeather);
         }
-        if (prevFireTick != null) {
-            gameruleWorld.setGameRule(GameRule.DO_FIRE_TICK, prevFireTick);
+        if (prevFireSpreadRadius != null) {
+            gameruleWorld.setGameRule(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, prevFireSpreadRadius);
         }
         if (prevMobGriefing != null) {
-            gameruleWorld.setGameRule(GameRule.MOB_GRIEFING, prevMobGriefing);
+            gameruleWorld.setGameRule(GameRules.MOB_GRIEFING, prevMobGriefing);
         }
         if (prevMobSpawning != null) {
-            gameruleWorld.setGameRule(GameRule.DO_MOB_SPAWNING, prevMobSpawning);
+            gameruleWorld.setGameRule(GameRules.SPAWN_MOBS, prevMobSpawning);
         }
         gameruleWorld = null;
-        prevDaylight = null;
-        prevWeather = null;
-        prevFireTick = null;
+        prevAdvanceTime = null;
+        prevAdvanceWeather = null;
+        prevFireSpreadRadius = null;
         prevMobGriefing = null;
         prevMobSpawning = null;
     }
