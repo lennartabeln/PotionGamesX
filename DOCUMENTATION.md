@@ -90,7 +90,7 @@ All config files in `plugins/PotionGamesX/`:
 | Paper | 26.3+ required |
 | Compiler | Warning-free (`-Xlint:all`, `-Werror`) |
 | Tests | ✅ JUnit 5 unit tests (`mvn test`) |
-| JAR Size | ~0.25 MB |
+| JAR Size | ~0.27 MB |
 
 ## 🔗 Requirements
 

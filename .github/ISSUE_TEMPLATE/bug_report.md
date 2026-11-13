@@ -21,7 +21,7 @@ If applicable, add screenshots or console output.
 
 **Environment (please complete):**
 - Server software: [e.g. Paper 26.3, Purpur 26.3]
-- Plugin version: [e.g. PotionGamesX 1.0.0-dev.6]
+- Plugin version: [e.g. PotionGamesX 1.0.0-dev.9]
 - Java version: [e.g. JDK 25]
 
 **Additional context**
