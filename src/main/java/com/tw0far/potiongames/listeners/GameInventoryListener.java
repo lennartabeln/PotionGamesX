@@ -270,9 +270,7 @@ public class GameInventoryListener implements Listener {
             Lobby lobby = plugin.getGame().getLobby(InteractionSupport.parseIntSafe(s));
             String kitName = lobby != null && lobby.getParticipant(p) != null && lobby.getParticipant(p).getKit() != null
                 ? lobby.getParticipant(p).getKit().getName() : null;
-            int coinamount = kitName != null && kitName.equals(itemStateManager.getShopKit(idx))
-                ? itemStateManager.getShopSale(idx)
-                : itemStateManager.getShopCost(idx);
+            int coinamount = itemStateManager.getShopPrice(idx, kitName);
 
             if (bottles < 1) {
                 p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);

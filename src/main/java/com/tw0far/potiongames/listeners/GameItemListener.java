@@ -515,9 +515,7 @@ public class GameItemListener implements Listener {
         int entries = activePotions > 0 ? Math.min(shopItems.size(), activePotions) : shopItems.size();
         int slots = Math.min(entries, inv.getSize());
         for (int idx = 0; idx < slots; idx++) {
-            int coinamount = kitName != null && kitName.equals(itemStateManager.getShopKit(idx))
-                ? itemStateManager.getShopSale(idx)
-                : itemStateManager.getShopCost(idx);
+            int coinamount = itemStateManager.getShopPrice(idx, kitName);
             ItemStack potionType = itemStateManager.getShopPotionType(idx);
             PotionEffect shopPotion = itemStateManager.getShopPotion(idx);
             if (potionType == null || shopPotion == null) continue;
