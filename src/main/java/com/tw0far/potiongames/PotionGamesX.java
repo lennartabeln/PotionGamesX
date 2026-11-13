@@ -158,12 +158,13 @@ public class PotionGamesX extends JavaPlugin {
                 getComponentLogger().info(Messages.UpdateAvailable(getPluginMeta().getVersion(), version));
             }
         });
-        if (configManager.isEnableRewards()) {
-            if (!setupEconomy()) {
-                log.severe(String.format("[%s] - Disabled due to no Vault dependency found!", getPluginMeta().getName()));
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
+        if (configManager.isEnableRewards() && !setupEconomy()) {
+            // Rewards are a bonus, not the point of the plugin: a missing Vault
+            // install must not disable the whole server. Every reward path
+            // already checks getEconomy() for null.
+            log.warning(String.format(
+                "[%s] pg.enableRewards is on, but no Vault economy was found - rewards stay inactive.",
+                getPluginMeta().getName()));
         }
 
     }
