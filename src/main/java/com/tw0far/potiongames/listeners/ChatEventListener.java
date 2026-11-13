@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.managers.SetupInputMode;
 import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -94,8 +95,9 @@ public class ChatEventListener implements Listener {
      * Handle chat input during setup mode
      */
     private void handleSetupChatInput(AsyncChatEvent e, Player p, String input) {
+        SetupInputMode mode = plugin.getSetupStateManager().getInputMode(p);
         // No pending input mode: let normal chat through instead of swallowing it
-        if (!hasPendingSetupInput()) {
+        if (mode == null) {
             return;
         }
 
@@ -104,61 +106,55 @@ public class ChatEventListener implements Listener {
         e.setCancelled(true);
         PlayerTaskDispatcher.dispatch(
                 action -> p.getScheduler().run(plugin, task -> action.run(), null),
-                () -> processSetupChatInput(p, input));
+                () -> processSetupChatInput(p, input, mode));
     }
 
-    private boolean hasPendingSetupInput() {
+    private void processSetupChatInput(Player p, String input, SetupInputMode mode) {
         var state = plugin.getSetupStateManager();
-        return state.isAddlobby() || state.isDellobby() || state.isAddarena() || state.isDelarena();
-    }
-
-    private void processSetupChatInput(Player p, String input) {
-        // The pending mode may have changed before the entity task ran.
-        if (!hasPendingSetupInput()) {
+        // The player may have cancelled or changed the mode before the entity task ran.
+        if (state.getInputMode(p) != mode) {
             return;
         }
-        Integer selectedLobby = plugin.getSetupStateManager().getSelectedLobby(p);
+        Integer selectedLobby = state.getSelectedLobby(p);
 
-        // Handle add lobby
-        if (plugin.getSetupStateManager().isAddlobby()) {
-            // Input is the lobby ID to add
-            try {
-                int lobbyId = Integer.parseInt(input);
-                plugin.getSetupHandler().addLobby(p, lobbyId);
-                plugin.getSetupStateManager().setAddlobby(false);
-            } catch (NumberFormatException ex) {
-                p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
+        switch (mode) {
+            case ADD_LOBBY -> {
+                // Input is the lobby ID to add
+                try {
+                    int lobbyId = Integer.parseInt(input);
+                    plugin.getSetupHandler().addLobby(p, lobbyId);
+                    state.clearInputMode(p);
+                } catch (NumberFormatException ex) {
+                    p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
+                }
             }
-        }
-        // Handle delete lobby
-        else if (plugin.getSetupStateManager().isDellobby()) {
-            // Input is the lobby ID to delete
-            try {
-                int lobbyId = Integer.parseInt(input);
-                plugin.getSetupHandler().removeLobby(p, lobbyId);
-                plugin.getSetupStateManager().setDellobby(false);
-            } catch (NumberFormatException ex) {
-                p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
+            case DEL_LOBBY -> {
+                // Input is the lobby ID to delete
+                try {
+                    int lobbyId = Integer.parseInt(input);
+                    plugin.getSetupHandler().removeLobby(p, lobbyId);
+                    state.clearInputMode(p);
+                } catch (NumberFormatException ex) {
+                    p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
+                }
             }
-        }
-        // Handle add arena
-        else if (plugin.getSetupStateManager().isAddarena()) {
-            // Input is the arena name to add
-            if (selectedLobby != null) {
-                plugin.getSetupHandler().addArena(p, input, selectedLobby);
-                plugin.getSetupStateManager().setAddarena(false);
-            } else {
-                p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
+            case ADD_ARENA -> {
+                // Input is the arena name to add
+                if (selectedLobby != null) {
+                    plugin.getSetupHandler().addArena(p, input, selectedLobby);
+                    state.clearInputMode(p);
+                } else {
+                    p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
+                }
             }
-        }
-        // Handle delete arena
-        else if (plugin.getSetupStateManager().isDelarena()) {
-            // Input is the arena name to delete
-            if (selectedLobby != null) {
-                plugin.getSetupHandler().removeArena(p, input, selectedLobby);
-                plugin.getSetupStateManager().setDelarena(false);
-            } else {
-                p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
+            case DEL_ARENA -> {
+                // Input is the arena name to delete
+                if (selectedLobby != null) {
+                    plugin.getSetupHandler().removeArena(p, input, selectedLobby);
+                    state.clearInputMode(p);
+                } else {
+                    p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
+                }
             }
         }
     }

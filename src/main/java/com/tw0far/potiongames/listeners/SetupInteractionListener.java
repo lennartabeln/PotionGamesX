@@ -5,6 +5,7 @@ import com.tw0far.potiongames.models.Arena;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
+import com.tw0far.potiongames.managers.SetupInputMode;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -199,14 +200,14 @@ public class SetupInteractionListener implements Listener {
                 p.sendMessage(Messages.LobbySuccessSet());
 
                 p.getInventory().clear();
-                plugin.getSetupStateManager().setAddlobby(true);
+                plugin.getSetupStateManager().setInputMode(p, SetupInputMode.ADD_LOBBY);
                 e.setCancelled(true);
             } else if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteArenaLabel())) {
                 if (!p.hasPermission("pg.setup")) {
                     return;
                 }
                 p.getInventory().clear();
-                plugin.getSetupStateManager().setAddarena(true);
+                plugin.getSetupStateManager().setInputMode(p, SetupInputMode.ADD_ARENA);
                 e.setCancelled(true);
                 p.sendMessage(Messages.TypeArenaNameAdd());
             } else if (isNamedItem(p, Material.STICK, Messages.SetupAddDeleteSpawnLabel())) {
