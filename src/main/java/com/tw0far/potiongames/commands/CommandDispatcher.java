@@ -56,7 +56,6 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
         registerCommand(new DatabaseCommand(plugin));
         registerCommand(new ConfigCommand(plugin));
         registerCommand(new StatusCommand(plugin));
-        registerCommand(new DebugCommand(plugin));
         registerCommand(new BroadcastCommand(plugin));
         registerCommand(new KickCommand(plugin));
         registerCommand(new TopCommand(plugin));

@@ -46,7 +46,6 @@ mvn clean package        # add -DskipTests to skip unit tests
 - `/pg status` - Show server status and lobbies
 - `/pg gameserver` - Toggle offline/online mode
 - `/pg database` - Switch MySQL/SQLite
-- `/pg debug` - Toggle debug logging
 - `/pg broadcast` - Send announcements
 - `/pg kick` - Remove players from lobbies
 - `/pg top` - Show leaderboards

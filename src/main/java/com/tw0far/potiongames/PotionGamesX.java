@@ -194,6 +194,7 @@ public class PotionGamesX extends JavaPlugin {
         if (lobbyStateManager != null) lobbyStateManager.onDisable();
         if (arenaStateManager != null) arenaStateManager.onDisable();
         if (itemStateManager != null) itemStateManager.onDisable();
+        if (setupStateManager != null) setupStateManager.onDisable();
         if (configManager != null) configManager.onDisable();
         if (databaseManager != null) databaseManager.onDisable();
 

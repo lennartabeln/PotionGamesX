@@ -2,6 +2,7 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
+import com.tw0far.potiongames.models.Messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
@@ -28,63 +29,59 @@ public class StatusCommand implements ICommand {
 
 
     @Override
-    public boolean execute(CommandSender player, String[] args) {
+    public boolean execute(CommandSender sender, String[] args) {
         var game = plugin.getGame();
         var lobbies = game.getLobbies();
+        int active = game.getActivePlayers().size();
+        int spectators = game.getSpectatorPlayers().size();
 
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
+        sender.sendMessage(divider());
+        sender.sendMessage(Component.text(Messages.StatusTitleText()).color(NamedTextColor.GOLD));
 
-        player.sendMessage(Component.text("PotionGamesX Status").color(NamedTextColor.GOLD));
+        sender.sendMessage(section(Messages.StatusServerText()));
+        sender.sendMessage(line(Messages.StatusPlayersActiveText(), Integer.toString(active)));
+        sender.sendMessage(line(Messages.StatusSpectatorsText(), Integer.toString(spectators)));
+        sender.sendMessage(line(Messages.StatusTotalPlayersText(), Integer.toString(active + spectators)));
 
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("Server:").color(NamedTextColor.GOLD)));
-
-        player.sendMessage(formatStatusLine("  Players Active", game.getActivePlayers().size() + ""));
-        player.sendMessage(formatStatusLine("  Players Spectating", game.getSpectatorPlayers().size() + ""));
-        player.sendMessage(formatStatusLine("  Total Players", (game.getActivePlayers().size() + game.getSpectatorPlayers().size()) + ""));
-
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("Lobbies:").color(NamedTextColor.GOLD)));
-
+        sender.sendMessage(section(Messages.StatusLobbiesText()));
         if (lobbies.isEmpty()) {
-            player.sendMessage(Component.text("  No active lobbies").color(NamedTextColor.GRAY));
+            sender.sendMessage(Component.text("  " + Messages.StatusNoLobbiesText()).color(NamedTextColor.GRAY));
         } else {
             for (Lobby lobby : lobbies) {
-                int lobbyId = lobby.getId();
-                int activePlayers = lobby.getActivePlayers().size();
-                int spectators = lobby.getSpectatorPlayers().size();
                 String state = lobby.getState().name();
-
-                Component lobbyInfo = Component.text("  Lobby: ").color(NamedTextColor.GRAY)
-                    .append(Component.text(lobbyId + "").color(NamedTextColor.AQUA))
-                    .append(Component.text(" | ").color(NamedTextColor.DARK_GRAY))
-                    .append(Component.text(activePlayers + "/" + spectators).color(NamedTextColor.YELLOW))
-                    .append(Component.text(" | ").color(NamedTextColor.DARK_GRAY))
-                    .append(Component.text(state).color(getStateColor(state)));
-
-                player.sendMessage(lobbyInfo);
+                Component lobbyInfo = Component.text("  " + Messages.StatusLobbyLine(Integer.toString(lobby.getId()),
+                        lobby.getActivePlayers().size(), lobby.getMaxPlayers(),
+                        lobby.getSpectatorPlayers().size()))
+                    .color(NamedTextColor.GRAY)
+                    .append(Component.text(" (" + state + ")").color(getStateColor(state)));
+                sender.sendMessage(lobbyInfo);
             }
         }
 
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("Database:").color(NamedTextColor.GOLD)));
-
+        sender.sendMessage(section(Messages.StatusDatabaseText()));
         boolean mysqlActive = plugin.getConfigManager().isActivateMysql();
         boolean connected = plugin.getDatabaseManager().isConnected();
-        player.sendMessage(formatStatusLine("  Mode", mysqlActive ? "MySQL" : "SQLite"));
-        player.sendMessage(Component.text("  Connection").color(NamedTextColor.GRAY)
+        sender.sendMessage(line(Messages.StatusModeText(), mysqlActive ? "MySQL" : "SQLite"));
+        sender.sendMessage(Component.text("  " + Messages.StatusConnectionText()).color(NamedTextColor.GRAY)
             .append(Component.text(": ").color(NamedTextColor.DARK_GRAY))
-            .append(Component.text(connected ? "✓ Connected" : "✗ Disconnected").color(connected ? NamedTextColor.GREEN : NamedTextColor.RED)));
+            .append(Component.text(connected ? Messages.StatusConnectedText() : Messages.StatusDisconnectedText())
+                .color(connected ? NamedTextColor.GREEN : NamedTextColor.RED)));
 
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
-
+        sender.sendMessage(divider());
         return true;
     }
 
-    private Component formatStatusLine(String key, String value) {
-        return Component.text(key).color(NamedTextColor.GRAY)
+    private Component divider() {
+        return Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY);
+    }
+
+    private Component section(String label) {
+        return Component.text("").color(NamedTextColor.DARK_GRAY)
+            .append(Component.text(label + ":").color(NamedTextColor.GOLD));
+    }
+
+    private Component line(String label, String value) {
+        return Component.text("  " + label).color(NamedTextColor.GRAY)
             .append(Component.text(": ").color(NamedTextColor.DARK_GRAY))
             .append(Component.text(value).color(NamedTextColor.GREEN));
     }

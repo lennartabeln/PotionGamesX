@@ -58,6 +58,9 @@ en_US:
       connect_failed: "Connection to database failed! For more information see console."
       connected: "Connection to database established!"
       not_connected: "Statistics database is not connected. Check the database settings and the console."
+      connection_failed: "connection failed!"
+      mode_changed: "Database mode switched to %s (%s)"
+      mode_broadcast: "%s switched database mode to %s!"
     dead:
       label: "Dead"
     deathmatch:
@@ -141,7 +144,6 @@ en_US:
       broadcast: "/pg broadcast <message> - Send announcement to all players"
       status: "/pg status - Show server status and active lobbies"
       config: "/pg config - View current configuration"
-      debug: "/pg debug - Toggle debug logging mode"
       database: "/pg database - Toggle database mode (MySQL/SQLite)"
       database_usage: "/pg database - Toggle database mode MySQL/SQLite (requires pg.database)"
       gameserver: "/pg gameserver - Toggle gameserver mode (online/offline)"
@@ -271,6 +273,20 @@ en_US:
       invalid: "is not a valid spawn!"
     stats:
       label: "Stats"
+    status:
+      title: "PotionGamesX Status"
+      server: "Server"
+      players_active: "Players Active"
+      spectators: "Spectators"
+      total_players: "Total Players"
+      lobbies: "Lobbies"
+      no_lobbies: "No active lobbies"
+      lobby_line: "Lobby %s - Players: %d/%d, Spectators: %d"
+      database: "Database"
+      mode: "Mode"
+      connection: "Connection"
+      connected: "Connected"
+      disconnected: "Disconnected"
     team:
       label: "Team"
       already_full: "This team is already full!"
@@ -371,6 +387,9 @@ de_DE:
       connect_failed: "Verbindung zur Datenbank fehlgeschlagen! Weitere Informationen in der Konsole."
       connected: "Verbindung zur Datenbank hergestellt!"
       not_connected: "Die Statistik-Datenbank ist nicht verbunden. Prüfe die Datenbank-Einstellungen und die Konsole."
+      connection_failed: "Verbindung fehlgeschlagen!"
+      mode_changed: "Datenbankmodus umgeschaltet auf %s (%s)"
+      mode_broadcast: "%s hat den Datenbankmodus auf %s umgeschaltet!"
     dead:
       label: "Tot"
     deathmatch:
@@ -454,7 +473,6 @@ de_DE:
       broadcast: "/pg broadcast <message> - Ankündigung an alle Spieler senden"
       status: "/pg status - Serverstatus und aktive Lobbys anzeigen"
       config: "/pg config - Aktuelle Konfiguration anzeigen"
-      debug: "/pg debug - Debug-Protokollierung umschalten"
       database: "/pg database - Datenbankmodus umschalten (MySQL/SQLite)"
       database_usage: "/pg database - Datenbankmodus MySQL/SQLite umschalten (benötigt pg.database)"
       gameserver: "/pg gameserver - Gameserver-Modus umschalten (online/offline)"
@@ -584,6 +602,20 @@ de_DE:
       invalid: "ist kein gültiger Spawn!"
     stats:
       label: "Statistiken"
+    status:
+      title: "PotionGamesX Status"
+      server: "Server"
+      players_active: "Aktive Spieler"
+      spectators: "Zuschauer"
+      total_players: "Spieler insgesamt"
+      lobbies: "Lobbys"
+      no_lobbies: "Keine aktiven Lobbys"
+      lobby_line: "Lobby %s - Spieler: %d/%d, Zuschauer: %d"
+      database: "Datenbank"
+      mode: "Modus"
+      connection: "Verbindung"
+      connected: "Verbunden"
+      disconnected: "Getrennt"
     team:
       label: "Team"
       already_full: "Dieses Team ist bereits voll!"

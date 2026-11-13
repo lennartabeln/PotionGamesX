@@ -101,6 +101,22 @@ public class Messages {
         addDefault(lang, "lobby.invalid_selection", "Invalid lobby selection!");
         addDefault(lang, "players.label", "Players");
         addDefault(lang, "database.not_connected", "Statistics database is not connected. Check the database settings and the console.");
+        addDefault(lang, "database.connection_failed", "connection failed!");
+        addDefault(lang, "database.mode_changed", "Database mode switched to %s (%s)");
+        addDefault(lang, "database.mode_broadcast", "%s switched database mode to %s!");
+        addDefault(lang, "status.title", "PotionGamesX Status");
+        addDefault(lang, "status.server", "Server");
+        addDefault(lang, "status.players_active", "Players Active");
+        addDefault(lang, "status.spectators", "Spectators");
+        addDefault(lang, "status.total_players", "Total Players");
+        addDefault(lang, "status.lobbies", "Lobbies");
+        addDefault(lang, "status.no_lobbies", "No active lobbies");
+        addDefault(lang, "status.lobby_line", "Lobby %s - Players: %d/%d, Spectators: %d");
+        addDefault(lang, "status.database", "Database");
+        addDefault(lang, "status.mode", "Mode");
+        addDefault(lang, "status.connection", "Connection");
+        addDefault(lang, "status.connected", "Connected");
+        addDefault(lang, "status.disconnected", "Disconnected");
         addDefault(lang, "plugin.started", "Plugin started successfully!");
         addDefault(lang, "plugin.stopped", "Plugin stopped successfully!");
         addDefault(lang, "price.label", "Price");
@@ -727,6 +743,40 @@ public class Messages {
         return prefix(Component.text(get("you.not_enough_coins", "You don't have enough coins!")).color(NamedTextColor.RED));
     }
 
+    public static String StatusTitleText() { return get("status.title", "PotionGamesX Status"); }
+    public static String StatusServerText() { return get("status.server", "Server"); }
+    public static String StatusPlayersActiveText() { return get("status.players_active", "Players Active"); }
+    public static String StatusSpectatorsText() { return get("status.spectators", "Spectators"); }
+    public static String StatusTotalPlayersText() { return get("status.total_players", "Total Players"); }
+    public static String StatusLobbiesText() { return get("status.lobbies", "Lobbies"); }
+    public static String StatusNoLobbiesText() { return get("status.no_lobbies", "No active lobbies"); }
+    public static String StatusDatabaseText() { return get("status.database", "Database"); }
+    public static String StatusModeText() { return get("status.mode", "Mode"); }
+    public static String StatusConnectionText() { return get("status.connection", "Connection"); }
+    public static String StatusConnectedText() { return get("status.connected", "Connected"); }
+    public static String StatusDisconnectedText() { return get("status.disconnected", "Disconnected"); }
+
+    /** One lobby line of /pg status: players/maxPlayers plus the spectator count. */
+    public static String StatusLobbyLine(String lobbyId, int players, int maxPlayers, int spectators) {
+        return String.format(get("status.lobby_line", "Lobby %s - Players: %d/%d, Spectators: %d"),
+                lobbyId, players, maxPlayers, spectators);
+    }
+
+    public static String DatabaseConnectionFailedText() {
+        return get("database.connection_failed", "connection failed!");
+    }
+
+    public static Component DatabaseModeChanged(String dbType, boolean connected) {
+        String state = connected ? StatusConnectedText() : DatabaseConnectionFailedText();
+        return prefix(Component.text(String.format(get("database.mode_changed", "Database mode switched to %s (%s)"),
+                dbType, state)).color(connected ? NamedTextColor.GREEN : NamedTextColor.RED));
+    }
+
+    public static Component DatabaseModeBroadcast(String player, String dbType) {
+        return prefix(Component.text(String.format(get("database.mode_broadcast", "%s switched database mode to %s!"),
+                player, dbType)).color(NamedTextColor.YELLOW));
+    }
+
     public static Component DatabaseNotConnected() {
         return prefix(Component.text(get("database.not_connected",
                 "Statistics database is not connected. Check the database settings and the console."))
@@ -763,7 +813,6 @@ public class Messages {
     public static String HelpConfigText() { return get("help.config", "/pg config - View current configuration"); }
     public static String HelpDatabaseText() { return get("help.database", "/pg database - Toggle database mode (MySQL/SQLite)"); }
     public static String HelpDatabaseUsageText() { return get("help.database_usage", "/pg database - Toggle database mode MySQL/SQLite (requires pg.database)"); }
-    public static String HelpDebugText() { return get("help.debug", "/pg debug - Toggle debug logging mode"); }
     public static String HelpDellobbyText() { return get("help.dellobby", "/pg dellobby <lobbynumber> - Remove a lobby"); }
     public static String HelpForceText() { return get("help.force", "/pg force [arenaname] - Force an arena"); }
     public static String HelpForceUsageText() { return get("help.force_usage", "/pg force <arena_name> - Force a specific arena (requires pg.force)"); }
