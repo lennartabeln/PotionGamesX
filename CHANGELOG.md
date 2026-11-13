@@ -49,6 +49,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `/pg reload`, the permission denial and the setup chat answer are localized now instead of hardcoded English; the previously dead `plugin.reloaded` key is actually sent
+- 35 message keys that no code path could resolve were removed (`admin.please_inform`, `database.connected`, `command.list_header`, `lobby.enabled`, `setup.incomplete`, `vote.you_have_voted_for`, ...) - both locales keep 244 identical keys
+- `config.yml` documents the optional `RankWall` section that `/pg headp1`-`/pg signp3` write at runtime
 - MOTD and slot count stay untouched when game server mode is off (`pg.gameServer: false`), matching legacy 7.0.1; the plugin only owns the server-list entry on a dedicated game server
 - `/pg config` prints booleans as `true`/`false` instead of a mix of `ONLINE`/`OFFLINE` and `✓`/`✗`
 - Team selector: `Random` spread players over every free team instead of always landing in the team that already had a player (candidates came from the sparse per-team count map, so empty teams were invisible)
