@@ -96,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Votes and team slots are released when a player leaves (`/pg leave`, quit, kick, death, reset), so a disconnected player no longer decides the arena and team capacity stays correct
 - Dropping items in a lobby is cancelled again (the guard tested `isActivePlayer` and therefore never triggered)
 - `/pg joinsign` reports "That is not a sign!" instead of throwing a `ClassCastException` when aiming at a non-sign block, and `/pg kick` keeps the player's restored pre-join location instead of teleporting them to the spawn of world 0
+- `/pg reload` and a server shutdown mid-round restore the arena: the tracked blocks go back and the frozen gamerules (time, weather, mob spawning/griefing, fire spread) are written back. Previously the reload discarded the block tracking and left the arena damaged, and a shutdown left the arena world frozen
 - Deprecated `org.bukkit.GameRule` usages replaced by the new `org.bukkit.GameRules` (`ADVANCE_TIME`, `ADVANCE_WEATHER`, `MOB_GRIEFING`, `SPAWN_MOBS`, `FIRE_SPREAD_RADIUS_AROUND_PLAYER`), which removes 15 build warnings
 - The Vault dependency uses jitpack's canonical coordinates (`com.github.MilkBowl`), which removes 18 Maven cache warnings on case-insensitive filesystems
 
@@ -117,6 +118,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `roundTime` is stored in seconds internally; `LobbyConfig` is the only place that converts minutes to seconds
 - The team amount is derived from `maxPlayers / teamSize` (legacy behaviour) instead of `ceil(players / teamSize)`
 - Setup commands accept an optional lobby number in single-lobby mode; the long form is unchanged
+- `plugin.yml` now declares `api-version: 26.3` (the API the code builds against, required for `GameRules`), matching the documented "Paper 26.3+" requirement
 - Arena gamerules now freeze `ADVANCE_TIME`, `ADVANCE_WEATHER`, `SPAWN_MOBS`, `MOB_GRIEFING` and a fire-spread radius of `0`, and restore the captured values (including a custom radius) afterwards
 
 ### Removed

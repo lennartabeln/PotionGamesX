@@ -106,7 +106,9 @@ public class ReloadHandler {
                         lobby.clearVoting();
                         lobby.clearTeams();
                         lobby.clearChests();
-                        lobby.clearBlockTracking();
+                        // Restore the arena instead of dropping the tracking:
+                        // a reload mid-round must not leave the world damaged.
+                        lobby.restoreWorldState();
                         lobby.setCurrentArena(null);
                         lobby.setState(GameStates.WAITING);
                         lobby.setJoinable(true);
