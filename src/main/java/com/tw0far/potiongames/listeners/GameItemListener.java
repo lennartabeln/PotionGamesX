@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -46,7 +47,11 @@ import java.util.Random;
  * plus join/stats signs.
  */
 public class GameItemListener implements Listener {
+    /** Loot chest inventory opened for a player, written back when it closes. */
+    private record ChestSession(int lobbyId, Location location) {}
+
     private final PotionGamesX plugin;
+    private final Map<Inventory, ChestSession> openChests = new HashMap<>();
 
     public GameItemListener(PotionGamesX plugin) {
         this.plugin = plugin;
@@ -425,13 +430,7 @@ public class GameItemListener implements Listener {
             fillLootChest(inv, rnd, profile, itemStateManager);
             lobby.setChestInventory(loc, inv.getContents());
         }
-        ItemStack[] items = lobby.getChestInventory(loc);
-        if (items == null) {
-            return;
-        }
-        Inventory view = Bukkit.createInventory(null, 27);
-        view.setContents(items);
-        p.openInventory(view);
+        reopenStoredChest(p, lobby, loc);
 
         // Bonus random potion effect on first open of an empty-effects player
         if (p.getActivePotionEffects().isEmpty()) {
@@ -467,10 +466,8 @@ public class GameItemListener implements Listener {
                             ChestLootProfile profile = resolveLootProfile(customChest, defaultCustomLootProfile());
                             fillLootChest(inv, rnd, profile, plugin.getItemStateManager());
                             lobby.setChestInventory(loc, inv.getContents());
-                            p.openInventory(inv);
-                        } else {
-                            reopenStoredChest(p, lobby, loc);
                         }
+                        reopenStoredChest(p, lobby, loc);
                     }
                     break;
                 }
@@ -491,7 +488,8 @@ public class GameItemListener implements Listener {
         }
         GameStates state = plugin.getLobbyStateManager().getGameState(s);
         if (state != GameStates.INGAME && state != GameStates.DEATHMATCH) {
-            reopenStoredChest(p, lobby, loc);
+            // The shop is only usable during a running round; reopening the
+            // stored items would hand them out for free.
             return;
         }
 
@@ -553,14 +551,34 @@ public class GameItemListener implements Listener {
         return false;
     }
 
+    /**
+     * Opens the stored contents of a loot chest. The inventory is tracked so
+     * that taken items stay taken for the rest of the round instead of being
+     * regenerated on every open.
+     */
     private void reopenStoredChest(Player p, Lobby lobby, Location loc) {
         ItemStack[] items = lobby.getChestInventory(loc);
         if (items == null) {
             return;
         }
-        Inventory view = Bukkit.createInventory(null, items.length > 0 ? Math.max(9, ((items.length + 8) / 9) * 9) : 27);
+        int size = items.length > 0 ? Math.max(9, ((items.length + 8) / 9) * 9) : 27;
+        Inventory view = Bukkit.createInventory(null, Math.min(54, size));
         view.setContents(items);
+        openChests.put(view, new ChestSession(lobby.getId(), loc));
         p.openInventory(view);
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        ChestSession session = openChests.remove(event.getInventory());
+        if (session == null) {
+            return;
+        }
+        Lobby lobby = plugin.getGame().getLobby(session.lobbyId());
+        if (lobby == null) {
+            return;
+        }
+        lobby.setChestInventory(session.location(), event.getInventory().getContents());
     }
 
     private void sendStats(Player p) {
