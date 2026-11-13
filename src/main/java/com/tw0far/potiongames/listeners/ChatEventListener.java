@@ -3,6 +3,7 @@ package com.tw0far.potiongames.listeners;
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.managers.SetupInputMode;
 import com.tw0far.potiongames.models.Lobby;
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 
 import com.tw0far.potiongames.util.PlayerTaskDispatcher;
+import com.tw0far.potiongames.util.SetupInputValidator;
 
 /**
  * Handles player chat events.
@@ -119,14 +121,14 @@ public class ChatEventListener implements Listener {
 
         switch (mode) {
             case ADD_LOBBY -> {
-                // Input is the lobby ID to add
-                try {
-                    int lobbyId = Integer.parseInt(input);
-                    plugin.getSetupHandler().addLobby(p, lobbyId);
-                    state.clearInputMode(p);
-                } catch (NumberFormatException ex) {
-                    p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
+                // Input is the lobby ID to add; invalid IDs keep the input mode active
+                Integer lobbyId = SetupInputValidator.parseLobbyId(input);
+                if (lobbyId == null) {
+                    p.sendMessage(Messages.InvalidLobbyId());
+                    return;
                 }
+                plugin.getSetupHandler().addLobby(p, lobbyId);
+                state.clearInputMode(p);
             }
             case DEL_LOBBY -> {
                 // Input is the lobby ID to delete

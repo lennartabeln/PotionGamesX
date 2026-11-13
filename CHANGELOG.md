@@ -42,6 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Status screen shows real game states and live database connectivity
 - `/pg top` and the stats signs/emerald readout no longer block the main thread while querying the database
 - Player records are created asynchronously on join instead of during the join event
+- Setup chat input is tracked per player, so one staff member's pending lobby/arena input no longer swallows another staff member's chat
+- Setup chat actions run on the player scheduler instead of the asynchronous chat thread
+- Add-lobby chat input rejects zero and negative IDs with a clear message and keeps the input mode active
+- `/pg reload` now re-reads `lobbies.yml`, `messages.yml`, `kits.yml`, `shop.yml` and `chests.yml` in addition to `config.yml`
+- `/pg reload` reports failed reload steps instead of claiming success when configuration, database or game data reloading failed
+- `/pg stats <player>` also resolves offline players whose profile is cached by Paper
 
 ### Changed
 
