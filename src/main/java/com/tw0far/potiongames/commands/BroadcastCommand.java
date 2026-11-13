@@ -1,6 +1,8 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -9,6 +11,9 @@ import org.bukkit.command.CommandSender;
 /**
  * /pg broadcast <message> - Send announcement to all players
  * Permission: pg.broadcast (or pg.admin)
+ *
+ * <p>The announcement uses the same {@link Settings#prefix} as every other
+ * message, so it renders in the plugin colours instead of a hardcoded one.</p>
  */
 public class BroadcastCommand implements ICommand {
     public BroadcastCommand(PotionGamesX plugin) {
@@ -28,7 +33,8 @@ public class BroadcastCommand implements ICommand {
     @Override
     public boolean execute(CommandSender player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(Component.text("Usage: /pg broadcast <message>").color(NamedTextColor.RED));
+            player.sendMessage(Settings.prefix.append(
+                Component.text(Messages.BroadcastUsageText()).color(NamedTextColor.RED)));
             return true;
         }
 
@@ -38,14 +44,10 @@ public class BroadcastCommand implements ICommand {
             if (i < args.length - 1) message.append(" ");
         }
 
-        Component broadcast = Component.text("").color(NamedTextColor.GOLD)
-            .append(Component.text("[PotionGamesX] ").color(NamedTextColor.GOLD))
-            .append(Component.text(message.toString()).color(NamedTextColor.YELLOW));
+        Bukkit.broadcast(Settings.prefix.append(Component.text(message.toString()).color(NamedTextColor.YELLOW)));
 
-        Bukkit.broadcast(broadcast);
-
-        Component confirmMsg = Component.text("Broadcast sent to all players").color(NamedTextColor.GREEN);
-        player.sendMessage(confirmMsg);
+        player.sendMessage(Settings.prefix.append(
+            Component.text(Messages.BroadcastSentText()).color(NamedTextColor.GREEN)));
 
         return true;
     }

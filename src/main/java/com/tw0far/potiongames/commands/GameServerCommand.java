@@ -42,10 +42,14 @@ public class GameServerCommand implements ICommand {
         plugin.saveConfig();
 
         // Send message to player
-        String statusText = newState ? "enabled" : "disabled";
-        Component message = Component.text("GameServer mode is now ")
-            .color(NamedTextColor.AQUA)
-            .append(Component.text(statusText).color(newState ? NamedTextColor.GREEN : NamedTextColor.RED));
+        String statusText = newState ? Messages.GameServerEnabledText() : Messages.GameServerDisabledText();
+        String pattern = Messages.GameServerStateText();
+        int slot = pattern.indexOf("%s");
+        Component message = slot < 0
+            ? Component.text(pattern).color(NamedTextColor.AQUA)
+            : Component.text(pattern.substring(0, slot)).color(NamedTextColor.AQUA)
+                .append(Component.text(statusText).color(newState ? NamedTextColor.GREEN : NamedTextColor.RED))
+                .append(Component.text(pattern.substring(slot + 2)).color(NamedTextColor.AQUA));
 
         player.sendMessage(message);
 
@@ -53,7 +57,7 @@ public class GameServerCommand implements ICommand {
         for (Player op : plugin.getServer().getOnlinePlayers()) {
             if (op == null) continue;
             if (op.isOp() && !op.equals(player)) {
-                op.sendMessage(Component.text(player.getName() + " turned " + statusText + " GameServer mode!")
+                op.sendMessage(Component.text(String.format(Messages.GameServerStateOtherText(), player.getName(), statusText))
                     .color(NamedTextColor.YELLOW));
             }
         }

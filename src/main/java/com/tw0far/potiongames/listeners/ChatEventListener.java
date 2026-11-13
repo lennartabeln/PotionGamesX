@@ -137,7 +137,7 @@ public class ChatEventListener implements Listener {
                     plugin.getSetupHandler().removeLobby(p, lobbyId);
                     state.clearInputMode(p);
                 } catch (NumberFormatException ex) {
-                    p.sendMessage(Component.text("Invalid lobby ID. Must be a number.").color(NamedTextColor.RED));
+                    p.sendMessage(Component.text(Messages.InvalidLobbyIdText()).color(NamedTextColor.RED));
                 }
             }
             case ADD_ARENA -> {

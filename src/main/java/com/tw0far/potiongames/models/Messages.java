@@ -118,7 +118,7 @@ public class Messages {
         addDefault(lang, "status.connected", "Connected");
         addDefault(lang, "status.disconnected", "Disconnected");
         addDefault(lang, "setup.not_a_sign", "That is not a sign!");
-        addDefault(lang, "command.kick.usage", "Usage: /pg kick <player>");
+        addDefault(lang, "command.kick_usage", "Usage: /pg kick <player>");
         addDefault(lang, "kick.not_in_lobby", "%s is not in a lobby!");
         addDefault(lang, "kick.success", "%s has been kicked from lobby %s!");
         addDefault(lang, "kick.notice", "You have been kicked from the lobby by an admin!");
@@ -907,6 +907,25 @@ public class Messages {
     public static String SignSet1Text() { return get("sign.set_1", "1st place sign set."); }
     public static String SignSet2Text() { return get("sign.set_2", "2nd place sign set."); }
     public static String SignSet3Text() { return get("sign.set_3", "3rd place sign set."); }
+
+    // Command output that used to be hardcoded in the command classes.
+    public static String BroadcastUsageText() { return get("command.broadcast_usage", "Usage: /pg broadcast <message>"); }
+    public static String BroadcastSentText() { return get("command.broadcast_sent", "Broadcast sent to all players"); }
+    public static String InvalidLobbyIdText() { return get("command.invalid_lobby_id", "Invalid lobby ID. Must be a number."); }
+    public static String ConfigHeaderText() { return get("config.header", "PotionGamesX Configuration"); }
+
+    public static String GameServerStateText() { return get("gameserver.state", "GameServer mode is now %s"); }
+    public static String GameServerStateOtherText() { return get("gameserver.state_other", "%s switched GameServer mode to %s!"); }
+    public static String GameServerEnabledText() { return get("gameserver.enabled", "enabled"); }
+    public static String GameServerDisabledText() { return get("gameserver.disabled", "disabled"); }
+
+    public static String TopHeaderText() { return get("top.header", "Top 10 Players by %s"); }
+    public static String TopUsageText() { return get("top.usage", "Use /pg top [kills|deaths|wins|kd]"); }
+    public static String TopUnknownTypeText() { return get("top.unknown_type", "Unknown leaderboard type: %s"); }
+    public static String TopKillsText() { return get("top.kills", "Kills"); }
+    public static String TopDeathsText() { return get("top.deaths", "Deaths"); }
+    public static String TopWinsText() { return get("top.wins", "Wins"); }
+    public static String TopKdText() { return get("top.kd", "K/D Ratio"); }
 
 }
 
