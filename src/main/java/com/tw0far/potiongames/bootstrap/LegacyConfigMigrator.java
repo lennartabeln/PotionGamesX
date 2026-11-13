@@ -19,8 +19,10 @@ import java.util.List;
  * <p>The legacy plugin kept everything in {@code arenadata.yml}: the arenas
  * globally under {@code pg.arenas.<n>} and, in multi-lobby mode, the lobbies
  * under {@code pg.lobbies.<id>} with their spawn in {@code coords} and the
- * settings directly on the lobby section. The rewrite stores the lobbies in
- * {@code lobbies.yml} with a {@code spawn} and a {@code settings} section.</p>
+ * settings directly on the lobby section. A single-lobby server kept its only
+ * lobby in {@code config.yml} under {@code pg.Lobby.coords}/{@code pg.Lobby.sign}.
+ * The rewrite stores the lobbies in {@code lobbies.yml} with a {@code spawn} and
+ * a {@code settings} section.</p>
  *
  * <p>Everything runs once per start and only fills gaps: existing lobbies,
  * arenas and settings are never overwritten, so running it repeatedly (or after
@@ -35,6 +37,9 @@ public final class LegacyConfigMigrator {
     private static final List<String> LOBBY_SETTINGS = List.of(
             "countdown", "roundTime", "maxPlayers", "minPlayers", "teamSize",
             "activateTeams", "activateKits", "activateShop", "activateAirdrops");
+
+    /** Lobby id the legacy single-lobby configuration becomes. */
+    public static final int SINGLE_LOBBY_ID = 1;
 
     /** What the migration did, for the log line and the tests. */
     public record Result(int lobbies, int arenas, int settings, boolean singleLobby) {
@@ -66,14 +71,24 @@ public final class LegacyConfigMigrator {
         if (legacyFile.isFile()) {
             YamlConfiguration legacy = YamlConfiguration.loadConfiguration(legacyFile);
             lobbies = createMissingLobbies(legacy.getConfigurationSection("pg.lobbies"), Settings.lobbies);
-            arenas = importGlobalArenas(legacy);
+            arenas = importGlobalArenas(legacy.getConfigurationSection("pg.arenas"), Settings.lobbies).arenas();
+        }
+
+        // A legacy single-lobby server kept its lobby in config.yml (pg.Lobby.*)
+        // instead of lobbies.yml, so it becomes lobby 1 here.
+        boolean createdSingleLobby = createSingleLobby(plugin.getConfig(), Settings.lobbies);
+        if (createdSingleLobby) {
+            lobbies++;
+            if (arenas == 0 && legacyFile.isFile()) {
+                YamlConfiguration legacy = YamlConfiguration.loadConfiguration(legacyFile);
+                arenas = importGlobalArenas(legacy.getConfigurationSection("pg.arenas"), Settings.lobbies).arenas();
+            }
         }
 
         // Older lobbies.yml files kept the settings directly on the lobby section.
         int settings = moveLobbySettings(Settings.lobbies);
 
-        boolean changed = lobbies > 0 || arenas > 0 || settings > 0;
-        if (changed) {
+        if (lobbies > 0 || arenas > 0 || settings > 0) {
             try {
                 Settings.lobbies.save(Settings.lobbiesFile);
             } catch (IOException ex) {
@@ -96,58 +111,32 @@ public final class LegacyConfigMigrator {
     }
 
     /**
-     * Imports the legacy global arenas into every lobby that has no arena yet.
+     * Creates lobby 1 from the legacy single-lobby configuration
+     * ({@code pg.Lobby.coords} / {@code pg.Lobby.sign} in {@code config.yml}),
+     * when no lobby is configured yet.
      *
-     * <p>The legacy release kept the arenas globally, so any lobby could vote for
-     * any of them. Copying them into every empty lobby keeps that behaviour; a
-     * lobby that is already set up stays untouched.</p>
+     * @param config  the plugin configuration to read the legacy keys from
+     * @param lobbies {@code lobbies.yml}
+     * @return true when lobby 1 was created
      */
-    private int importGlobalArenas(YamlConfiguration legacy) {
-        ArenaImport imported = importGlobalArenas(legacy.getConfigurationSection("pg.arenas"), Settings.lobbies);
-        if (imported.arenas() == 0) {
-            if (legacy.getConfigurationSection("pg.arenas") != null
-                    && lowestLobbyId(Settings.lobbies) == null) {
-                plugin.getLogger().warning("Found a legacy " + LEGACY_FILE
-                        + " with arenas, but no lobby exists yet. Create one and run /pg importarenas <lobby>.");
-            }
-            return 0;
+    public static boolean createSingleLobby(FileConfiguration config, ConfigurationSection lobbies) {
+        if (config == null || lobbies == null || lowestLobbyId(lobbies) != null) {
+            return false;
         }
-        plugin.getLogger().info(String.format("Imported %d legacy arena(s) into %d lobby/lobbies.",
-                imported.arenas(), imported.lobbies()));
-        return imported.arenas();
-    }
-
-    /**
-     * Copies all legacy global arenas into the lobbies that do not have any yet.
-     *
-     * @param sourceArenas the {@code pg.arenas} section of the legacy file
-     * @param lobbies      the {@code lobbies.yml} configuration
-     * @return arenas imported and the number of lobbies they were added to
-     */
-    public static ArenaImport importGlobalArenas(ConfigurationSection sourceArenas, ConfigurationSection lobbies) {
-        if (sourceArenas == null || lobbies == null) {
-            return new ArenaImport(0, 0);
+        Object coords = config.get("pg.Lobby.coords");
+        if (coords == null) {
+            return false;
         }
-        int arenaCount = 0;
-        int lobbyCount = 0;
-        for (Integer lobbyId : lobbyIds(lobbies)) {
-            String path = "pg.lobbies." + lobbyId;
-            ConfigurationSection target = lobbies.getConfigurationSection(path);
-            if (target == null) {
-                continue;
-            }
-            ConfigurationSection existing = target.getConfigurationSection("arenas");
-            if (existing != null && !existing.getKeys(false).isEmpty()) {
-                continue;
-            }
-            LegacyArenaImporter.Result result = LegacyArenaImporter.importArenas(sourceArenas, target);
-            if (result.imported().isEmpty()) {
-                continue;
-            }
-            arenaCount += result.imported().size();
-            lobbyCount++;
+        ConfigurationSection target = lobbies.createSection("pg.lobbies." + SINGLE_LOBBY_ID);
+        if (target == null) {
+            return false;
         }
-        return new ArenaImport(lobbyCount, arenaCount);
+        target.set("spawn", coords);
+        Object sign = config.get("pg.Lobby.sign");
+        if (sign != null) {
+            target.set("joinSign", sign);
+        }
+        return true;
     }
 
     /**
@@ -184,6 +173,42 @@ public final class LegacyConfigMigrator {
             created++;
         }
         return created;
+    }
+
+    /**
+     * Copies all legacy global arenas into the lobbies that do not have any yet.
+     *
+     * <p>The legacy release kept the arenas globally, so any lobby could vote for
+     * any of them. Copying them into every empty lobby keeps that behaviour; a
+     * lobby that is already set up stays untouched.</p>
+     *
+     * @param sourceArenas the {@code pg.arenas} section of the legacy file
+     * @param lobbies      the {@code lobbies.yml} configuration
+     * @return arenas imported and the number of lobbies they were added to
+     */
+    public static ArenaImport importGlobalArenas(ConfigurationSection sourceArenas, ConfigurationSection lobbies) {
+        if (sourceArenas == null || lobbies == null) {
+            return new ArenaImport(0, 0);
+        }
+        int arenaCount = 0;
+        int lobbyCount = 0;
+        for (Integer lobbyId : lobbyIds(lobbies)) {
+            ConfigurationSection target = lobbies.getConfigurationSection("pg.lobbies." + lobbyId);
+            if (target == null) {
+                continue;
+            }
+            ConfigurationSection existing = target.getConfigurationSection("arenas");
+            if (existing != null && !existing.getKeys(false).isEmpty()) {
+                continue;
+            }
+            LegacyArenaImporter.Result result = LegacyArenaImporter.importArenas(sourceArenas, target);
+            if (result.imported().isEmpty()) {
+                continue;
+            }
+            arenaCount += result.imported().size();
+            lobbyCount++;
+        }
+        return new ArenaImport(lobbyCount, arenaCount);
     }
 
     /**
@@ -264,9 +289,10 @@ public final class LegacyConfigMigrator {
     }
 
     /**
-     * The legacy release defaulted {@code pg.lobbySystem} to {@code false}, which
-     * meant "one lobby on this server". Sets {@code pg.singleLobby} accordingly
-     * when the old key is present and the new one has never been written.
+     * The legacy release used {@code pg.lobbySystem}: {@code false} (the default)
+     * meant "one lobby on this server", {@code true} meant multiple lobbies. Writes
+     * the equivalent {@code pg.singleLobby} value when the old key is present and
+     * the new one has never been written.
      *
      * @return true when the config was changed and has to be saved
      */
@@ -274,10 +300,7 @@ public final class LegacyConfigMigrator {
         if (config == null || !config.contains("pg.lobbySystem") || config.contains("pg.singleLobby")) {
             return false;
         }
-        if (config.getBoolean("pg.lobbySystem")) {
-            return false;
-        }
-        config.set("pg.singleLobby", true);
+        config.set("pg.singleLobby", !config.getBoolean("pg.lobbySystem"));
         return true;
     }
 

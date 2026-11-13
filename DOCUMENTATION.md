@@ -55,6 +55,20 @@ Javac warnings fail the build (`failOnWarning` with `-Xlint:all`), so a green bu
 - `/pg top` - Show leaderboards
 - `/pg version` - Show the plugin and the latest release version
 
+## ⬆️ Upgrading from the legacy release (7.0.1)
+
+Copy your old `plugins/PotionGames/arenadata.yml` and `config.yml` into `plugins/PotionGamesX/` and start the server. The plugin migrates automatically:
+
+| Legacy source | Becomes |
+|---|---|
+| `arenadata.yml` → `pg.lobbies.<id>` | lobby with `spawn` (from `coords`) and `settings.*` |
+| `config.yml` → `pg.Lobby.coords`/`pg.Lobby.sign` | lobby **1** (single-lobby servers) |
+| `arenadata.yml` → `pg.arenas.<n>` | arenas of every lobby without arenas (spawns/deathmatch verbatim) |
+| `config.yml` → `pg.lobbySystem` | `pg.singleLobby` (`false` → `true`) |
+| `lobbies.yml` root settings | `pg.lobbies.<id>.settings.*` |
+
+Nothing is overwritten and the migration is idempotent (it only logs when it did something). A single file can still be imported on demand with `/pg importarenas <lobby> [file]`.
+
 ## 🛠️ Configuration
 
 All config files in `plugins/PotionGamesX/`:

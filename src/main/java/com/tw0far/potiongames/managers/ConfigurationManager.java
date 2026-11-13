@@ -47,7 +47,30 @@ public class ConfigurationManager implements IConfigurationManager {
 
     @Override
     public void onEnable() {
+        seedMissingDefaults();
         loadAllConfig();
+    }
+
+    /**
+     * Writes options that were added after the config file was created, so an
+     * upgrade actually shows them. Values are only written when the key is
+     * missing; legacy installs keep {@code pg.singleLobby} untouched because the
+     * migration derives it from {@code pg.lobbySystem}.
+     */
+    private void seedMissingDefaults() {
+        FileConfiguration config = plugin.getConfig();
+        boolean changed = false;
+        if (!config.contains("pg.activePotions")) {
+            config.set("pg.activePotions", 0);
+            changed = true;
+        }
+        if (!config.contains("pg.singleLobby") && !config.contains("pg.lobbySystem")) {
+            config.set("pg.singleLobby", false);
+            changed = true;
+        }
+        if (changed) {
+            plugin.saveConfig();
+        }
     }
 
     @Override
