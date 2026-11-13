@@ -80,6 +80,7 @@ Every subcommand of `/pg` is one class implementing `ICommand`
 
 ### handlers/ & bootstrap/
 
+- `LegacyConfigMigrator` (bootstrap) - startup migration of a legacy `arenadata.yml`/`pg.Lobby.*`/`settings.*` layout; `LegacyArenaImporter` (util) is the pure copy logic, `/pg importarenas` the manual entry point
 - `JoinLobbyHandler` - join gating (reject full/running lobbies; spectator late join via `pg.joinStarted`)
 - `SetupHandler` - setup wizard state give/restore
 - `ReloadHandler` - full reload: restore setup players, cancel tasks, reconnect DB, restart ticks/rank wall
@@ -116,6 +117,13 @@ Every subcommand of `/pg` is one class implementing `ICommand`
     `Lobby#giveRichKidCoins()` handles the Rich Kid kit.
 11. **Shop currency**: coins + one glass bottle per purchase, both rolled by the
     `shop` loot pool (`pg.chestloot.normal.loot.shop`) while the lobby shop is on.
+    `pg.activePotions` (>0) caps the entries that are rendered *and* buyable.
+12. **Legacy parity**: `pg.singleLobby` lets the setup commands omit the lobby
+    number (targets lobby 1, parsed by `SetupArguments`); the arena selector paper
+    only exists when `Lobby#hasArenaChoice()`; `LegacyConfigMigrator` +
+    `LegacyArenaImporter` handle upgrades and must stay idempotent.
+13. **World restore**: `Lobby#restoreWorldState()` (blocks + gamerules) runs on
+    `RESET`, on `/pg reload` and on shutdown — never discard block tracking.
 
 ## Testing
 
