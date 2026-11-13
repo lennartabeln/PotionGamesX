@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Loot and shop chests work on a fresh install again: `chests.yml` ships usable `chestblocks` defaults (`END_PORTAL_FRAME`/`COMPOSTER`), empty values are seeded on startup, and the matcher accepts both the legacy string and the new list format
 - Winning a round now actually pays `pg.winningReward` through Vault (previously the reward was only announced), logs failed transactions, and spawns the celebratory firework from the legacy release
 - Free-for-all lobbies can fight again: the friendly-fire check only compares teams when the lobby actually uses teams, and teammates may attack each other in `DEATHMATCH` (previously `friendlyFire: false` cancelled every player hit without teams because all teams were `null`)
+- Player-finder compass points at enemies again: it ignored same-team players only when teams are active, targets any other player in free-for-all, also works in `DEATHMATCH`, and only considers players of the same running lobby
 
 ### Changed
 
