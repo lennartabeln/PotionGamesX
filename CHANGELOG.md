@@ -49,6 +49,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `pg.admin` now grants every admin subcommand (`children:` in `plugin.yml`); before it only changed the `/pg help` list while `KickCommand`/`BroadcastCommand` documented "or pg.admin"
+- `/pg stats` runs its six database getters on the async scheduler instead of the main thread, sharing a new `PlayerStats` record with the compass stat sheet
+- `/pg top` no longer resolves `messages.yml` text on the async scheduler, and its no-data/empty/failed rows are localized (`top.no_data`, `top.empty`, `top.failed`)
+- `/pg config` is fully localized - row labels and the Core/Defaults/Features headings come from `config.*` keys - and its header uses the plugin prefix
+- Lobby join aborts with `lobby.no_spawn` instead of clearing the inventory and throwing when the lobby spawn (or its world) is missing; all lobby items share one null-safe `item(...)` helper
+- `ReloadCommand`/`CommandDispatcher` log exceptions through the plugin logger instead of `printStackTrace()`
 - `/pg reload`, the permission denial and the setup chat answer are localized now instead of hardcoded English; the previously dead `plugin.reloaded` key is actually sent
 - 35 message keys that no code path could resolve were removed (`admin.please_inform`, `database.connected`, `command.list_header`, `lobby.enabled`, `setup.incomplete`, `vote.you_have_voted_for`, ...) - both locales keep 244 identical keys
 - `config.yml` documents the optional `RankWall` section that `/pg headp1`-`/pg signp3` write at runtime
