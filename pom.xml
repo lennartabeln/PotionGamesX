@@ -27,6 +27,10 @@
                 <version>3.16.0</version>
                 <configuration>
                     <showWarnings>true</showWarnings>
+                    <!-- -Werror: the code base compiles without a single javac
+                         warning, and it must stay that way. Applies to main and
+                         test sources, locally and in CI (mvn clean package). -->
+                    <failOnWarning>true</failOnWarning>
                     <compilerArgs>
                         <arg>-Xlint:all</arg>
                     </compilerArgs>
