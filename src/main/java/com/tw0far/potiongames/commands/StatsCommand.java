@@ -9,10 +9,15 @@ import java.util.UUID;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.models.PlayerStats;
 import com.tw0far.potiongames.util.PlayerUuidResolver;
 
 /**
  * /pg stats [player] - Show player statistics
+ *
+ * <p>The database getters block, so the six lookups run on the async scheduler
+ * and only the rendering happens on the player's thread. Running them inline
+ * would stall the tick loop on a remote MySQL.</p>
  */
 public class StatsCommand implements ICommand {
     private final PotionGamesX plugin;
@@ -44,25 +49,12 @@ public class StatsCommand implements ICommand {
             player.sendMessage(Messages.DatabaseNotConnected());
             return true;
         }
-        if (args.length < 2) {
-            // Show stats for command sender
-            int wins = plugin.getDatabaseManager().getWins(player.getUniqueId().toString());
-            int losses = plugin.getDatabaseManager().getLosses(player.getUniqueId().toString());
-            int rounds = plugin.getDatabaseManager().getRounds(player.getUniqueId().toString());
-            int kills = plugin.getDatabaseManager().getKills(player.getUniqueId().toString());
-            int deaths = plugin.getDatabaseManager().getDeaths(player.getUniqueId().toString());
-            double kd = plugin.getDatabaseManager().getKD(player.getUniqueId().toString());
 
-            player.sendMessage(Messages.StatsLabel());
-            player.sendMessage(Messages.RoundsLabel(rounds));
-            player.sendMessage(Messages.WinsLabel(wins));
-            player.sendMessage(Messages.LossesLabel(losses));
-            player.sendMessage(Messages.KillsLabel(kills));
-            player.sendMessage(Messages.DeathsLabel(deaths));
-            player.sendMessage(Messages.KDLabel(kd));
-            player.sendMessage(Messages.StatsLabel());
+        UUID target;
+        if (args.length < 2) {
+            target = player.getUniqueId();
         } else {
-            UUID targetUuid = PlayerUuidResolver.resolve(args[1],
+            target = PlayerUuidResolver.resolve(args[1],
                     name -> {
                         Player online = Bukkit.getPlayer(name);
                         return online == null ? null : online.getUniqueId();
@@ -71,28 +63,34 @@ public class StatsCommand implements ICommand {
                         OfflinePlayer cached = Bukkit.getOfflinePlayerIfCached(name);
                         return cached == null ? null : cached.getUniqueId();
                     });
-            player.sendMessage(Messages.StatsLabel());
-            if (targetUuid != null) {
-                String uuid = targetUuid.toString();
-                int wins = plugin.getDatabaseManager().getWins(uuid);
-                int losses = plugin.getDatabaseManager().getLosses(uuid);
-                int rounds = plugin.getDatabaseManager().getRounds(uuid);
-                int kills = plugin.getDatabaseManager().getKills(uuid);
-                int deaths = plugin.getDatabaseManager().getDeaths(uuid);
-                double kd = plugin.getDatabaseManager().getKD(uuid);
-
-                player.sendMessage(Messages.RoundsLabel(rounds));
-                player.sendMessage(Messages.WinsLabel(wins));
-                player.sendMessage(Messages.LossesLabel(losses));
-                player.sendMessage(Messages.KillsLabel(kills));
-                player.sendMessage(Messages.DeathsLabel(deaths));
-                player.sendMessage(Messages.KDLabel(kd));
-            } else {
-                player.sendMessage(Messages.NoPlayerFound());
-            }
-            player.sendMessage(Messages.StatsLabel());
         }
+
+        if (target == null) {
+            player.sendMessage(Messages.StatsLabel());
+            player.sendMessage(Messages.NoPlayerFound());
+            player.sendMessage(Messages.StatsLabel());
+            return true;
+        }
+
+        showStats(player, target.toString());
         return true;
+    }
+
+    /** Reads the stat sheet off-thread, renders it on the player's thread. */
+    private void showStats(Player player, String uuid) {
+        Bukkit.getAsyncScheduler().runNow(plugin, task -> {
+            PlayerStats stats = PlayerStats.read(plugin.getDatabaseManager(), uuid);
+            player.getScheduler().execute(plugin, () -> {
+                player.sendMessage(Messages.StatsLabel());
+                player.sendMessage(Messages.RoundsLabel(stats.rounds()));
+                player.sendMessage(Messages.WinsLabel(stats.wins()));
+                player.sendMessage(Messages.LossesLabel(stats.losses()));
+                player.sendMessage(Messages.KillsLabel(stats.kills()));
+                player.sendMessage(Messages.DeathsLabel(stats.deaths()));
+                player.sendMessage(Messages.KDLabel(stats.kd()));
+                player.sendMessage(Messages.StatsLabel());
+            }, () -> { }, 1L);
+        });
     }
 
     @Override
@@ -100,4 +98,3 @@ public class StatsCommand implements ICommand {
         return Messages.HelpStatsUsageText();
     }
 }
-
