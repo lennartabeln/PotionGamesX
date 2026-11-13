@@ -99,11 +99,11 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 | `/pg joinsign <lobby>` | Set join sign | `pg.setup` |
 | `/pg headp1\|p2\|p3` | Set stats wall head | `pg.setup` |
 | `/pg signp1\|p2\|p3` | Set stats wall sign | `pg.setup` |
-| `/pg importarenas <lobby> [file]` | Import arenas from a legacy `arenadata.yml` | `pg.setup` |
+| `/pg importarenas <lobby> [file]` | Merge arenas from a legacy file into one lobby (on demand) | `pg.setup` |
 
 With `pg.singleLobby: true` the setup commands also accept their legacy short form without a lobby number (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg joinsign`) and always target lobby 1.
 
-**Upgrading from the legacy release:** on startup the plugin looks for an `arenadata.yml` in `plugins/PotionGamesX/` and migrates it automatically — lobbies from `pg.lobbies.<id>` are created (spawn from `coords`, settings moved into `settings.*`), a legacy single-lobby server gets its `pg.Lobby.coords`/`pg.Lobby.sign` from `config.yml` turned into lobby 1, the global `pg.arenas.<n>` are copied into every lobby that has no arena yet, and a legacy `pg.lobbySystem: false` enables `pg.singleLobby`. Nothing is ever overwritten, so the migration is safe to run repeatedly; `/pg importarenas <lobby> [file]` imports into a specific lobby on demand.
+**Upgrading from the legacy release:** on startup the plugin looks for an `arenadata.yml` in `plugins/PotionGamesX/` and migrates it automatically — lobbies from `pg.lobbies.<id>` are created (spawn from `coords`, settings moved into `settings.*`), a legacy single-lobby server gets its `pg.Lobby.coords`/`pg.Lobby.sign` from `config.yml` turned into lobby 1, the global `pg.arenas.<n>` are copied into every lobby that has no arena yet, and a legacy `pg.lobbySystem: false` enables `pg.singleLobby`. Nothing is ever overwritten, so the migration is safe to run repeatedly. You only need `/pg importarenas <lobby> [file]` for the cases the startup migration leaves alone: merging additional arenas into a lobby that already has some, importing a differently named file (e.g. a backup), importing into a specific lobby, or importing without restarting the server.
 
 ### Chest Types
 

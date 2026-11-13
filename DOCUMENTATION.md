@@ -67,7 +67,14 @@ Copy your old `plugins/PotionGames/arenadata.yml` and `config.yml` into `plugins
 | `config.yml` → `pg.lobbySystem` | `pg.singleLobby` (`false` → `true`) |
 | `lobbies.yml` root settings | `pg.lobbies.<id>.settings.*` |
 
-Nothing is overwritten and the migration is idempotent (it only logs when it did something). A single file can still be imported on demand with `/pg importarenas <lobby> [file]`.
+Nothing is overwritten and the migration is idempotent (it only logs when it did something).
+
+The normal upgrade therefore needs **no command**. `/pg importarenas <lobby> [file]` exists for the cases the startup pass deliberately skips:
+
+- merging additional arenas into a lobby that already has arenas (existing names are skipped, nothing is overwritten),
+- importing a differently named file, e.g. a backup (`arenadata-old.yml`),
+- importing into one specific lobby instead of every empty one,
+- importing without a server restart.
 
 ## 🛠️ Configuration
 
