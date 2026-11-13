@@ -50,7 +50,7 @@ public class StatusCommand implements ICommand {
             for (Lobby lobby : lobbies) {
                 String state = lobby.getState().name();
                 Component lobbyInfo = Component.text("  " + Messages.StatusLobbyLine(Integer.toString(lobby.getId()),
-                        lobby.getActivePlayers().size(), lobby.getMaxPlayers(),
+                        lobby.getActivePlayers().size(), lobby.getCapacity(),
                         lobby.getSpectatorPlayers().size()))
                     .color(NamedTextColor.GRAY)
                     .append(Component.text(" (" + state + ")").color(getStateColor(state)));
