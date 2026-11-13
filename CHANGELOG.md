@@ -47,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The compile fails on javac warnings (`failOnWarning`, i.e. `-Werror`, with `-Xlint:all`), locally and in CI
 - Unit tests for the team amount/assignment contract (`LobbyTeamTest`) and for enabling/disabling kits (`LobbyConfigTest`)
 
-### Security
+### Fixed
 
 - The update checker parses the GitHub release list with a linear scan instead of a backtracking regex (CodeQL `java/polynomial-redos`)
 - `/pg start`, `/pg pause`, `/pg build`, `/pg force` and `/pg leave` report `You are not in a lobby!` instead of doing nothing when the sender has no lobby
