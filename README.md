@@ -183,6 +183,8 @@ Architecture notes live in [DOCUMENTATION.md](DOCUMENTATION.md), the release not
 
 ## Release History
 
+Development builds are published as pre-releases (`1.0.0-dev.N`) with the changelog section of the commit; full releases use the `[version]` section of `CHANGELOG.md`.
+
 ### v1.0 — PotionGamesX (Rework)
 Complete rework of the original PotionGames, now rebuilt as PotionGamesX.
 * Full class-based OOP refactor with manager delegation

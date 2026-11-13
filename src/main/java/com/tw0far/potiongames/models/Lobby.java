@@ -1301,6 +1301,18 @@ public class Lobby {
         }
     }
 
+    /**
+     * Puts the arena world back into its pre-round state without the RESET state
+     * machine: the tracked blocks are restored and the captured gamerules are
+     * written back. Used where a round is interrupted instead of finished, i.e.
+     * {@code /pg reload} and plugin shutdown — otherwise a reload mid-round left
+     * the arena damaged and the world's time/weather/mob rules frozen.
+     */
+    public void restoreWorldState() {
+        restoreBlocks();
+        restoreGameRules();
+    }
+
     private void restoreBlocks() {
         // Restore broken blocks to their original material
         for (Map.Entry<Location, Material> entry : brokenBlocks.entrySet()) {

@@ -174,6 +174,18 @@ public class PotionGamesX extends JavaPlugin {
     public void onDisable() {
         log.info(String.format("[%s] Disabled Version %s", getPluginMeta().getName(), getPluginMeta().getVersion()));
 
+        // Put the arena worlds back (blocks + gamerules) before anything is torn
+        // down; the normal RESET never runs when the server stops mid-round.
+        if (game != null) {
+            for (Lobby lobby : game.getLobbies()) {
+                try {
+                    lobby.restoreWorldState();
+                } catch (RuntimeException ex) {
+                    log.log(Level.WARNING, "[PotionGamesX] Could not restore lobby " + lobby.getId(), ex);
+                }
+            }
+        }
+
         // Remove all players from lobbies while managers are still alive,
         // restoring inventories/locations before anything is torn down.
         for (Player player : Bukkit.getOnlinePlayers()) {
