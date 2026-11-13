@@ -12,6 +12,14 @@ import org.bukkit.potion.PotionEffect;
 import net.kyori.adventure.text.Component;
 
 public class Participant {
+
+    // Hotbar slots of the lobby items, in the legacy 7.0.1 arrangement:
+    // vote paper 0, kit selector 2, team selector 4, stats 6, leave 8.
+    private static final int SLOT_ARENA_SELECTOR = 0;
+    private static final int SLOT_KIT_SELECTOR = 2;
+    private static final int SLOT_TEAM_SELECTOR = 4;
+    private static final int SLOT_STATS = 6;
+    private static final int SLOT_LEAVE = 8;
     private Lobby lobby;
     private Kit kit;
     private Player player;
@@ -41,7 +49,7 @@ public class Participant {
                 mapMeta.displayName(Messages.ArenaSelectorItem());
                 map.setItemMeta(mapMeta);
             }
-            inv.setItem(0, map);
+            inv.setItem(SLOT_ARENA_SELECTOR, map);
         }
 
         // The kit selector is only handed out when kits are enabled.
@@ -50,26 +58,26 @@ public class Participant {
             ItemMeta kitMeta = kitItem.getItemMeta();
             kitMeta.displayName(Messages.KitSelectorItem());
             kitItem.setItemMeta(kitMeta);
-            inv.setItem(1, kitItem);
+            inv.setItem(SLOT_KIT_SELECTOR, kitItem);
         }
 
         ItemStack teamItem = new ItemStack(Material.CLOCK);
         ItemMeta teamMeta = teamItem.getItemMeta();
         teamMeta.displayName(Messages.SelectorTeamItem());
         teamItem.setItemMeta(teamMeta);
-        inv.setItem(2, teamItem);
+        inv.setItem(SLOT_TEAM_SELECTOR, teamItem);
 
         ItemStack statsItem = new ItemStack(Material.EMERALD);
         ItemMeta statsMeta = statsItem.getItemMeta();
         statsMeta.displayName(Messages.StatsItem());
         statsItem.setItemMeta(statsMeta);
-        inv.setItem(7, statsItem);
+        inv.setItem(SLOT_STATS, statsItem);
 
         ItemStack leaveItem = new ItemStack(Material.MAGMA_CREAM);
         ItemMeta leaveMeta = leaveItem.getItemMeta();
         leaveMeta.displayName(Messages.LeaveItem());
         leaveItem.setItemMeta(leaveMeta);
-        inv.setItem(8, leaveItem);
+        inv.setItem(SLOT_LEAVE, leaveItem);
     }
 
     /**
