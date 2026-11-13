@@ -7,6 +7,7 @@ import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Participant;
+import com.tw0far.potiongames.models.PlayerStats;
 import com.tw0far.potiongames.models.Settings;
 
 import net.kyori.adventure.text.Component;
@@ -594,13 +595,7 @@ public class GameItemListener implements Listener {
         // DB reads run async; the message components are built on the player's
         // thread because Messages reads the YAML config.
         org.bukkit.Bukkit.getAsyncScheduler().runNow(plugin, task -> {
-            PlayerStats stats = new PlayerStats(
-                plugin.getDatabaseManager().getWins(uuid),
-                plugin.getDatabaseManager().getLosses(uuid),
-                plugin.getDatabaseManager().getRounds(uuid),
-                plugin.getDatabaseManager().getKills(uuid),
-                plugin.getDatabaseManager().getDeaths(uuid),
-                plugin.getDatabaseManager().getKD(uuid));
+            PlayerStats stats = PlayerStats.read(plugin.getDatabaseManager(), uuid);
 
             p.getScheduler().execute(plugin, () -> {
                 List<Component> lines = new ArrayList<>();
@@ -615,10 +610,6 @@ public class GameItemListener implements Listener {
                 lines.forEach(p::sendMessage);
             }, () -> { }, 1L);
         });
-    }
-
-    /** Snapshot of the stat sheet, moved from the async thread to the player thread. */
-    private record PlayerStats(int wins, int losses, int rounds, int kills, int deaths, double kd) {
     }
 
     // ===== Loot filling =====
