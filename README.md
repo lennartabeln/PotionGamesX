@@ -31,7 +31,7 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 ## Requirements
 
 - **Java 25+**
-- **Paper 26+**
+- **Paper 26.3+**
 - **Multiverse-Core** (soft dependency)
 - **Vault** (optional, for economy rewards)
 
@@ -105,7 +105,9 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 * **End Portal Frame**: Normal chest with probability-weighted loot (food, armour, weapons)
 * **Target**: Special chest with Flame Bow and Arrows
 * **Netherite Block**: Special chest with Netherite Ingots (Smithing Table upgrades diamond → netherite)
-* **Composter**: Potion shop (build a beacon under it to show on the map)
+* **Composter**: Potion shop (right-click during a round; prices are in coins and one glass bottle)
+
+Additional chest types and their loot can be defined in `chests.yml` (`pg.customchests.<id>` with `activate`, `chesttype`, `chestsize` and numbered slots).
 
 ### Signs
 
@@ -137,14 +139,39 @@ Settings use a lobby-first model:
 - `pg.lobbies.<id>.settings.*` stores per-lobby overrides
 - Falls back to defaults if per-lobby setting is missing
 
+Feature defaults (`pg.defaults.*`, overridable per lobby):
+| Setting | Effect |
+|---------|--------|
+| `countdown` | Seconds between reaching `minPlayers` and the round start |
+| `roundTime` | Round length in minutes (values above 300 are read as seconds) |
+| `maxPlayers` / `minPlayers` / `teamSize` | Capacity, start threshold and team size; the team count is `maxPlayers / teamSize` |
+| `activateTeams` / `activateKits` / `activateShop` / `activateAirdrops` | Feature toggles per lobby |
+
 Notable global toggles (`config.yml`):
 | Setting | Effect |
 |---------|--------|
-| `joinStarted` | Late joiners spectate a running round instead of being rejected |
-| `broadcastStarting` | Broadcast a server-wide message when a lobby countdown starts |
-| `compassOnSpawn` | Give everyone the player-finder compass at round start |
-| `changeGamerules` | Freeze daylight/weather in the arena world during rounds |
-| `allowOutsideChat` | Players outside lobbies can see lobby chat |
+| `pg.gameServer` | Dedicated game server: players are sent to `pg.bungeeServer` after a round |
+| `pg.language` | Locale used by `messages.yml` (`en_US`, `de_DE`) |
+| `pg.joinStarted` | Late joiners spectate a running round instead of being rejected |
+| `pg.startOnJoin` | Auto-join the first open lobby on connect |
+| `pg.activateDeathmatch` | Switch a close round to the deathmatch arena |
+| `pg.activateScoreboard` | Per-player sidebar with map, team, kit, time and kills |
+| `pg.friendlyFire` | Allow teammates to damage each other outside `DEATHMATCH` |
+| `pg.broadcastStarting` | Broadcast a server-wide message when a lobby countdown starts |
+| `pg.compassOnSpawn` | Give everyone the player-finder compass at round start |
+| `pg.changeGamerules` | Freeze time, weather, fire spread, mob griefing and mob spawning in the arena world during rounds |
+| `pg.allowOutsideChat` | Players outside lobbies can see lobby chat |
+
+## Development
+
+```bash
+mvn clean install    # build + run the JUnit 5 tests
+mvn test             # tests only
+```
+
+The build is warning-free and stays that way: `maven-compiler-plugin` runs `-Xlint:all` and fails on any javac warning (`failOnWarning`, i.e. `-Werror`), locally and in CI. The resulting `target/PotionGamesX-<version>.jar` is a Paper plugin — copy it into your server's `plugins/` folder; it cannot be executed with `java -jar`.
+
+Architecture notes live in [DOCUMENTATION.md](DOCUMENTATION.md), the release notes in [CHANGELOG.md](CHANGELOG.md).
 
 ## Release History
 

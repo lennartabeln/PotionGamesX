@@ -1,15 +1,16 @@
 ## Essential Commands
 - `mvn clean install` to build the project (required before any tests or execution)
 - `mvn test` to run tests (Maven Surefire, JUnit 5)
-- `java -jar target/PotionGamesX-*.jar` to launch the game (found in target directory)
+- `mvn clean package` produces `target/PotionGamesX-<version>.jar`; it is a **Paper plugin** (copy it into `plugins/` of a Paper server), not a standalone executable
 
 ## Build/Execution Workflow
 - Maven-based project: always run `mvn clean` before `mvn install` to purge build artifacts
 - Tests in `src/test` are JUnit 5 unit tests (pure JVM, no Bukkit server needed)
-- Game executable path is `target/PotionGamesX-*.jar` (version matches pom.xml)
+- Plugin JAR path is `target/PotionGamesX-*.jar` (version matches pom.xml); `java -jar` does not work for a Bukkit plugin
 
 ## Important Rules
 - NEVER commit changes unless explicitly asked. Stage with `git add` and wait for user confirmation before committing.
+- The compile fails on javac warnings (`maven-compiler-plugin` `failOnWarning` = `-Werror` with `-Xlint:all`). Fix warnings instead of suppressing them; a justified `@SuppressWarnings` needs a comment.
 
 ## Repo-Specific Quirks
 - Plugin configuration in `src/main/resources/plugin.yml` requires `mvn package` to generate JAR
@@ -17,7 +18,7 @@
 - No official documentation for deployment; infrastructure flow inferred from `target/classes/config.yml`
 
 ## Critical Paths
-- Development: `mvn compile` -> `mvn test` -> `java -jar target/PotionGamesX-*.jar`
+- Development: `mvn compile` -> `mvn test` -> `mvn package` (JAR for the server's `plugins/` folder)
 - Testing: Skip `mvn package` if only running unit tests
 - Failure Handling: `mvn clean` always resolves transient build errors
 
@@ -30,6 +31,20 @@
   1. Rename `## [Unreleased]` to `## [version] - YYYY-MM-DD`
   2. Add a fresh `## [Unreleased]` section at the top for future development
   3. Set pom.xml version to the release version (remove `-dev.X` suffix)
+
+## Current State (2026-11-13)
+
+Bug-fix wave against legacy 7.0.1: every audit finding is fixed, documented in `CHANGELOG.md` and merged. Invariants that must not regress:
+
+- **Round time** is stored in **seconds**; `LobbyConfig.normalizeRoundTime` is the only minutes→seconds conversion.
+- **Team count** = `maxPlayers / teamSize` (min. 2). `Lobby#assignTeam` keeps the lobby counters and the `ArenaStateManager` selector counters in sync; `clearTeams()`/`distributeTeams()` re-seed the selector, otherwise the GUI is empty after round 1.
+- **Spawns/blocks**: `Lobby` tracks placed/broken/liquid blocks; `Lobby#isGameWorld` (hub + arenas) and `Game#isRoundWorld` (arena of a running round) scope world-level guards.
+- **Lobby lifecycle**: `RESET` only touches its own lobby and returns its players to the hub; an emptied lobby ends a running round through `ENDING`, drops the pause flag and keeps exactly one tick task (`startTick()` is guarded).
+- **Spectators**: `Lobby#addSpectatorPlayer` keeps the player at the death location, `removeSpectatorPlayer` restores gamemode/inventory/effects/collision/scoreboard.
+- **Round start**: `Participant#startRound()` (survival, clean inventory, offhand cleared); `Lobby#giveRichKidCoins()` for the Rich Kid kit.
+- **Shop**: purchases need coins plus one `GLASS_BOTTLE`; both come from the `shop` loot pool while `activateShop` is on.
+- **Stats**: `DatabaseManager` is the only DB access, all APIs take UUID strings, counters increment in SQL, `Stats.UUID` is unique.
+- **Messages**: all player-facing text lives in `messages.yml` (`en_US` + `de_DE`, key parity enforced by `MessagesYamlTest`) behind typed `Messages` accessors.
 
 ## Session Summary (2026-06-11)
 
