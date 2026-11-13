@@ -6,7 +6,7 @@
 
     <groupId>com.tw0far.potiongames</groupId>
     <artifactId>PotionGamesX</artifactId>
-    <version>1.0.0-dev.17</version>
+    <version>1.0.0-dev.18</version>
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>
