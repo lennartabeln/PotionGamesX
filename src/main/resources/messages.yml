@@ -1,9 +1,6 @@
 # Default localized messages for PotionGames
 en_US:
   messages:
-    admin:
-      please_inform: "Please inform an admin!"
-      prefix: "[PG-Admin]"
     airdrop:
       falling_at: "Airdrop is falling at"
       falling_here: "Airdrop is falling at your location!"
@@ -20,11 +17,7 @@ en_US:
       selected: "Arena %s selected!"
     build:
       toggle: "Build"
-      label: "Build"
     command:
-      list_header: "═════════ PotionGames Commands ═════════"
-      list_footer: "═════════════════════════════════════════"
-      not_game_server: "This is not a game server!"
       execution_error: "An error occurred while executing this command!"
       unknown: "Unknown command! Use /pg help for help."
       player_only: "This command can only be used by players!"
@@ -49,6 +42,10 @@ en_US:
       broadcast_usage: "Usage: /pg broadcast <message>"
       broadcast_sent: "Broadcast sent to all players"
       invalid_lobby_id: "Invalid lobby ID. Must be a number."
+      no_permission: "You don't have permission to use this command!"
+      reloading: "Starting plugin reload... this may take a moment."
+      reload_failed: "Plugin reload failed! Check console for details."
+      reload_error: "Unexpected error during reload!"
     coin:
       single: "Coin"
     coins:
@@ -58,21 +55,13 @@ en_US:
     config:
       header: "PotionGamesX Configuration"
     database:
-      closed: "Connection to database closed!"
-      close_failed: "Failed to close connection to database! For more information see console."
-      connect_failed: "Connection to database failed! For more information see console."
-      connected: "Connection to database established!"
       not_connected: "Statistics database is not connected. Check the database settings and the console."
       connection_failed: "connection failed!"
       mode_changed: "Database mode switched to %s (%s)"
       mode_broadcast: "%s switched database mode to %s!"
-    dead:
-      label: "Dead"
     deathmatch:
       started: "Deathmatch started!"
       starting_in: "Deathmatch is starting in"
-      teleport_in: "Teleporting to deathmatch arena in"
-      teleport_now: "Teleporting to deathmatch arena now!"
     deaths:
       label: "Deaths"
     duration:
@@ -85,7 +74,6 @@ en_US:
       already_started: "The game has already started!"
       started: "The game has been started!"
       starts_in: "The game starts in"
-      starts_now: "The game starts now!"
       waiting: "Waiting for players! [%d/%d]"
       not_enough_players: "Not enough players to start the game!"
     gameserver:
@@ -94,7 +82,6 @@ en_US:
       enabled: "enabled"
       disabled: "disabled"
     head:
-      set: "Head successfully set!"
       look_block_1: "Look at a block to set the 1st place head."
       look_block_2: "Look at a block to set the 2nd place head."
       look_block_3: "Look at a block to set the 3rd place head."
@@ -165,7 +152,6 @@ en_US:
       success: "%s has been kicked from lobby %s!"
       notice: "You have been kicked from the lobby by an admin!"
     join:
-      could_not_join_lobby: "Could not join lobby!"
       already_in_lobby: "You are already in a lobby!"
       success: "Successfully joined lobby"
     list:
@@ -195,14 +181,10 @@ en_US:
     lobby:
       added: "Lobby %d added successfully."
       added_failed: "Failed to add lobby %d."
-      could_not_spawn: "could not be teleported to a spawn!"
-      could_not_teleport: "could not be teleported to the lobby!"
-      disabled: "Lobby disabled!"
       does_not_exist: "This lobby does not exist!"
       invalid_id: "Invalid lobby ID. Must be a positive number."
       already_exists: "Lobby %d already exists!"
       full: "This lobby is full!"
-      enabled: "Lobby enabled!"
       removed: "Lobby %d removed successfully."
       removed_failed: "Failed to remove lobby %d."
       removed_success: "Lobby successfully removed!"
@@ -212,7 +194,7 @@ en_US:
       selected: "Lobby %d selected!"
       invalid_selection: "Invalid lobby selection!"
     setup:
-      incomplete: "Lobby setup is incomplete: add at least one arena with one spawn before enabling the lobby."
+      select_lobby_first: "Please select a lobby first!"
       not_a_sign: "That is not a sign!"
       no_block_in_range: "No block in range to set as join sign."
       no_spawns: "No spawns are configured for that arena."
@@ -233,8 +215,6 @@ en_US:
     no_player_found: "No player found!"
     pause:
       toggle: "Pause"
-    place:
-      label: "Place"
     player:
       finder: "Player-Finder"
       finder_distance: "Blocks away from next player"
@@ -250,8 +230,6 @@ en_US:
       label: "Random"
     rankwall:
       could_not_update: "Could not update Rank-Wall!"
-    reward:
-      label: "Reward"
     round:
       nobody_won: "Nobody won this round!"
       seconds_remaining: "seconds remaining to end this round!"
@@ -264,10 +242,8 @@ en_US:
       team: "Team-Selector"
     server:
       stopped: "Server stopped!"
-      reload_rejoining: "Server reload - rejoining now"
     shop:
       label: "Shop"
-      cost: "Cost: %s"
     sign:
       set: "Sign successfully set!"
       prefix: "[PG]"
@@ -286,7 +262,6 @@ en_US:
       added: "Spawn %d added successfully. (Arena: %s, Lobby: %d)"
       removed: "Spawn %d removed successfully. (Arena: %s, Lobby: %d)"
       none_to_remove: "No spawns to remove!"
-      invalid: "is not a valid spawn!"
     stats:
       label: "Stats"
     status:
@@ -308,14 +283,9 @@ en_US:
       already_full: "This team is already full!"
       now_in: "You are now in team"
     teleport:
-      to_arena_failed: "Could not teleport to arena!"
-      to_dm_failed: "Could not teleport to deathmatch arena!"
       to_lobby_in: "Teleporting to lobby in"
-      to_lobby_now: "Teleporting to lobby now!"
     time:
       label: "Time"
-    tnt:
-      extremely_explosive: "Extremely explosive TNT"
     top:
       header: "Top 10 Players by %s"
       usage: "Use /pg top [kills|deaths|wins|kd]"
@@ -326,9 +296,6 @@ en_US:
       kd: "K/D Ratio"
     type:
       arena_name_add: "Type arena name in chat to add it!"
-      arena_name_remove: "Type arena name in chat to remove it!"
-      lobby_number_add: "Type lobby number in chat to add it!"
-      lobby_number_remove: "Type lobby number in chat to remove it!"
     bucket:
       water_not_allowed: "Water buckets are not allowed during games!"
       fill_not_allowed: "You cannot fill buckets during a game!"
@@ -338,7 +305,6 @@ en_US:
       not_available: "There is not a new update available."
     vote:
       label: "Votes"
-      you_have_voted_for: "You have voted for"
     will_be_played: "will be played!"
     winner:
       has_won_the_game: "has won the game!"
@@ -347,16 +313,12 @@ en_US:
       reward: "For winning the round you get"
     you:
       block_above: "You have a block above you!"
-      in_spectator_mode: "in spectator mode"
       not_empty_bottle: "You don't have an empty bottle!"
       not_enough_coins: "You don't have enough coins!"
     died: "died"
 
 de_DE:
   messages:
-    admin:
-      please_inform: "Bitte informiere einen Admin!"
-      prefix: "[PG-Admin]"
     airdrop:
       falling_at: "Airdrop fällt bei"
       falling_here: "Airdrop fällt an deinem Standort!"
@@ -373,11 +335,7 @@ de_DE:
       selected: "Arena %s ausgewählt!"
     build:
       toggle: "Bauen"
-      label: "Bauen"
     command:
-      list_header: "═════════ PotionGames Befehle ═════════"
-      list_footer: "═══════════════════════════════════════"
-      not_game_server: "Dies ist kein Spielserver!"
       execution_error: "Beim Ausführen dieses Befehls ist ein Fehler aufgetreten!"
       unknown: "Unbekannter Befehl! Benutze /pg help für Hilfe."
       player_only: "Dieser Befehl kann nur von Spielern verwendet werden!"
@@ -402,6 +360,10 @@ de_DE:
       broadcast_usage: "Verwendung: /pg broadcast <nachricht>"
       broadcast_sent: "Broadcast an alle Spieler gesendet"
       invalid_lobby_id: "Ungültige Lobby-ID. Muss eine Zahl sein."
+      no_permission: "Du hast keine Berechtigung für diesen Befehl!"
+      reloading: "Plugin-Reload gestartet... das kann einen Moment dauern."
+      reload_failed: "Plugin-Reload fehlgeschlagen! Details in der Konsole."
+      reload_error: "Unerwarteter Fehler beim Reload!"
     coin:
       single: "Münze"
     coins:
@@ -411,21 +373,13 @@ de_DE:
     config:
       header: "PotionGamesX Konfiguration"
     database:
-      closed: "Verbindung zur Datenbank geschlossen!"
-      close_failed: "Schließen der Datenbankverbindung fehlgeschlagen! Weitere Informationen in der Konsole."
-      connect_failed: "Verbindung zur Datenbank fehlgeschlagen! Weitere Informationen in der Konsole."
-      connected: "Verbindung zur Datenbank hergestellt!"
       not_connected: "Die Statistik-Datenbank ist nicht verbunden. Prüfe die Datenbank-Einstellungen und die Konsole."
       connection_failed: "Verbindung fehlgeschlagen!"
       mode_changed: "Datenbankmodus umgeschaltet auf %s (%s)"
       mode_broadcast: "%s hat den Datenbankmodus auf %s umgeschaltet!"
-    dead:
-      label: "Tot"
     deathmatch:
       started: "Deathmatch gestartet!"
       starting_in: "Deathmatch startet in"
-      teleport_in: "Teleportiere zur Deathmatch-Arena in"
-      teleport_now: "Teleportiere jetzt zur Deathmatch-Arena!"
     deaths:
       label: "Tode"
     duration:
@@ -438,7 +392,6 @@ de_DE:
       already_started: "Das Spiel hat bereits begonnen!"
       started: "Das Spiel wurde gestartet!"
       starts_in: "Das Spiel startet in"
-      starts_now: "Das Spiel startet jetzt!"
       waiting: "Warte auf Spieler! [%d/%d]"
       not_enough_players: "Nicht genug Spieler, um das Spiel zu starten!"
     gameserver:
@@ -447,7 +400,6 @@ de_DE:
       enabled: "aktiviert"
       disabled: "deaktiviert"
     head:
-      set: "Kopf erfolgreich gesetzt!"
       look_block_1: "Schau auf einen Block, um den Kopf für den 1. Platz zu setzen."
       look_block_2: "Schau auf einen Block, um den Kopf für den 2. Platz zu setzen."
       look_block_3: "Schau auf einen Block, um den Kopf für den 3. Platz zu setzen."
@@ -518,7 +470,6 @@ de_DE:
       success: "%s wurde aus Lobby %s gekickt!"
       notice: "Du wurdest von einem Admin aus der Lobby gekickt!"
     join:
-      could_not_join_lobby: "Konnte der Lobby nicht beitreten!"
       already_in_lobby: "Du bist bereits in einer Lobby!"
       success: "Erfolgreich der Lobby beigetreten"
     list:
@@ -548,14 +499,10 @@ de_DE:
     lobby:
       added: "Lobby %d erfolgreich hinzugefügt."
       added_failed: "Lobby %d konnte nicht hinzugefügt werden."
-      could_not_spawn: "konnte nicht zu einem Spawn teleportiert werden!"
-      could_not_teleport: "konnte nicht in die Lobby teleportiert werden!"
-      disabled: "Lobby deaktiviert!"
       does_not_exist: "Diese Lobby existiert nicht!"
       invalid_id: "Ungültige Lobby-ID. Muss eine positive Zahl sein."
       already_exists: "Lobby %d existiert bereits!"
       full: "Diese Lobby ist voll!"
-      enabled: "Lobby aktiviert!"
       removed: "Lobby %d erfolgreich entfernt."
       removed_failed: "Lobby %d konnte nicht entfernt werden."
       removed_success: "Lobby erfolgreich entfernt!"
@@ -565,7 +512,7 @@ de_DE:
       selected: "Lobby %d ausgewählt!"
       invalid_selection: "Ungültige Lobbyauswahl!"
     setup:
-      incomplete: "Das Lobby-Setup ist unvollständig: Füge mindestens eine Arena mit einem Spawn hinzu, bevor du die Lobby aktivierst."
+      select_lobby_first: "Bitte wähle zuerst eine Lobby aus!"
       not_a_sign: "Das ist kein Schild!"
       no_block_in_range: "Kein Block in Reichweite, um ihn als Beitrittsschild zu setzen."
       no_spawns: "Für diese Arena sind keine Spawns konfiguriert."
@@ -586,8 +533,6 @@ de_DE:
     no_player_found: "Kein Spieler gefunden!"
     pause:
       toggle: "Pause"
-    place:
-      label: "Platz"
     player:
       finder: "Spieler-Finder"
       finder_distance: "Blöcke bis zum nächsten Spieler"
@@ -603,8 +548,6 @@ de_DE:
       label: "Zufällig"
     rankwall:
       could_not_update: "Rangwand konnte nicht aktualisiert werden!"
-    reward:
-      label: "Belohnung"
     round:
       nobody_won: "Niemand hat diese Runde gewonnen!"
       seconds_remaining: "Sekunden verbleiben bis zum Ende dieser Runde!"
@@ -617,10 +560,8 @@ de_DE:
       team: "Team-Auswahl"
     server:
       stopped: "Server gestoppt!"
-      reload_rejoining: "Server-Neustart - verbinde erneut"
     shop:
       label: "Shop"
-      cost: "Kosten: %s"
     sign:
       set: "Schild erfolgreich gesetzt!"
       prefix: "[PG]"
@@ -639,7 +580,6 @@ de_DE:
       added: "Spawn %d erfolgreich hinzugefügt. (Arena: %s, Lobby: %d)"
       removed: "Spawn %d erfolgreich entfernt. (Arena: %s, Lobby: %d)"
       none_to_remove: "Keine Spawns zum Entfernen!"
-      invalid: "ist kein gültiger Spawn!"
     stats:
       label: "Statistiken"
     status:
@@ -661,14 +601,9 @@ de_DE:
       already_full: "Dieses Team ist bereits voll!"
       now_in: "Du bist jetzt im Team"
     teleport:
-      to_arena_failed: "Konnte nicht zur Arena teleportieren!"
-      to_dm_failed: "Konnte nicht zur Deathmatch-Arena teleportieren!"
       to_lobby_in: "Teleportiere in die Lobby in"
-      to_lobby_now: "Teleportiere jetzt in die Lobby!"
     time:
       label: "Zeit"
-    tnt:
-      extremely_explosive: "Extrem explosives TNT"
     top:
       header: "Top 10 Spieler nach %s"
       usage: "Nutze /pg top [kills|deaths|wins|kd]"
@@ -679,9 +614,6 @@ de_DE:
       kd: "K/D-Verhältnis"
     type:
       arena_name_add: "Gib den Arenanamen im Chat ein, um ihn hinzuzufügen!"
-      arena_name_remove: "Gib den Arenanamen im Chat ein, um ihn zu entfernen!"
-      lobby_number_add: "Gib die Lobbynummer im Chat ein, um sie hinzuzufügen!"
-      lobby_number_remove: "Gib die Lobbynummer im Chat ein, um sie zu entfernen!"
     bucket:
       water_not_allowed: "Wassereimer sind während des Spiels nicht erlaubt!"
       fill_not_allowed: "Du kannst während eines Spiels keine Eimer füllen!"
@@ -691,7 +623,6 @@ de_DE:
       not_available: "Es ist kein neues Update verfügbar."
     vote:
       label: "Stimmen"
-      you_have_voted_for: "Du hast abgestimmt für"
     will_be_played: "wird gespielt!"
     winner:
       has_won_the_game: "hat das Spiel gewonnen!"
@@ -700,7 +631,6 @@ de_DE:
       reward: "Für den Sieg in dieser Runde erhältst du"
     you:
       block_above: "Über dir befindet sich ein Block!"
-      in_spectator_mode: "im Zuschauermodus"
       not_empty_bottle: "Du hast keine leere Flasche!"
       not_enough_coins: "Du hast nicht genug Münzen!"
     died: "gestorben"

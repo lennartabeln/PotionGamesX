@@ -121,7 +121,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
 
         // Check permission
         if (command.getPermission() != null && !sender.hasPermission(command.getPermission())) {
-            sender.sendMessage(createError("You don't have permission to use this command!"));
+            sender.sendMessage(createError(Messages.NoPermissionText()));
             return true;
         }
 

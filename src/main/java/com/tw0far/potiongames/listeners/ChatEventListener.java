@@ -146,7 +146,7 @@ public class ChatEventListener implements Listener {
                     plugin.getSetupHandler().addArena(p, input, selectedLobby);
                     state.clearInputMode(p);
                 } else {
-                    p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
+                    p.sendMessage(Component.text(Messages.SelectLobbyFirstText()).color(NamedTextColor.RED));
                 }
             }
             case DEL_ARENA -> {
@@ -155,7 +155,7 @@ public class ChatEventListener implements Listener {
                     plugin.getSetupHandler().removeArena(p, input, selectedLobby);
                     state.clearInputMode(p);
                 } else {
-                    p.sendMessage(Component.text("Please select a lobby first!").color(NamedTextColor.RED));
+                    p.sendMessage(Component.text(Messages.SelectLobbyFirstText()).color(NamedTextColor.RED));
                 }
             }
         }

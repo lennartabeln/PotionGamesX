@@ -909,6 +909,12 @@ public class Messages {
     public static String SignSet3Text() { return get("sign.set_3", "3rd place sign set."); }
 
     // Command output that used to be hardcoded in the command classes.
+    public static String NoPermissionText() { return get("command.no_permission", "You don't have permission to use this command!"); }
+    public static String ReloadingText() { return get("command.reloading", "Starting plugin reload... this may take a moment."); }
+    public static String ReloadFailedText() { return get("command.reload_failed", "Plugin reload failed! Check console for details."); }
+    public static String ReloadErrorText() { return get("command.reload_error", "Unexpected error during reload!"); }
+    public static String PluginReloadedText() { return get("plugin.reloaded", "Plugin successfully reloaded!"); }
+    public static String SelectLobbyFirstText() { return get("setup.select_lobby_first", "Please select a lobby first!"); }
     public static String BroadcastUsageText() { return get("command.broadcast_usage", "Usage: /pg broadcast <message>"); }
     public static String BroadcastSentText() { return get("command.broadcast_sent", "Broadcast sent to all players"); }
     public static String InvalidLobbyIdText() { return get("command.invalid_lobby_id", "Invalid lobby ID. Must be a number."); }
