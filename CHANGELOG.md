@@ -49,6 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- MOTD and slot count stay untouched when game server mode is off (`pg.gameServer: false`), matching legacy 7.0.1; the plugin only owns the server-list entry on a dedicated game server
+- `/pg config` prints booleans as `true`/`false` instead of a mix of `ONLINE`/`OFFLINE` and `✓`/`✗`
 - Team selector: `Random` spread players over every free team instead of always landing in the team that already had a player (candidates came from the sparse per-team count map, so empty teams were invisible)
 - Sidebar rendered the internal entry keys (`pg-label-map`, ...) instead of the configured labels; each field is now one line (`Map: Voting`), and the round timer shows `m:ss`
 - `/pg broadcast` used a hardcoded gold `[PotionGamesX]` prefix instead of the purple/gold plugin prefix; its usage/confirmation and the remaining hardcoded command output (`/pg top`, `/pg config`, `/pg gameserver`, setup chat) are localized now
