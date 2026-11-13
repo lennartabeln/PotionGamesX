@@ -100,8 +100,9 @@ public class DeathEventListener implements Listener {
             }
         }
 
-        // Move player from active to spectator
-        plugin.getGame().removePlayerLobby(p);
+        // Move player from active to spectator, but stay at the death location:
+        // the pre-join state is restored only once spectating ends.
+        int roundPlayers = lobby.getPlayerCount();
         plugin.getGame().setSpectatorLobby(p, lobbyId);
 
         // Set spectator mode
@@ -117,10 +118,10 @@ public class DeathEventListener implements Listener {
         int aliveCount = lobby.getActivePlayers().size();
         String verb = killer != null ? Messages.KilledByText() : Messages.DiedText();
         for (Player all : plugin.getGame().getPlayersInLobby(lobbyId)) {
-            all.sendMessage(buildDeathMessage(p, killer, verb, aliveCount, lobby.getPlayerCount()));
+            all.sendMessage(buildDeathMessage(p, killer, verb, aliveCount, roundPlayers));
         }
         for (Player all : plugin.getGame().getSpectatorsInLobby(lobbyId)) {
-            all.sendMessage(buildDeathMessage(p, killer, verb, aliveCount, lobby.getPlayerCount()));
+            all.sendMessage(buildDeathMessage(p, killer, verb, aliveCount, roundPlayers));
         }
         e.deathMessage(null);
 

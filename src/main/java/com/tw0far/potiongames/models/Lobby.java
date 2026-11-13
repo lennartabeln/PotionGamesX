@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
@@ -84,6 +85,13 @@ public class Lobby {
     private Boolean prevWeather = null;
 
     // Per-lobby chests
+    /**
+     * Pre-join state of every spectator, restored when spectating ends. Dying
+     * players keep the snapshot of their participant, late joiners get one on
+     * the fly.
+     */
+    private final HashMap<UUID, PlayerState> spectatorStates = new HashMap<>();
+
     private HashMap<Location, ItemStack[]> chests = new HashMap<>();
 
     // Per-lobby block tracking (for restoring the arena at RESET)
@@ -281,9 +289,13 @@ public class Lobby {
                 plugin.getScoreboardManager().hide(part.getPlayer());
             }
         }
+        for (Player spectator : new ArrayList<>(spectatorPlayers)) {
+            removeSpectatorPlayer(spectator);
+        }
         participants.clear();
         activePlayers.clear();
         spectatorPlayers.clear();
+        spectatorStates.clear();
         playerKills.clear();
         playerDeaths.clear();
         setPlayerCount(0);
@@ -322,22 +334,57 @@ public class Lobby {
         removeParticipant(player);
     }
 
+    /**
+     * Turn an active player into a spectator without moving them, so a killed
+     * player stays at the death location instead of being teleported back to
+     * their pre-join location. The pre-join state is kept for
+     * {@link #removeSpectatorPlayer(Player)}.
+     */
     public void addSpectatorPlayer(Player player) {
         if (player == null) {
             return;
+        }
+        Participant participant = getParticipant(player);
+        if (participant != null) {
+            participants.remove(participant);
+            PlayerState state = participant.takeSavedState();
+            if (state != null) {
+                spectatorStates.put(player.getUniqueId(), state);
+            }
+            setPlayerCount(Math.max(0, playerCount - 1));
         }
         activePlayers.remove(player);
         if (!spectatorPlayers.contains(player)) {
             spectatorPlayers.add(player);
         }
-        removeParticipant(player);
     }
 
+    /**
+     * Stops spectating and restores the pre-join state: gamemode, inventory,
+     * location, potion effects and the server scoreboard. Also clears the
+     * spectator-only flags applied by the death and spectator listeners.
+     */
     public void removeSpectatorPlayer(Player player) {
         if (player == null) {
             return;
         }
-        spectatorPlayers.remove(player);
+        boolean wasSpectator = spectatorPlayers.remove(player);
+        PlayerState state = spectatorStates.remove(player.getUniqueId());
+        if (state != null) {
+            state.restore(player);
+        } else if (wasSpectator && player.getGameMode() == GameMode.SPECTATOR) {
+            player.setGameMode(GameMode.SURVIVAL);
+        }
+        if (!wasSpectator && state == null) {
+            return;
+        }
+        player.setCanPickupItems(true);
+        player.setCollidable(true);
+        player.setFireTicks(0);
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (plugin != null && plugin.getScoreboardManager() != null) {
+            plugin.getScoreboardManager().hide(player);
+        }
     }
 
     public boolean isActivePlayer(Player player) {
@@ -400,8 +447,10 @@ public class Lobby {
         if (p == null) {
             return;
         }
-        removeActivePlayer(p);
-        spectatorPlayers.add(p);
+        if (!isActivePlayer(p) && !spectatorStates.containsKey(p.getUniqueId())) {
+            spectatorStates.put(p.getUniqueId(), new PlayerState(p));
+        }
+        addSpectatorPlayer(p);
         p.setGameMode(GameMode.SPECTATOR);
         Location target = null;
         if (currentArena != null) {
@@ -419,8 +468,11 @@ public class Lobby {
     }
 
     public void leave(Player p) {
+        if (p == null) {
+            return;
+        }
         activePlayers.remove(p);
-        spectatorPlayers.remove(p);
+        removeSpectatorPlayer(p);
         removeParticipant(p);
     }
 
