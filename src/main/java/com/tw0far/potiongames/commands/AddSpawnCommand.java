@@ -2,8 +2,8 @@ package com.tw0far.potiongames.commands;
 
 import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.PotionGamesX;
-import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.util.SetupArguments;
 import org.bukkit.entity.Player;
 
 /**
@@ -34,26 +34,22 @@ public class AddSpawnCommand implements ICommand {
             sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
-        // Multi-lobby system: /pg addspawn <lobbynumber> <arenaname>
-        if (args.length < 3) {
+        // Long form: /pg addspawn <lobbynumber> <arenaname>; with pg.singleLobby the
+        // legacy short form /pg addspawn <arenaname> targets lobby 1.
+        SetupArguments.LobbyArguments parsed =
+                SetupArguments.parse(plugin.getConfigManager().isSingleLobby(), args);
+        if (parsed == null) {
             player.sendMessage(Messages.CommandAddspawnUsageText());
             return false;
         }
-
-        try {
-            int lobbyId = Integer.parseInt(args[1]);
-            String arenaName = args[2];
-            Lobby lobby = plugin.getGame().getLobby(lobbyId);
-            if (lobby == null) {
-                player.sendMessage(Messages.LobbyDoesNotExist());
-                return false;
-            }
-            plugin.getSetupHandler().addSpawn(player, arenaName, lobbyId);
-            return true;
-        } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.CommandAddspawnUsageText());
+        int lobbyId = parsed.lobbyId();
+        String arenaName = args[parsed.valueIndex()];
+        if (plugin.getGame().getLobby(lobbyId) == null) {
+            player.sendMessage(Messages.LobbyDoesNotExist());
             return false;
         }
+        plugin.getSetupHandler().addSpawn(player, arenaName, lobbyId);
+        return true;
     }
 
     @Override

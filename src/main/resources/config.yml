@@ -17,6 +17,11 @@ pg:
   gameServer: false
   language: en_US
 
+  # Single-lobby compatibility mode (legacy behaviour): the setup commands accept
+  # their short form without a lobby number and always target lobby 1
+  # (/pg addarena <arena> instead of /pg addarena <lobby> <arena>).
+  singleLobby: false
+
   # BungeeCord / Proxy network support
   # When game ends, players are sent back to this server
   bungeeServer: hub
@@ -78,5 +83,6 @@ pg:
 
   # Content limits
   activeKits: 6                # Number of player kits
+  activePotions: 0             # Shop entries shown and buyable (0 = all entries of shop.yml)
 
   # ═══════════════════════════════════════════════════════

@@ -26,7 +26,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
     /** Subcommands that also work from the server console. */
     private static final Set<String> CONSOLE_ALLOWED = Set.of(
         "reload", "status", "top", "broadcast", "version", "database", "gameserver", "config",
-        "help", "kick");
+        "help", "kick", "importarenas");
 
     /** Legacy aliases that map onto an existing subcommand. */
     private static final Map<String, String> ALIASES = Map.of(
@@ -71,6 +71,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
         registerCommand(new AddDeathmatchCommand(plugin));
         registerCommand(new DelDeathmatchCommand(plugin));
         registerCommand(new JoinSignCommand(plugin));
+        registerCommand(new ImportArenasCommand(plugin));
         registerCommand(new StatsWallCommand(plugin, true, 1));
         registerCommand(new StatsWallCommand(plugin, true, 2));
         registerCommand(new StatsWallCommand(plugin, true, 3));

@@ -41,6 +41,9 @@ public final class BootstrapInitializer {
 
         Settings.loadConfigurations();
         Settings.loadSettings(plugin);
+        // Fill in what a legacy arenadata.yml / old lobbies.yml still holds, so
+        // the lobbies loaded right below already contain the imported data.
+        new LegacyConfigMigrator(plugin).migrate();
         plugin.getGame().load();
 
         Messages.seed();

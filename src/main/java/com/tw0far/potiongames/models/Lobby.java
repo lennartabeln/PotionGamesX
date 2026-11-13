@@ -1695,6 +1695,11 @@ public class Lobby {
 
     // =====
 
+    /** True when the lobby has more than one arena, i.e. arena voting is useful. */
+    public boolean hasArenaChoice() {
+        return arenas.size() > 1;
+    }
+
     /**
      * Get all arenas in this lobby.
      *
