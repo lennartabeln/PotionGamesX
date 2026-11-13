@@ -9,6 +9,7 @@ import com.tw0far.potiongames.models.Participant;
 import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Criteria;
@@ -19,49 +20,50 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
 /**
  * Builds and maintains the per-player sidebar scoreboard.
  *
- * <p>The layout follows the legacy release: while a lobby waits it shows the
- * arena, team, kit and player count; during a round it shows the remaining
- * time and the player's kills. Values live in team prefixes so other
- * listeners can keep updating them (for example the team selector).</p>
+ * <p>Every field is a single line: the translated label is the score entry
+ * itself and the value sits in the suffix of that entry's team, so it can be
+ * refreshed without touching the entry list. The lobby layout shows arena,
+ * team, kit and player count; the round layout shows the remaining time and
+ * the player's kills.</p>
+ *
+ * <p>Labels are rendered as legacy entry strings rather than through
+ * {@code Score#customName}: a custom name set before the score exists is
+ * dropped, which left the raw internal keys visible on the sidebar.</p>
  */
 public class PlayerScoreboardManager {
 
     /** Name of the sidebar objective; also used by the legacy-compatible listeners. */
     public static final String OBJECTIVE_NAME = "main-content";
 
+    private static final String TEAM_MAP = "map";
     private static final String TEAM_TEAM = "team";
     private static final String TEAM_KIT = "kit";
     private static final String TEAM_PLAYERS = "players";
     private static final String TEAM_TIME = "timeScoreboard";
-    private static final String TEAM_MAP = "map";
     private static final String TEAM_KILLS = "kills";
 
-    /** Entries that belong to a team so its prefix is rendered as the value. */
-    private static final String ENTRY_MAP = " ";
-    private static final String ENTRY_TEAM = "   ";
-    private static final String ENTRY_KIT = "     ";
-    private static final String ENTRY_PLAYERS = "       ";
-    private static final String ENTRY_TIME = "          ";
-    private static final String ENTRY_KILLS = "        ";
-
-    private static final String[] ALL_ENTRIES = {
-        "pg-label-map", ENTRY_MAP,
-        "pg-label-team", ENTRY_TEAM,
-        "pg-label-kit", ENTRY_KIT,
-        "pg-label-players", ENTRY_PLAYERS,
-        "pg-label-time", ENTRY_TIME,
-        "pg-label-kills", ENTRY_KILLS,
+    /** Lobby rows, top to bottom. */
+    private static final String[] LOBBY_ROWS = {TEAM_MAP, TEAM_TEAM, TEAM_KIT, TEAM_PLAYERS};
+    /** Round rows, top to bottom. */
+    private static final String[] ROUND_ROWS = {TEAM_TIME, TEAM_KILLS};
+    private static final String[] ALL_ROWS = {
+        TEAM_MAP, TEAM_TEAM, TEAM_KIT, TEAM_PLAYERS, TEAM_TIME, TEAM_KILLS
     };
+
+    private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
     private final PotionGamesX plugin;
     /** Players that currently own a managed sidebar, mapped to the layout in use. */
     private final Map<UUID, Boolean> roundLayout = new HashMap<>();
+    /** Row team name to the score entry that carries its label. */
+    private final Map<String, String> entries = new LinkedHashMap<>();
 
     public PlayerScoreboardManager(PotionGamesX plugin) {
         this.plugin = plugin;
@@ -80,21 +82,19 @@ public class PlayerScoreboardManager {
         Objective objective = board.registerNewObjective(OBJECTIVE_NAME, Criteria.DUMMY, Settings.prefix);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        registerTeam(board, TEAM_MAP, ENTRY_MAP);
-        registerTeam(board, TEAM_TEAM, ENTRY_TEAM);
-        registerTeam(board, TEAM_KIT, ENTRY_KIT);
-        registerTeam(board, TEAM_PLAYERS, ENTRY_PLAYERS);
-        registerTeam(board, TEAM_TIME, ENTRY_TIME);
-        registerTeam(board, TEAM_KILLS, ENTRY_KILLS);
-
-        label(objective, "pg-label-map", Messages.MapLabel());
-        label(objective, "pg-label-team", Messages.TeamLabel());
-        label(objective, "pg-label-kit", Messages.KitLabel());
-        label(objective, "pg-label-players", darkAqua(Messages.PlayersText()));
-        label(objective, "pg-label-time", Messages.TimeLabel());
-        label(objective, "pg-label-kills", darkAqua(Messages.KillsText()));
+        // The labels are the same for every player, so the entry table is
+        // rebuilt once here and reused by every sidebar of this manager.
+        entries.clear();
+        registerRow(board, TEAM_MAP, Messages.MapLabel(), 0);
+        registerRow(board, TEAM_TEAM, Messages.TeamLabel(), 1);
+        registerRow(board, TEAM_KIT, Messages.KitLabel(), 2);
+        registerRow(board, TEAM_PLAYERS, darkAqua(Messages.PlayersText()), 3);
+        registerRow(board, TEAM_TIME, Messages.TimeLabel(), 4);
+        registerRow(board, TEAM_KILLS, darkAqua(Messages.KillsText()), 5);
 
         player.setScoreboard(board);
+        entryLayout(objective, false);
+        roundLayout.put(player.getUniqueId(), false);
     }
 
     /** Restores the server scoreboard when a player leaves the lobby. */
@@ -146,18 +146,18 @@ public class PlayerScoreboardManager {
         boolean round = state == GameStates.INGAME || state == GameStates.DEATHMATCH;
         Boolean previous = roundLayout.get(player.getUniqueId());
         if (previous == null || previous != round) {
-            applyLayout(objective, round);
+            entryLayout(objective, round);
             roundLayout.put(player.getUniqueId(), round);
         }
 
-        prefix(board, TEAM_MAP, arenaName(lobby));
-        prefix(board, TEAM_TEAM, teamName(lobby, player));
-        prefix(board, TEAM_KIT, kitName(lobby, player));
-        prefix(board, TEAM_PLAYERS, lobby.getPlayerCount() + "/" + lobby.getMaxPlayers());
+        row(board, TEAM_MAP, arenaName(lobby));
+        row(board, TEAM_TEAM, teamName(lobby, player));
+        row(board, TEAM_KIT, kitName(lobby, player));
+        row(board, TEAM_PLAYERS, lobby.getPlayerCount() + "/" + lobby.getMaxPlayers());
 
         if (round) {
-            prefix(board, TEAM_TIME, minutes(lobby.getGameTimer()));
-            prefix(board, TEAM_KILLS, Integer.toString(lobby.getKills(player)));
+            row(board, TEAM_TIME, clock(lobby.getGameTimer()));
+            row(board, TEAM_KILLS, Integer.toString(lobby.getKills(player)));
         }
     }
 
@@ -179,60 +179,85 @@ public class PlayerScoreboardManager {
         return Messages.ScoreboardNoneText();
     }
 
-    private void registerTeam(Scoreboard board, String name, String entry) {
-        Team team = board.getTeam(name);
+    /** Registers a row team together with the entry that displays its label. */
+    private void registerRow(Scoreboard board, String teamName, Component label, int index) {
+        String entry = labelEntry(label, index);
+        entries.put(teamName, entry);
+        Team team = board.getTeam(teamName);
         if (team == null) {
-            team = board.registerNewTeam(name);
+            team = board.registerNewTeam(teamName);
         }
         if (!team.hasEntry(entry)) {
             team.addEntry(entry);
         }
-        team.prefix(darkAqua(Messages.ScoreboardNoneText()));
+        team.suffix(value(Messages.ScoreboardNoneText()));
     }
 
-    private void label(Objective objective, String entry, Component display) {
-        Score score = objective.getScore(entry);
-        score.customName(display);
+    /**
+     * The score entry that renders the given label in the sidebar.
+     *
+     * <p>Entries must be unique within an objective; one invisible reset code
+     * per row keeps two identically configured labels apart.</p>
+     */
+    private static String labelEntry(Component label, int index) {
+        return LEGACY.serialize(label) + "\u00A7r".repeat(Math.max(0, index));
     }
 
-    private void prefix(Scoreboard board, String teamName, String value) {
+    /** Writes a row value into the team suffix, i.e. right after the label. */
+    private void row(Scoreboard board, String teamName, String text) {
         Team team = board.getTeam(teamName);
         if (team != null) {
-            team.prefix(darkAqua(value));
+            team.suffix(value(text));
         }
     }
 
     /**
-     * Shows only the lines that belong to the requested layout. Scores of
-     * unused lines are reset so old lines disappear immediately.
+     * Updates the team row immediately instead of waiting for the next tick.
+     * Used by the team selector, whose click already knows the new team.
      */
-    private void applyLayout(Objective objective, boolean round) {
-        for (String entry : ALL_ENTRIES) {
+    public void updateTeamValue(Player player, String text) {
+        if (player == null || text == null) {
+            return;
+        }
+        row(player.getScoreboard(), TEAM_TEAM, text);
+    }
+
+    /**
+     * Shows only the rows that belong to the requested layout. Scores of
+     * unused rows are reset so the previous layout disappears immediately.
+     */
+    private void entryLayout(Objective objective, boolean round) {
+        for (String teamName : ALL_ROWS) {
+            String entry = entries.get(teamName);
+            if (entry == null) {
+                continue;
+            }
             Score score = objective.getScore(entry);
             if (score.isScoreSet()) {
                 score.resetScore();
             }
         }
-        if (round) {
-            objective.getScore("pg-label-time").setScore(3);
-            objective.getScore(ENTRY_TIME).setScore(2);
-            objective.getScore("pg-label-kills").setScore(1);
-            objective.getScore(ENTRY_KILLS).setScore(0);
-        } else {
-            objective.getScore("pg-label-map").setScore(7);
-            objective.getScore(ENTRY_MAP).setScore(6);
-            objective.getScore("pg-label-team").setScore(5);
-            objective.getScore(ENTRY_TEAM).setScore(4);
-            objective.getScore("pg-label-kit").setScore(3);
-            objective.getScore(ENTRY_KIT).setScore(2);
-            objective.getScore("pg-label-players").setScore(1);
-            objective.getScore(ENTRY_PLAYERS).setScore(0);
+        String[] rows = round ? ROUND_ROWS : LOBBY_ROWS;
+        for (int i = 0; i < rows.length; i++) {
+            String entry = entries.get(rows[i]);
+            if (entry != null) {
+                objective.getScore(entry).setScore(rows.length - 1 - i);
+            }
         }
     }
 
-    /** Remaining round time, clamped so the sidebar never shows a negative value. */
-    private static String minutes(int seconds) {
-        return (Math.max(0, seconds) / 60) + " min";
+    /**
+     * Remaining round time as {@code m:ss}. Clamped so a stalled or negative
+     * timer can never push a broken value onto the sidebar.
+     */
+    static String clock(int seconds) {
+        int remaining = Math.max(0, seconds);
+        return (remaining / 60) + ":" + String.format("%02d", remaining % 60);
+    }
+
+    private static Component value(String text) {
+        return Component.text(": ").color(NamedTextColor.GRAY)
+                .append(Component.text(text).color(NamedTextColor.AQUA));
     }
 
     private static Component darkAqua(String text) {
