@@ -54,7 +54,7 @@ public class BuildCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpBuildUsageText();
+        return Messages.CommandHelpText("build");
     }
 }
 

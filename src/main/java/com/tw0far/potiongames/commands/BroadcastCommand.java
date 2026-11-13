@@ -52,8 +52,7 @@ public class BroadcastCommand implements ICommand {
         }
 
         if (args.length <= firstWord) {
-            player.sendMessage(Settings.prefix.append(
-                Component.text(Messages.BroadcastUsageText()).color(NamedTextColor.RED)));
+            player.sendMessage(Messages.CommandHelp("broadcast"));
             return true;
         }
 

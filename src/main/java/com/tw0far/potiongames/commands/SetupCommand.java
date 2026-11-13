@@ -48,7 +48,7 @@ public class SetupCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpSetupUsageText();
+        return Messages.CommandHelpText("setup");
     }
 }
 

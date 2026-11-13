@@ -53,6 +53,6 @@ public class StatsWallCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return head ? Messages.HelpHeadpUsageText(place) : Messages.HelpSignpUsageText(place);
+        return Messages.CommandHelpText((head ? "headp" : "signp") + place);
     }
 }

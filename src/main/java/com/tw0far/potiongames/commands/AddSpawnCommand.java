@@ -39,7 +39,7 @@ public class AddSpawnCommand implements ICommand {
         SetupArguments.LobbyArguments parsed =
                 SetupArguments.parse(plugin.getConfigManager().isSingleLobby(), args);
         if (parsed == null) {
-            player.sendMessage(Messages.CommandAddspawnUsageText());
+            player.sendMessage(Messages.CommandHelp("addspawn"));
             return false;
         }
         int lobbyId = parsed.lobbyId();
@@ -54,7 +54,7 @@ public class AddSpawnCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.CommandAddspawnUsageText();
+        return Messages.CommandHelpText("addspawn");
     }
 }
 

@@ -36,7 +36,7 @@ public class ForceCommand implements ICommand {
             return true;
         }
         if (args.length < 2) {
-            player.sendMessage(Messages.HelpForceUsageText());
+            player.sendMessage(Messages.CommandHelp("force"));
             return true;
         }
 
@@ -73,7 +73,7 @@ public class ForceCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpForceUsageText();
+        return Messages.CommandHelpText("force");
     }
 }
 

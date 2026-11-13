@@ -37,7 +37,7 @@ public class JoinSignCommand implements ICommand {
         // /pg joinsign <lobbynumber>; with pg.singleLobby /pg joinsign targets lobby 1
         Integer lobbyId = SetupArguments.parseLobbyOnly(plugin.getConfigManager().isSingleLobby(), args);
         if (lobbyId == null) {
-            player.sendMessage(Messages.CommandJoinsignUsageText());
+            player.sendMessage(Messages.CommandHelp("joinsign"));
             return false;
         }
         plugin.getSetupHandler().setJoinSign(player, lobbyId);
@@ -46,7 +46,7 @@ public class JoinSignCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.CommandJoinsignUsageText();
+        return Messages.CommandHelpText("joinsign");
     }
 }
 

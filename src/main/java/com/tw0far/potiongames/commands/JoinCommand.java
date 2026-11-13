@@ -36,7 +36,7 @@ public class JoinCommand implements ICommand {
             return true;
         }
         if (args.length <= 1) {
-            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpJoinText()).color(NamedTextColor.GRAY)));
+            player.sendMessage(Messages.CommandHelp("join"));
             return true;
         }
 
@@ -44,7 +44,7 @@ public class JoinCommand implements ICommand {
         try {
             Integer.parseInt(lobbyId);
         } catch (NumberFormatException e) {
-            player.sendMessage(Messages.HelpUsePgHelp());
+            player.sendMessage(Messages.CommandHelp("join"));
             return true;
         }
 
@@ -61,6 +61,6 @@ public class JoinCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpJoinUsageText();
+        return Messages.CommandHelpText("join");
     }
 }

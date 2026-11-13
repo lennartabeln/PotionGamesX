@@ -76,7 +76,6 @@ public class Messages {
         addDefault(lang, "game.not_enough_players", "Not enough players to start the game!");
         addDefault(lang, "game.starts_in", "The game starts in");
         addDefault(lang, "game.waiting", "Waiting for players! [%d/%d]");
-        addDefault(lang, "help.use_pg_help", "Use /pg help for help!");
         addDefault(lang, "join.already_in_lobby", "You are already in a lobby!");
         addDefault(lang, "join.success", "Successfully joined lobby");
         addDefault(lang, "leave.success", "Successfully left the lobby!");
@@ -438,10 +437,6 @@ public class Messages {
 
     public static Component GameWaiting(int players, int minPlayers) {
         return Component.text(String.format(get("game.waiting", "Waiting for players! [%d/%d]"), players, minPlayers)).color(NamedTextColor.GRAY);
-    }
-
-    public static Component HelpUsePgHelp() {
-        return prefix(Component.text(get("help.use_pg_help", "Use /pg help for help!")).color(NamedTextColor.AQUA));
     }
 
     public static Component JoinAlreadyInLobby() {
@@ -920,16 +915,7 @@ public class Messages {
 
     public static String BucketWaterNotAllowedText() { return get("bucket.water_not_allowed", "Water buckets are not allowed during games!"); }
     public static String BucketFillNotAllowedText() { return get("bucket.fill_not_allowed", "You cannot fill buckets during a game!"); }
-    public static String CommandAddarenaUsageText() { return get("command.addarena.usage", "Usage: /pg addarena <lobbynumber> <arenaname>"); }
-    public static String CommandAdddeathmatchUsageText() { return get("command.adddeathmatch.usage", "Usage: /pg adddeathmatch <lobbynumber> <arenaname>"); }
-    public static String CommandAddlobbyUsageText() { return get("command.addlobby.usage", "Usage: /pg addlobby <lobbynumber>"); }
-    public static String CommandAddspawnUsageText() { return get("command.addspawn.usage", "Usage: /pg addspawn <lobbynumber> <arenaname>"); }
-    public static String CommandDelarenaUsageText() { return get("command.delarena.usage", "Usage: /pg delarena <lobbynumber> <arenaname>"); }
-    public static String CommandDeldeathmatchUsageText() { return get("command.deldeathmatch.usage", "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"); }
-    public static String CommandDellobbyUsageText() { return get("command.dellobby.usage", "Usage: /pg dellobby <lobbynumber>"); }
-    public static String CommandDelspawnUsageText() { return get("command.delspawn.usage", "Usage: /pg delspawn <lobbynumber> <arenaname>"); }
     public static String CommandExecutionErrorText() { return get("command.execution_error", "An error occurred while executing this command!"); }
-    public static String CommandJoinsignUsageText() { return get("command.joinsign.usage", "Usage: /pg joinsign <lobbynumber>"); }
     public static String CommandUnknownText() { return get("command.unknown", "Unknown command! Use /pg help for help."); }
     public static String DiedText() { return get("died", "died"); }
     public static String HeadLookBlock1Text() { return get("head.look_block_1", "Look at a block to set the 1st place head."); }
@@ -944,24 +930,14 @@ public class Messages {
     public static String HelpAddspawnText() { return get("help.addspawn", "/pg addspawn <lobbynumber> <arenaname> - Add a spawn"); }
     public static String HelpBroadcastText() { return get("help.broadcast", "/pg broadcast <message> - Send announcement to all players"); }
     public static String HelpBuildText() { return get("help.build", "/pg build - Activate build mode"); }
-    public static String HelpBuildUsageText() { return get("help.build_usage", "/pg build - Enable/disable build mode (requires pg.build)"); }
     public static String HelpConfigText() { return get("help.config", "/pg config - View current configuration"); }
     public static String HelpDatabaseText() { return get("help.database", "/pg database - Toggle database mode (MySQL/SQLite)"); }
-    public static String HelpDatabaseUsageText() { return get("help.database_usage", "/pg database - Toggle database mode MySQL/SQLite (requires pg.database)"); }
     public static String HelpDellobbyText() { return get("help.dellobby", "/pg dellobby <lobbynumber> - Remove a lobby"); }
     public static String HelpForceText() { return get("help.force", "/pg force [arenaname] - Force an arena"); }
-    public static String HelpForceUsageText() { return get("help.force_usage", "/pg force <arena_name> - Force a specific arena (requires pg.force)"); }
     public static String HelpGameserverText() { return get("help.gameserver", "/pg gameserver - Toggle gameserver mode (true/false)"); }
-    public static String HelpGameserverUsageText() { return get("help.gameserver_usage", "/pg gameserver - Toggle gameserver mode (requires pg.gameserver)"); }
     public static String HelpHeadText() { return get("help.head", "/pg headp1(2;3) - Add Player Head to Stats-Wall"); }
-    public static String HelpHeadp1UsageText() { return get("help.headp1_usage", "/pg headp1 (Look at 1st place head)"); }
-    public static String HelpHeadp2UsageText() { return get("help.headp2_usage", "/pg headp2 (Look at 2nd place head)"); }
-    public static String HelpHeadp3UsageText() { return get("help.headp3_usage", "/pg headp3 (Look at 3rd place head)"); }
-    public static String HelpHelpUsageText() { return get("help.help_usage", "/pg help - Show this help message"); }
     public static String HelpJoinText() { return get("help.join", "/pg join # - Join a game"); }
-    public static String HelpJoinUsageText() { return get("help.join_usage", "/pg join <lobby_number> - Join a specific lobby"); }
     public static String HelpJoinsignText() { return get("help.joinsign", "/pg joinsign <lobbynumber> - Add Join-Sign"); }
-    public static String CommandKickUsageText() { return get("command.kick_usage", "Usage: /pg kick <player>"); }
     public static Component KickNotInLobby(String player) {
         return prefix(Component.text(String.format(get("kick.not_in_lobby", "%s is not in a lobby!"), player))
             .color(NamedTextColor.RED));
@@ -976,30 +952,19 @@ public class Messages {
     }
     public static String HelpKickText() { return get("help.kick", "/pg kick <player> - Remove player from lobby"); }
     public static String HelpLeaveText() { return get("help.leave", "/pg leave - Leave the game"); }
-    public static String HelpLeaveUsageText() { return get("help.leave_usage", "/pg leave - Leave the current game"); }
     public static String HelpListText() { return get("help.list", "/pg list - List of all lobbies"); }
-    public static String HelpListUsageText() { return get("help.list_usage", "/pg list"); }
     public static String HelpPauseText() { return get("help.pause", "/pg pause - Pause timer/countdown"); }
-    public static String HelpPauseUsageText() { return get("help.pause_usage", "/pg pause - Pause/resume the game (requires pg.pause)"); }
     public static String HelpReloadText() { return get("help.reload", "/pg reload - Reload all configs"); }
-    public static String HelpReloadUsageText() { return get("help.reload_usage", "/pg reload - Reload all configurations and stop all games (requires pg.setup)"); }
     public static String HelpDelarenaText() { return get("help.delarena", "/pg delarena <lobbynumber> <arenaname> - Remove an arena"); }
     public static String HelpDelspawnText() { return get("help.delspawn", "/pg delspawn <lobbynumber> <arenaname> - Remove last spawn"); }
     public static String HelpDeldeathmatchText() { return get("help.deldeathmatch", "/pg deldeathmatch <lobbynumber> <arenaname> - Remove last deathmatch spawn"); }
     public static String HelpSetupText() { return get("help.setup", "/pg setup - Set up plugin"); }
-    public static String HelpSetupUsageText() { return get("help.setup_usage", "/pg setup - Start setup mode (requires pg.setup)"); }
     public static String HelpSignText() { return get("help.sign", "/pg signp1(2;3) - Add Player Sign to Stats-Wall"); }
-    public static String HelpSignp1UsageText() { return get("help.signp1_usage", "/pg signp1 (Look at 1st place sign)"); }
-    public static String HelpSignp2UsageText() { return get("help.signp2_usage", "/pg signp2 (Look at 2nd place sign)"); }
-    public static String HelpSignp3UsageText() { return get("help.signp3_usage", "/pg signp3 (Look at 3rd place sign)"); }
     public static String HelpStartText() { return get("help.start", "/pg start - Set lobby countdown to 10"); }
-    public static String HelpStartUsageText() { return get("help.start_usage", "/pg start - Set lobby countdown to 10 seconds (requires pg.start)"); }
     public static String HelpStatsText() { return get("help.stats", "/pg stats [player] - Show player stats"); }
-    public static String HelpStatsUsageText() { return get("help.stats_usage", "/pg stats [player] - Show player statistics"); }
     public static String HelpStatusText() { return get("help.status", "/pg status - Show server status and active lobbies"); }
     public static String HelpTopText() { return get("help.top", "/pg top [type] - Show leaderboard (kills/deaths/wins/kd)"); }
     public static String HelpVersionText() { return get("help.version", "/pg version - Show your and latest version of plugin"); }
-    public static String HelpVersionUsageText() { return get("help.version_usage", "/pg version - Check plugin version and updates (requires pg.version)"); }
     public static String HeadLookBlockText(int place) {
         return get("head.look_block_" + place, "Look at a block to set the " + place + (place == 1 ? "st" : place == 2 ? "nd" : "rd") + " place head.");
     }
@@ -1016,13 +981,6 @@ public class Messages {
         return get("sign.set_" + place, place + (place == 1 ? "st" : place == 2 ? "nd" : "rd") + " place sign set.");
     }
 
-    public static String HelpHeadpUsageText(int place) {
-        return get("help.headp" + place + "_usage", "/pg headp" + place + " (Look at the " + place + "st place head)");
-    }
-
-    public static String HelpSignpUsageText(int place) {
-        return get("help.signp" + place + "_usage", "/pg signp" + place + " (Look at the " + place + "st place sign)");
-    }
     public static String KilledByText() { return get("killed.by", "was killed by"); }
     public static String ListNoLobbiesText() { return get("list.no_lobbies", "No lobbies available."); }
     public static String SetupDisabledText() { return get("setup.disabled", "Setup mode disabled."); }
@@ -1057,7 +1015,19 @@ public class Messages {
             .append(Component.text(" " + message).color(NamedTextColor.AQUA));
     }
 
-    public static String BroadcastUsageText() { return get("command.broadcast_usage", "Usage: /pg broadcast <message>"); }
+    /**
+     * The /pg help line for one command. Incomplete commands print exactly the line
+     * that /pg help shows for them, so both stay identical.
+     */
+    public static Component CommandHelp(String command) {
+        return Settings.prefix.append(Component.text(CommandHelpText(command)).color(NamedTextColor.RED));
+    }
+
+    /** Plain text form of {@link #CommandHelp(String)}, for {@code ICommand#getUsage()}. */
+    public static String CommandHelpText(String command) {
+        return get("help." + command, "/pg " + command);
+    }
+
     public static String BroadcastSentText() { return get("command.broadcast_sent", "Broadcast sent to all players"); }
     public static String BroadcastSentLobbyText() { return get("command.broadcast_sent_lobby", "Broadcast sent to lobby %s"); }
     public static String InvalidLobbyIdText() { return get("command.invalid_lobby_id", "Invalid lobby ID. Must be a number."); }
@@ -1086,7 +1056,6 @@ public class Messages {
     public static String GameServerDisabledText() { return get("gameserver.disabled", "disabled"); }
 
     public static String TopHeaderText() { return get("top.header", "Top 10 Players by %s"); }
-    public static String TopUsageText() { return get("top.usage", "Use /pg top [kills|deaths|wins|kd]"); }
     public static String TopUnknownTypeText() { return get("top.unknown_type", "Unknown leaderboard type: %s"); }
     public static String TopKillsText() { return get("top.kills", "Kills"); }
     public static String TopDeathsText() { return get("top.deaths", "Deaths"); }

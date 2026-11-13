@@ -88,7 +88,7 @@ public class ListCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpListUsageText();
+        return Messages.CommandHelpText("list");
     }
 }
 

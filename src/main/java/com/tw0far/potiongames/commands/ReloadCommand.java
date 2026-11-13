@@ -57,7 +57,7 @@ public class ReloadCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpReloadUsageText();
+        return Messages.CommandHelpText("reload");
     }
 }
 

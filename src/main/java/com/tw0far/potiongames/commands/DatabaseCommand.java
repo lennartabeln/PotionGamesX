@@ -65,6 +65,6 @@ public class DatabaseCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpDatabaseUsageText();
+        return Messages.CommandHelpText("database");
     }
 }

@@ -30,7 +30,7 @@ public class KickCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            sender.sendMessage(Messages.CommandKickUsageText());
+            sender.sendMessage(Messages.CommandHelp("kick"));
             return true;
         }
 

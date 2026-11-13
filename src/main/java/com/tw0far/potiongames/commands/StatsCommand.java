@@ -95,6 +95,6 @@ public class StatsCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpStatsUsageText();
+        return Messages.CommandHelpText("stats");
     }
 }
