@@ -231,6 +231,10 @@ public class Lobby {
             participants.add(participant);
             participant.teleportToLobby();
             setPlayerCount(playerCount + 1);
+            PotionGamesX plugin = PotionGamesX.getInstance();
+            if (plugin != null && plugin.getScoreboardManager() != null) {
+                plugin.getScoreboardManager().show(p);
+            }
         }
         if (tickTask == null || tickTask.isCancelled()) {
             startTick();
@@ -243,6 +247,10 @@ public class Lobby {
             participants.remove(participant);
             participant.teleportToOriginalLocation();
             setPlayerCount(playerCount - 1);
+            PotionGamesX plugin = PotionGamesX.getInstance();
+            if (plugin != null && plugin.getScoreboardManager() != null) {
+                plugin.getScoreboardManager().hide(p);
+            }
         }
         if (playerCount == 0) {
             setState(GameStates.RESET);
@@ -258,8 +266,12 @@ public class Lobby {
     }
 
     public void clearParticipants() {
+        PotionGamesX plugin = PotionGamesX.getInstance();
         for (Participant part : participants) {
             part.teleportToOriginalLocation();
+            if (plugin != null && plugin.getScoreboardManager() != null) {
+                plugin.getScoreboardManager().hide(part.getPlayer());
+            }
         }
         participants.clear();
         activePlayers.clear();
@@ -445,17 +457,36 @@ public class Lobby {
         if (arenas.isEmpty()) {
             return null;
         }
+        Arena leading = getLeadingVotedArena();
+        return leading != null ? leading : arenas.get((int)(Math.random() * arenas.size()));
+    }
+
+    /**
+     * Arena to display outside of a running round: the vote leader, or null
+     * when nobody voted yet.
+     */
+    public Arena getDisplayArena() {
+        if (currentArena != null) {
+            return currentArena;
+        }
+        return getLeadingVotedArena();
+    }
+
+    private Arena getLeadingVotedArena() {
         var asm = PotionGamesX.getInstance().getArenaStateManager();
-        Arena topArena = arenas.get((int)(Math.random() * arenas.size()));
+        if (asm == null) {
+            return null;
+        }
+        Arena leader = null;
         int topVotes = 0;
         for (Arena arena : arenas) {
             int votes = asm.getLobbyVoteCount(Integer.toString(id), arena.getName());
             if (votes > topVotes) {
-                topArena = arena;
+                leader = arena;
                 topVotes = votes;
             }
         }
-        return topArena;
+        return leader;
     }
 
     public void startTick() {
@@ -738,6 +769,11 @@ public class Lobby {
                 break;
         }
 
+        PotionGamesX gamePlugin = PotionGamesX.getInstance();
+        if (gamePlugin != null && gamePlugin.getScoreboardManager() != null) {
+            gamePlugin.getScoreboardManager().update(this);
+        }
+
         if (playerCount == 0 && state != GameStates.WAITING) {
             setState(GameStates.RESET);
         }
@@ -945,6 +981,10 @@ public class Lobby {
 
     public Arena getCurrentArena() {
         return this.currentArena;
+    }
+
+    public int getGameTimer() {
+        return this.gameTimer;
     }
 
     public void setPlayerCount(int count) {

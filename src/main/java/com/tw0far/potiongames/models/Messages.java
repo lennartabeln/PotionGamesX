@@ -116,6 +116,12 @@ public class Messages {
         addDefault(lang, "update.checker_error", "Update-Checker-Error");
         addDefault(lang, "update.not_available", "There is not a new update available.");
         addDefault(lang, "vote.label", "Votes");
+        addDefault(lang, "map.label", "Map");
+        addDefault(lang, "map.voting", "Voting");
+        addDefault(lang, "team.label", "Team");
+        addDefault(lang, "kit.label", "Kit");
+        addDefault(lang, "time.label", "Time");
+        addDefault(lang, "scoreboard.none", "none");
         addDefault(lang, "will_be_played", "will be played!");
         addDefault(lang, "winner.has_won_the_game", "has won the game!");
         addDefault(lang, "won.label", "Wins");
@@ -298,6 +304,34 @@ public class Messages {
 
     public static Component KillsLabel(int kills) {
         return prefix(Component.text(get("kills.label", "Kills") + ": ").color(NamedTextColor.GREEN).append(Component.text(kills).color(NamedTextColor.AQUA)));
+    }
+
+    public static String KillsText() {
+        return get("kills.label", "Kills");
+    }
+
+    public static Component MapLabel() {
+        return Component.text(get("map.label", "Map")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static String MapVotingText() {
+        return get("map.voting", "Voting");
+    }
+
+    public static Component TeamLabel() {
+        return Component.text(get("team.label", "Team")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component KitLabel() {
+        return Component.text(get("kit.label", "Kit")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static Component TimeLabel() {
+        return Component.text(get("time.label", "Time")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    public static String ScoreboardNoneText() {
+        return get("scoreboard.none", "none");
     }
 
     public static Component KitNowHave() {

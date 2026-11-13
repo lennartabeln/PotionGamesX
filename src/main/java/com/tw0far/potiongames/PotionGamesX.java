@@ -38,6 +38,7 @@ public class PotionGamesX extends JavaPlugin {
     private IDatabaseManager databaseManager;
     private ISetupHandler setupHandler;
     private JoinLobbyHandler joinLobbyHandler;
+    private PlayerScoreboardManager scoreboardManager;
     public static PotionGamesX getInstance() { return instance; }
     public Game getGame() { return game; }
     public IConfigurationManager getConfigManager() { return configManager; }
@@ -47,6 +48,7 @@ public class PotionGamesX extends JavaPlugin {
     public ISetupStateManager getSetupStateManager() { return setupStateManager; }
     public IDatabaseManager getDatabaseManager() { return databaseManager; }
     public ISetupHandler getSetupHandler() { return setupHandler; }
+    public PlayerScoreboardManager getScoreboardManager() { return scoreboardManager; }
 
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Economy econ = null;
@@ -69,6 +71,8 @@ public class PotionGamesX extends JavaPlugin {
         // Initialize configuration manager
         configManager = new ConfigurationManager(this);
         configManager.onEnable();
+
+        scoreboardManager = new PlayerScoreboardManager(this);
 
         // Initialize state managers
         lobbyStateManager = new LobbyStateManager();
