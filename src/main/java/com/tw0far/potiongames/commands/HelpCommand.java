@@ -103,10 +103,6 @@ public class HelpCommand implements ICommand {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpStatusText()).color(NamedTextColor.GRAY)));
         }
 
-        if (player.hasPermission("pg.admin") || player.hasPermission("pg.debug")) {
-            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpDebugText()).color(NamedTextColor.GRAY)));
-        }
-
         if (player.hasPermission("pg.admin") || player.hasPermission("pg.broadcast")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpBroadcastText()).color(NamedTextColor.GRAY)));
         }

@@ -70,9 +70,6 @@ permissions:
   pg.admin:
     description: See the administrative command list in /pg help
     default: op
-  pg.debug:
-    description: Toggle debug mode
-    default: op
   pg.database:
     description: Toggle database backend (MySQL/SQLite)
     default: op

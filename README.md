@@ -72,7 +72,6 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 | `/pg setup` | Interactive setup wizard | `pg.setup` |
 | `/pg config` | View current configuration | `pg.config` |
 | `/pg status` | Show server status and lobbies | `pg.status` |
-| `/pg debug` | Toggle debug logging | `pg.debug` |
 | `/pg broadcast` | Send server announcement | `pg.broadcast` |
 | `/pg kick <player>` | Remove player from lobby | `pg.kick` |
 | `/pg top` | Show leaderboards | `pg.top` |

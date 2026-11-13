@@ -2,8 +2,6 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,10 +27,8 @@ public class DatabaseCommand implements ICommand {
 
 
     @Override
-    public boolean execute(CommandSender player, String[] args) {
-        // Get current state
-        boolean currentState = plugin.getConfigManager().isActivateMysql();
-        boolean newState = !currentState;
+    public boolean execute(CommandSender sender, String[] args) {
+        boolean newState = !plugin.getConfigManager().isActivateMysql();
 
         // Update config manager
         plugin.getConfigManager().setActivateMysql(newState);
@@ -50,26 +46,20 @@ public class DatabaseCommand implements ICommand {
         }
         boolean connected = plugin.getDatabaseManager().isConnected();
 
-        // Send message to player
         String dbType = newState ? "MySQL" : "SQLite";
-        Component message = Component.text("Database mode switched to ")
-            .color(NamedTextColor.AQUA)
-            .append(Component.text(dbType).color(NamedTextColor.GREEN))
-            .append(Component.text(connected ? " (connected)" : " (connection failed!)")
-                .color(connected ? NamedTextColor.GREEN : NamedTextColor.RED));
+        sender.sendMessage(Messages.DatabaseModeChanged(dbType, connected));
 
-        player.sendMessage(message);
-
-        // Broadcast to all ops
-        for (Player op : plugin.getServer().getOnlinePlayers()) {
-            if (op == null) continue;
-            if (op.isOp() && !op.equals(player)) {
-                op.sendMessage(Component.text(player.getName() + " switched database mode to " + dbType + "!")
-                    .color(NamedTextColor.YELLOW));
+        // Tell the players that are allowed to run this command as well
+        for (Player other : plugin.getServer().getOnlinePlayers()) {
+            if (other == null || other.equals(sender)) {
+                continue;
+            }
+            if (other.hasPermission(getPermission())) {
+                other.sendMessage(Messages.DatabaseModeBroadcast(sender.getName(), dbType));
             }
         }
 
-        plugin.getLogger().info("Database mode switched to " + dbType + " by " + player.getName());
+        plugin.getLogger().info("Database mode switched to " + dbType + " by " + sender.getName());
         return true;
     }
 
@@ -78,4 +68,3 @@ public class DatabaseCommand implements ICommand {
         return Messages.HelpDatabaseUsageText();
     }
 }
-
