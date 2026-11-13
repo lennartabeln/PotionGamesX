@@ -36,7 +36,7 @@ public class StatusCommand implements ICommand {
         int spectators = game.getSpectatorPlayers().size();
 
         sender.sendMessage(divider());
-        sender.sendMessage(Component.text(Messages.StatusTitleText()).color(NamedTextColor.GOLD));
+        sender.sendMessage(Messages.line(Messages.StatusTitleText(), NamedTextColor.GOLD));
 
         sender.sendMessage(section(Messages.StatusServerText()));
         sender.sendMessage(line(Messages.StatusPlayersActiveText(), Integer.toString(active)));

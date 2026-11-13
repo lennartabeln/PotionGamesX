@@ -55,7 +55,7 @@ public class TopCommand implements ICommand {
             case "wins" -> { column = "WINS"; label = Messages.TopWinsText(); }
             case "kd" -> { column = "KD"; label = Messages.TopKdText(); }
             default -> {
-                sender.sendMessage(Component.text(String.format(Messages.TopUnknownTypeText(), type)).color(NamedTextColor.RED));
+                sender.sendMessage(Messages.line(String.format(Messages.TopUnknownTypeText(), type), NamedTextColor.RED));
                 sender.sendMessage(Messages.CommandHelp("top"));
                 return true;
             }
@@ -100,7 +100,7 @@ public class TopCommand implements ICommand {
                         case "empty" -> Messages.TopEmptyText();
                         default -> Messages.TopFailedText();
                     };
-                    sender.sendMessage(Component.text(text).color(NamedTextColor.RED));
+                    sender.sendMessage(Messages.line(text, NamedTextColor.RED));
                 } else {
                     for (String line : rows) {
                         sender.sendMessage(Component.text(line).color(NamedTextColor.GRAY));

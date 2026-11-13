@@ -41,9 +41,6 @@ en_US:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
-      broadcast_usage: "Usage: /pg broadcast [-l <lobby>] <message>"
-      broadcast_sent: "Broadcast sent to %s players"
-      broadcast_sent_lobby: "Broadcast sent to lobby %s"
       invalid_lobby_id: "Invalid lobby ID. Must be a number."
       no_permission: "You don't have permission to use this command!"
       reloading: "Starting plugin reload... this may take a moment."
@@ -114,7 +111,6 @@ en_US:
       adddeathmatch: "/pg adddeathmatch <lobby> <arena> - Add a deathmatch spawn"
       addlobby: "/pg addlobby <lobby> - Add a lobby"
       addspawn: "/pg addspawn <lobby> <arena> - Add a spawn at your position"
-      broadcast: "/pg broadcast [-l <lobby>] <message> - Announce to all players or one lobby"
       build: "/pg build - Toggle build mode"
       config: "/pg config - Show the current configuration"
       database: "/pg database - Switch between MySQL and SQLite"
@@ -309,8 +305,6 @@ en_US:
       available: "A new version is available: %s -> %s"
       checker_error: "Could not check for updates."
       not_available: "You are running the latest version."
-    broadcast:
-      label: "Broadcast"
     vote:
       label: "Votes"
     will_be_played: "will be played!"
@@ -367,9 +361,6 @@ de_DE:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
-      broadcast_usage: "Verwendung: /pg broadcast [-l <lobby>] <nachricht>"
-      broadcast_sent: "Broadcast an %s Spieler gesendet"
-      broadcast_sent_lobby: "Broadcast an Lobby %s gesendet"
       invalid_lobby_id: "Ungültige Lobby-ID. Muss eine Zahl sein."
       no_permission: "Du hast keine Berechtigung für diesen Befehl!"
       reloading: "Plugin-Reload gestartet... das kann einen Moment dauern."
@@ -440,7 +431,6 @@ de_DE:
       adddeathmatch: "/pg adddeathmatch <lobby> <arena> - Deathmatch-Spawn hinzufügen"
       addlobby: "/pg addlobby <lobby> - Lobby hinzufügen"
       addspawn: "/pg addspawn <lobby> <arena> - Spawn an deiner Position hinzufügen"
-      broadcast: "/pg broadcast [-l <lobby>] <nachricht> - Ankündigung an alle Spieler oder eine Lobby"
       build: "/pg build - Baumodus umschalten"
       config: "/pg config - Aktuelle Konfiguration anzeigen"
       database: "/pg database - Zwischen MySQL und SQLite wechseln"
@@ -635,8 +625,6 @@ de_DE:
       available: "Neue Version verfügbar: %s -> %s"
       checker_error: "Update-Prüfung fehlgeschlagen."
       not_available: "Du verwendest bereits die neueste Version."
-    broadcast:
-      label: "Ankündigung"
     vote:
       label: "Stimmen"
     will_be_played: "wird gespielt!"

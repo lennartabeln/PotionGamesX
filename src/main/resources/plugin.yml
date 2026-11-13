@@ -58,9 +58,6 @@ permissions:
   pg.kick:
     description: Kick players from lobbies
     default: op
-  pg.broadcast:
-    description: Broadcast messages to all players
-    default: op
   pg.top:
     description: View leaderboards
     default: op
@@ -82,7 +79,6 @@ permissions:
       pg.start: true
       pg.sign: true
       pg.kick: true
-      pg.broadcast: true
       pg.top: true
       pg.status: true
       pg.config: true

@@ -36,6 +36,14 @@ public class Messages {
         return Component.text(get(key, def)).color(color);
     }
 
+    /**
+     * One prefixed line in a given colour. Every user facing message goes through
+     * this (or a dedicated accessor), so no output can appear without the prefix.
+     */
+    public static Component line(String text, NamedTextColor color) {
+        return prefix(Component.text(text).color(color));
+    }
+
     /** Plugin name in the brand colours: Potion / Games / X. */
     public static Component PluginName() {
         return Component.text("Potion").color(NamedTextColor.DARK_PURPLE)
@@ -928,7 +936,6 @@ public class Messages {
     public static String HelpAdddeathmatchText() { return get("help.adddeathmatch", "/pg adddeathmatch <lobbynumber> <arenaname> - Add a deathmatch spawn"); }
     public static String HelpAddlobbyText() { return get("help.addlobby", "/pg addlobby <lobbynumber> - Add a lobby"); }
     public static String HelpAddspawnText() { return get("help.addspawn", "/pg addspawn <lobbynumber> <arenaname> - Add a spawn"); }
-    public static String HelpBroadcastText() { return get("help.broadcast", "/pg broadcast <message> - Send announcement to all players"); }
     public static String HelpBuildText() { return get("help.build", "/pg build - Activate build mode"); }
     public static String HelpConfigText() { return get("help.config", "/pg config - View current configuration"); }
     public static String HelpDatabaseText() { return get("help.database", "/pg database - Toggle database mode (MySQL/SQLite)"); }
@@ -1003,17 +1010,6 @@ public class Messages {
     public static String ReloadErrorText() { return get("command.reload_error", "Unexpected error during reload!"); }
     public static String PluginReloadedText() { return get("plugin.reloaded", "Plugin successfully reloaded!"); }
     public static String SelectLobbyFirstText() { return get("setup.select_lobby_first", "Please select a lobby first!"); }
-    /**
-     * Announcement in the normal plugin prefix: [PotionGamesX] [Broadcast] text.
-     * The label is light purple, the brackets dark grey and the message aqua.
-     */
-    public static Component Broadcast(String message) {
-        return Settings.prefix
-            .append(Component.text("[").color(NamedTextColor.DARK_GRAY))
-            .append(Component.text(get("broadcast.label", "Broadcast")).color(NamedTextColor.LIGHT_PURPLE))
-            .append(Component.text("]").color(NamedTextColor.DARK_GRAY))
-            .append(Component.text(" " + message).color(NamedTextColor.AQUA));
-    }
 
     /**
      * The /pg help line for one command. Incomplete commands print exactly the line
@@ -1028,8 +1024,6 @@ public class Messages {
         return get("help." + command, "/pg " + command);
     }
 
-    public static String BroadcastSentText() { return get("command.broadcast_sent", "Broadcast sent to all players"); }
-    public static String BroadcastSentLobbyText() { return get("command.broadcast_sent_lobby", "Broadcast sent to lobby %s"); }
     public static String InvalidLobbyIdText() { return get("command.invalid_lobby_id", "Invalid lobby ID. Must be a number."); }
     public static String ConfigHeaderText() { return get("config.header", "PotionGamesX Configuration"); }
     public static String ConfigSectionCoreText() { return get("config.section_core", "Core"); }

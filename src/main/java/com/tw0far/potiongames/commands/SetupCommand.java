@@ -3,6 +3,7 @@ package com.tw0far.potiongames.commands;
 import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -35,10 +36,10 @@ public class SetupCommand implements ICommand {
         try {
             if (plugin.getSetupStateManager().isSetupPlayer(player)) {
                 plugin.getSetupHandler().exitSetup(player);
-                player.sendMessage(Messages.SetupDisabledText());
+                player.sendMessage(Messages.line(Messages.SetupDisabledText(), NamedTextColor.RED));
             } else {
                 plugin.getSetupHandler().setup(player);
-                player.sendMessage(Messages.SetupEnabledText());
+                player.sendMessage(Messages.line(Messages.SetupEnabledText(), NamedTextColor.GREEN));
             }
         } catch (Exception ex) {
             player.sendMessage(Messages.ErrorGeneric());

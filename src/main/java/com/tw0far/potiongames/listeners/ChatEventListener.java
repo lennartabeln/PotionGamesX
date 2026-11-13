@@ -137,7 +137,7 @@ public class ChatEventListener implements Listener {
                     plugin.getSetupHandler().removeLobby(p, lobbyId);
                     state.clearInputMode(p);
                 } catch (NumberFormatException ex) {
-                    p.sendMessage(Component.text(Messages.InvalidLobbyIdText()).color(NamedTextColor.RED));
+                    p.sendMessage(Messages.line(Messages.InvalidLobbyIdText(), NamedTextColor.RED));
                 }
             }
             case ADD_ARENA -> {
@@ -146,7 +146,7 @@ public class ChatEventListener implements Listener {
                     plugin.getSetupHandler().addArena(p, input, selectedLobby);
                     state.clearInputMode(p);
                 } else {
-                    p.sendMessage(Component.text(Messages.SelectLobbyFirstText()).color(NamedTextColor.RED));
+                    p.sendMessage(Messages.line(Messages.SelectLobbyFirstText(), NamedTextColor.RED));
                 }
             }
             case DEL_ARENA -> {
@@ -155,7 +155,7 @@ public class ChatEventListener implements Listener {
                     plugin.getSetupHandler().removeArena(p, input, selectedLobby);
                     state.clearInputMode(p);
                 } else {
-                    p.sendMessage(Component.text(Messages.SelectLobbyFirstText()).color(NamedTextColor.RED));
+                    p.sendMessage(Messages.line(Messages.SelectLobbyFirstText(), NamedTextColor.RED));
                 }
             }
         }

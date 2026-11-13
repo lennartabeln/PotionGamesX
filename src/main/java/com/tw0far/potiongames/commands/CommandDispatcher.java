@@ -2,6 +2,7 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -25,7 +26,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
 
     /** Subcommands that also work from the server console. */
     private static final Set<String> CONSOLE_ALLOWED = Set.of(
-        "reload", "status", "top", "broadcast", "version", "database", "gameserver", "config",
+        "reload", "status", "top", "version", "database", "gameserver", "config",
         "help", "kick");
 
     /** Legacy aliases that map onto an existing subcommand. */
@@ -56,7 +57,6 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
         registerCommand(new DatabaseCommand(plugin));
         registerCommand(new ConfigCommand(plugin));
         registerCommand(new StatusCommand(plugin));
-        registerCommand(new BroadcastCommand(plugin));
         registerCommand(new KickCommand(plugin));
         registerCommand(new TopCommand(plugin));
 
@@ -109,7 +109,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
         ICommand command = commands.get(subCommand);
         if (command == null) {
             String msg = Messages.CommandUnknownText();
-            sender.sendMessage(Component.text(msg).color(NamedTextColor.RED));
+            sender.sendMessage(Messages.line(msg, NamedTextColor.RED));
             return true;
         }
 
@@ -136,15 +136,15 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
     }
 
     public static Component createInfo(String message) {
-        return Component.text(message).color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false);
+        return Settings.prefix.append(Component.text(message).color(NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false));
     }
 
     public static Component createSuccess(String message) {
-        return Component.text(message).color(NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false);
+        return Settings.prefix.append(Component.text(message).color(NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false));
     }
 
     public static Component createError(String message) {
-        return Component.text(message).color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false);
+        return Settings.prefix.append(Component.text(message).color(NamedTextColor.RED).decoration(TextDecoration.ITALIC, false));
     }
 
     @Override
