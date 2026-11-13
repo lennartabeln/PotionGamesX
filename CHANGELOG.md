@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Legacy compatibility
 - `pg.singleLobby`: single-lobby mode accepts the legacy short setup forms (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg joinsign`, …) and targets lobby 1, while the long form keeps working
+- Automatic legacy migration on startup: an existing `arenadata.yml` is migrated without any command — lobbies from `pg.lobbies.<id>` are created (spawn from `coords`, settings moved into `settings.*`), the global `pg.arenas.<n>` are copied into every lobby that has no arena yet, and a legacy `pg.lobbySystem: false` switches `pg.singleLobby` on. Existing entries are never overwritten
 - `/pg importarenas <lobby> [file]`: imports arenas from a legacy `arenadata.yml` (`pg.arenas.<n>` with `name`, `spawns`, `deathmatch`) into a lobby of the current `lobbies.yml` layout, skips existing arenas and keeps the spawn locations verbatim; usable from the console
 - `pg.activePotions`: caps how many entries of `shop.yml` are shown and buyable (`0` = all), the legacy `activePotions` knob
 - The arena selector paper is only handed out when the lobby has more than one arena, like the legacy `singleArena` behaviour
