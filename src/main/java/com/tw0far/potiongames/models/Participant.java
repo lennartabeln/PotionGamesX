@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.models;
 
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class Participant {
 
@@ -31,11 +33,19 @@ public class Participant {
     }
 
     public void teleportToLobby() {
+        // A missing spawn (hand-edited lobbies.yml, deleted world) must not wipe
+        // the player's inventory and then fail on teleport(null).
+        Location spawn = lobby.getSpawn();
+        if (spawn == null || spawn.getWorld() == null) {
+            player.sendMessage(Settings.prefix.append(
+                Component.text(Messages.LobbyNoSpawnText()).color(NamedTextColor.RED)));
+            return;
+        }
         if (savedState == null) {
             savedState = new PlayerState(player);
         }
         clearPlayer();
-        player.teleport(lobby.getSpawn());
+        player.teleport(spawn);
         player.setGameMode(GameMode.ADVENTURE);
 
         PlayerInventory inv = player.getInventory();

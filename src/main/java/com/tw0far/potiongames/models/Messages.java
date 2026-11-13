@@ -457,6 +457,10 @@ public class Messages {
         return prefix(Component.text(get("lobby.full", "This lobby is full!")).color(NamedTextColor.RED));
     }
 
+    public static String LobbyNoSpawnText() {
+        return get("lobby.no_spawn", "This lobby has no usable spawn - please tell an admin.");
+    }
+
     public static Component LobbyStartingBroadcast(String lobbyId) {
         String pattern = get("lobby.starting_broadcast", "Lobby %s is starting! Join with /pg join %s");
         return prefix(Component.text(String.format(pattern, lobbyId, lobbyId)).color(NamedTextColor.GRAY));

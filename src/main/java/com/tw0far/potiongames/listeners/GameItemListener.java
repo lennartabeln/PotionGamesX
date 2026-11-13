@@ -591,27 +591,34 @@ public class GameItemListener implements Listener {
 
     private void sendStats(Player p) {
         String uuid = p.getUniqueId().toString();
-        // DB reads run async; the message is delivered on the player's thread
+        // DB reads run async; the message components are built on the player's
+        // thread because Messages reads the YAML config.
         org.bukkit.Bukkit.getAsyncScheduler().runNow(plugin, task -> {
-            int wins = plugin.getDatabaseManager().getWins(uuid);
-            int losses = plugin.getDatabaseManager().getLosses(uuid);
-            int rounds = plugin.getDatabaseManager().getRounds(uuid);
-            int kills = plugin.getDatabaseManager().getKills(uuid);
-            int deaths = plugin.getDatabaseManager().getDeaths(uuid);
-            double kd = plugin.getDatabaseManager().getKD(uuid);
+            PlayerStats stats = new PlayerStats(
+                plugin.getDatabaseManager().getWins(uuid),
+                plugin.getDatabaseManager().getLosses(uuid),
+                plugin.getDatabaseManager().getRounds(uuid),
+                plugin.getDatabaseManager().getKills(uuid),
+                plugin.getDatabaseManager().getDeaths(uuid),
+                plugin.getDatabaseManager().getKD(uuid));
 
-            List<Component> lines = new ArrayList<>();
-            lines.add(Messages.StatsLabel());
-            lines.add(Messages.RoundsLabel(rounds));
-            lines.add(Messages.WinsLabel(wins));
-            lines.add(Messages.LossesLabel(losses));
-            lines.add(Messages.KillsLabel(kills));
-            lines.add(Messages.DeathsLabel(deaths));
-            lines.add(Messages.KDLabel(kd));
-            lines.add(Messages.StatsLabel());
-
-            p.getScheduler().execute(plugin, () -> lines.forEach(p::sendMessage), () -> { }, 1L);
+            p.getScheduler().execute(plugin, () -> {
+                List<Component> lines = new ArrayList<>();
+                lines.add(Messages.StatsLabel());
+                lines.add(Messages.RoundsLabel(stats.rounds()));
+                lines.add(Messages.WinsLabel(stats.wins()));
+                lines.add(Messages.LossesLabel(stats.losses()));
+                lines.add(Messages.KillsLabel(stats.kills()));
+                lines.add(Messages.DeathsLabel(stats.deaths()));
+                lines.add(Messages.KDLabel(stats.kd()));
+                lines.add(Messages.StatsLabel());
+                lines.forEach(p::sendMessage);
+            }, () -> { }, 1L);
         });
+    }
+
+    /** Snapshot of the stat sheet, moved from the async thread to the player thread. */
+    private record PlayerStats(int wins, int losses, int rounds, int kills, int deaths, double kd) {
     }
 
     // ===== Loot filling =====

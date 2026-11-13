@@ -67,35 +67,42 @@ public class TopCommand implements ICommand {
         sender.sendMessage(Component.text(DIVIDER).color(NamedTextColor.DARK_GRAY));
         sender.sendMessage(Component.text(String.format(Messages.TopHeaderText(), label)).color(NamedTextColor.GOLD));
 
-        // Query runs asynchronously; results are delivered on the sender's thread
+        // Query runs asynchronously; results are delivered on the sender's thread.
+        // Message lookups stay on that thread too - Messages reads the YAML config,
+        // which is not safe to touch from the async scheduler.
         Bukkit.getAsyncScheduler().runNow(plugin, task -> {
-            List<String> lines = new ArrayList<>();
+            List<String> rows = new ArrayList<>();
+            String problem = null;
             try (ResultSet resultSet = plugin.getDatabaseManager().query(query)) {
                 if (resultSet == null) {
-                    lines.add("!" + Messages.TopNoDataText());
+                    problem = "no_data";
                 } else {
                     int rank = 1;
-                    boolean hasEntries = false;
                     while (resultSet.next()) {
-                        hasEntries = true;
                         String playerName = resolvePlayerName(resultSet.getString("UUID"));
-                        lines.add(rank + ". " + playerName + " - " + formatValue(queryType, resultSet));
+                        rows.add(rank + ". " + playerName + " - " + formatValue(queryType, resultSet));
                         rank++;
                     }
-                    if (!hasEntries) {
-                        lines.add(Messages.TopEmptyText());
+                    if (rows.isEmpty()) {
+                        problem = "empty";
                     }
                 }
             } catch (SQLException e) {
                 plugin.getLogger().warning("Failed to build leaderboard for type " + queryType + ": " + e.getMessage());
-                lines.add("!" + Messages.TopFailedText());
+                problem = "failed";
             }
 
+            final String status = problem;
             Runnable deliver = () -> {
-                for (String line : lines) {
-                    if (line.startsWith("!")) {
-                        sender.sendMessage(Component.text(line.substring(1)).color(NamedTextColor.RED));
-                    } else {
+                if (status != null) {
+                    String text = switch (status) {
+                        case "no_data" -> Messages.TopNoDataText();
+                        case "empty" -> Messages.TopEmptyText();
+                        default -> Messages.TopFailedText();
+                    };
+                    sender.sendMessage(Component.text(text).color(NamedTextColor.RED));
+                } else {
+                    for (String line : rows) {
                         sender.sendMessage(Component.text(line).color(NamedTextColor.GRAY));
                     }
                 }
