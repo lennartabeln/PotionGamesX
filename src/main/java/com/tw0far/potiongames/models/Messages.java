@@ -1,10 +1,17 @@
 package com.tw0far.potiongames.models;
 
+import com.tw0far.potiongames.PotionGamesX;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class Messages {
     private static String get(String key, String def) {
@@ -23,6 +30,7 @@ public class Messages {
 
     public static void seed() {
         String lang = "en_US";
+        mergeBundledMessages();
         addDefault(lang, "lobby.added", "Lobby %d added successfully.");
         addDefault(lang, "lobby.added_failed", "Failed to add lobby %d.");
         addDefault(lang, "lobby.removed", "Lobby %d removed successfully.");
@@ -167,6 +175,53 @@ public class Messages {
             Settings.messages.save(Settings.messagesFile);
         } catch (IOException ignored) {
         }
+    }
+
+    /**
+     * Copy every key of the shipped {@code messages.yml} into the user's file
+     * when that file does not define it yet.
+     *
+     * <p>Runs before {@link #seedMissingTranslations(String)}, so an installation
+     * that upgrades from an older jar receives the shipped translation of a new
+     * key (e.g. the German text) instead of the English in-code fallback. Keys
+     * the admin already edited are never touched.</p>
+     */
+    private static void mergeBundledMessages() {
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (plugin == null) {
+            return;
+        }
+        try (InputStream in = plugin.getResource("messages.yml")) {
+            if (in == null) {
+                return;
+            }
+            YamlConfiguration bundled =
+                YamlConfiguration.loadConfiguration(new InputStreamReader(in, StandardCharsets.UTF_8));
+            for (String locale : bundled.getKeys(false)) {
+                ConfigurationSection section = bundled.getConfigurationSection(locale + ".messages");
+                if (section != null) {
+                    mergeLocale(Settings.messages, section, locale);
+                }
+            }
+        } catch (IOException | RuntimeException ignored) {
+            // A broken bundled resource must never stop the plugin from starting.
+        }
+    }
+
+    /** Adds the missing keys of one locale to {@code target}; returns how many were added. */
+    static int mergeLocale(FileConfiguration target, ConfigurationSection bundled, String locale) {
+        int added = 0;
+        for (String key : bundled.getKeys(true)) {
+            if (bundled.isConfigurationSection(key)) {
+                continue;
+            }
+            String path = locale + ".messages." + key;
+            if (target.get(path) == null) {
+                target.set(path, bundled.get(key));
+                added++;
+            }
+        }
+        return added;
     }
 
     /**
