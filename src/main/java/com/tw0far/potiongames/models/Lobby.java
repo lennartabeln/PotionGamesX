@@ -636,8 +636,9 @@ public class Lobby {
                 } else {
                     sign.getSide(Side.FRONT).line(1, Component.text(state.toString()).color(NamedTextColor.RED));
                 }
-                if (currentArena != null) {
-                    sign.getSide(Side.FRONT).line(2, Component.text(currentArena.getName()).color(NamedTextColor.GOLD));
+                Arena shown = getDisplayArena();
+                if (shown != null) {
+                    sign.getSide(Side.FRONT).line(2, Component.text(shown.getName()).color(NamedTextColor.GOLD));
                 } else {
                     sign.getSide(Side.FRONT).line(2, Component.text("VOTING").color(NamedTextColor.AQUA));
                 }
@@ -657,14 +658,23 @@ public class Lobby {
     }
 
     /**
-     * Arena to display outside of a running round: the vote leader, or null
-     * when nobody voted yet.
+     * Arena to display outside of a running round: the running arena, the vote
+     * leader, or - in a lobby with a single map - that map, because there is
+     * nothing to vote for.
      */
     public Arena getDisplayArena() {
         if (currentArena != null) {
             return currentArena;
         }
-        return getLeadingVotedArena();
+        Arena leading = getLeadingVotedArena();
+        if (leading != null) {
+            return leading;
+        }
+        // A single-map lobby has nothing to vote for: show the only arena.
+        if (!hasArenaChoice() && !arenas.isEmpty()) {
+            return arenas.get(0);
+        }
+        return null;
     }
 
     private Arena getLeadingVotedArena() {
