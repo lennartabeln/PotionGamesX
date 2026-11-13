@@ -40,7 +40,7 @@ public class ConfigCommand implements ICommand {
             .append(Component.text("Core:").color(NamedTextColor.GOLD)));
 
         player.sendMessage(formatConfigLine("  Language", config.getLanguage()));
-        player.sendMessage(formatConfigLine("  Game Server Mode", config.isGameServer() ? "ONLINE" : "OFFLINE"));
+        player.sendMessage(flagLine("  Game Server Mode", config.isGameServer()));
         player.sendMessage(formatConfigLine("  Database Mode", config.isActivateMysql() ? "MySQL" : "SQLite"));
 
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
@@ -55,12 +55,12 @@ public class ConfigCommand implements ICommand {
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("Features:").color(NamedTextColor.GOLD)));
 
-        player.sendMessage(formatConfigLine("  Teams", config.isActivateTeams() ? "✓" : "✗"));
-        player.sendMessage(formatConfigLine("  Kits", config.isActivateKits() ? "✓" : "✗"));
-        player.sendMessage(formatConfigLine("  Shop", config.isActivateShop() ? "✓" : "✗"));
-        player.sendMessage(formatConfigLine("  Airdrops", config.isActivateAirdrops() ? "✓" : "✗"));
-        player.sendMessage(formatConfigLine("  Deathmatch", config.isActivateDeathmatch() ? "✓" : "✗"));
-        player.sendMessage(formatConfigLine("  Scoreboard", config.isActivateScoreboard() ? "✓" : "✗"));
+        player.sendMessage(flagLine("  Teams", config.isActivateTeams()));
+        player.sendMessage(flagLine("  Kits", config.isActivateKits()));
+        player.sendMessage(flagLine("  Shop", config.isActivateShop()));
+        player.sendMessage(flagLine("  Airdrops", config.isActivateAirdrops()));
+        player.sendMessage(flagLine("  Deathmatch", config.isActivateDeathmatch()));
+        player.sendMessage(flagLine("  Scoreboard", config.isActivateScoreboard()));
 
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
@@ -72,6 +72,17 @@ public class ConfigCommand implements ICommand {
         return Component.text(key).color(NamedTextColor.GRAY)
             .append(Component.text(": ").color(NamedTextColor.DARK_GRAY))
             .append(Component.text(value).color(NamedTextColor.GREEN));
+    }
+
+    /**
+     * Boolean setting as {@code true}/{@code false} - the same spelling the
+     * config file uses, instead of mixing ONLINE/OFFLINE and ticks.
+     */
+    private Component flagLine(String key, boolean value) {
+        return Component.text(key).color(NamedTextColor.GRAY)
+            .append(Component.text(": ").color(NamedTextColor.DARK_GRAY))
+            .append(Component.text(Boolean.toString(value))
+                .color(value ? NamedTextColor.GREEN : NamedTextColor.RED));
     }
 
     @Override

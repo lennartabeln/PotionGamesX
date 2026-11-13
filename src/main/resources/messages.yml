@@ -157,7 +157,7 @@ en_US:
       config: "/pg config - View current configuration"
       database: "/pg database - Toggle database mode (MySQL/SQLite)"
       database_usage: "/pg database - Toggle database mode MySQL/SQLite (requires pg.database)"
-      gameserver: "/pg gameserver - Toggle gameserver mode (online/offline)"
+      gameserver: "/pg gameserver - Toggle gameserver mode (true/false)"
       gameserver_usage: "/pg gameserver - Toggle gameserver mode (requires pg.gameserver)"
       top: "/pg top [type] - Show leaderboard (kills/deaths/wins/kd)"
     kick:
@@ -510,7 +510,7 @@ de_DE:
       config: "/pg config - Aktuelle Konfiguration anzeigen"
       database: "/pg database - Datenbankmodus umschalten (MySQL/SQLite)"
       database_usage: "/pg database - Datenbankmodus MySQL/SQLite umschalten (benötigt pg.database)"
-      gameserver: "/pg gameserver - Gameserver-Modus umschalten (online/offline)"
+      gameserver: "/pg gameserver - Gameserver-Modus umschalten (true/false)"
       gameserver_usage: "/pg gameserver - Gameserver-Modus umschalten (benötigt pg.gameserver)"
       top: "/pg top [type] - Rangliste anzeigen (kills/deaths/wins/kd)"
     kick:
