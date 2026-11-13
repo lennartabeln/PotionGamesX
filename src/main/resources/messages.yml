@@ -7,6 +7,8 @@ en_US:
     arena:
       added: "Arena %s added successfully. (Lobby: %d)"
       removed: "Arena %s removed successfully. (Lobby: %d)"
+      no_spawn: "Arena %s has no usable spawn - the round cannot start."
+      spawn_shortage: "Arena %s has only %d spawns for %d players - players share spawn points."
       could_not_load: "Could not load an arena!"
       forced: "has been forced as arena!"
       not_arena: "is not an arena!"
@@ -79,6 +81,7 @@ en_US:
     deathmatch:
       started: "Deathmatch started!"
       starting_in: "Deathmatch is starting in"
+      no_spawn: "No deathmatch spawn configured - staying in the arena."
     deaths:
       label: "Deaths"
     duration:
@@ -346,6 +349,8 @@ de_DE:
     arena:
       added: "Arena %s erfolgreich hinzugefügt. (Lobby: %d)"
       removed: "Arena %s erfolgreich entfernt. (Lobby: %d)"
+      no_spawn: "Arena %s hat keinen nutzbaren Spawn - die Runde kann nicht starten."
+      spawn_shortage: "Arena %s hat nur %d Spawns für %d Spieler - Spieler teilen sich Spawnpunkte."
       could_not_load: "Konnte keine Arena laden!"
       forced: "wurde als Arena erzwungen!"
       not_arena: "ist keine Arena!"
@@ -418,6 +423,7 @@ de_DE:
     deathmatch:
       started: "Deathmatch gestartet!"
       starting_in: "Deathmatch startet in"
+      no_spawn: "Kein Deathmatch-Spawn konfiguriert - die Spieler bleiben in der Arena."
     deaths:
       label: "Tode"
     duration:

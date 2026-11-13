@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.models;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Location;
@@ -225,16 +226,54 @@ public class Arena {
         return name;
     }
 
-    public void teleport(ArrayList<Participant> participants) {
-        if (spawns.isEmpty()) {
-            return;
+    /**
+     * Teleports the participants onto this arena's spawns.
+     *
+     * <p>Spawns whose world no longer exists are skipped; when no usable spawn is
+     * left the caller is told, instead of teleporting into a null world. More
+     * players than spawns cycle through the list (legacy behaviour).</p>
+     *
+     * @return false when there was no usable spawn at all
+     */
+    public boolean teleport(ArrayList<Participant> participants) {
+        List<Location> usable = usableSpawns();
+        if (usable.isEmpty()) {
+            return false;
         }
         for (int i = 0; i < participants.size(); i++) {
             Participant participant = participants.get(i);
             Player player = participant.getPlayer();
             if (player != null && player.isOnline()) {
-                player.teleport(spawns.get(i % spawns.size()));
+                player.teleport(usable.get(i % usable.size()));
             }
         }
+        return true;
+    }
+
+    /** Spawns that can actually be teleported to (non-null, world still loaded). */
+    public List<Location> usableSpawns() {
+        List<Location> usable = new ArrayList<>();
+        for (Location spawn : spawns) {
+            if (spawn != null && spawn.getWorld() != null) {
+                usable.add(spawn);
+            }
+        }
+        return usable;
+    }
+
+    /** Number of normal spawns that are usable right now. */
+    public int usableSpawnCount() {
+        return usableSpawns().size();
+    }
+
+    /** Number of deathmatch spawns that are usable right now. */
+    public int usableDeathmatchSpawnCount() {
+        int usable = 0;
+        for (Location spawn : deathmatchSpawns) {
+            if (spawn != null && spawn.getWorld() != null) {
+                usable++;
+            }
+        }
+        return usable;
     }
 }

@@ -153,7 +153,7 @@ public class PlayerScoreboardManager {
         row(board, TEAM_MAP, arenaName(lobby));
         row(board, TEAM_TEAM, teamName(lobby, player));
         row(board, TEAM_KIT, kitName(lobby, player));
-        row(board, TEAM_PLAYERS, lobby.getPlayerCount() + "/" + lobby.getMaxPlayers());
+        row(board, TEAM_PLAYERS, lobby.getPlayerCount() + "/" + lobby.getCapacity());
 
         if (round) {
             row(board, TEAM_TIME, clock(lobby.getGameTimer()));

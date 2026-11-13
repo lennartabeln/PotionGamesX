@@ -74,7 +74,7 @@ public class ServerListPingEventListener implements Listener {
     private int totalCapacity(ArrayList<Lobby> lobbies) {
         int capacity = 0;
         for (Lobby lobby : lobbies) {
-            capacity += Math.max(0, lobby.getMaxPlayers());
+            capacity += Math.max(0, lobby.getCapacity());
         }
         return capacity;
     }

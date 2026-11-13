@@ -370,6 +370,21 @@ public class Messages {
         return prefix(Component.text(get("deathmatch.starting_in", "Deathmatch is starting in") + " " + time).color(NamedTextColor.GOLD));
     }
 
+    public static Component DeathmatchNoSpawn() {
+        return prefix(Component.text(get("deathmatch.no_spawn", "No deathmatch spawn configured - staying in the arena.")).color(NamedTextColor.YELLOW));
+    }
+
+    public static Component ArenaNoSpawn(String arena) {
+        return prefix(Component.text(String.format(
+            get("arena.no_spawn", "Arena %s has no usable spawn - the round cannot start."), arena)).color(NamedTextColor.RED));
+    }
+
+    public static Component ArenaSpawnShortage(String arena, int spawns, int players) {
+        return prefix(Component.text(String.format(
+            get("arena.spawn_shortage", "Arena %s has only %d spawns for %d players - players share spawn points."),
+            arena, spawns, players)).color(NamedTextColor.YELLOW));
+    }
+
     public static Component DeathsLabel(int deaths) {
         return prefix(Component.text(get("deaths.label", "Deaths") + ": ").color(NamedTextColor.GREEN).append(Component.text(deaths).color(NamedTextColor.AQUA)));
     }

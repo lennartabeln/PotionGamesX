@@ -290,7 +290,7 @@ public class Lobby {
     }
 
     public void addParticipant(Player p) {
-        if (participants.size() < maxPlayers && getParticipant(p) == null) {
+        if (participants.size() < getCapacity() && getParticipant(p) == null) {
             Participant participant = new Participant(this, p);
             participants.add(participant);
             participant.teleportToLobby();
@@ -553,7 +553,7 @@ public class Lobby {
      * and has free slots.
      */
     public boolean canJoin() {
-        return playerCount < maxPlayers
+        return playerCount < getCapacity()
             && (state == GameStates.WAITING || state == GameStates.PREPARING);
     }
 
@@ -642,7 +642,7 @@ public class Lobby {
                 } else {
                     sign.getSide(Side.FRONT).line(2, Component.text("VOTING").color(NamedTextColor.AQUA));
                 }
-                sign.getSide(Side.FRONT).line(3, Component.text("[" + playerCount + "/" + maxPlayers + "]").color(NamedTextColor.GRAY));
+                sign.getSide(Side.FRONT).line(3, Component.text("[" + playerCount + "/" + getCapacity() + "]").color(NamedTextColor.GRAY));
                 sign.update();
                 joinSign = sign;
             }
@@ -892,6 +892,60 @@ public class Lobby {
         return available;
     }
 
+    /**
+     * Capacity the lobby can actually serve: the configured maximum, capped by
+     * the fewest usable normal spawns of its arenas, so nobody joins a lobby
+     * that would later cycle spawns or teleport two players onto one block.
+     *
+     * <p>While no arena has a usable spawn yet (setup phase) the configured
+     * maximum stays in place, otherwise a fresh lobby could not be joined at
+     * all.</p>
+     */
+    public int getCapacity() {
+        int smallest = Integer.MAX_VALUE;
+        for (Arena arena : arenas) {
+            int spawns = arena.usableSpawnCount();
+            if (spawns > 0) {
+                smallest = Math.min(smallest, spawns);
+            }
+        }
+        if (smallest == Integer.MAX_VALUE) {
+            return maxPlayers;
+        }
+        return Math.min(maxPlayers, smallest);
+    }
+
+    /** Pure helper behind {@link #getCapacity()}; testable without a server. */
+    static int capacityFor(int configuredMax, List<Integer> arenaSpawnCounts) {
+        int smallest = Integer.MAX_VALUE;
+        for (Integer spawns : arenaSpawnCounts) {
+            if (spawns != null && spawns > 0) {
+                smallest = Math.min(smallest, spawns);
+            }
+        }
+        if (smallest == Integer.MAX_VALUE) {
+            return Math.max(0, configuredMax);
+        }
+        return Math.min(Math.max(0, configuredMax), smallest);
+    }
+
+    /**
+     * Remaining players at which the deathmatch starts: the number of usable
+     * deathmatch spawns, so every survivor gets one. Never below two (a
+     * deathmatch against yourself makes no sense), and the legacy minimum when
+     * no deathmatch spawn is configured.
+     */
+    public int getDeathmatchThreshold() {
+        Arena arena = currentArena != null ? currentArena : getDisplayArena();
+        int spawns = arena != null ? arena.usableDeathmatchSpawnCount() : 0;
+        return deathmatchThreshold(spawns);
+    }
+
+    /** Pure helper behind {@link #getDeathmatchThreshold()}. */
+    static int deathmatchThreshold(int usableDeathmatchSpawns) {
+        return Math.max(2, usableDeathmatchSpawns);
+    }
+
     public boolean isTeamFull(int teamId, int maxTeamPlayers) {
         return lobbyteams.getOrDefault(teamId, 0) >= Math.max(1, maxTeamPlayers);
     }
@@ -1086,7 +1140,10 @@ public class Lobby {
                     }
                     if (currentArena != null) {
                         distributeTeams();
-                        currentArena.teleport(participants);
+                        if (!currentArena.teleport(participants)) {
+                            abortRoundStart(currentArena);
+                            break;
+                        }
                         // Adventure mode (lobby) and the lobby items would make
                         // the whole arena block system unreachable.
                         for (Participant participant : participants) {
@@ -1095,6 +1152,7 @@ public class Lobby {
                         giveRichKidCoins();
                         applyGameRules();
                         giveSpawnItems();
+                        warnAboutSpawnShortage(currentArena);
                     }
                     gameTimer = Math.max(1, roundTime);
                     deathmatch = false;
@@ -1207,6 +1265,9 @@ public class Lobby {
                 alive.add(player);
             }
         }
+        int threshold = getDeathmatchThreshold();
+        boolean deathmatchDue = alive.size() >= 2 && alive.size() <= threshold
+            && PotionGamesX.getInstance().getConfigManager().isActivateDeathmatch() && !deathmatch;
 
         // Team mode: the round ends when a single team remains
         if (activateTeams && !lobbyteamplayernames.isEmpty()) {
@@ -1227,9 +1288,8 @@ public class Lobby {
                 endRound();
                 return;
             }
-            // 1v1 from opposing teams: deathmatch applies here too
-            if (alive.size() == 2 && aliveTeams.size() == 2
-                    && PotionGamesX.getInstance().getConfigManager().isActivateDeathmatch() && !deathmatch) {
+            // Remaining players fit onto the deathmatch spawns
+            if (deathmatchDue) {
                 activateDeathmatch();
             }
         } else if (alive.size() == 1) {
@@ -1238,20 +1298,54 @@ public class Lobby {
         } else if (alive.isEmpty()) {
             announceDraw();
             endRound();
-        } else if (alive.size() == 2 && PotionGamesX.getInstance().getConfigManager().isActivateDeathmatch() && !deathmatch) {
+        } else if (deathmatchDue) {
             activateDeathmatch();
         }
     }
 
+    /**
+     * Aborts a round that cannot start because the arena has no usable spawn:
+     * the lobby returns to waiting, everyone is told, nothing is half-started.
+     */
+    private void abortRoundStart(Arena arena) {
+        setState(GameStates.WAITING);
+        prepareTimer = countdown;
+        gameTimer = Math.max(1, roundTime);
+        String arenaName = arena != null && arena.getName() != null ? arena.getName() : "?";
+        PotionGamesX.getInstance().getLogger().warning(
+            "Lobby " + id + ": arena " + arenaName + " has no usable spawn - round aborted");
+        sendToLobby(Messages.ArenaNoSpawn(arenaName));
+    }
+
+    /** Tells the round participants when the arena has fewer spawns than players. */
+    private void warnAboutSpawnShortage(Arena arena) {
+        int spawns = arena.usableSpawnCount();
+        int players = activePlayers.size();
+        if (spawns <= 0 || players <= spawns) {
+            return;
+        }
+        PotionGamesX.getInstance().getLogger().warning(
+            "Lobby " + id + ": arena " + arena.getName() + " has " + spawns
+                + " spawns for " + players + " players - players share spawn points");
+        sendToLobby(Messages.ArenaSpawnShortage(arena.getName(), spawns, players));
+    }
+
     private void activateDeathmatch() {
         deathmatch = true;
-        for (Player player : new ArrayList<>(activePlayers)) {
-            if (currentArena != null) {
-                Location spawn = currentArena.getRandomDeathmatchSpawn();
-                if (spawn != null) {
-                    player.teleport(spawn);
-                }
+        Arena arena = currentArena;
+        int spawns = arena != null ? arena.usableDeathmatchSpawnCount() : 0;
+        if (arena != null && spawns > 0) {
+            Location fallback = arena.getRandomDeathmatchSpawn();
+            for (Player player : new ArrayList<>(activePlayers)) {
+                Location spawn = arena.getRandomDeathmatchSpawn();
+                player.teleport(spawn != null ? spawn : fallback);
             }
+        } else {
+            // No deathmatch spawn configured: keep everyone where they are instead
+            // of leaving the round in a half-teleported state.
+            PotionGamesX.getInstance().getLogger().info(
+                "Lobby " + id + ": no deathmatch spawn configured, players stay in the arena");
+            sendToLobby(Messages.DeathmatchNoSpawn());
         }
         for (Participant participant : participants) {
             participant.sendMessage(Messages.DeathmatchStarted());
