@@ -143,7 +143,36 @@ class LegacyConfigMigratorTest {
         YamlConfiguration config = new YamlConfiguration();
         config.set("pg.lobbySystem", true);
 
-        assertFalse(LegacyConfigMigrator.enableSingleLobby(config));
-        assertFalse(config.contains("pg.singleLobby"));
+        assertTrue(LegacyConfigMigrator.enableSingleLobby(config));
+        assertFalse(config.getBoolean("pg.singleLobby"));
+    }
+
+    @Test
+    void singleLobbyConfigBecomesLobbyOne() {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("pg.Lobby.coords", "legacy-hub-spawn");
+        config.set("pg.Lobby.sign", "legacy-sign");
+        YamlConfiguration lobbies = new YamlConfiguration();
+
+        assertTrue(LegacyConfigMigrator.createSingleLobby(config, lobbies));
+
+        assertEquals("legacy-hub-spawn", lobbies.getString("pg.lobbies.1.spawn"));
+        assertEquals("legacy-sign", lobbies.getString("pg.lobbies.1.joinSign"));
+    }
+
+    @Test
+    void singleLobbyIsNotCreatedNextToExistingLobbies() {
+        YamlConfiguration config = new YamlConfiguration();
+        config.set("pg.Lobby.coords", "legacy-hub-spawn");
+        YamlConfiguration lobbies = new YamlConfiguration();
+        lobbies.createSection("pg.lobbies.3");
+
+        assertFalse(LegacyConfigMigrator.createSingleLobby(config, lobbies));
+        assertFalse(lobbies.contains("pg.lobbies.1"));
+    }
+
+    @Test
+    void missingLegacyLobbyKeysDoNotCreateALobby() {
+        assertFalse(LegacyConfigMigrator.createSingleLobby(new YamlConfiguration(), new YamlConfiguration()));
     }
 }

@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Legacy compatibility
 - `pg.singleLobby`: single-lobby mode accepts the legacy short setup forms (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg joinsign`, …) and targets lobby 1, while the long form keeps working
-- Automatic legacy migration on startup: an existing `arenadata.yml` is migrated without any command — lobbies from `pg.lobbies.<id>` are created (spawn from `coords`, settings moved into `settings.*`), the global `pg.arenas.<n>` are copied into every lobby that has no arena yet, and a legacy `pg.lobbySystem: false` switches `pg.singleLobby` on. Existing entries are never overwritten
+- Automatic legacy migration on startup: an existing `arenadata.yml` is migrated without any command — lobbies from `pg.lobbies.<id>` are created (spawn from `coords`, settings moved into `settings.*`), a legacy single-lobby server gets `pg.Lobby.coords`/`pg.Lobby.sign` from `config.yml` as lobby 1, the global `pg.arenas.<n>` are copied into every lobby that has no arena yet, and a legacy `pg.lobbySystem` value is turned into `pg.singleLobby`. Existing entries are never overwritten
 - `/pg importarenas <lobby> [file]`: imports arenas from a legacy `arenadata.yml` (`pg.arenas.<n>` with `name`, `spawns`, `deathmatch`) into a lobby of the current `lobbies.yml` layout, skips existing arenas and keeps the spawn locations verbatim; usable from the console
 - `pg.activePotions`: caps how many entries of `shop.yml` are shown and buyable (`0` = all), the legacy `activePotions` knob
 - The arena selector paper is only handed out when the lobby has more than one arena, like the legacy `singleArena` behaviour
@@ -119,6 +119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The team amount is derived from `maxPlayers / teamSize` (legacy behaviour) instead of `ceil(players / teamSize)`
 - Setup commands accept an optional lobby number in single-lobby mode; the long form is unchanged
 - `plugin.yml` now declares `api-version: 26.3` (the API the code builds against, required for `GameRules`), matching the documented "Paper 26.3+" requirement
+- New options (`pg.singleLobby`, `pg.activePotions`) are written into an existing `config.yml` on startup, so upgrades can see them without deleting the file
 - Arena gamerules now freeze `ADVANCE_TIME`, `ADVANCE_WEATHER`, `SPAWN_MOBS`, `MOB_GRIEFING` and a fire-spread radius of `0`, and restore the captured values (including a custom radius) afterwards
 
 ### Removed
