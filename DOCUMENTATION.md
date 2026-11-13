@@ -11,8 +11,10 @@
 
 ### Build
 ```bash
-mvn clean package        # add -DskipTests to skip unit tests
+mvn clean install        # build + unit tests (add -DskipTests to skip them)
 ```
+
+Javac warnings fail the build (`failOnWarning` with `-Xlint:all`), so a green build is also a warning-free build.
 
 ### Deploy
 1. Copy `target/PotionGamesX-*.jar` to server `plugins/`
@@ -39,16 +41,19 @@ mvn clean package        # add -DskipTests to skip unit tests
 - ✅ Individual command classes (not monolithic)
 - ✅ Separated event listeners
 - ✅ Configuration-driven design
-- ✅ 0 code warnings, production-ready
+- ✅ Warning-free build (`-Xlint:all` + `-Werror`), enforced in CI
 
 ### Admin Commands
+- `/pg setup` - Interactive setup wizard (lobbies, arenas, spawns, chests, signs)
 - `/pg config` - View configuration
 - `/pg status` - Show server status and lobbies
+- `/pg reload` - Reload every config file
 - `/pg gameserver` - Toggle offline/online mode
 - `/pg database` - Switch MySQL/SQLite
 - `/pg broadcast` - Send announcements
 - `/pg kick` - Remove players from lobbies
 - `/pg top` - Show leaderboards
+- `/pg version` - Show the plugin and the latest release version
 
 ## 🛠️ Configuration
 
@@ -68,7 +73,8 @@ All config files in `plugins/PotionGamesX/`:
 | Metric | Status |
 |--------|--------|
 | Java | 25+ required |
-| Paper | 26.2+ required |
+| Paper | 26.3+ required |
+| Compiler | Warning-free (`-Xlint:all`, `-Werror`) |
 | Tests | ✅ JUnit 5 unit tests (`mvn test`) |
 | JAR Size | ~0.25 MB |
 
@@ -76,7 +82,7 @@ All config files in `plugins/PotionGamesX/`:
 
 - **Java 25+**
 - **Maven 3.8+**
-- **Paper 26.2**
+- **Paper 26.3+**
 - **VaultAPI 1.7.1** (optional, for economy)
 - **Multiverse-Core** (soft dependency)
 

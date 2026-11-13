@@ -20,8 +20,8 @@ What you expected to happen instead.
 If applicable, add screenshots or console output.
 
 **Environment (please complete):**
-- Server software: [e.g. Paper 1.21, Purpur 1.21.1]
-- Plugin version: [e.g. PotionGamesX 1.0.0]
+- Server software: [e.g. Paper 26.3, Purpur 26.3]
+- Plugin version: [e.g. PotionGamesX 1.0.0-dev.6]
 - Java version: [e.g. JDK 25]
 
 **Additional context**

@@ -8,5 +8,5 @@
 
 ## Checklist
 
-- [ ] The project builds (`mvn clean package`)
-- [ ] No new warnings from `-Xlint:all`
+- [ ] The project builds (`mvn clean install`)
+- [ ] The build is warning-free — `-Xlint:all` + `-Werror` are enforced by the compiler plugin

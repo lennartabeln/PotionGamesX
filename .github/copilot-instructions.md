@@ -2,7 +2,7 @@
 
 ## Overview
 
-PotionGamesX is a Minecraft **Paper 26.2+** (Java 25+) minigames plugin similar to SurvivalGames, but with potions, loot chests, a potion shop, teams and a deathmatch phase. It supports multiple lobbies with arena voting and persists player statistics via SQLite or MySQL.
+PotionGamesX is a Minecraft **Paper 26.3+** (Java 25+) minigames plugin similar to SurvivalGames, but with potions, loot chests, a potion shop, teams and a deathmatch phase. It supports multiple lobbies with arena voting and persists player statistics via SQLite or MySQL.
 
 ## Build & Test
 
@@ -12,6 +12,7 @@ mvn test             # JUnit 5 unit tests (src/test/java) - no Bukkit server nee
 ```
 
 - Java 25+, Maven 3.8+
+- Javac warnings fail the build (`-Xlint:all` + `failOnWarning`/`-Werror`) — fix warnings, never suppress them silently
 - Paper API is resolved from `https://repo.papermc.io` by Maven
 - Optional at runtime: VaultAPI 1.7.1 (economy rewards), Multiverse-Core (multi-world)
 
@@ -61,10 +62,10 @@ block tracking lives on `Lobby`, membership lives on `Game`.
   airdrop torch, player finder, selector openers, leave/stats items, join/stats signs
 - `SetupInteractionListener` - setup hotbar tools + lobby/arena selection GUIs
 - `PlayerEventListener`, `ChatEventListener`, `DeathEventListener`, `CombatEventListener`,
-  `DamageEventListener`, `BlockEventListener`, `BucketEventListener`, `BlockFadeEventListener`,
-  `BlockFlowEventListener`, `LeavesDecayEventListener`, `WeatherEventListener`,
-  `CreatureSpawnEventListener`, `ItemDropEventListener`, `SignChangeEventListener`,
-  `SpectatorEventListener`
+  `DamageEventListener`, `BlockEventListener`, `ExplosionEventListener`, `BucketEventListener`,
+  `BlockFadeEventListener`, `BlockFlowEventListener`, `LeavesDecayEventListener`,
+  `WeatherEventListener`, `CreatureSpawnEventListener`, `ItemDropEventListener`,
+  `SignChangeEventListener`, `SpectatorEventListener`, `ServerListPingEventListener`
 
 All are registered in `PotionGamesX.onEnable()`.
 
@@ -103,6 +104,18 @@ Every subcommand of `/pg` is one class implementing `ICommand`
    player-facing English strings.
 7. **Spawns**: always use the 1-based contiguous ID scheme on `Arena`;
    see `ArenaSpawnTest` for the exact contract.
+8. **World scoping**: world-level guards use `Lobby#isGameWorld` (hub + arenas) or
+   `Game#isRoundWorld` (arena of a lobby in `INGAME`/`DEATHMATCH`) — never a global
+   "anyone is in a lobby" check, that froze mobs/weather on unrelated worlds.
+9. **Teams**: the team count is `maxPlayers / teamSize` (`Lobby#getTeamAmount`).
+   `Lobby#assignTeam` writes both the lobby counters and the `ArenaStateManager`
+   selector state; `clearTeams()`/`distributeTeams()` must leave a usable selector
+   behind (`syncTeamSelector`/`publishTeamsToSelector`).
+10. **Rounds**: `roundTime` is seconds internally (`LobbyConfig` converts once);
+    `Participant#startRound()` prepares survival + clean inventory at round start,
+    `Lobby#giveRichKidCoins()` handles the Rich Kid kit.
+11. **Shop currency**: coins + one glass bottle per purchase, both rolled by the
+    `shop` loot pool (`pg.chestloot.normal.loot.shop`) while the lobby shop is on.
 
 ## Testing
 

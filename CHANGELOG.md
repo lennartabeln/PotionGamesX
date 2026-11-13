@@ -27,6 +27,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Configuration
 - Consolidated config structure (config.yml, chests.yml, kits.yml, messages.yml, shop.yml)
 
+#### Loot & shop
+- Default loot is seeded again on startup: the `food1/2`, `armour1-5` and `weapons1/2` pools and the documented special chests (`pg.customchests` 1-4, including the Flame Bow, netherite and diamond-armour chests) work on a fresh install; existing admin entries are never overwritten
+- Shop currency is part of the chest loot again: the new `shop` loot pool (`pg.chestloot.normal.loot.shop`, default `10.0`) rolls glass bottles and coins while a lobby has its shop enabled, so potions can actually be bought
+- `Rich Kid` starts every round with 5 coins again (legacy value) next to the doubled kill coins
+
+#### Localization
+- `/pg status` and `/pg database` are translated (`status.*`, `database.mode_*` in `en_US` and `de_DE`), including the per-lobby line `Lobby 1 - Players: 3/24, Spectators: 1 (INGAME)`
+- `/pg kick` feedback is translated as well (`kick.*`, `command.kick_usage`)
+- New keys `database.not_connected`, `bucket.fill_not_allowed` and `setup.not_a_sign`, so admins get a clear message instead of a zeroed stat sheet, a silently ignored bucket or a stack trace
+
+#### Build & tooling
+- The compile fails on javac warnings (`failOnWarning`, i.e. `-Werror`, with `-Xlint:all`), locally and in CI
+- Unit tests for the team amount/assignment contract (`LobbyTeamTest`) and for enabling/disabling kits (`LobbyConfigTest`)
+
 ### Fixed
 
 - Game state is now propagated from the `Lobby` model to listeners; previously deaths/kills/rewards were never recorded and in-game block rules never applied
@@ -61,6 +75,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Free-for-all lobbies can fight again: the friendly-fire check only compares teams when the lobby actually uses teams, and teammates may attack each other in `DEATHMATCH` (previously `friendlyFire: false` cancelled every player hit without teams because all teams were `null`)
 - Player-finder compass points at enemies again: it ignored same-team players only when teams are active, targets any other player in free-for-all, also works in `DEATHMATCH`, and only considers players of the same running lobby
 - Explosions in arena worlds no longer permanently remove blocks (only entity damage applies); build mode still allows admins to reshape the arena, matching the legacy TNT whitelist behaviour
+- `roundTime` was converted from minutes to seconds twice, so a configured 30-minute round lasted 30 hours; the conversion happens exactly once in `LobbyConfig` now
+- Chest contents no longer regenerate on every open: each chest is stored for the round, shop chests only open and only sell during `INGAME`/`DEATHMATCH`, GUI drags are cancelled and clicks outside the top inventory are ignored, so loot and potions cannot be duplicated
+- Rounds start in `SURVIVAL` with the lobby items and leftover effects cleared, so breaking/placing blocks, buckets and flint and steel work again; the kit item and the kit GUI are only available with `activateKits`
+- The team count is derived from the lobby capacity (`maxPlayers / teamSize`, at least two teams) instead of the number of online players, players are spread over the emptiest teams, manual team picks survive the round start, and the selector state is re-seeded after every round (it was dead after round 1)
+- `messages.yml` duplicate keys are gone, missing translations are seeded, and every accessor resolves through the same `lang -> en_US -> literal` fallback chain
+- Stats backend: no more `StackOverflowError` when the database is unreachable, `Stats.UUID` is unique, counters are incremented inside SQL, a dropped connection is re-established once, the JDBC drivers ship through `plugin.yml` `libraries`, and the MySQL URL enables `allowPublicKeyRetrieval`, `serverTimezone` and `characterEncoding`
+- Command UX: `/pg force` explains its usage and rejects unknown arenas, `/pg commands` aliases `/pg help`, the console may run `help` and `kick`, tab completion only suggests permitted commands, `/pg list` caps at 54 entries, setup errors name the missing argument, join/leave print feedback, `/pg start` forces a 10-second countdown, and `plugin.yml` no longer advertises absent permissions
+- Arena worlds are protected on every level: liquid flow, block fade, leaf decay, fire spread, mob griefing and bucket filling are limited to the arena world, and mob spawning, weather and lightning only change in arena worlds of a running round (previously one waiting player froze mobs and weather on the whole server)
+- Spectators: a killed player stays at the death location instead of being teleported back to the hub, keeps a live sidebar, and every exit path (`/pg leave`, kick, quit, reset, reload, disable) restores gamemode, inventory, effects, collision and the server scoreboard
+- Lobby lifecycle: a reset only affects its own lobby and returns its players to the hub (other lobbies keep players, inventories and state), the last player leaving ends a running round through `ENDING` (draw message, stats, block restore), the pause flag no longer locks an emptied lobby, and exactly one tick task runs per lobby
+- Entering the lobby clears armour, offhand, potion effects, fire and health/food, so arena gear and shop potions no longer follow the player into the lobby or the next round
+- Votes and team slots are released when a player leaves (`/pg leave`, quit, kick, death, reset), so a disconnected player no longer decides the arena and team capacity stays correct
+- Dropping items in a lobby is cancelled again (the guard tested `isActivePlayer` and therefore never triggered)
+- `/pg joinsign` reports "That is not a sign!" instead of throwing a `ClassCastException` when aiming at a non-sign block, and `/pg kick` keeps the player's restored pre-join location instead of teleporting them to the spawn of world 0
+- Deprecated `org.bukkit.GameRule` usages replaced by the new `org.bukkit.GameRules` (`ADVANCE_TIME`, `ADVANCE_WEATHER`, `MOB_GRIEFING`, `SPAWN_MOBS`, `FIRE_SPREAD_RADIUS_AROUND_PLAYER`), which removes 15 build warnings
+- The Vault dependency uses jitpack's canonical coordinates (`com.github.MilkBowl`), which removes 18 Maven cache warnings on case-insensitive filesystems
 
 ### Changed
 
@@ -77,6 +107,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Permission nodes now match their command names: `/pg version` requires `pg.version` (replaces `pg.update`, which also gated update notifications) and `/pg reload` requires `pg.reload` (previously shared `pg.setup`)
 - `/pg leave` is now actually gated by `pg.leave` (the node existed in plugin.yml but was never checked)
 - Corrected grammar in several player-facing messages ("does not exists", "You not have …")
+- `roundTime` is stored in seconds internally; `LobbyConfig` is the only place that converts minutes to seconds
+- The team amount is derived from `maxPlayers / teamSize` (legacy behaviour) instead of `ceil(players / teamSize)`
+- Arena gamerules now freeze `ADVANCE_TIME`, `ADVANCE_WEATHER`, `SPAWN_MOBS`, `MOB_GRIEFING` and a fire-spread radius of `0`, and restore the captured values (including a custom radius) afterwards
 
 ### Removed
 
@@ -94,3 +127,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Never-functional move-freeze flag (cost a lobby lookup on every move event)
 - Write-only voting/team maps in `Lobby` and mirror flags in `LobbyStateManager`
 - BAD_OMEN entries 21-27 from `shop.yml` and `BootstrapInitializer.java` shop seeding
+- `/pg debug` and the `pg.debug` permission (the command toggled a field that nothing read)
