@@ -117,8 +117,17 @@ public class LobbyConfig {
         return defaultValue;
     }
 
-    private int normalizeRoundTime(int value) {
-        if (value > 0 && value <= 300) {
+    /**
+     * Lobbies may hold the round time as minutes (documented unit) or already
+     * normalised as seconds (written by older builds, which persisted the
+     * runtime value). Everything up to five hours is a plausible minute value,
+     * everything above is treated as seconds.
+     */
+    public static int normalizeRoundTime(int value) {
+        if (value <= 0) {
+            return 60;
+        }
+        if (value <= 300) {
             return value * 60;
         }
         return value;
