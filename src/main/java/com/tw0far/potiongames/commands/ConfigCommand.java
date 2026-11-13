@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.models.Messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
@@ -33,7 +34,7 @@ public class ConfigCommand implements ICommand {
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
 
-        player.sendMessage(Component.text("PotionGamesX Configuration").color(NamedTextColor.GOLD));
+        player.sendMessage(Component.text(Messages.ConfigHeaderText()).color(NamedTextColor.GOLD));
 
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("Core:").color(NamedTextColor.GOLD)));

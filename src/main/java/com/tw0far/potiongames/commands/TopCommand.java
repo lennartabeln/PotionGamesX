@@ -50,13 +50,13 @@ public class TopCommand implements ICommand {
         String column;
         String label;
         switch (type) {
-            case "kills" -> { column = "KILLS"; label = "Kills"; }
-            case "deaths" -> { column = "DEATHS"; label = "Deaths"; }
-            case "wins" -> { column = "WINS"; label = "Wins"; }
-            case "kd" -> { column = "KD"; label = "K/D Ratio"; }
+            case "kills" -> { column = "KILLS"; label = Messages.TopKillsText(); }
+            case "deaths" -> { column = "DEATHS"; label = Messages.TopDeathsText(); }
+            case "wins" -> { column = "WINS"; label = Messages.TopWinsText(); }
+            case "kd" -> { column = "KD"; label = Messages.TopKdText(); }
             default -> {
-                sender.sendMessage(Component.text("Unknown leaderboard type: " + type).color(NamedTextColor.RED));
-                sender.sendMessage(Component.text("Use /pg top [kills|deaths|wins|kd]").color(NamedTextColor.GRAY));
+                sender.sendMessage(Component.text(String.format(Messages.TopUnknownTypeText(), type)).color(NamedTextColor.RED));
+                sender.sendMessage(Component.text(Messages.TopUsageText()).color(NamedTextColor.GRAY));
                 return true;
             }
         }
@@ -65,7 +65,7 @@ public class TopCommand implements ICommand {
         final String query = "SELECT UUID, " + column + " FROM Stats ORDER BY " + column + " DESC LIMIT 10";
 
         sender.sendMessage(Component.text(DIVIDER).color(NamedTextColor.DARK_GRAY));
-        sender.sendMessage(Component.text("Top 10 Players by " + label).color(NamedTextColor.GOLD));
+        sender.sendMessage(Component.text(String.format(Messages.TopHeaderText(), label)).color(NamedTextColor.GOLD));
 
         // Query runs asynchronously; results are delivered on the sender's thread
         Bukkit.getAsyncScheduler().runNow(plugin, task -> {

@@ -46,12 +46,17 @@ en_US:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
+      broadcast_usage: "Usage: /pg broadcast <message>"
+      broadcast_sent: "Broadcast sent to all players"
+      invalid_lobby_id: "Invalid lobby ID. Must be a number."
     coin:
       single: "Coin"
     coins:
       label: "Coins"
     commands:
       label: "Commands"
+    config:
+      header: "PotionGamesX Configuration"
     database:
       closed: "Connection to database closed!"
       close_failed: "Failed to close connection to database! For more information see console."
@@ -83,6 +88,11 @@ en_US:
       starts_now: "The game starts now!"
       waiting: "Waiting for players! [%d/%d]"
       not_enough_players: "Not enough players to start the game!"
+    gameserver:
+      state: "GameServer mode is now %s"
+      state_other: "%s switched GameServer mode to %s!"
+      enabled: "enabled"
+      disabled: "disabled"
     head:
       set: "Head successfully set!"
       look_block_1: "Look at a block to set the 1st place head."
@@ -306,6 +316,14 @@ en_US:
       label: "Time"
     tnt:
       extremely_explosive: "Extremely explosive TNT"
+    top:
+      header: "Top 10 Players by %s"
+      usage: "Use /pg top [kills|deaths|wins|kd]"
+      unknown_type: "Unknown leaderboard type: %s"
+      kills: "Kills"
+      deaths: "Deaths"
+      wins: "Wins"
+      kd: "K/D Ratio"
     type:
       arena_name_add: "Type arena name in chat to add it!"
       arena_name_remove: "Type arena name in chat to remove it!"
@@ -381,12 +399,17 @@ de_DE:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
+      broadcast_usage: "Verwendung: /pg broadcast <nachricht>"
+      broadcast_sent: "Broadcast an alle Spieler gesendet"
+      invalid_lobby_id: "Ungültige Lobby-ID. Muss eine Zahl sein."
     coin:
       single: "Münze"
     coins:
       label: "Münzen"
     commands:
       label: "Befehle"
+    config:
+      header: "PotionGamesX Konfiguration"
     database:
       closed: "Verbindung zur Datenbank geschlossen!"
       close_failed: "Schließen der Datenbankverbindung fehlgeschlagen! Weitere Informationen in der Konsole."
@@ -418,6 +441,11 @@ de_DE:
       starts_now: "Das Spiel startet jetzt!"
       waiting: "Warte auf Spieler! [%d/%d]"
       not_enough_players: "Nicht genug Spieler, um das Spiel zu starten!"
+    gameserver:
+      state: "GameServer-Modus ist jetzt %s"
+      state_other: "%s hat den GameServer-Modus auf %s gestellt!"
+      enabled: "aktiviert"
+      disabled: "deaktiviert"
     head:
       set: "Kopf erfolgreich gesetzt!"
       look_block_1: "Schau auf einen Block, um den Kopf für den 1. Platz zu setzen."
@@ -641,6 +669,14 @@ de_DE:
       label: "Zeit"
     tnt:
       extremely_explosive: "Extrem explosives TNT"
+    top:
+      header: "Top 10 Spieler nach %s"
+      usage: "Nutze /pg top [kills|deaths|wins|kd]"
+      unknown_type: "Unbekannter Ranglistentyp: %s"
+      kills: "Kills"
+      deaths: "Tode"
+      wins: "Siege"
+      kd: "K/D-Verhältnis"
     type:
       arena_name_add: "Gib den Arenanamen im Chat ein, um ihn hinzuzufügen!"
       arena_name_remove: "Gib den Arenanamen im Chat ein, um ihn zu entfernen!"
