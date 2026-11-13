@@ -81,6 +81,7 @@ public class Participant {
         }
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
+        player.getInventory().setItemInOffHand(null);
         for (PotionEffect effect : player.getActivePotionEffects()) {
             player.removePotionEffect(effect.getType());
         }
@@ -125,9 +126,27 @@ public class Participant {
         return state;
     }
 
+    /**
+     * Puts the player back into the lobby state the legacy release used: no
+     * inventory, armour or offhand item, no leftover effects, no fire and full
+     * health/food. Without this, arena armour and shop potion effects followed
+     * the player into the lobby and into the next round.
+     */
     private void clearPlayer() {
         kit = null;
-        player.getInventory().clear();
+        PlayerInventory inv = player.getInventory();
+        inv.clear();
+        inv.setArmorContents(null);
+        inv.setItemInOffHand(null);
+        for (PotionEffect effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
+        player.setFireTicks(0);
+        player.setFoodLevel(20);
+        player.setSaturation(20f);
+        if (player.getAttribute(Attribute.MAX_HEALTH) != null) {
+            player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
+        }
     }
 
     public void sendMessage(Component message) {
