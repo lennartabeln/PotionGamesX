@@ -48,7 +48,7 @@ public class LeaveCommand implements ICommand {
         if (plugin.getConfigManager().isGameServer()) {
             String hub = plugin.getConfig().getString("pg.bungeeServer", "hub");
             if (plugin.getConfigManager().isStartOnJoin()) {
-                player.kick(Component.text("Connecting to " + hub + "...").color(NamedTextColor.GREEN));
+                player.kick(Messages.LobbyConnecting(hub));
             } else {
                 sendToServer(player, hub);
             }
@@ -66,7 +66,7 @@ public class LeaveCommand implements ICommand {
             out.writeUTF(server);
             player.sendPluginMessage(PotionGamesX.getInstance(), "BungeeCord", b.toByteArray());
         } catch (Exception e) {
-            player.kick(Component.text("Connecting to " + server + "...").color(NamedTextColor.GREEN));
+            player.kick(Messages.LobbyConnecting(server));
         }
     }
 

@@ -531,6 +531,12 @@ public class Messages {
         return get("lobby.no_spawn", "This lobby has no usable spawn - please tell an admin.");
     }
 
+    /** Kick text shown while the proxy moves the player. */
+    public static Component LobbyConnecting(String server) {
+        return Component.text(String.format(get("lobby.connecting", "Connecting to %s..."), server))
+            .color(NamedTextColor.GREEN);
+    }
+
     public static Component LobbyStartingBroadcast(String lobbyId) {
         String pattern = get("lobby.starting_broadcast", "Lobby %s is starting! Join with /pg join %s");
         return prefix(Component.text(String.format(pattern, lobbyId, lobbyId)).color(NamedTextColor.GRAY));

@@ -1475,7 +1475,7 @@ public class Lobby {
             out.writeUTF(server);
             player.sendPluginMessage(PotionGamesX.getInstance(), "BungeeCord", b.toByteArray());
         } catch (Exception e) {
-            player.kick(Component.text("Game finished! Connecting to " + server + "...").color(NamedTextColor.GREEN));
+            player.kick(Messages.LobbyConnecting(server));
         }
     }
 
