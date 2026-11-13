@@ -62,8 +62,21 @@ public class Participant {
     }
 
     public void teleportToOriginalLocation() {
+        if (savedState == null) {
+            return;
+        }
         savedState.restore(player);
         savedState = null;
+    }
+
+    /**
+     * Hands the pre-join state over to the caller (used when an active player
+     * becomes a spectator and must not be teleported back yet).
+     */
+    public PlayerState takeSavedState() {
+        PlayerState state = savedState;
+        savedState = null;
+        return state;
     }
 
     private void clearPlayer() {

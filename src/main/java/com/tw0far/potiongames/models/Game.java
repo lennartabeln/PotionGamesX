@@ -245,14 +245,23 @@ public class Game {
         return lobbyPlayers;
     }
 
+    /**
+     * Turns a player of the given lobby into a spectator. The player keeps
+     * their current position and inventory; the pre-join state is restored when
+     * they stop spectating.
+     */
     public void setSpectatorLobby(Player player, String lobbyId) {
-        for (Lobby lobby : lobbies) {
-            lobby.removeActivePlayer(player);
-            lobby.removeSpectatorPlayer(player);
+        if (player == null) {
+            return;
         }
-        Lobby lobby = getLobby(Integer.parseInt(lobbyId));
-        if (lobby != null) {
-            lobby.addSpectatorPlayer(player);
+        Lobby target = getLobby(Integer.parseInt(lobbyId));
+        for (Lobby lobby : lobbies) {
+            if (lobby != target) {
+                lobby.removeSpectatorPlayer(player);
+            }
+        }
+        if (target != null) {
+            target.addSpectatorPlayer(player);
         }
     }
 

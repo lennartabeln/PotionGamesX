@@ -108,21 +108,31 @@ public class PlayerScoreboardManager {
         }
     }
 
-    /** Refreshes the sidebar of every participant of a lobby (called once per tick). */
+    /**
+     * Refreshes the sidebar of every participant and spectator of a lobby
+     * (called once per tick). Dead players keep watching the round, so they
+     * must keep a live sidebar until spectating ends.
+     */
     public void update(Lobby lobby) {
         if (lobby == null || !enabled()) {
             return;
         }
         for (Participant participant : lobby.getParticipants()) {
-            Player player = participant.getPlayer();
-            if (player == null || !player.isOnline()) {
-                continue;
-            }
-            if (player.getScoreboard().getObjective(OBJECTIVE_NAME) == null) {
-                show(player);
-            }
-            render(player, lobby);
+            renderFor(participant.getPlayer(), lobby);
         }
+        for (Player spectator : lobby.getSpectatorPlayers()) {
+            renderFor(spectator, lobby);
+        }
+    }
+
+    private void renderFor(Player player, Lobby lobby) {
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+        if (player.getScoreboard().getObjective(OBJECTIVE_NAME) == null) {
+            show(player);
+        }
+        render(player, lobby);
     }
 
     private void render(Player player, Lobby lobby) {
