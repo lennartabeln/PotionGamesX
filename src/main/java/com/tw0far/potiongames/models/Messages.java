@@ -63,6 +63,7 @@ public class Messages {
         addDefault(lang, "kit.selector", "Kit-Selector");
         addDefault(lang, "leave.label", "Leave");
         addDefault(lang, "lobby.does_not_exist", "This lobby does not exist!");
+        addDefault(lang, "lobby.invalid_id", "Invalid lobby ID. Must be a positive number.");
         addDefault(lang, "arena.does_not_exist", "This arena does not exist!");
         addDefault(lang, "lobby.full", "This lobby is full!");
         addDefault(lang, "lobby.starting_broadcast", "Lobby %s is starting! Join with /pg join %s");
@@ -329,6 +330,10 @@ public class Messages {
 
     public static Component LobbyDoesNotExist() {
         return prefix(Component.text(get("lobby.does_not_exist", "This lobby does not exist!")).color(NamedTextColor.RED));
+    }
+
+    public static Component InvalidLobbyId() {
+        return prefix(Component.text(get("lobby.invalid_id", "Invalid lobby ID. Must be a positive number.")).color(NamedTextColor.RED));
     }
 
     public static Component LobbyFull() {
