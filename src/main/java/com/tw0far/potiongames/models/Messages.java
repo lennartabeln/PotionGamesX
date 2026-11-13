@@ -40,7 +40,7 @@ public class Messages {
     public static Component PluginName() {
         return Component.text("Potion").color(NamedTextColor.DARK_PURPLE)
             .append(Component.text("Games").color(NamedTextColor.GOLD))
-            .append(Component.text("X").color(NamedTextColor.AQUA));
+            .append(Component.text("X").color(NamedTextColor.DARK_AQUA));
     }
 
     public static void seed() {
