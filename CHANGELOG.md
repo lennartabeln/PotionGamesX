@@ -7,171 +7,164 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Nothing yet - new entries belong here and are moved into a version section on release.
+
+## [1.0.0-dev.26] - 2026-11-13
+
 ### Added
 
 #### Gameplay
-- Team-aware win condition: the round ends when a single team remains; every surviving member earns a win and reward
+- Team-aware win condition: the round ends when a single team remains, and every surviving member earns the win and the reward
 - Late-join spectating: with `pg.joinStarted`, players who join a running round become spectators instead of being dropped in as fighters
-- `pg.broadcastStarting`: broadcasts a "lobby is starting" message to the whole server when a countdown begins
-- `pg.compassOnSpawn`: hands the player-finder compass to everyone at round start
-- `pg.changeGamerules`: freezes daylight/weather in the arena world during rounds and restores the previous values afterwards
-- `pg.allowOutsideChat`: lets players outside a lobby watch lobby chat (default off, previous behavior)
-- Console support for `/pg reload|status|top|broadcast|version|database|gameserver|config|help|kick`
-- `permissions` section in plugin.yml with sane defaults (`pg.join`/`pg.leave`/`pg.stats` for everyone, admin nodes op-only)
-- Unit tests (JUnit 5): arena spawn ID math and per-lobby config resolution/normalization
+- `pg.broadcastStarting` announces a starting lobby to the whole server when its countdown begins
+- `pg.compassOnSpawn` hands the player-finder compass to everyone at round start
+- `pg.changeGamerules` freezes daylight and weather in the arena world during a round and restores the previous values afterwards
+- `pg.allowOutsideChat` lets players outside a lobby follow lobby chat (default off, the previous behaviour)
 
-#### Scoreboard
-- `pg.activateScoreboard` works again: players get a per-player sidebar with map, team, kit and player count while a lobby waits, and remaining time plus kills during a round; leaving the lobby restores the server scoreboard
-- `messages.yml` gains `map`, `team`, `kit`, `time` and `scoreboard.none` labels (en_US/de_DE)
+#### Scoreboard and interface
+- `pg.activateScoreboard` works again: a per-player sidebar shows map, team, kit and player count while a lobby waits, and remaining time plus kills during a round; leaving the lobby restores the server scoreboard
+- `messages.yml` gains the `map`, `team`, `kit`, `time` and `scoreboard.none` labels (en_US/de_DE)
+- Inventory items (arena, kit, team, stats, leave) share the `DARK_AQUA` style, and their GUI titles no longer carry a prefix line
+
+#### Loot and shop
+- Default loot is seeded on startup again: the `food1/2`, `armour1-5` and `weapons1/2` pools and the documented special chests (`pg.customchests` 1-4, including the Flame Bow, netherite and diamond-armour chests) work on a fresh install; existing admin entries are never overwritten
+- The `shop` loot pool (`pg.chestloot.normal.loot.shop`, default `10.0`) rolls glass bottles and coins while a lobby has its shop enabled, so potions can actually be bought
+- `Rich Kid` starts every round with 5 coins again (the legacy value) on top of the doubled kill coins
 
 #### Configuration
-- Consolidated config structure (config.yml, chests.yml, kits.yml, messages.yml, shop.yml)
-
-#### Loot & shop
-- Default loot is seeded again on startup: the `food1/2`, `armour1-5` and `weapons1/2` pools and the documented special chests (`pg.customchests` 1-4, including the Flame Bow, netherite and diamond-armour chests) work on a fresh install; existing admin entries are never overwritten
-- Shop currency is part of the chest loot again: the new `shop` loot pool (`pg.chestloot.normal.loot.shop`, default `10.0`) rolls glass bottles and coins while a lobby has its shop enabled, so potions can actually be bought
-- `Rich Kid` starts every round with 5 coins again (legacy value) next to the doubled kill coins
+- One structure for `config.yml`, `chests.yml`, `kits.yml`, `messages.yml` and `shop.yml`
+- `plugin.yml` declares its `permissions` with sane defaults: `pg.join`/`pg.leave`/`pg.stats` for everyone, admin nodes op-only
+- `api-version: 26.3`, matching the documented "Paper 26.3+" requirement
+- Console support for `reload`, `status`, `top`, `version`, `database`, `gameserver`, `config`, `help` and `kick`
+- New options (`pg.singleLobby`, `pg.activePotions`) are written into an existing `config.yml` on startup, so upgrades can see them without deleting the file
 
 #### Localization
-- `/pg status` and `/pg database` are translated (`status.*`, `database.mode_*` in `en_US` and `de_DE`), including the per-lobby line `Lobby 1 - Players: 3/24, Spectators: 1 (INGAME)`
-- `/pg kick` feedback is translated as well (`kick.*`, `command.kick_usage`)
-- New keys `database.not_connected`, `bucket.fill_not_allowed` and `setup.not_a_sign`, so admins get a clear message instead of a zeroed stat sheet, a silently ignored bucket or a stack trace
+- `/pg status` and `/pg database` are translated (`status.*`, `database.mode_*` in en_US and de_DE), including the per-lobby line `Lobby 1 - Players: 3/24, Spectators: 1 (INGAME)`
+- `/pg kick` feedback is translated as well (`kick.*`)
+- New keys `database.not_connected`, `bucket.fill_not_allowed` and `setup.not_a_sign` replace a zeroed stat sheet, a silently ignored bucket and a stack trace
 
 #### Legacy compatibility
-- `pg.singleLobby`: single-lobby mode accepts the legacy short setup forms (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg joinsign`, …) and targets lobby 1, while the long form keeps working
-- Automatic legacy migration on startup: an existing `arenadata.yml` is migrated without any command — lobbies from `pg.lobbies.<id>` are created (spawn from `coords`, settings moved into `settings.*`), a legacy single-lobby server gets `pg.Lobby.coords`/`pg.Lobby.sign` from `config.yml` as lobby 1, the global `pg.arenas.<n>` are copied into every lobby (existing arena names are skipped, spawns/deathmatch verbatim), and a legacy `pg.lobbySystem` value is turned into `pg.singleLobby`. Existing entries are never overwritten; the console tells you to delete `arenadata.yml` when the migration is complete
-- `pg.activePotions`: caps how many entries of `shop.yml` are shown and buyable (`0` = all), the legacy `activePotions` knob
-- The arena selector paper is only handed out when the lobby has more than one arena, like the legacy `singleArena` behaviour
+- `pg.singleLobby`: single-lobby mode accepts the legacy short setup forms (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg joinsign`, ...) and targets lobby 1, while the long form keeps working
+- Automatic migration on startup: an existing `arenadata.yml` is imported without a command. Lobbies come from `pg.lobbies.<id>` (spawn from `coords`, settings into `settings.*`), a legacy single-lobby server gets `pg.Lobby.coords`/`pg.Lobby.sign` as lobby 1, the global `pg.arenas.<n>` are copied into every lobby (existing names skipped, spawns and deathmatch spawns verbatim), and a legacy `pg.lobbySystem` becomes `pg.singleLobby`. Nothing is overwritten and the console tells you when `arenadata.yml` can be deleted
+- `pg.activePotions` caps how many `shop.yml` entries are shown and buyable (`0` = all)
+- The arena selector paper is only handed out when a lobby has more than one arena, like the legacy `singleArena` behaviour
 
-#### Build & tooling
-- The compile fails on javac warnings (`failOnWarning`, i.e. `-Werror`, with `-Xlint:all`), locally and in CI
-- Unit tests for the team amount/assignment contract (`LobbyTeamTest`) and for enabling/disabling kits (`LobbyConfigTest`)
-
-### Fixed
-
-- The update checker parses the GitHub release list with a linear scan instead of a backtracking regex (CodeQL `java/polynomial-redos`)
-- `/pg start`, `/pg pause`, `/pg build`, `/pg force` and `/pg leave` report `You are not in a lobby!` instead of doing nothing when the sender has no lobby
-- Update checks read the GitHub releases instead of the legacy SpigotMC resource, so 1.x installs are no longer told to "update" to 7.0.1; versions are compared numerically (`PluginVersion`)
-- Console lines no longer repeat the prefix (`[PotionGamesX] [Potion Games]`) and the prefix now reads `[PotionGamesX]` with a coloured `X`
-- `/pg broadcast` uses rule lines and a bold label instead of gold chat text; `/pg version` prints the running version first
-- Shop prices come from one place now: the kit price applies to the matching kit and a zero or missing `sale` falls back to `cost` instead of making the potion free; `shop.yml` documents `sale` as the kit price, not a resale value
-- Airdrop torch checks the column up to the world's real build height (was hardcoded 320), accepts cave air, and clamps the drop inside the world; the connecting message is localized (`lobby.connecting`)
-- `pg.enableRewards: true` without a Vault economy no longer disables the whole plugin; it logs a warning and rewards stay inactive
-- `pg.mysql.port` is read as a number or a string, and the shipped config writes it as a number
-- `/pg list` has its own permission node (`pg.list`, default true) instead of sharing `pg.join`; every other command keeps its previous node (`pg.setup` for the setup commands)
-- Lobby capacity is capped by the fewest usable arena spawns (join check, join sign, sidebar, lobby list, `/pg status`, server ping); a round with no usable spawn aborts back to `WAITING` instead of half-starting, and a spawn shortage is reported to the round
-- The deathmatch now starts when the remaining players fit onto the arena's usable deathmatch spawns (`max(2, spawns)`), so 2 DM spawns keep the legacy behaviour
-- Upgrading an installation now merges message keys that only the new jar ships - in every locale - so a German server gets the German text of a new screen instead of the English in-code fallback (edited texts are never overwritten)
-- `pg.admin` now grants every admin subcommand (`children:` in `plugin.yml`); before it only changed the `/pg help` list while `KickCommand`/`BroadcastCommand` documented "or pg.admin"
-- `/pg stats` runs its six database getters on the async scheduler instead of the main thread, sharing a new `PlayerStats` record with the compass stat sheet
-- `/pg top` no longer resolves `messages.yml` text on the async scheduler, and its no-data/empty/failed rows are localized (`top.no_data`, `top.empty`, `top.failed`)
-- `/pg config` is fully localized - row labels and the Core/Defaults/Features headings come from `config.*` keys - and its header uses the plugin prefix
-- Lobby join aborts with `lobby.no_spawn` instead of clearing the inventory and throwing when the lobby spawn (or its world) is missing; all lobby items share one null-safe `item(...)` helper
-- `ReloadCommand`/`CommandDispatcher` log exceptions through the plugin logger instead of `printStackTrace()`
-- `/pg reload`, the permission denial and the setup chat answer are localized now instead of hardcoded English; the previously dead `plugin.reloaded` key is actually sent
-- 35 message keys that no code path could resolve were removed (`admin.please_inform`, `database.connected`, `command.list_header`, `lobby.enabled`, `setup.incomplete`, `vote.you_have_voted_for`, ...) - both locales keep 244 identical keys
-- `config.yml` documents the optional `RankWall` section that `/pg headp1`-`/pg signp3` write at runtime
-- MOTD and slot count stay untouched when game server mode is off (`pg.gameServer: false`), matching legacy 7.0.1; the plugin only owns the server-list entry on a dedicated game server
-- `/pg config` prints booleans as `true`/`false` instead of a mix of `ONLINE`/`OFFLINE` and `✓`/`✗`
-- Team selector: `Random` spread players over every free team instead of always landing in the team that already had a player (candidates came from the sparse per-team count map, so empty teams were invisible)
-- Sidebar rendered the internal entry keys (`pg-label-map`, ...) instead of the configured labels; each field is now one line (`Map: Voting`), and the round timer shows `m:ss`
-- `/pg broadcast` used a hardcoded gold `[PotionGamesX]` prefix instead of the purple/gold plugin prefix; its usage/confirmation and the remaining hardcoded command output (`/pg top`, `/pg config`, `/pg gameserver`, setup chat) are localized now
-- A single-map lobby shows its arena name in the sidebar and on the join sign instead of the `Voting` placeholder
-- Game state is now propagated from the `Lobby` model to listeners; previously deaths/kills/rewards were never recorded and in-game block rules never applied
-- Shop GUI was unreachable (title mismatch + wrong state gate); purchases now count real coin items and can no longer loop forever
-- Random team assignment froze the server when all teams were full; switching teams validates capacity first so nobody ends up teamless
-- Arena spawn add/remove kept config keys and memory in sync (1-based contiguous IDs) with rollback on save failure
-- Joining via signs/GUIs mid-game or into full lobbies is now rejected (or turned into spectator late join)
-- Rank wall updates no longer die on bad blocks/DB errors; DB queries run async and only block/sign writes happen on the region thread
-- PreparedStatements are closed with their ResultSets (cursor leak on MySQL)
-- Update-check failures are reported instead of silently doing nothing (or throwing NPE)
-- TNT bonus damage applies once inside active games (was an extra flat health drain anywhere on the server)
-- Lobby maps are protected outside running games; placed/broken blocks and liquids are actually restored at reset
-- `/pg reload` fully restores setup players (level/exp/gamemode/location/health) and restarts tick loops + rank wall
-- `/pg database` reconnects immediately instead of requiring a reload
-- `/pg stats <player>` looks up the target correctly (was parsing "stats")
-- `/pg pause` actually pauses the tick loop again
-- Status screen shows real game states and live database connectivity
-- `/pg top` and the stats signs/emerald readout no longer block the main thread while querying the database
-- Player records are created asynchronously on join instead of during the join event
-- Setup chat input is tracked per player, so one staff member's pending lobby/arena input no longer swallows another staff member's chat
-- Setup chat actions run on the player scheduler instead of the asynchronous chat thread
-- Add-lobby chat input rejects zero and negative IDs with a clear message and keeps the input mode active
-- `/pg reload` now re-reads `lobbies.yml`, `messages.yml`, `kits.yml`, `shop.yml` and `chests.yml` in addition to `config.yml`
-- `/pg reload` reports failed reload steps instead of claiming success when configuration, database or game data reloading failed
-- `/pg stats <player>` also resolves offline players whose profile is cached by Paper
-- `/pg join <id>` now goes through the shared lobby join validation (capacity, state, `pg.joinStarted`) instead of adding the player to `activePlayers` unconditionally; a full lobby can no longer leave a player half-joined
-- Per-round kills are tracked through `Lobby#addKill` again (previously the scoreboard kill counter parsed its own team prefix, and `Lobby#getKills` was always 0)
-- Server list now reflects the plugin state again: the MOTD shows `WAITING`/`VOTING`/the voted arena/`INGAME` for the busiest lobby and the max player count is the summed capacity of all lobbies
-- Restored the legacy in-game audio cues: countdown bells in the last five seconds, a launch firework when the countdown starts, blast/dragon sounds at round start, a dragon growl when a round ends, a death sound for the eliminated player, and click/error sounds in the arena, kit, team and shop GUIs
-- Loot and shop chests work on a fresh install again: `chests.yml` ships usable `chestblocks` defaults (`END_PORTAL_FRAME`/`COMPOSTER`), empty values are seeded on startup, and the matcher accepts both the legacy string and the new list format
-- Winning a round now actually pays `pg.winningReward` through Vault (previously the reward was only announced), logs failed transactions, and spawns the celebratory firework from the legacy release
-- Free-for-all lobbies can fight again: the friendly-fire check only compares teams when the lobby actually uses teams, and teammates may attack each other in `DEATHMATCH` (previously `friendlyFire: false` cancelled every player hit without teams because all teams were `null`)
-- Player-finder compass points at enemies again: it ignored same-team players only when teams are active, targets any other player in free-for-all, also works in `DEATHMATCH`, and only considers players of the same running lobby
-- Explosions in arena worlds no longer permanently remove blocks (only entity damage applies); build mode still allows admins to reshape the arena, matching the legacy TNT whitelist behaviour
-- `roundTime` was converted from minutes to seconds twice, so a configured 30-minute round lasted 30 hours; the conversion happens exactly once in `LobbyConfig` now
-- Chest contents no longer regenerate on every open: each chest is stored for the round, shop chests only open and only sell during `INGAME`/`DEATHMATCH`, GUI drags are cancelled and clicks outside the top inventory are ignored, so loot and potions cannot be duplicated
-- Rounds start in `SURVIVAL` with the lobby items and leftover effects cleared, so breaking/placing blocks, buckets and flint and steel work again; the kit item and the kit GUI are only available with `activateKits`
-- The team count is derived from the lobby capacity (`maxPlayers / teamSize`, at least two teams) instead of the number of online players, players are spread over the emptiest teams, manual team picks survive the round start, and the selector state is re-seeded after every round (it was dead after round 1)
-- `messages.yml` duplicate keys are gone, missing translations are seeded, and every accessor resolves through the same `lang -> en_US -> literal` fallback chain
-- Stats backend: no more `StackOverflowError` when the database is unreachable, `Stats.UUID` is unique, counters are incremented inside SQL, a dropped connection is re-established once, the JDBC drivers ship through `plugin.yml` `libraries`, and the MySQL URL enables `allowPublicKeyRetrieval`, `serverTimezone` and `characterEncoding`
-- Command UX: `/pg force` explains its usage and rejects unknown arenas, `/pg commands` aliases `/pg help`, the console may run `help` and `kick`, tab completion only suggests permitted commands, `/pg list` caps at 54 entries, setup errors name the missing argument, join/leave print feedback, `/pg start` forces a 10-second countdown, and `plugin.yml` no longer advertises absent permissions
-- Arena worlds are protected on every level: liquid flow, block fade, leaf decay, fire spread, mob griefing and bucket filling are limited to the arena world, and mob spawning, weather and lightning only change in arena worlds of a running round (previously one waiting player froze mobs and weather on the whole server)
-- Spectators: a killed player stays at the death location instead of being teleported back to the hub, keeps a live sidebar, and every exit path (`/pg leave`, kick, quit, reset, reload, disable) restores gamemode, inventory, effects, collision and the server scoreboard
-- Lobby lifecycle: a reset only affects its own lobby and returns its players to the hub (other lobbies keep players, inventories and state), the last player leaving ends a running round through `ENDING` (draw message, stats, block restore), the pause flag no longer locks an emptied lobby, and exactly one tick task runs per lobby
-- Entering the lobby clears armour, offhand, potion effects, fire and health/food, so arena gear and shop potions no longer follow the player into the lobby or the next round
-- Votes and team slots are released when a player leaves (`/pg leave`, quit, kick, death, reset), so a disconnected player no longer decides the arena and team capacity stays correct
-- Dropping items in a lobby is cancelled again (the guard tested `isActivePlayer` and therefore never triggered)
-- `/pg joinsign` reports "That is not a sign!" instead of throwing a `ClassCastException` when aiming at a non-sign block, and `/pg kick` keeps the player's restored pre-join location instead of teleporting them to the spawn of world 0
-- `/pg reload` and a server shutdown mid-round restore the arena: the tracked blocks go back and the frozen gamerules (time, weather, mob spawning/griefing, fire spread) are written back. Previously the reload discarded the block tracking and left the arena damaged, and a shutdown left the arena world frozen
-- Deprecated `org.bukkit.GameRule` usages replaced by the new `org.bukkit.GameRules` (`ADVANCE_TIME`, `ADVANCE_WEATHER`, `MOB_GRIEFING`, `SPAWN_MOBS`, `FIRE_SPREAD_RADIUS_AROUND_PLAYER`), which removes 15 build warnings
-- The Vault dependency uses jitpack's canonical coordinates (`com.github.MilkBowl`), which removes 18 Maven cache warnings on case-insensitive filesystems
+#### Build and tooling
+- Java 21 to 25 across all build configs and CI workflows
+- The compile fails on javac warnings (`failOnWarning`, `-Werror` with `-Xlint:all`), locally and in CI
+- Unit tests (JUnit 5) for the arena spawn ID math, the per-lobby config resolution and the team contract (`LobbyTeamTest`, `LobbyConfigTest`)
+- Release bodies are read from `CHANGELOG.md` instead of auto-generated notes
 
 ### Changed
 
+#### Commands and permissions
 - Incomplete commands print their own `/pg help` line with the plugin prefix instead of ad-hoc usage strings; the help texts follow one shape and cover every command
-- `/pg broadcast` targets only PotionGamesX players, supports `-l <lobby>` and renders as `[PotionGamesX] [Broadcast] <message>`
-- The trailing `X` of the `[PotionGamesX]` prefix and the MOTD name uses dark aqua, matching the accent colour of the rest of the UI
-- Java 21 → 25 across all build configs and CI workflows
-- `maven-resources-plugin` pinned to 3.5.0 for Eclipse M2E compat
-- release.yml: reads release body from `CHANGELOG.md` instead of auto-generated notes
-- Inventory GUI: arena selector, kit selector, team selector, stats, leave items unified to DARK_AQUA
-- Inventory titles: ArenaSelectorTitle, KitSelector, SelectorTeamTitle no longer use prefix line
-- `InventoryEventListener` split into `GameInventoryListener`, `GameItemListener` and `SetupInteractionListener`
-- Six clone commands (headp1-3/signp1-3) consolidated into one parameterized `StatsWallCommand`
-- Setup-mode chat input no longer swallows normal chat while no input mode is active
-- Votes have a single source of truth (`ArenaStateManager` via `Lobby#recordVote`); the duplicate vote record on participants was removed
-- Removed redundant spectator fallbacks in `/pg join|force|start|pause|build` (`getPlayerLobby` already covers spectators)
-- Permission nodes now match their command names: `/pg version` requires `pg.version` (replaces `pg.update`, which also gated update notifications) and `/pg reload` requires `pg.reload` (previously shared `pg.setup`)
-- `/pg leave` is now actually gated by `pg.leave` (the node existed in plugin.yml but was never checked)
-- Corrected grammar in several player-facing messages ("does not exists", "You not have …")
+- Permission nodes match their command names: `/pg version` requires `pg.version` (replaces `pg.update`), `/pg reload` requires `pg.reload` (previously shared `pg.setup`), and `/pg leave` is actually gated by `pg.leave`
+- `/pg list` has its own node (`pg.list`, default true), while every other command keeps its previous node
+- `pg.admin` grants every admin subcommand through `children:` in `plugin.yml`; before it only changed the `/pg help` list
+- `/pg config` is fully localized and prints booleans as `true`/`false`
+- `/pg stats <player>` also resolves offline players whose profile Paper has cached
+- Removed the redundant spectator fallbacks in `/pg join|force|start|pause|build` (`getPlayerLobby` already covers spectators)
+
+#### Gameplay and state
+- Team count is derived from the lobby capacity (`maxPlayers / teamSize`, at least two), players are spread over the emptiest teams, manual picks survive the round start, and the selector is re-seeded after every round
 - `roundTime` is stored in seconds internally; `LobbyConfig` is the only place that converts minutes to seconds
-- The team amount is derived from `maxPlayers / teamSize` (legacy behaviour) instead of `ceil(players / teamSize)`
-- Setup commands accept an optional lobby number in single-lobby mode; the long form is unchanged
-- `plugin.yml` now declares `api-version: 26.3` (the API the code builds against, required for `GameRules`), matching the documented "Paper 26.3+" requirement
-- New options (`pg.singleLobby`, `pg.activePotions`) are written into an existing `config.yml` on startup, so upgrades can see them without deleting the file
-- Arena gamerules now freeze `ADVANCE_TIME`, `ADVANCE_WEATHER`, `SPAWN_MOBS`, `MOB_GRIEFING` and a fire-spread radius of `0`, and restore the captured values (including a custom radius) afterwards
+- Arena gamerules freeze `ADVANCE_TIME`, `ADVANCE_WEATHER`, `SPAWN_MOBS`, `MOB_GRIEFING` and a fire-spread radius of `0`, and restore the captured values (including a custom radius) afterwards
+- Votes have one source of truth (`ArenaStateManager` via `Lobby#recordVote`); the duplicate record on the participant is gone
+- The inventory listener was split into `GameInventoryListener`, `GameItemListener` and `SetupInteractionListener`; the six stats-wall commands became one parameterized `StatsWallCommand`
+- Setup-mode chat input only swallows chat while an input mode is active
+
+#### Tooling
+- `maven-resources-plugin` pinned to 3.5.0 for Eclipse M2E compatibility
+- Vault uses jitpack's canonical coordinates (`com.github.MilkBowl`), which removes 18 Maven cache warnings on case-insensitive filesystems
+- Deprecated `org.bukkit.GameRule` replaced by `org.bukkit.GameRules` (`ADVANCE_TIME`, `ADVANCE_WEATHER`, `MOB_GRIEFING`, `SPAWN_MOBS`, `FIRE_SPREAD_RADIUS_AROUND_PLAYER`), removing 15 build warnings
+
+#### Prefix and messages
+- The prefix reads `[PotionGamesX]` with a dark aqua `X`, and the MOTD fallback uses the same name
+- Console lines no longer repeat the prefix; console-bound messages have prefix-free variants
+- Every chat message carries the prefix, including `/pg list` without lobbies, setup toggles, bucket guards, setup chat input, `/pg gameserver`, `/pg headpN`/`signpN`, `/pg top` errors, the `/pg status` title and all dispatcher info/error lines
+- Grammar fixes in several player-facing messages ("does not exists", "You not have ...")
 
 ### Removed
 
-- `/pg broadcast` and its `pg.broadcast` permission; `pg.broadcastStarting` (lobby countdown announcement) is untouched
+- `/pg broadcast` and its `pg.broadcast` permission (`pg.broadcastStarting` is untouched)
+- `/pg importarenas` and its message keys - the startup migration imports the legacy arenas into every lobby
+- `/pg debug` and the `pg.debug` permission (the command toggled a field nothing read)
+- Hardcoded chest loot and shop data (now configuration), and the monolithic event/command classes they lived in
+- `BlockTracker`, `PotionChest`, `LootTable`, `LobbySettings`, `ConfigKeys`, `BlockStateManager` and `PlayerStateManager` (state now lives in `Lobby`/`Game`)
+- Dead config knobs with no reader: `logging.*`, `performance.*`, `security.*`
+- ~45 dead message methods with their orphaned translation keys, plus 35 keys that no code path could resolve
+- 5 no-op listener classes (consume, food, respawn, teleport, explosion), the never-functional move-freeze flag, write-only voting/team maps and `BAD_OMEN` entries 21-27
+- The unused participant type enum and the kit id field
 
 ### Fixed
 
-- Every message carries the `[PotionGamesX]` prefix, including `/pg list` without lobbies, setup toggles, bucket guards, setup chat input, `/pg gameserver`, `/pg headpN`/`signpN`, `/pg top` errors, the `/pg status` title and all dispatcher info/error lines
-- Hardcoded chest loot (now config-driven)
-- Hardcoded shop data (now in config)
-- Monolithic event/command classes
-- `BlockTracker.java`, `PotionChest.java`, `LootTable.java`
-- `LobbySettings.java` (entire class unused)
-- `ConfigKeys.java` (36/37 dead enum values inlined)
-- Dead config knobs that had no code reader: `logging.*`, `performance.*`, `security.*`, `activePotions`
-- `BlockStateManager` / `PlayerStateManager` (duplicated state owned by `Lobby`/`Game`; tracking now lives where it is used)
-- Unused ParticipantType enum and Kit id field
-- ~45 dead message methods and their orphaned translation keys
-- 5 no-op listener classes (consume/food/respawn/teleport/explosion)
-- Never-functional move-freeze flag (cost a lobby lookup on every move event)
-- Write-only voting/team maps in `Lobby` and mirror flags in `LobbyStateManager`
-- BAD_OMEN entries 21-27 from `shop.yml` and `BootstrapInitializer.java` shop seeding
-- `/pg importarenas` and its message keys — the startup migration imports the legacy arenas into every lobby, so the command was redundant
-- `/pg debug` and the `pg.debug` permission (the command toggled a field that nothing read)
+#### Rounds and lobbies
+- Lobby capacity is capped by the fewest usable arena spawns (join check, join sign, sidebar, lobby list, `/pg status`, server ping); a round without a usable spawn aborts back to `WAITING` instead of half-starting
+- The deathmatch starts when the remaining players fit onto the arena's usable deathmatch spawns (`max(2, spawns)`), so two DM spawns keep the legacy behaviour
+- Rounds start in `SURVIVAL` with lobby items and leftover effects cleared, so breaking, placing, buckets and flint and steel work again
+- Entering the lobby clears armour, offhand, potion effects, fire and health/food, so arena gear and shop potions no longer follow the player into the lobby or the next round
+- Votes and team slots are released when a player leaves (`/pg leave`, quit, kick, death, reset), so a disconnected player no longer decides the arena
+- Free-for-all lobbies can fight again: the friendly-fire check only compares teams when teams are active, and teammates may attack each other in `DEATHMATCH`
+- The player-finder compass points at enemies again in free-for-all and `DEATHMATCH`, and only considers players of the same running lobby
+- Explosions in arena worlds no longer remove blocks permanently (build mode still allows reshaping), TNT bonus damage applies once inside active games, and lobby maps are protected outside running games
+- A lobby reset only affects its own lobby; the last player leaving ends the round through `ENDING`; the pause flag no longer locks an emptied lobby, and exactly one tick task runs per lobby
+- Spectators keep their death location, a live sidebar and get gamemode, inventory, effects, collision and scoreboard restored on every exit path
+- A killed player is no longer teleported back to the hub
+
+#### Chests, shop and rewards
+- Loot and shop chests work on a fresh install: `chests.yml` ships usable `chestblocks` defaults, empty values are seeded on startup, and the matcher accepts both the legacy string and the list format
+- Chest contents no longer regenerate on every open: each chest is stored per round, shop chests open and sell only during `INGAME`/`DEATHMATCH`, GUI drags are cancelled and clicks outside the top inventory are ignored
+- Shop prices come from one place: the kit price applies to the matching kit, and a zero or missing `sale` falls back to `cost` instead of making the potion free; `shop.yml` documents `sale` as the kit price
+- Shop GUI was unreachable (title mismatch and wrong state gate); purchases count real coin items and can no longer loop forever
+- Winning a round pays `pg.winningReward` through Vault, logs failed transactions and spawns the celebratory firework
+- `pg.enableRewards: true` without a Vault economy no longer disables the whole plugin; it logs a warning and rewards stay inactive
+- Airdrop torch checks the column up to the world's real build height (was hardcoded 320), accepts cave air, and clamps the drop inside the world
+
+#### Scoreboard, GUI and chat
+- Sidebar rendered internal entry keys (`pg-label-map`, ...) instead of the configured labels; each field is one line and the round timer shows `m:ss`
+- Random team assignment spread players over every free team instead of landing in the team that already had a player; a full selection validates capacity first instead of freezing the server
+- A single-map lobby shows its arena name in the sidebar and on the join sign instead of `Voting`
+- Dropping items in a lobby is cancelled again (the guard tested `isActivePlayer` and never triggered)
+- The legacy audio cues are back: countdown bells, launch firework, blast/dragon sounds at round start, dragon growl at round end, death sound, and click/error sounds in the GUIs
+- `/pg joinsign` reports "That is not a sign!" instead of a `ClassCastException`, and `/pg kick` keeps the restored pre-join location
+
+#### Data, reload and server
+- Game state is propagated from the `Lobby` model to listeners, so deaths, kills, rewards and in-game block rules work again
+- Per-round kills are tracked through `Lobby#addKill` again (the scoreboard parsed its own team prefix and `getKills` was always 0)
+- `/pg stats` runs its six database getters on the async scheduler, sharing a `PlayerStats` record with the compass stat sheet; `/pg top` and the stats signs no longer block the main thread
+- `PreparedStatement`s are closed with their `ResultSet`s (MySQL cursor leak), and the stats backend no longer overflows the stack when the database is unreachable
+- SQL counters are incremented inside the statement, `Stats.UUID` is unique, a dropped connection is re-established once, and the MySQL URL enables `allowPublicKeyRetrieval`, `serverTimezone` and `characterEncoding`
+- Player records are created asynchronously on join instead of during the join event
+- `/pg reload` re-reads `lobbies.yml`, `messages.yml`, `kits.yml`, `shop.yml` and `chests.yml`, reports failed steps instead of claiming success, and restores setup players completely
+- `/pg reload` and a server shutdown mid-round restore the arena blocks and the frozen gamerules instead of leaving the arena damaged or frozen
+- `/pg database` reconnects immediately instead of requiring a reload; the status screen shows real game states and live connectivity
+- MOTD and slot count stay untouched when game server mode is off (`pg.gameServer: false`), matching legacy 7.0.1
+- Server list shows `WAITING`/`VOTING`/the voted arena/`INGAME` for the busiest lobby, and the max player count is the summed capacity
+- Upgrading merges message keys that only the new jar ships, in every locale, without overwriting edited texts
+- `messages.yml` has no duplicate keys, missing translations are seeded, and every accessor resolves through `lang -> en_US -> literal`
+- Arena worlds are protected on every level: liquid flow, block fade, leaf decay, fire spread, mob griefing, bucket filling, mob spawning, weather and lightning only apply inside arena worlds of a running round
+- Rank wall updates survive bad blocks and database errors, and requests run async
+- `LobbyConfig` `roundTime` was converted from minutes to seconds twice, so a configured 30-minute round lasted 30 hours
+
+#### Commands
+- `/pg start`, `/pg pause`, `/pg build`, `/pg force` and `/pg leave` report `You are not in a lobby!` instead of doing nothing
+- `/pg force` explains its usage and rejects unknown arenas; `/pg start` forces a ten-second countdown; `/pg list` caps at 54 entries
+- Setup commands name the missing argument instead of silently doing nothing, and arena spawn add/remove keeps config keys and memory in sync (1-based contiguous IDs) with rollback on save failure
+- `/pg stats <player>` looks up the target correctly (it parsed "stats"), and add-lobby chat input rejects zero and negative IDs while keeping the input mode active
+- Setup chat input is tracked per player and runs on the player scheduler, so one staff member's pending input no longer swallows another's chat
+- Join, leave, kick and sign/GUI joins validate capacity, state and `pg.joinStarted`; `/pg join <id>` can no longer leave a player half-joined
+- `/pg pause` pauses the tick loop again, and `/pg commands` aliases `/pg help`
+- Tab completion only suggests permitted commands, and the console may run `help` and `kick`
+- `/pg top` no longer resolves `messages.yml` text on the async scheduler, and its no-data, empty and failed rows are localized
+- Update-check failures are reported instead of doing nothing or throwing an NPE
+- `/pg reload`, the permission denial and the setup chat answer are localized instead of hardcoded English
+- `ReloadCommand` and `CommandDispatcher` log exceptions through the plugin logger instead of `printStackTrace()`
+- Lobby join aborts with `lobby.no_spawn` instead of clearing the inventory and throwing when the spawn or its world is missing
+- A spawn shortage is reported to the round instead of silently starting
+
+### Security
+
+- The update checker parses the GitHub release list with a linear scan instead of a backtracking regex (CodeQL `java/polynomial-redos`)
+- Update checks read the GitHub releases instead of the legacy SpigotMC resource, so 1.x installs are no longer told to "update" to 7.0.1; versions are compared numerically
+- `pg.mysql.port` is read as a number or a string, and the shipped config writes it as a number
