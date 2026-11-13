@@ -19,27 +19,16 @@ public class WeatherEventListener implements Listener {
 
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent e) {
-        // Check if there's an active game
-        boolean gameActive = plugin.getGame().getActivePlayerCount() > 0;
-
-        if (!gameActive) {
-            return;
-        }
-
-        // Prevent weather changes during active games
-        if (e.toWeatherState()) {
-            // Prevent rain/storm during games
+        // Rain is only suppressed in the arena worlds of a running round; the
+        // global check used to silence the weather on the whole server.
+        if (e.toWeatherState() && plugin.getGame().isRoundWorld(e.getWorld())) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onLightningStrike(LightningStrikeEvent e) {
-        // Check if there's an active game
-        boolean gameActive = plugin.getGame().getActivePlayerCount() > 0;
-
-        if (gameActive) {
-            // Prevent lightning during games
+        if (e.getWorld() != null && plugin.getGame().isRoundWorld(e.getWorld())) {
             e.setCancelled(true);
         }
     }
