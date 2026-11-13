@@ -49,6 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `pg.enableRewards: true` without a Vault economy no longer disables the whole plugin; it logs a warning and rewards stay inactive
+- `pg.mysql.port` is read as a number or a string, and the shipped config writes it as a number
 - `/pg list` has its own permission node (`pg.list`, default true) instead of sharing `pg.join`; every other command keeps its previous node (`pg.setup` for the setup commands)
 - Lobby capacity is capped by the fewest usable arena spawns (join check, join sign, sidebar, lobby list, `/pg status`, server ping); a round with no usable spawn aborts back to `WAITING` instead of half-starting, and a spawn shortage is reported to the round
 - The deathmatch now starts when the remaining players fit onto the arena's usable deathmatch spawns (`max(2, spawns)`), so 2 DM spawns keep the legacy behaviour
