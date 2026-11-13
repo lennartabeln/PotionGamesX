@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -218,19 +217,26 @@ public class GameItemListener implements Listener {
     }
 
     private void handlePlayerFinder(Player p, String s) {
-        if (plugin.getLobbyStateManager().getGameState(s) != GameStates.INGAME) {
+        GameStates state = plugin.getLobbyStateManager().getGameState(s);
+        if (state != GameStates.INGAME && state != GameStates.DEATHMATCH) {
             return;
         }
         Player result = null;
         double lastDistance = Double.MAX_VALUE;
         Lobby lobby = plugin.getGame().getLobby(InteractionSupport.parseIntSafe(s));
-        String playerTeam_p = lobby != null ? lobby.getPlayerTeam(p) : null;
+        String ownTeam = lobby != null ? lobby.getPlayerTeam(p) : null;
+        boolean teamsActive = lobby != null && lobby.isActivateTeams();
         for (Player cp : p.getWorld().getPlayers()) {
-            if (cp == p || plugin.getGame().getPlayerLobby(cp) == null) {
+            if (cp == p) {
                 continue;
             }
-            String playerTeam_cp = lobby != null ? lobby.getPlayerTeam(cp) : null;
-            if (!Objects.equals(playerTeam_p, playerTeam_cp)) {
+            // Only players in the same running round are valid targets
+            String otherLobby = plugin.getGame().getPlayerLobby(cp);
+            if (otherLobby == null || !otherLobby.equals(s)) {
+                continue;
+            }
+            // With teams active the finder points at an enemy, never an ally
+            if (teamsActive && ownTeam != null && ownTeam.equals(lobby.getPlayerTeam(cp))) {
                 continue;
             }
             double distance = p.getLocation().distance(cp.getLocation());
