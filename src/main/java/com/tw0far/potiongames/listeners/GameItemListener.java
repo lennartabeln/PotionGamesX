@@ -431,7 +431,7 @@ public class GameItemListener implements Listener {
             ChestLootProfile profile = resolveLootProfile(
                     Settings.chests.getConfigurationSection("pg.chestloot.normal"),
                     defaultNormalLootProfile());
-            fillLootChest(inv, rnd, profile, itemStateManager);
+            fillLootChest(inv, rnd, profile, itemStateManager, lobby.isActivateShop());
             lobby.setChestInventory(loc, inv.getContents());
         }
         reopenStoredChest(p, lobby, loc);
@@ -468,7 +468,7 @@ public class GameItemListener implements Listener {
                             }
                             Random rnd = new Random();
                             ChestLootProfile profile = resolveLootProfile(customChest, defaultCustomLootProfile());
-                            fillLootChest(inv, rnd, profile, plugin.getItemStateManager());
+                            fillLootChest(inv, rnd, profile, plugin.getItemStateManager(), lobby.isActivateShop());
                             lobby.setChestInventory(loc, inv.getContents());
                         }
                         reopenStoredChest(p, lobby, loc);
@@ -612,7 +612,8 @@ public class GameItemListener implements Listener {
 
     // ===== Loot filling =====
 
-    private void fillLootChest(Inventory inv, Random rnd, ChestLootProfile profile, IItemStateManager itemStateManager) {
+    private void fillLootChest(Inventory inv, Random rnd, ChestLootProfile profile,
+                               IItemStateManager itemStateManager, boolean shopActive) {
         if (profile.factor <= 0.0) {
             return;
         }
@@ -629,6 +630,10 @@ public class GameItemListener implements Listener {
 
         for (int i = 0; i < rolls && !emptySlots.isEmpty(); i++) {
             LootPool pool = pickLootPool(rnd, profile);
+            if (pool == LootPool.SHOP && !shopActive) {
+                // Without a shop the currency is useless, so the roll becomes food.
+                pool = LootPool.FOOD1;
+            }
             ItemStack loot = pickLootItem(pool, itemStateManager, rnd);
             if (loot == null) {
                 continue;
@@ -668,7 +673,21 @@ public class GameItemListener implements Listener {
             case ARMOUR5 -> itemStateManager.getRandomArmor(5);
             case WEAPONS1 -> itemStateManager.getRandomWeapon(1);
             case WEAPONS2 -> itemStateManager.getRandomWeapon(2);
+            // Shop currency: a glass bottle is required for every purchase and the
+            // coins are what the shop charges, so both have to come from the
+            // chests like in the legacy release.
+            case SHOP -> rnd.nextBoolean() ? shopBottle() : shopCoin();
         };
+    }
+
+    private ItemStack shopBottle() {
+        ItemStack bottle = plugin.getBottle();
+        return bottle == null ? null : bottle.clone();
+    }
+
+    private ItemStack shopCoin() {
+        ItemStack coin = plugin.getCoin();
+        return coin == null ? null : coin.clone();
     }
 
     private ChestLootProfile resolveLootProfile(ConfigurationSection chestSection, ChestLootProfile defaultProfile) {
@@ -692,6 +711,7 @@ public class GameItemListener implements Listener {
         profile.armour5 = lootSection.getDouble("armour5", profile.armour5);
         profile.weapons1 = lootSection.getDouble("weapons1", profile.weapons1);
         profile.weapons2 = lootSection.getDouble("weapons2", profile.weapons2);
+        profile.shop = lootSection.getDouble("shop", profile.shop);
         return profile;
     }
 
@@ -711,6 +731,7 @@ public class GameItemListener implements Listener {
                 profile.armour5 = lootConfig.getDouble("armour5", 3.0);
                 profile.weapons1 = lootConfig.getDouble("weapons1", 20.0);
                 profile.weapons2 = lootConfig.getDouble("weapons2", 5.0);
+                profile.shop = lootConfig.getDouble("shop", 10.0);
                 return profile;
             }
         }
@@ -735,9 +756,11 @@ public class GameItemListener implements Listener {
         private double armour5 = 3.0;
         private double weapons1 = 20.0;
         private double weapons2 = 5.0;
+        private double shop = 10.0;
 
         double totalWeight() {
-            return food1 + food2 + armour1 + armour2 + armour3 + armour4 + armour5 + weapons1 + weapons2;
+            return food1 + food2 + armour1 + armour2 + armour3 + armour4 + armour5
+                    + weapons1 + weapons2 + shop;
         }
 
         double weight(LootPool pool) {
@@ -751,6 +774,7 @@ public class GameItemListener implements Listener {
                 case ARMOUR5 -> armour5;
                 case WEAPONS1 -> weapons1;
                 case WEAPONS2 -> weapons2;
+                case SHOP -> shop;
             };
         }
     }
@@ -764,6 +788,7 @@ public class GameItemListener implements Listener {
         ARMOUR4,
         ARMOUR5,
         WEAPONS1,
-        WEAPONS2
+        WEAPONS2,
+        SHOP
     }
 }
