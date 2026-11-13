@@ -789,6 +789,11 @@ public class Lobby {
                     if (currentArena != null) {
                         distributeTeams();
                         currentArena.teleport(participants);
+                        // Adventure mode (lobby) and the lobby items would make
+                        // the whole arena block system unreachable.
+                        for (Participant participant : participants) {
+                            participant.startRound();
+                        }
                         applyGameRules();
                         giveSpawnItems();
                     }
@@ -1210,6 +1215,10 @@ public class Lobby {
     public void setCountdown(int countdown) {
         this.countdown = countdown;
         this.prepareTimer = countdown;
+    }
+
+    public boolean isActivateKits() {
+        return activateKits;
     }
 
     public boolean isActivateTeams() {

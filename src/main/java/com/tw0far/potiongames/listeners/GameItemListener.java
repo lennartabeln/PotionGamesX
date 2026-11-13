@@ -360,6 +360,10 @@ public class GameItemListener implements Listener {
         if (state != GameStates.WAITING && state != GameStates.PREPARING) {
             return;
         }
+        Lobby lobby = plugin.getGame().getLobby(InteractionSupport.parseIntSafe(s));
+        if (lobby == null || !lobby.isActivateKits()) {
+            return;
+        }
         ItemStack randombarrier = new ItemStack(Material.COMMAND_BLOCK);
         ItemMeta randombarriermeta = randombarrier.getItemMeta();
         if (randombarriermeta == null) {
