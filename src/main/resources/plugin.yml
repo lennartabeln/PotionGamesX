@@ -19,56 +19,133 @@ commands:
       - pgames
       - potiong
 permissions:
+  # ── Player commands (one node per command; /pg list uses pg.join) ──
   pg.join:
-    description: Join lobbies and view the lobby list
+    description: Join lobbies, and view the lobby list (/pg join, /pg list)
     default: true
   pg.leave:
-    description: Leave the current game
+    description: Leave the current game (/pg leave)
     default: true
   pg.stats:
-    description: View player statistics
+    description: View player statistics (/pg stats)
+    default: true
+  pg.help:
+    description: Show the command list (/pg help)
     default: true
   pg.version:
-    description: Show plugin version and receive update notifications
+    description: Show plugin version and receive update notifications (/pg version)
     default: op
+
+  # ── Setup commands ──
   pg.setup:
-    description: Set up lobbies, arenas and spawns
+    description: Toggle setup mode (/pg setup) and run the setup commands
     default: op
+    children:
+      pg.addlobby: true
+      pg.dellobby: true
+      pg.addarena: true
+      pg.delarena: true
+      pg.addspawn: true
+      pg.delspawn: true
+      pg.adddeathmatch: true
+      pg.deldeathmatch: true
+      pg.joinsign: true
+      pg.headp1: true
+      pg.headp2: true
+      pg.headp3: true
+      pg.signp1: true
+      pg.signp2: true
+      pg.signp3: true
+  pg.addlobby:
+    description: Add a lobby (/pg addlobby)
+    default: op
+  pg.dellobby:
+    description: Remove a lobby (/pg dellobby)
+    default: op
+  pg.addarena:
+    description: Add an arena (/pg addarena)
+    default: op
+  pg.delarena:
+    description: Remove an arena (/pg delarena)
+    default: op
+  pg.addspawn:
+    description: Add an arena spawn (/pg addspawn)
+    default: op
+  pg.delspawn:
+    description: Remove an arena spawn (/pg delspawn)
+    default: op
+  pg.adddeathmatch:
+    description: Add a deathmatch spawn (/pg adddeathmatch)
+    default: op
+  pg.deldeathmatch:
+    description: Remove a deathmatch spawn (/pg deldeathmatch)
+    default: op
+  pg.joinsign:
+    description: Create the join sign of a lobby (/pg joinsign)
+    default: op
+  pg.headp1:
+    description: Set the stats wall head for 1st place (/pg headp1)
+    default: op
+  pg.headp2:
+    description: Set the stats wall head for 2nd place (/pg headp2)
+    default: op
+  pg.headp3:
+    description: Set the stats wall head for 3rd place (/pg headp3)
+    default: op
+  pg.signp1:
+    description: Set the stats wall sign for 1st place (/pg signp1)
+    default: op
+  pg.signp2:
+    description: Set the stats wall sign for 2nd place (/pg signp2)
+    default: op
+  pg.signp3:
+    description: Set the stats wall sign for 3rd place (/pg signp3)
+    default: op
+
+  # ── Admin commands ──
   pg.reload:
-    description: Reload the plugin configuration
+    description: Reload the plugin configuration (/pg reload)
     default: op
   pg.build:
-    description: Toggle build mode in a lobby
+    description: Toggle build mode in a lobby (/pg build)
     default: op
   pg.pause:
-    description: Pause or resume a game
+    description: Pause or resume a game (/pg pause)
     default: op
   pg.force:
-    description: Force a specific arena
+    description: Force a specific arena (/pg force)
     default: op
   pg.start:
-    description: Shorten the lobby countdown
+    description: Shorten the lobby countdown (/pg start)
     default: op
   pg.sign:
-    description: Create [PG] join signs
+    description: Create [PG] join signs by placing a sign
     default: op
   pg.kick:
-    description: Kick players from lobbies
+    description: Kick players from lobbies (/pg kick)
     default: op
   pg.broadcast:
-    description: Broadcast messages to all players
+    description: Broadcast messages to all players (/pg broadcast)
     default: op
   pg.top:
-    description: View leaderboards
+    description: View leaderboards (/pg top)
     default: op
   pg.status:
-    description: View server and lobby status
+    description: View server and lobby status (/pg status)
     default: op
   pg.config:
-    description: View current configuration
+    description: View the current configuration (/pg config)
     default: op
+  pg.database:
+    description: Toggle database backend, MySQL or SQLite (/pg database)
+    default: op
+  pg.gameserver:
+    description: Toggle game-server mode (/pg gameserver)
+    default: op
+
+  # ── Umbrella ──
   pg.admin:
-    description: See the administrative command list in /pg help and use every admin subcommand
+    description: Every administrative subcommand and the full admin help list
     default: op
     children:
       pg.setup: true
@@ -85,9 +162,4 @@ permissions:
       pg.config: true
       pg.database: true
       pg.gameserver: true
-  pg.database:
-    description: Toggle database backend (MySQL/SQLite)
-    default: op
-  pg.gameserver:
-    description: Toggle game-server mode
-    default: op
+      pg.version: true

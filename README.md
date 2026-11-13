@@ -88,17 +88,17 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 
 | Command | Description | Permission |
 |---------|-------------|------------|
-| `/pg addlobby <id>` | Create lobby | `pg.setup` |
-| `/pg dellobby <id>` | Remove lobby | `pg.setup` |
-| `/pg addarena <lobby> <name>` | Add arena | `pg.setup` |
-| `/pg delarena <lobby> <name>` | Remove arena | `pg.setup` |
-| `/pg addspawn <lobby> <arena>` | Add spawn | `pg.setup` |
-| `/pg delspawn <lobby> <arena>` | Remove last spawn | `pg.setup` |
-| `/pg adddeathmatch <lobby> <arena>` | Add deathmatch spawn | `pg.setup` |
-| `/pg deldeathmatch <lobby> <arena>` | Remove deathmatch spawn | `pg.setup` |
-| `/pg joinsign <lobby>` | Set join sign | `pg.setup` |
-| `/pg headp1\|p2\|p3` | Set stats wall head | `pg.setup` |
-| `/pg signp1\|p2\|p3` | Set stats wall sign | `pg.setup` |
+| `/pg addlobby <id>` | Create lobby | `pg.addlobby` |
+| `/pg dellobby <id>` | Remove lobby | `pg.dellobby` |
+| `/pg addarena <lobby> <name>` | Add arena | `pg.addarena` |
+| `/pg delarena <lobby> <name>` | Remove arena | `pg.delarena` |
+| `/pg addspawn <lobby> <arena>` | Add spawn | `pg.addspawn` |
+| `/pg delspawn <lobby> <arena>` | Remove last spawn | `pg.delspawn` |
+| `/pg adddeathmatch <lobby> <arena>` | Add deathmatch spawn | `pg.adddeathmatch` |
+| `/pg deldeathmatch <lobby> <arena>` | Remove deathmatch spawn | `pg.deldeathmatch` |
+| `/pg joinsign <lobby>` | Set join sign | `pg.joinsign` |
+| `/pg headp1\|p2\|p3` | Set stats wall head | `pg.headp1` / `pg.headp2` / `pg.headp3` |
+| `/pg signp1\|p2\|p3` | Set stats wall sign | `pg.signp1` / `pg.signp2` / `pg.signp3` |
 
 With `pg.singleLobby: true` the setup commands also accept their legacy short form without a lobby number (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg joinsign`) and always target lobby 1.
 
