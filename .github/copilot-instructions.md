@@ -80,7 +80,7 @@ Every subcommand of `/pg` is one class implementing `ICommand`
 
 ### handlers/ & bootstrap/
 
-- `LegacyConfigMigrator` (bootstrap) - startup migration of a legacy `arenadata.yml`/`pg.Lobby.*`/`settings.*` layout; `LegacyArenaImporter` (util) is the pure copy logic, `/pg importarenas` the manual entry point
+- `LegacyConfigMigrator` (bootstrap) - one-shot startup migration of a legacy `arenadata.yml`/`pg.Lobby.*`/`settings.*` layout; `LegacyArenaImporter` (util) is the pure copy logic. There is no import command: the admin deletes `arenadata.yml` after the migration
 - `JoinLobbyHandler` - join gating (reject full/running lobbies; spectator late join via `pg.joinStarted`)
 - `SetupHandler` - setup wizard state give/restore
 - `ReloadHandler` - full reload: restore setup players, cancel tasks, reconnect DB, restart ticks/rank wall

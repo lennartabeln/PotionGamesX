@@ -12,11 +12,6 @@ en_US:
       removed: "Arena %s removed successfully. (Lobby: %d)"
       could_not_load: "Could not load an arena!"
       forced: "has been forced as arena!"
-      imported: "Imported %d arena(s) into lobby %d."
-      import_skipped: "%d arena(s) already existed and were skipped."
-      import_unnamed: "%d legacy arena(s) had no name and were ignored."
-      import_no_arenas: "No arenas found in %s."
-      import_file_missing: "File %s not found in the plugin folder."
       not_arena: "is not an arena!"
       not_exists: "This arena does not exist!"
       does_not_exist: "This arena does not exist!"
@@ -51,8 +46,6 @@ en_US:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
-      importarenas:
-        usage: "Usage: /pg importarenas <lobbynumber> [file]"
     coin:
       single: "Coin"
     coins:
@@ -126,7 +119,6 @@ en_US:
       signp2_usage: "/pg signp2 (Look at 2nd place sign)"
       signp3_usage: "/pg signp3 (Look at 3rd place sign)"
       joinsign: "/pg joinsign <lobbynumber> - Add Join-Sign"
-      importarenas: "/pg importarenas <lobbynumber> [file] - Import arenas from a legacy arenadata.yml"
       joinsign_usage: "/pg joinsign <lobbynumber>"
       reload: "/pg reload - Reload all configs"
       reload_usage: "/pg reload - Reload all configurations and stop all games (requires pg.reload)"
@@ -355,11 +347,6 @@ de_DE:
       removed: "Arena %s erfolgreich entfernt. (Lobby: %d)"
       could_not_load: "Konnte keine Arena laden!"
       forced: "wurde als Arena erzwungen!"
-      imported: "%d Arena(s) in Lobby %d importiert."
-      import_skipped: "%d Arena(s) existierten bereits und wurden übersprungen."
-      import_unnamed: "%d Arena(s) aus dem alten Format hatten keinen Namen und wurden ignoriert."
-      import_no_arenas: "In %s wurden keine Arenen gefunden."
-      import_file_missing: "Datei %s wurde im Plugin-Ordner nicht gefunden."
       not_arena: "ist keine Arena!"
       not_exists: "Diese Arena existiert nicht!"
       does_not_exist: "Diese Arena existiert nicht!"
@@ -394,8 +381,6 @@ de_DE:
         usage: "Usage: /pg addlobby <lobbynumber>"
       joinsign:
         usage: "Usage: /pg joinsign <lobbynumber>"
-      importarenas:
-        usage: "Verwendung: /pg importarenas <lobbynumber> [datei]"
     coin:
       single: "Münze"
     coins:
@@ -468,7 +453,6 @@ de_DE:
       signp2_usage: "/pg signp2 (Look at 2nd place sign)"
       signp3_usage: "/pg signp3 (Look at 3rd place sign)"
       joinsign: "/pg joinsign <lobbynumber> - Beitrittsschild hinzufügen"
-      importarenas: "/pg importarenas <lobbynumber> [datei] - Arenen aus einer alten arenadata.yml importieren"
       joinsign_usage: "/pg joinsign <lobbynumber>"
       reload: "/pg reload - Alle Konfigurationen neu laden"
       reload_usage: "/pg reload - Reload all configurations and stop all games (requires pg.reload)"

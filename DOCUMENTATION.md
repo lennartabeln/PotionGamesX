@@ -63,11 +63,13 @@ Copy your old `plugins/PotionGames/arenadata.yml` and `config.yml` into `plugins
 |---|---|
 | `arenadata.yml` → `pg.lobbies.<id>` | lobby with `spawn` (from `coords`) and `settings.*` |
 | `config.yml` → `pg.Lobby.coords`/`pg.Lobby.sign` | lobby **1** (single-lobby servers) |
-| `arenadata.yml` → `pg.arenas.<n>` | arenas of every lobby without arenas (spawns/deathmatch verbatim) |
+| `arenadata.yml` → `pg.arenas.<n>` | arenas of every lobby (existing names skipped, spawns/deathmatch verbatim) |
 | `config.yml` → `pg.lobbySystem` | `pg.singleLobby` (`false` → `true`) |
 | `lobbies.yml` root settings | `pg.lobbies.<id>.settings.*` |
 
-Nothing is overwritten and the migration is idempotent (it only logs when it did something). A single file can still be imported on demand with `/pg importarenas <lobby> [file]`.
+Nothing is overwritten and the migration is idempotent (it only logs when it did something), so **no command is needed** for the upgrade.
+
+**After a successful migration delete `arenadata.yml`.** While the file exists, its arenas are checked again on every start — an arena an admin deleted on purpose would be re-imported. A differently named legacy file (e.g. a backup) just has to be renamed to `arenadata.yml` before the next start.
 
 ## 🛠️ Configuration
 

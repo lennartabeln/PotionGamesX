@@ -45,7 +45,7 @@ Bug-fix wave against legacy 7.0.1: every audit finding is fixed, documented in `
 - **Shop**: purchases need coins plus one `GLASS_BOTTLE`; both come from the `shop` loot pool while `activateShop` is on.
 - **Stats**: `DatabaseManager` is the only DB access, all APIs take UUID strings, counters increment in SQL, `Stats.UUID` is unique.
 - **Messages**: all player-facing text lives in `messages.yml` (`en_US` + `de_DE`, key parity enforced by `MessagesYamlTest`) behind typed `Messages` accessors.
-- **Legacy migration**: `LegacyConfigMigrator` runs from `BootstrapInitializer` before `Game.load()` and only fills gaps (lobbies from `arenadata.yml` / `pg.Lobby.*`, global arenas, `settings.*`, `pg.singleLobby` from `pg.lobbySystem`). `LegacyArenaImporter` is the pure copy logic, `/pg importarenas <lobby> [file]` the manual path.
+- **Legacy migration**: `LegacyConfigMigrator` runs from `BootstrapInitializer` before `Game.load()` and only fills gaps (lobbies from `arenadata.yml` / `pg.Lobby.*`, global arenas into every lobby with name-level dedup, `settings.*`, `pg.singleLobby` from `pg.lobbySystem`). `LegacyArenaImporter` is the pure copy logic; there is no import command, the admin deletes `arenadata.yml` when done.
 - **Legacy parity switches**: `pg.singleLobby` enables the short setup command forms (lobby 1), `pg.activePotions` caps the shop entries that are shown *and* buyable, and the arena selector paper is only handed out when `Lobby#hasArenaChoice()`.
 - **World restore**: `Lobby#restoreWorldState()` puts blocks and gamerules back and is used by `RESET`, `ReloadHandler` and `onDisable` — never drop block tracking without restoring.
 

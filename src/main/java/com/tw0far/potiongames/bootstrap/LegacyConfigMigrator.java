@@ -107,6 +107,10 @@ public final class LegacyConfigMigrator {
                     "Legacy migration: %d lobby/lobbies, %d arena(s), %d setting(s), singleLobby=%s",
                     lobbies, arenas, settings, singleLobby));
         }
+        if (arenas > 0) {
+            plugin.getLogger().info("Delete " + LEGACY_FILE + " once the migration is complete; "
+                    + "otherwise its arenas are checked again on every start.");
+        }
         return result;
     }
 
@@ -176,11 +180,12 @@ public final class LegacyConfigMigrator {
     }
 
     /**
-     * Copies all legacy global arenas into the lobbies that do not have any yet.
+     * Copies the legacy global arenas into every lobby.
      *
      * <p>The legacy release kept the arenas globally, so any lobby could vote for
-     * any of them. Copying them into every empty lobby keeps that behaviour; a
-     * lobby that is already set up stays untouched.</p>
+     * any of them. Copying them into every lobby keeps that behaviour; arenas a
+     * lobby already has (same name) are skipped and never overwritten, so an
+     * existing setup only gains the arenas it does not know yet.</p>
      *
      * @param sourceArenas the {@code pg.arenas} section of the legacy file
      * @param lobbies      the {@code lobbies.yml} configuration
@@ -195,10 +200,6 @@ public final class LegacyConfigMigrator {
         for (Integer lobbyId : lobbyIds(lobbies)) {
             ConfigurationSection target = lobbies.getConfigurationSection("pg.lobbies." + lobbyId);
             if (target == null) {
-                continue;
-            }
-            ConfigurationSection existing = target.getConfigurationSection("arenas");
-            if (existing != null && !existing.getKeys(false).isEmpty()) {
                 continue;
             }
             LegacyArenaImporter.Result result = LegacyArenaImporter.importArenas(sourceArenas, target);
