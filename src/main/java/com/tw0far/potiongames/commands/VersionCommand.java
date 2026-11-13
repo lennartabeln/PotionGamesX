@@ -2,6 +2,7 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.util.PluginVersion;
 import com.tw0far.potiongames.util.UpdateChecker;
 import org.bukkit.command.CommandSender;
 
@@ -28,16 +29,17 @@ public class VersionCommand implements ICommand {
 
     @Override
     public boolean execute(CommandSender player, String[] args) {
-        new UpdateChecker(plugin, 87633).getVersion(version -> {
+        String currentVersion = plugin.getPluginMeta().getVersion();
+        player.sendMessage(Messages.VersionCurrent(currentVersion));
+        new UpdateChecker(plugin).getVersion(version -> {
             if (version == null) {
                 player.sendMessage(Messages.UpdateCheckerError());
                 return;
             }
-            String currentVersion = plugin.getPluginMeta().getVersion();
-            if (currentVersion.equalsIgnoreCase(version)) {
-                player.sendMessage(Messages.UpdateNotAvailable());
-            } else {
+            if (PluginVersion.isNewer(version, currentVersion)) {
                 player.sendMessage(Messages.UpdateAvailable(currentVersion, version));
+            } else {
+                player.sendMessage(Messages.UpdateNotAvailable());
             }
         });
         return true;

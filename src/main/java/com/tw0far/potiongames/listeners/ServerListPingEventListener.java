@@ -1,5 +1,7 @@
 package com.tw0far.potiongames.listeners;
 
+import com.tw0far.potiongames.models.Messages;
+
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Arena;
 import com.tw0far.potiongames.models.GameStates;
@@ -82,7 +84,7 @@ public class ServerListPingEventListener implements Listener {
     private Component motdFor(Lobby lobby) {
         GameStates state = lobby.getState();
         if (state == null) {
-            return Component.text("PotionGames").color(NamedTextColor.RED);
+            return Messages.PluginName().colorIfAbsent(NamedTextColor.RED);
         }
         return switch (state) {
             case WAITING -> Component.text("WAITING").color(NamedTextColor.GREEN);

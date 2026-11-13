@@ -1,4 +1,4 @@
-# Default localized messages for PotionGames
+# Default localized messages for PotionGamesX
 en_US:
   messages:
     airdrop:
@@ -324,10 +324,14 @@ en_US:
     bucket:
       water_not_allowed: "Water buckets are not allowed during games!"
       fill_not_allowed: "You cannot fill buckets during a game!"
+    version:
+      current: "Running version %s"
     update:
-      available: "There is a new update available. %s -> %s"
-      checker_error: "Update-Checker-Error"
-      not_available: "There is not a new update available."
+      available: "A new version is available: %s -> %s"
+      checker_error: "Could not check for updates."
+      not_available: "You are running the latest version."
+    broadcast:
+      label: "BROADCAST"
     vote:
       label: "Votes"
     will_be_played: "will be played!"
@@ -667,10 +671,14 @@ de_DE:
     bucket:
       water_not_allowed: "Wassereimer sind während des Spiels nicht erlaubt!"
       fill_not_allowed: "Du kannst während eines Spiels keine Eimer füllen!"
+    version:
+      current: "Laufende Version %s"
     update:
-      available: "Es ist ein neues Update verfügbar. %s -> %s"
-      checker_error: "Update-Checker-Fehler"
-      not_available: "Es ist kein neues Update verfügbar."
+      available: "Neue Version verfügbar: %s -> %s"
+      checker_error: "Update-Prüfung fehlgeschlagen."
+      not_available: "Du verwendest bereits die neueste Version."
+    broadcast:
+      label: "ANKÜNDIGUNG"
     vote:
       label: "Stimmen"
     will_be_played: "wird gespielt!"

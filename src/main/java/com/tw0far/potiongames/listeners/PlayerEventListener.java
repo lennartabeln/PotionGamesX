@@ -2,6 +2,7 @@ package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.util.PluginVersion;
 import com.tw0far.potiongames.util.UpdateChecker;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,9 +30,10 @@ public class PlayerEventListener implements Listener {
         org.bukkit.Bukkit.getAsyncScheduler().runNow(plugin, task ->
             plugin.getDatabaseManager().createPlayer(p.getUniqueId().toString()));
         if (p.hasPermission("pg.version")) {
-            new UpdateChecker(plugin, 87633).getVersion(version -> {
-                if (version != null && !plugin.getPluginMeta().getVersion().equalsIgnoreCase(version)) {
-                    p.sendMessage(Messages.UpdateAvailable(plugin.getPluginMeta().getVersion(), version));
+            new UpdateChecker(plugin).getVersion(version -> {
+                String current = plugin.getPluginMeta().getVersion();
+                if (version != null && PluginVersion.isNewer(version, current)) {
+                    p.sendMessage(Messages.UpdateAvailable(current, version));
                 }
             });
         }
