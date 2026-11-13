@@ -115,7 +115,7 @@ public class ConfigurationManager implements IConfigurationManager {
         singleLobby = config.getBoolean("pg.singleLobby", false);
 
         host = config.getString("pg.mysql.host", "localhost");
-        port = config.getString("pg.mysql.port", "3306");
+        port = String.valueOf(config.get("pg.mysql.port", 3306));
         database = config.getString("pg.mysql.database", "PotionGamesX");
         user = config.getString("pg.mysql.user", "root");
     }

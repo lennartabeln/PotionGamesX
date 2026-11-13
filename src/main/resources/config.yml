@@ -33,14 +33,19 @@ pg:
   activateMySQL: false
   mysql:
     host: localhost
-    port: "3306"
+    port: 3306
     database: potiongames
     user: root
     password: "admin"
 
   # ═══════════════════════════════════════════════════════
   # DEFAULT GAME SETTINGS
-  # (Applied to all lobbies unless overridden)
+  # (Applied to all lobbies unless overridden per lobby in lobbies.yml)
+  #
+  # Everything below can be overridden per lobby:
+  #   lobbies.yml -> pg.lobbies.<id>.settings.<key>
+  # The remaining feature flags further down (activateDeathmatch,
+  # activateScoreboard, changeGamerules, friendlyFire) are global only.
   # ═══════════════════════════════════════════════════════
 
   defaults:
@@ -49,7 +54,8 @@ pg:
     roundTime: 30              # Minutes per round
 
     # Player limits
-    maxPlayers: 24
+    maxPlayers: 24             # Upper bound; the effective capacity is capped by
+                               # the smallest usable arena spawn count
     minPlayers: 2
     teamSize: 2
 
@@ -76,14 +82,23 @@ pg:
   compassOnSpawn: false
   startOnJoin: false
 
-  # Economy (requires Vault)
+  # Economy (optional, uses Vault). Without Vault the flags stay on but
+  # no money moves - the plugin does not disable itself.
   enableRewards: false
   killReward: 10               # Coins per kill
   winningReward: 100           # Coins for winning a round
 
   # Content limits
-  activeKits: 6                # Number of player kits
+  activeKits: 6                # Selectable kits, counted from the entries in kits.yml
   activePotions: 0             # Shop entries shown and buyable (0 = all entries of shop.yml)
+
+  # ═══════════════════════════════════════════════════════
+  # LEGACY KEYS
+  # Installs that still carry the pre-1.0 layout are migrated automatically:
+  # pg.Lobby.coords, pg.Lobby.sign, pg.lobbySystem, pg.arenas and the old
+  # per-lobby keys under pg.lobbies.* are read once and written to the new
+  # files. They do not have to exist in this file.
+  # ═══════════════════════════════════════════════════════
 
   # ═══════════════════════════════════════════════════════
   # STATS WALL (optional)
