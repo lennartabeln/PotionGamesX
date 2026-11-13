@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `/pg start`, `/pg pause`, `/pg build`, `/pg force` and `/pg leave` report `You are not in a lobby!` instead of doing nothing when the sender has no lobby
 - Update checks read the GitHub releases instead of the legacy SpigotMC resource, so 1.x installs are no longer told to "update" to 7.0.1; versions are compared numerically (`PluginVersion`)
 - Console lines no longer repeat the prefix (`[PotionGamesX] [Potion Games]`) and the prefix now reads `[PotionGamesX]` with a coloured `X`
 - `/pg broadcast` uses rule lines and a bold label instead of gold chat text; `/pg version` prints the running version first
