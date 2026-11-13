@@ -106,6 +106,16 @@ public class Participant {
     }
 
     /**
+     * Adopts a pre-join snapshot taken while the player was a spectator, so the
+     * lobby keeps the state to restore on /pg leave.
+     */
+    public void adoptSavedState(PlayerState state) {
+        if (state != null) {
+            savedState = state;
+        }
+    }
+
+    /**
      * Hands the pre-join state over to the caller (used when an active player
      * becomes a spectator and must not be teleported back yet).
      */
