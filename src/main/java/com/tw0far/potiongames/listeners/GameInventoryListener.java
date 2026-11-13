@@ -182,15 +182,12 @@ public class GameInventoryListener implements Listener {
                 .append(Component.text(String.valueOf(maxTeamPlayers)).color(NamedTextColor.AQUA)));
         p.sendMessage(Messages.SelectorTeam());
         p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
-        applyTeamScoreboardPrefix(p, teamName);
+        applyTeamScoreboardValue(p, teamName);
     }
 
-    private void applyTeamScoreboardPrefix(Player p, String teamName) {
-        if (plugin.getConfigManager().isActivateScoreboard()) {
-            var team = p.getScoreboard().getTeam("team");
-            if (team != null) {
-                team.prefix(Component.text(teamName).color(NamedTextColor.DARK_AQUA));
-            }
+    private void applyTeamScoreboardValue(Player p, String teamName) {
+        if (plugin.getConfigManager().isActivateScoreboard() && plugin.getScoreboardManager() != null) {
+            plugin.getScoreboardManager().updateTeamValue(p, teamName);
         }
     }
 
