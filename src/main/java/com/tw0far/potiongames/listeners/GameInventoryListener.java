@@ -262,7 +262,7 @@ public class GameInventoryListener implements Listener {
             return;
         }
         Lobby lobby = plugin.getGame().getLobby(InteractionSupport.parseIntSafe(s));
-        if (lobby == null) return;
+        if (lobby == null || !lobby.isActivateKits()) return;
         Participant participant = lobby.getParticipant(p);
         if (participant == null) return;
         int activeKits = plugin.getConfigManager().getActiveKits();

@@ -2,10 +2,12 @@ package com.tw0far.potiongames.models;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
 
 import net.kyori.adventure.text.Component;
 
@@ -36,11 +38,14 @@ public class Participant {
         map.setItemMeta(mapMeta);
         inv.setItem(0, map);
 
-        ItemStack kitItem = new ItemStack(Material.ENDER_CHEST);
-        ItemMeta kitMeta = kitItem.getItemMeta();
-        kitMeta.displayName(Messages.KitSelectorItem());
-        kitItem.setItemMeta(kitMeta);
-        inv.setItem(1, kitItem);
+        // The kit selector is only handed out when kits are enabled.
+        if (lobby.isActivateKits()) {
+            ItemStack kitItem = new ItemStack(Material.ENDER_CHEST);
+            ItemMeta kitMeta = kitItem.getItemMeta();
+            kitMeta.displayName(Messages.KitSelectorItem());
+            kitItem.setItemMeta(kitMeta);
+            inv.setItem(1, kitItem);
+        }
 
         ItemStack teamItem = new ItemStack(Material.CLOCK);
         ItemMeta teamMeta = teamItem.getItemMeta();
@@ -59,6 +64,37 @@ public class Participant {
         leaveMeta.displayName(Messages.LeaveItem());
         leaveItem.setItemMeta(leaveMeta);
         inv.setItem(8, leaveItem);
+    }
+
+    /**
+     * Prepares the participant for a running round: the lobby inventory is
+     * cleared and survival mode enabled, otherwise the arena block handling
+     * (breaking, placing, buckets, flint and steel) is denied by adventure mode
+     * and the lobby items stay in the inventory. The kit selection is kept.
+     */
+    public void startRound() {
+        if (player == null) {
+            return;
+        }
+        if (savedState == null) {
+            savedState = new PlayerState(player);
+        }
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(null);
+        for (PotionEffect effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
+        player.setGameMode(GameMode.SURVIVAL);
+        player.setFireTicks(0);
+        player.setFoodLevel(20);
+        player.setSaturation(20f);
+        player.setLevel(0);
+        player.setExp(0);
+        player.setAllowFlight(false);
+        player.setFlying(false);
+        if (player.getAttribute(Attribute.MAX_HEALTH) != null) {
+            player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
+        }
     }
 
     public void teleportToOriginalLocation() {

@@ -53,6 +53,17 @@ class LobbyConfigTest {
     }
 
     @Test
+    void kitsCanBeDisabledGloballyAndPerLobby() {
+        LobbyConfig global = new LobbyConfig(1, emptyYml(), 30, 24, 2, 2, 30, true, false, true, true);
+        assertFalse(global.isActivateKits());
+
+        YamlConfiguration yml = emptyYml();
+        yml.set("pg.lobbies.2.settings.activateKits", false);
+        LobbyConfig perLobby = new LobbyConfig(2, yml, 30, 24, 2, 2, 30, true, true, true, true);
+        assertFalse(perLobby.isActivateKits());
+    }
+
+    @Test
     void roundTimeValuesAtOrBelow300AreTreatedAsMinutes() {
         YamlConfiguration yml = emptyYml();
         yml.set("pg.lobbies.3.roundTime", 5);
