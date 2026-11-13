@@ -932,6 +932,9 @@ public class Messages {
     public static String TopDeathsText() { return get("top.deaths", "Deaths"); }
     public static String TopWinsText() { return get("top.wins", "Wins"); }
     public static String TopKdText() { return get("top.kd", "K/D Ratio"); }
+    public static String TopNoDataText() { return get("top.no_data", "Unable to read leaderboard data right now."); }
+    public static String TopEmptyText() { return get("top.empty", "No leaderboard entries found yet."); }
+    public static String TopFailedText() { return get("top.failed", "Failed to load leaderboard data."); }
 
 }
 

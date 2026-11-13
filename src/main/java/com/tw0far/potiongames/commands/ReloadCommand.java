@@ -50,8 +50,7 @@ public class ReloadCommand implements ICommand {
 
         } catch (Exception e) {
             player.sendMessage(CommandDispatcher.createError(Messages.ReloadErrorText()));
-            plugin.getLogger().severe("Reload failed with exception: " + e.getMessage());
-            e.printStackTrace();
+            plugin.getLogger().log(java.util.logging.Level.SEVERE, "Reload failed with exception", e);
             return true;
         }
     }

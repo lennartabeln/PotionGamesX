@@ -68,8 +68,23 @@ permissions:
     description: View current configuration
     default: op
   pg.admin:
-    description: See the administrative command list in /pg help
+    description: See the administrative command list in /pg help and use every admin subcommand
     default: op
+    children:
+      pg.setup: true
+      pg.reload: true
+      pg.build: true
+      pg.pause: true
+      pg.force: true
+      pg.start: true
+      pg.sign: true
+      pg.kick: true
+      pg.broadcast: true
+      pg.top: true
+      pg.status: true
+      pg.config: true
+      pg.database: true
+      pg.gameserver: true
   pg.database:
     description: Toggle database backend (MySQL/SQLite)
     default: op
