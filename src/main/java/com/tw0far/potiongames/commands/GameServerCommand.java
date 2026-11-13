@@ -68,7 +68,7 @@ public class GameServerCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpGameserverUsageText();
+        return Messages.CommandHelpText("gameserver");
     }
 }
 

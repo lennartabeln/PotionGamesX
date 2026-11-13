@@ -39,7 +39,7 @@ public class DelSpawnCommand implements ICommand {
         SetupArguments.LobbyArguments parsed =
                 SetupArguments.parse(plugin.getConfigManager().isSingleLobby(), args);
         if (parsed == null) {
-            player.sendMessage(Messages.CommandDelspawnUsageText());
+            player.sendMessage(Messages.CommandHelp("delspawn"));
             return false;
         }
         int lobbyId = parsed.lobbyId();
@@ -54,7 +54,7 @@ public class DelSpawnCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.CommandDelspawnUsageText();
+        return Messages.CommandHelpText("delspawn");
     }
 }
 

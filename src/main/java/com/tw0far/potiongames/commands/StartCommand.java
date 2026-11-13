@@ -57,7 +57,7 @@ public class StartCommand implements ICommand {
                     }
                 }
             } catch (NumberFormatException e) {
-                player.sendMessage(Messages.HelpUsePgHelp());
+                player.sendMessage(Messages.CommandHelp("start"));
             }
         }
         return true;
@@ -65,7 +65,7 @@ public class StartCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpStartUsageText();
+        return Messages.CommandHelpText("start");
     }
 }
 

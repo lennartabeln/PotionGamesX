@@ -39,7 +39,7 @@ public class DelArenaCommand implements ICommand {
         SetupArguments.LobbyArguments parsed =
                 SetupArguments.parse(plugin.getConfigManager().isSingleLobby(), args);
         if (parsed == null) {
-            player.sendMessage(Messages.CommandDelarenaUsageText());
+            player.sendMessage(Messages.CommandHelp("delarena"));
             return false;
         }
         int lobbyId = parsed.lobbyId();
@@ -54,7 +54,7 @@ public class DelArenaCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.CommandDelarenaUsageText();
+        return Messages.CommandHelpText("delarena");
     }
 }
 

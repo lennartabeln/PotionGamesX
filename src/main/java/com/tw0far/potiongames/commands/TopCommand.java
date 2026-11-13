@@ -56,7 +56,7 @@ public class TopCommand implements ICommand {
             case "kd" -> { column = "KD"; label = Messages.TopKdText(); }
             default -> {
                 sender.sendMessage(Component.text(String.format(Messages.TopUnknownTypeText(), type)).color(NamedTextColor.RED));
-                sender.sendMessage(Component.text(Messages.TopUsageText()).color(NamedTextColor.GRAY));
+                sender.sendMessage(Messages.CommandHelp("top"));
                 return true;
             }
         }

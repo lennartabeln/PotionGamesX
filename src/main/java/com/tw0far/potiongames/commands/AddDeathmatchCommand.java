@@ -39,7 +39,7 @@ public class AddDeathmatchCommand implements ICommand {
         SetupArguments.LobbyArguments parsed =
                 SetupArguments.parse(plugin.getConfigManager().isSingleLobby(), args);
         if (parsed == null) {
-            player.sendMessage(Messages.CommandAdddeathmatchUsageText());
+            player.sendMessage(Messages.CommandHelp("adddeathmatch"));
             return false;
         }
         int lobbyId = parsed.lobbyId();
@@ -54,7 +54,7 @@ public class AddDeathmatchCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.CommandAdddeathmatchUsageText();
+        return Messages.CommandHelpText("adddeathmatch");
     }
 }
 

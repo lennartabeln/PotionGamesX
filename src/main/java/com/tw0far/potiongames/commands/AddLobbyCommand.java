@@ -33,7 +33,7 @@ public class AddLobbyCommand implements ICommand {
             return true;
         }
         if (args.length < 2) {
-            player.sendMessage(Messages.CommandAddlobbyUsageText());
+            player.sendMessage(Messages.CommandHelp("addlobby"));
             return false;
         }
         try {
@@ -41,14 +41,14 @@ public class AddLobbyCommand implements ICommand {
             plugin.getSetupHandler().addLobby(player, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.CommandAddlobbyUsageText());
+            player.sendMessage(Messages.CommandHelp("addlobby"));
             return false;
         }
     }
 
     @Override
     public String getUsage() {
-        return Messages.CommandAddlobbyUsageText();
+        return Messages.CommandHelpText("addlobby");
     }
 }
 

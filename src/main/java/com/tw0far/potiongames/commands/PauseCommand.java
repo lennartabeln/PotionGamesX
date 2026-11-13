@@ -58,7 +58,7 @@ public class PauseCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpPauseUsageText();
+        return Messages.CommandHelpText("pause");
     }
 }
 

@@ -33,7 +33,7 @@ public class DelLobbyCommand implements ICommand {
             return true;
         }
         if (args.length < 2) {
-            player.sendMessage(Messages.CommandDellobbyUsageText());
+            player.sendMessage(Messages.CommandHelp("dellobby"));
             return false;
         }
         try {
@@ -41,14 +41,14 @@ public class DelLobbyCommand implements ICommand {
             plugin.getSetupHandler().removeLobby(player, lobbyId);
             return true;
         } catch (NumberFormatException ex) {
-            player.sendMessage(Messages.CommandDellobbyUsageText());
+            player.sendMessage(Messages.CommandHelp("dellobby"));
             return false;
         }
     }
 
     @Override
     public String getUsage() {
-        return Messages.CommandDellobbyUsageText();
+        return Messages.CommandHelpText("dellobby");
     }
 }
 

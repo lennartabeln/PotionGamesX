@@ -123,7 +123,7 @@ public class HelpCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpHelpUsageText();
+        return Messages.CommandHelpText("help");
     }
 }
 

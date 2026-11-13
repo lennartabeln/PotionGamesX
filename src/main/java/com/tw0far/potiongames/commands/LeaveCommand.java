@@ -72,7 +72,7 @@ public class LeaveCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpLeaveUsageText();
+        return Messages.CommandHelpText("leave");
     }
 }
 

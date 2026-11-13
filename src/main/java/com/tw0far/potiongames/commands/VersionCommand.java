@@ -47,7 +47,7 @@ public class VersionCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.HelpVersionUsageText();
+        return Messages.CommandHelpText("version");
     }
 }
 

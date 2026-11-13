@@ -39,7 +39,7 @@ public class AddArenaCommand implements ICommand {
         SetupArguments.LobbyArguments parsed =
                 SetupArguments.parse(plugin.getConfigManager().isSingleLobby(), args);
         if (parsed == null) {
-            player.sendMessage(Messages.CommandAddarenaUsageText());
+            player.sendMessage(Messages.CommandHelp("addarena"));
             return false;
         }
         int lobbyId = parsed.lobbyId();
@@ -54,7 +54,7 @@ public class AddArenaCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.CommandAddarenaUsageText();
+        return Messages.CommandHelpText("addarena");
     }
 }
 
