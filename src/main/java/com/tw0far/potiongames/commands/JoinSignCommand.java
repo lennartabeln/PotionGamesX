@@ -24,7 +24,7 @@ public class JoinSignCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.setup";
+        return "pg.joinsign";
     }
 
 

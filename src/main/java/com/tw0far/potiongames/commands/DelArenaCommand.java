@@ -24,7 +24,7 @@ public class DelArenaCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.setup";
+        return "pg.delarena";
     }
 
 

@@ -22,7 +22,7 @@ public class AddLobbyCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.setup";
+        return "pg.addlobby";
     }
 
 
