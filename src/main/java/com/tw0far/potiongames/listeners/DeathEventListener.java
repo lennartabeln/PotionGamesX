@@ -87,17 +87,9 @@ public class DeathEventListener implements Listener {
             killer.playSound(killer.getLocation(), Sound.ENTITY_ENDER_DRAGON_HURT, 1, 1);
         }
 
-        // Update team counts if teams enabled
+        // Free the team slot and drop the vote of the eliminated player
         if (lobby.isActivateTeams()) {
-            String teamname = lobby.getPlayerTeam(p);
-            if (teamname != null) {
-                lobby.removePlayerTeam(p);
-                try {
-                    lobby.decrementTeamCount(Integer.parseInt(teamname));
-                } catch (NumberFormatException ignored) {
-                    plugin.getLogger().warning("[PotionGamesX] Invalid team ID in death event: " + teamname);
-                }
-            }
+            lobby.clearPlayerVoteAndTeam(p);
         }
 
         // Move player from active to spectator, but stay at the death location:

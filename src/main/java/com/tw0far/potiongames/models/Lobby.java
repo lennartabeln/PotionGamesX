@@ -261,6 +261,7 @@ public class Lobby {
     }
 
     public void removeParticipant(Player p) {
+        clearPlayerVoteAndTeam(p);
         Participant participant = getParticipant(p);
         if (participant != null) {
             participants.remove(participant);
@@ -877,6 +878,7 @@ public class Lobby {
                 plugin.getGame().clearAllPlayers();
                 setCurrentArena(null);
                 clearVoting();
+                clearTeams();
                 clearBlockTracking();
                 clearChests();
                 setState(GameStates.WAITING);
@@ -1300,6 +1302,48 @@ public class Lobby {
     public void clearTeams() {
         lobbyteams.clear();
         lobbyteamplayernames.clear();
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (plugin != null && plugin.getArenaStateManager() != null) {
+            plugin.getArenaStateManager().resetLobbyTeams(Integer.toString(id));
+        }
+    }
+
+    /**
+     * Drops the lobby vote and the team choice of a player who leaves the lobby
+     * (command, quit, kick or death), so a disconnected player cannot decide
+     * the map and a team slot does not stay occupied.
+     */
+    public void clearPlayerVoteAndTeam(Player p) {
+        if (p == null) {
+            return;
+        }
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (plugin != null && plugin.getArenaStateManager() != null) {
+            var asm = plugin.getArenaStateManager();
+            String lobbyId = Integer.toString(id);
+            String vote = asm.getPlayerVoteInLobby(lobbyId, p);
+            if (vote != null) {
+                asm.removeLobbyVote(lobbyId, vote);
+                asm.removePlayerVoteInLobby(lobbyId, p);
+            }
+            String team = asm.getPlayerTeamInLobby(lobbyId, p);
+            if (team != null) {
+                try {
+                    asm.decrementLobbyTeamPlayers(lobbyId, Integer.parseInt(team));
+                } catch (NumberFormatException ignored) {
+                    // Team ids are numeric; a malformed one is simply dropped.
+                }
+                asm.removePlayerTeamInLobby(lobbyId, p);
+            }
+        }
+        String ownTeam = lobbyteamplayernames.remove(p);
+        if (ownTeam != null) {
+            try {
+                decrementTeamCount(Integer.parseInt(ownTeam));
+            } catch (NumberFormatException ignored) {
+                // Team ids are numeric; a malformed one is simply dropped.
+            }
+        }
     }
 
     // =====

@@ -76,6 +76,14 @@ public class ArenaStateManager implements IArenaStateManager {
     }
 
     @Override
+    public void removePlayerVoteInLobby(String lobbyId, Player player) {
+        Map<Player, String> lobbyPlayerVotes = lobbyvoteplayernames.get(lobbyId);
+        if (lobbyPlayerVotes != null) {
+            lobbyPlayerVotes.remove(player);
+        }
+    }
+
+    @Override
     public void clearAllLobbyVotes() {
         lobbyvotes.clear();
         lobbyvoteplayernames.clear();
@@ -159,6 +167,12 @@ public class ArenaStateManager implements IArenaStateManager {
         for (int i = 1; i <= teamCount; i++) {
             teams.put(i, 0);
         }
+    }
+
+    @Override
+    public void resetLobbyTeams(String lobbyId) {
+        lobbyteams.remove(lobbyId);
+        lobbyteamplayernames.remove(lobbyId);
     }
 
     @Override
