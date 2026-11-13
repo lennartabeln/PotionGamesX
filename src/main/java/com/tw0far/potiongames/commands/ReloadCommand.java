@@ -33,23 +33,23 @@ public class ReloadCommand implements ICommand {
     @Override
     public boolean execute(CommandSender player, String[] args) {
         try {
-            player.sendMessage(CommandDispatcher.createInfo("Starting plugin reload... this may take a moment."));
+            player.sendMessage(CommandDispatcher.createInfo(Messages.ReloadingText()));
 
             // Perform comprehensive reload
             boolean success = reloadHandler.performReload();
 
             if (success) {
-                player.sendMessage(CommandDispatcher.createSuccess("Plugin successfully reloaded!"));
+                player.sendMessage(CommandDispatcher.createSuccess(Messages.PluginReloadedText()));
                 plugin.getLogger().info("Plugin reloaded by " + player.getName());
             } else {
-                player.sendMessage(CommandDispatcher.createError("Plugin reload failed! Check console for details."));
+                player.sendMessage(CommandDispatcher.createError(Messages.ReloadFailedText()));
                 plugin.getLogger().severe("Plugin reload failed - partial state may remain");
             }
 
             return true;
 
         } catch (Exception e) {
-            player.sendMessage(CommandDispatcher.createError("Unexpected error during reload!"));
+            player.sendMessage(CommandDispatcher.createError(Messages.ReloadErrorText()));
             plugin.getLogger().severe("Reload failed with exception: " + e.getMessage());
             e.printStackTrace();
             return true;

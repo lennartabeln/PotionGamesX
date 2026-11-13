@@ -86,3 +86,18 @@ pg:
   activePotions: 0             # Shop entries shown and buyable (0 = all entries of shop.yml)
 
   # ═══════════════════════════════════════════════════════
+  # STATS WALL (optional)
+  # The plugin writes these keys itself when an admin runs
+  # /pg headp1|headp2|headp3 and /pg signp1|signp2|signp3 while
+  # looking at the block. They stay absent until the first use, so
+  # nothing has to be prepared here. Example of what gets written:
+  #
+  # RankWall:
+  #   headp1:
+  #     world: world
+  #     x: 12.5
+  #     y: 64.0
+  #     z: -7.5
+  #     pitch: 0.0
+  #     yaw: 90.0
+  # ═══════════════════════════════════════════════════════
