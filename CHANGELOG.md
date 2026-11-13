@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Airdrop torch checks the column up to the world's real build height (was hardcoded 320), accepts cave air, and clamps the drop inside the world; the connecting message is localized (`lobby.connecting`)
 - `pg.enableRewards: true` without a Vault economy no longer disables the whole plugin; it logs a warning and rewards stay inactive
 - `pg.mysql.port` is read as a number or a string, and the shipped config writes it as a number
 - `/pg list` has its own permission node (`pg.list`, default true) instead of sharing `pg.join`; every other command keeps its previous node (`pg.setup` for the setup commands)
