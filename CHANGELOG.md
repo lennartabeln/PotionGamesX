@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Upgrading an installation now merges message keys that only the new jar ships - in every locale - so a German server gets the German text of a new screen instead of the English in-code fallback (edited texts are never overwritten)
 - `pg.admin` now grants every admin subcommand (`children:` in `plugin.yml`); before it only changed the `/pg help` list while `KickCommand`/`BroadcastCommand` documented "or pg.admin"
 - `/pg stats` runs its six database getters on the async scheduler instead of the main thread, sharing a new `PlayerStats` record with the compass stat sheet
 - `/pg top` no longer resolves `messages.yml` text on the async scheduler, and its no-data/empty/failed rows are localized (`top.no_data`, `top.empty`, `top.failed`)
