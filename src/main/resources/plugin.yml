@@ -19,9 +19,12 @@ commands:
       - pgames
       - potiong
 permissions:
-  # ── Player commands (one node per command; /pg list uses pg.join) ──
+  # ── Player commands (one node per command) ──
   pg.join:
-    description: Join lobbies, and view the lobby list (/pg join, /pg list)
+    description: Join lobbies (/pg join)
+    default: true
+  pg.list:
+    description: Open the lobby list GUI (/pg list)
     default: true
   pg.leave:
     description: Leave the current game (/pg leave)

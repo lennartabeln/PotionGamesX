@@ -58,7 +58,7 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 |---------|-------------|------------|
 | `/pg join <id>` | Join a lobby | `pg.join` |
 | `/pg leave` | Leave current lobby | `pg.leave` |
-| `/pg list` | Open lobby GUI | `pg.join` |
+| `/pg list` | Open lobby GUI | `pg.list` |
 | `/pg start` | Start countdown | `pg.start` |
 | `/pg build` | Toggle build mode | `pg.build` |
 | `/pg pause` | Pause/resume the game timer | `pg.pause` |

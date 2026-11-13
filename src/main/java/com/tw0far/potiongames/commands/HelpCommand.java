@@ -91,9 +91,11 @@ public class HelpCommand implements ICommand {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpStartText()).color(NamedTextColor.GRAY)));
         }
 
-        if (player.hasPermission("pg.join")) {
-            if (!plugin.getConfigManager().isStartOnJoin()) {
+        if (!plugin.getConfigManager().isStartOnJoin()) {
+            if (player.hasPermission("pg.join")) {
                 player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpJoinText()).color(NamedTextColor.GRAY)));
+            }
+            if (player.hasPermission("pg.list")) {
                 player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpListText()).color(NamedTextColor.GRAY)));
             }
         }

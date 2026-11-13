@@ -34,7 +34,7 @@ public class ListCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.join";
+        return "pg.list";
     }
 
 
