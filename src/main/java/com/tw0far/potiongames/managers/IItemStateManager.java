@@ -140,6 +140,13 @@ public interface IItemStateManager extends IManager {
     int getShopSale(int index);
 
     /**
+     * Price a player actually pays: the kit price (sale) when their kit matches the
+     * entry's kit, otherwise the normal cost. A missing or zero sale never makes the
+     * potion free.
+     */
+    int getShopPrice(int index, String kitName);
+
+    /**
      * Get all shop items count
      */
     int getShopItemCount();

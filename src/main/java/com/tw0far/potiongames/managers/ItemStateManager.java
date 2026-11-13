@@ -242,6 +242,16 @@ public class ItemStateManager implements IItemStateManager {
     }
 
     @Override
+    public int getShopPrice(int index, String kitName) {
+        int cost = getShopCost(index);
+        if (kitName == null || !kitName.equals(getShopKit(index))) {
+            return cost;
+        }
+        int sale = getShopSale(index);
+        return sale > 0 ? sale : cost;
+    }
+
+    @Override
     public int getShopItemCount() {
         return shop.size();
     }

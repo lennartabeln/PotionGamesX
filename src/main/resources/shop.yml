@@ -7,7 +7,8 @@
 #     shoppotiontype:   ItemStack shown in the shop GUI (material, amount)
 #     kit:              Kit category (Fighter, Healer, Looter, Ghost, Tank)
 #     cost:             Price in coins
-#     sale:             Resale value in coins
+#     sale:             Reduced price in coins for players whose kit matches
+#                       (must be below cost; 0 or missing = nobody gets a discount)
 
 pg:
   potions:
