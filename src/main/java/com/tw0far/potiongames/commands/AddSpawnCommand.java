@@ -24,7 +24,7 @@ public class AddSpawnCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.addspawn";
+        return "pg.setup";
     }
 
 

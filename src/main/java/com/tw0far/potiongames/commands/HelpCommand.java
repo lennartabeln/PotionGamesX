@@ -24,7 +24,7 @@ public class HelpCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.help"; // Public: default true
+        return null; // Everyone can use
     }
 
 
@@ -32,42 +32,18 @@ public class HelpCommand implements ICommand {
     public boolean execute(CommandSender player, String[] args) {
         player.sendMessage(Messages.CommandsLabel());
 
-        // One line per command, gated by that command's own node (pg.setup is the
-        // parent of all of them, so an admin holding it still sees every line).
         if (player.hasPermission("pg.setup")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpSetupText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.addlobby")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpAddlobbyText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.dellobby")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpDellobbyText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.addarena")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpAddarenaText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.delarena")) {
-            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpDelarenaText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.addspawn")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpAddspawnText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.delspawn")) {
-            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpDelspawnText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.adddeathmatch")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpAdddeathmatchText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.deldeathmatch")) {
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpDelarenaText()).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpDelspawnText()).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpDeldeathmatchText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.headp1") || player.hasPermission("pg.headp2") || player.hasPermission("pg.headp3")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpHeadText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.signp1") || player.hasPermission("pg.signp2") || player.hasPermission("pg.signp3")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpSignText()).color(NamedTextColor.GRAY)));
-        }
-        if (player.hasPermission("pg.joinsign")) {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpJoinsignText()).color(NamedTextColor.GRAY)));
         }
 

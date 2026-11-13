@@ -22,7 +22,7 @@ public class DelLobbyCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.dellobby";
+        return "pg.setup";
     }
 
 
