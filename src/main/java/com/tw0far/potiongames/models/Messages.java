@@ -116,6 +116,13 @@ public class Messages {
         addDefault(lang, "status.mode", "Mode");
         addDefault(lang, "status.connection", "Connection");
         addDefault(lang, "status.connected", "Connected");
+        addDefault(lang, "arena.imported", "Imported %d arena(s) into lobby %d.");
+        addDefault(lang, "arena.import_skipped", "%d arena(s) already existed and were skipped.");
+        addDefault(lang, "arena.import_unnamed", "%d legacy arena(s) had no name and were ignored.");
+        addDefault(lang, "arena.import_no_arenas", "No arenas found in %s.");
+        addDefault(lang, "arena.import_file_missing", "File %s not found in the plugin folder.");
+        addDefault(lang, "command.importarenas.usage", "Usage: /pg importarenas <lobbynumber> [file]");
+        addDefault(lang, "help.importarenas", "/pg importarenas <lobbynumber> [file] - Import arenas from a legacy arenadata.yml");
         addDefault(lang, "status.disconnected", "Disconnected");
         addDefault(lang, "setup.not_a_sign", "That is not a sign!");
         addDefault(lang, "command.kick.usage", "Usage: /pg kick <player>");
@@ -830,6 +837,8 @@ public class Messages {
     public static String HelpHelpUsageText() { return get("help.help_usage", "/pg help - Show this help message"); }
     public static String HelpJoinText() { return get("help.join", "/pg join # - Join a game"); }
     public static String HelpJoinUsageText() { return get("help.join_usage", "/pg join <lobby_number> - Join a specific lobby"); }
+    public static String HelpImportarenasText() { return get("help.importarenas", "/pg importarenas <lobbynumber> [file] - Import arenas from a legacy arenadata.yml"); }
+    public static String CommandImportarenasUsageText() { return get("command.importarenas.usage", "Usage: /pg importarenas <lobbynumber> [file]"); }
     public static String HelpJoinsignText() { return get("help.joinsign", "/pg joinsign <lobbynumber> - Add Join-Sign"); }
     public static String CommandKickUsageText() { return get("command.kick_usage", "Usage: /pg kick <player>"); }
     public static Component KickNotInLobby(String player) {
@@ -897,6 +906,31 @@ public class Messages {
     public static String ListNoLobbiesText() { return get("list.no_lobbies", "No lobbies available."); }
     public static String SetupDisabledText() { return get("setup.disabled", "Setup mode disabled."); }
     public static String SetupEnabledText() { return get("setup.enabled", "Setup mode enabled."); }
+    public static Component ArenasImported(int count, int lobbyId) {
+        return prefix(Component.text(String.format(get("arena.imported", "Imported %d arena(s) into lobby %d."), count, lobbyId))
+            .color(NamedTextColor.GREEN));
+    }
+
+    public static Component ArenasImportSkipped(int count) {
+        return prefix(Component.text(String.format(get("arena.import_skipped", "%d arena(s) already existed and were skipped."), count))
+            .color(NamedTextColor.YELLOW));
+    }
+
+    public static Component ArenasImportUnnamed(int count) {
+        return prefix(Component.text(String.format(get("arena.import_unnamed", "%d legacy arena(s) had no name and were ignored."), count))
+            .color(NamedTextColor.YELLOW));
+    }
+
+    public static Component ArenasImportNoArenas(String file) {
+        return prefix(Component.text(String.format(get("arena.import_no_arenas", "No arenas found in %s."), file))
+            .color(NamedTextColor.RED));
+    }
+
+    public static Component ArenasImportFileMissing(String file) {
+        return prefix(Component.text(String.format(get("arena.import_file_missing", "File %s not found in the plugin folder."), file))
+            .color(NamedTextColor.RED));
+    }
+
     public static String SetupNotASignText() { return get("setup.not_a_sign", "That is not a sign!"); }
     public static String SetupNoBlockInRangeText() { return get("setup.no_block_in_range", "No block in range to set as join sign."); }
     public static String SetupNoDeathmatchSpawnsText() { return get("setup.no_deathmatch_spawns", "No deathmatch spawns are configured for that arena."); }

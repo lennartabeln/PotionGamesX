@@ -32,11 +32,17 @@ public class Participant {
 
         PlayerInventory inv = player.getInventory();
 
-        ItemStack map = new ItemStack(Material.PAPER);
-        ItemMeta mapMeta = map.getItemMeta();
-        mapMeta.displayName(Messages.ArenaSelectorItem());
-        map.setItemMeta(mapMeta);
-        inv.setItem(0, map);
+        // Voting is pointless with a single arena, so the paper is only handed
+        // out when there is something to choose (legacy behaviour).
+        if (lobby.hasArenaChoice()) {
+            ItemStack map = new ItemStack(Material.PAPER);
+            ItemMeta mapMeta = map.getItemMeta();
+            if (mapMeta != null) {
+                mapMeta.displayName(Messages.ArenaSelectorItem());
+                map.setItemMeta(mapMeta);
+            }
+            inv.setItem(0, map);
+        }
 
         // The kit selector is only handed out when kits are enabled.
         if (lobby.isActivateKits()) {

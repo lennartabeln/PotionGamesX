@@ -267,7 +267,10 @@ public class GameInventoryListener implements Listener {
 
         var itemStateManager = plugin.getItemStateManager();
         List<String> shopItems = new ArrayList<>(itemStateManager.getShopItems());
-        for (int idx = 0; idx < shopItems.size(); idx++) {
+        // Hidden entries must not be buyable either (see pg.activePotions).
+        int activePotions = plugin.getConfigManager().getActivePotions();
+        int entries = activePotions > 0 ? Math.min(shopItems.size(), activePotions) : shopItems.size();
+        for (int idx = 0; idx < entries; idx++) {
             if (!displayname.equals(shopItems.get(idx))) {
                 continue;
             }

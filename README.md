@@ -99,13 +99,16 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 | `/pg joinsign <lobby>` | Set join sign | `pg.setup` |
 | `/pg headp1\|p2\|p3` | Set stats wall head | `pg.setup` |
 | `/pg signp1\|p2\|p3` | Set stats wall sign | `pg.setup` |
+| `/pg importarenas <lobby> [file]` | Import arenas from a legacy `arenadata.yml` | `pg.setup` |
+
+With `pg.singleLobby: true` the setup commands also accept their legacy short form without a lobby number (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg joinsign`) and always target lobby 1.
 
 ### Chest Types
 
 * **End Portal Frame**: Normal chest with probability-weighted loot (food, armour, weapons)
 * **Target**: Special chest with Flame Bow and Arrows
 * **Netherite Block**: Special chest with Netherite Ingots (Smithing Table upgrades diamond → netherite)
-* **Composter**: Potion shop (right-click during a round; prices are in coins and one glass bottle)
+* **Composter**: Potion shop (right-click during a round; prices are in coins and one glass bottle; `pg.activePotions` limits how many entries are active)
 
 Additional chest types and their loot can be defined in `chests.yml` (`pg.customchests.<id>` with `activate`, `chesttype`, `chestsize` and numbered slots).
 
@@ -151,6 +154,7 @@ Notable global toggles (`config.yml`):
 | Setting | Effect |
 |---------|--------|
 | `pg.gameServer` | Dedicated game server: players are sent to `pg.bungeeServer` after a round |
+| `pg.singleLobby` | Single-lobby compatibility mode: setup commands may omit the lobby number (targets lobby 1) |
 | `pg.language` | Locale used by `messages.yml` (`en_US`, `de_DE`) |
 | `pg.joinStarted` | Late joiners spectate a running round instead of being rejected |
 | `pg.startOnJoin` | Auto-join the first open lobby on connect |
@@ -161,6 +165,8 @@ Notable global toggles (`config.yml`):
 | `pg.compassOnSpawn` | Give everyone the player-finder compass at round start |
 | `pg.changeGamerules` | Freeze time, weather, fire spread, mob griefing and mob spawning in the arena world during rounds |
 | `pg.allowOutsideChat` | Players outside lobbies can see lobby chat |
+| `pg.activeKits` | Number of selectable kits (`kits.yml`) |
+| `pg.activePotions` | Shop entries shown and buyable (`0` = all entries of `shop.yml`) |
 
 ## Development
 

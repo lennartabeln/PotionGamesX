@@ -502,7 +502,11 @@ public class GameItemListener implements Listener {
         List<String> shopItems = new ArrayList<>(itemStateManager.getShopItems());
         Participant participant = lobby.getParticipant(p);
         String kitName = participant != null && participant.getKit() != null ? participant.getKit().getName() : null;
-        int slots = Math.min(shopItems.size(), inv.getSize());
+        // pg.activePotions caps how many of the configured potions are active
+        // (0 = all entries of shop.yml), like the legacy activePotions knob.
+        int activePotions = plugin.getConfigManager().getActivePotions();
+        int entries = activePotions > 0 ? Math.min(shopItems.size(), activePotions) : shopItems.size();
+        int slots = Math.min(entries, inv.getSize());
         for (int idx = 0; idx < slots; idx++) {
             int coinamount = kitName != null && kitName.equals(itemStateManager.getShopKit(idx))
                 ? itemStateManager.getShopSale(idx)

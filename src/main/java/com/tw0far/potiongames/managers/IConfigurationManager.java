@@ -14,6 +14,8 @@ public interface IConfigurationManager extends IManager {
     int getTeamSize();
     int getMaxPlayers();
     int getActiveKits();
+    /** Shop entries shown and buyable; 0 or less means "all entries of shop.yml". */
+    int getActivePotions();
     int getWinningReward();
     int getKillReward();
 
@@ -44,6 +46,8 @@ public interface IConfigurationManager extends IManager {
     boolean isBroadcastStarting();
     boolean isCompassOnSpawn();
     boolean isChangeGamerules();
+    /** Single-lobby compatibility mode: setup commands may omit the lobby number. */
+    boolean isSingleLobby();
 
     void setGameServer(boolean gameServer);
 

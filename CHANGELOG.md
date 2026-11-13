@@ -37,6 +37,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/pg kick` feedback is translated as well (`kick.*`, `command.kick_usage`)
 - New keys `database.not_connected`, `bucket.fill_not_allowed` and `setup.not_a_sign`, so admins get a clear message instead of a zeroed stat sheet, a silently ignored bucket or a stack trace
 
+#### Legacy compatibility
+- `pg.singleLobby`: single-lobby mode accepts the legacy short setup forms (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg joinsign`, …) and targets lobby 1, while the long form keeps working
+- `/pg importarenas <lobby> [file]`: imports arenas from a legacy `arenadata.yml` (`pg.arenas.<n>` with `name`, `spawns`, `deathmatch`) into a lobby of the current `lobbies.yml` layout, skips existing arenas and keeps the spawn locations verbatim; usable from the console
+- `pg.activePotions`: caps how many entries of `shop.yml` are shown and buyable (`0` = all), the legacy `activePotions` knob
+- The arena selector paper is only handed out when the lobby has more than one arena, like the legacy `singleArena` behaviour
+
 #### Build & tooling
 - The compile fails on javac warnings (`failOnWarning`, i.e. `-Werror`, with `-Xlint:all`), locally and in CI
 - Unit tests for the team amount/assignment contract (`LobbyTeamTest`) and for enabling/disabling kits (`LobbyConfigTest`)
@@ -109,6 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected grammar in several player-facing messages ("does not exists", "You not have …")
 - `roundTime` is stored in seconds internally; `LobbyConfig` is the only place that converts minutes to seconds
 - The team amount is derived from `maxPlayers / teamSize` (legacy behaviour) instead of `ceil(players / teamSize)`
+- Setup commands accept an optional lobby number in single-lobby mode; the long form is unchanged
 - Arena gamerules now freeze `ADVANCE_TIME`, `ADVANCE_WEATHER`, `SPAWN_MOBS`, `MOB_GRIEFING` and a fire-spread radius of `0`, and restore the captured values (including a custom radius) afterwards
 
 ### Removed
