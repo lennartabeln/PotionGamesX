@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 /**
  * /pg headp1(2;3) and /pg signp1(2;3) - Set the head/sign for a
@@ -42,12 +43,12 @@ public class StatsWallCommand implements ICommand {
         }
         Block target = player.getTargetBlockExact(5);
         if (target == null) {
-            player.sendMessage(Messages.HeadLookBlockText(place));
+            player.sendMessage(Messages.line(Messages.HeadLookBlockText(place), NamedTextColor.RED));
             return false;
         }
         plugin.getConfig().set("pg.RankWall." + (head ? "headp" : "signp") + place, target.getLocation());
         plugin.saveConfig();
-        player.sendMessage(head ? Messages.HeadSetText(place) : Messages.SignSetText(place));
+        player.sendMessage(Messages.line(head ? Messages.HeadSetText(place) : Messages.SignSetText(place), NamedTextColor.GREEN));
         return true;
     }
 

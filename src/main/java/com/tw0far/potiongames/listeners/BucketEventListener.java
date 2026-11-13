@@ -2,6 +2,7 @@ package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -38,7 +39,7 @@ public class BucketEventListener implements Listener {
         // Water can be used for escape/defensive purposes, which may be too powerful
         if (e.getBucket().toString().contains("WATER")) {
             e.setCancelled(true);
-            p.sendMessage(Messages.BucketWaterNotAllowedText());
+            p.sendMessage(Messages.line(Messages.BucketWaterNotAllowedText(), NamedTextColor.RED));
             return;
         }
 
@@ -68,7 +69,7 @@ public class BucketEventListener implements Listener {
             return;
         }
         e.setCancelled(true);
-        p.sendMessage(Messages.BucketFillNotAllowedText());
+        p.sendMessage(Messages.line(Messages.BucketFillNotAllowedText(), NamedTextColor.RED));
     }
 }
 

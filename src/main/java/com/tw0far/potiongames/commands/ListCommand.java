@@ -47,7 +47,7 @@ public class ListCommand implements ICommand {
         // Build an inventory GUI listing all lobbies with basic info
         List<Lobby> lobbies = plugin.getGame().getLobbies();
         if (lobbies == null || lobbies.isEmpty()) {
-            player.sendMessage(Messages.ListNoLobbiesText());
+            player.sendMessage(Messages.line(Messages.ListNoLobbiesText(), NamedTextColor.GRAY));
             return true;
         }
 

@@ -2,6 +2,7 @@ package com.tw0far.potiongames.commands;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
@@ -51,14 +52,14 @@ public class GameServerCommand implements ICommand {
                 .append(Component.text(statusText).color(newState ? NamedTextColor.GREEN : NamedTextColor.RED))
                 .append(Component.text(pattern.substring(slot + 2)).color(NamedTextColor.AQUA));
 
-        player.sendMessage(message);
+        player.sendMessage(Settings.prefix.append(message));
 
         // Broadcast to all ops
         for (Player op : plugin.getServer().getOnlinePlayers()) {
             if (op == null) continue;
             if (op.isOp() && !op.equals(player)) {
-                op.sendMessage(Component.text(String.format(Messages.GameServerStateOtherText(), player.getName(), statusText))
-                    .color(NamedTextColor.YELLOW));
+                op.sendMessage(Messages.line(
+                    String.format(Messages.GameServerStateOtherText(), player.getName(), statusText), NamedTextColor.YELLOW));
             }
         }
 
