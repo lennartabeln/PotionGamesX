@@ -11,8 +11,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import java.util.Objects;
-
 /**
  * Handles combat-related events (multi-lobby only).
  * Extracted from monolithic Events.java.
@@ -22,6 +20,14 @@ public class CombatEventListener implements Listener {
 
     public CombatEventListener(PotionGamesX plugin) {
         this.plugin = plugin;
+    }
+
+    private Lobby getLobby(String lobbyId) {
+        try {
+            return plugin.getGame().getLobby(Integer.parseInt(lobbyId));
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
     }
 
     private String getPlayerTeam(String lobbyId, Player player) {
@@ -59,12 +65,19 @@ public class CombatEventListener implements Listener {
             // Both must be in same lobby for friendly fire check
             String dLobby = plugin.getGame().getPlayerLobby(d);
 
-            if (victimLobby != null && victimLobby.equals(dLobby)
-                    && isGameState(plugin.getLobbyStateManager().getGameState(victimLobby))) {
-                String pTeam = getPlayerTeam(victimLobby, p);
-                String dTeam = getPlayerTeam(dLobby, d);
-                if (Objects.equals(pTeam, dTeam)) {
-                    e.setCancelled(true);
+            if (victimLobby != null && victimLobby.equals(dLobby)) {
+                GameStates state = plugin.getLobbyStateManager().getGameState(victimLobby);
+                Lobby lobby = getLobby(victimLobby);
+                // Without teams every player has a null team, so comparing teams
+                // would cancel all PvP in free-for-all rounds. Deathmatch also
+                // allows teammates to fight (legacy parity).
+                if (isGameState(state) && state != GameStates.DEATHMATCH
+                        && lobby != null && lobby.isActivateTeams()) {
+                    String pTeam = getPlayerTeam(victimLobby, p);
+                    String dTeam = getPlayerTeam(dLobby, d);
+                    if (pTeam != null && pTeam.equals(dTeam)) {
+                        e.setCancelled(true);
+                    }
                 }
             }
         }
