@@ -2,6 +2,7 @@ package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.GameStates;
+import com.tw0far.potiongames.models.Kit;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
@@ -78,7 +79,7 @@ public class DeathEventListener implements Listener {
             // Give coins to killer
             String victimKitName = lobby.getParticipant(p) != null && lobby.getParticipant(p).getKit() != null
                 ? lobby.getParticipant(p).getKit().getName() : null;
-            int coinAmount = Objects.equals(victimKitName, "Rich Kid") ? 10 : 5;
+            int coinAmount = Objects.equals(victimKitName, Kit.RICH_KID) ? 10 : 5;
             for (int i = 0; i < coinAmount; i++) {
                 killer.getInventory().addItem(plugin.getCoin());
             }
