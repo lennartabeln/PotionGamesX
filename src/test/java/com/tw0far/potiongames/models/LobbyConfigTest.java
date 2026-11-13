@@ -69,6 +69,18 @@ class LobbyConfigTest {
     }
 
     @Test
+    void invalidRoundTimeFallsBackToOneMinute() {
+        assertEquals(60, LobbyConfig.normalizeRoundTime(0));
+        assertEquals(60, LobbyConfig.normalizeRoundTime(-5));
+    }
+
+    @Test
+    void legacySecondsAreNotConvertedTwice() {
+        // Older builds persisted the runtime value (seconds) into lobbies.yml.
+        assertEquals(1800, LobbyConfig.normalizeRoundTime(1800));
+    }
+
+    @Test
     void legacyLobbyKeysStillWork() {
         YamlConfiguration yml = emptyYml();
         yml.set("pg.lobbies.5.teamSize", 6);

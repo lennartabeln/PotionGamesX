@@ -46,7 +46,7 @@ public class Lobby {
     private boolean activateKits = true;
     private boolean activateShop = true;
     private boolean activateAirdrops = true;
-    private int roundTime = 30;
+    private int roundTime = 1800; // seconds; loaded from LobbyConfig / lobbies.yml
     private int maxPlayers = 24;
     private int minPlayers = 2;
     private int teamSize = 2;
@@ -65,7 +65,7 @@ public class Lobby {
     private ScheduledTask tickTask = null;
     private int endingTimer = 10;
     private int prepareTimer = 60;
-    private int gameTimer = roundTime * 60;
+    private int gameTimer = roundTime;
     private int[] announceRoundTimes = new int[] { 0, 1, 2, 3, 4, 5, 10, 30, 60, 60 * 5, 60 * 10, 60 * 30 };
 
     // =====
@@ -155,7 +155,7 @@ public class Lobby {
             activateKits = Settings.lobbies.getBoolean("pg.lobbies." + id + ".activateKits");
             activateShop = Settings.lobbies.getBoolean("pg.lobbies." + id + ".activateShop");
             activateAirdrops = Settings.lobbies.getBoolean("pg.lobbies." + id + ".activateAirdrops");
-            roundTime = Settings.lobbies.getInt("pg.lobbies." + id + ".roundTime");
+            roundTime = LobbyConfig.normalizeRoundTime(Settings.lobbies.getInt("pg.lobbies." + id + ".roundTime", 30));
             maxPlayers = Settings.lobbies.getInt("pg.lobbies." + id + ".maxPlayers");
             minPlayers = Settings.lobbies.getInt("pg.lobbies." + id + ".minPlayers");
             teamSize = Settings.lobbies.getInt("pg.lobbies." + id + ".teamSize");
@@ -187,7 +187,8 @@ public class Lobby {
         Settings.lobbies.set("pg.lobbies." + id + ".activateKits", activateKits);
         Settings.lobbies.set("pg.lobbies." + id + ".activateShop", activateShop);
         Settings.lobbies.set("pg.lobbies." + id + ".activateAirdrops", activateAirdrops);
-        Settings.lobbies.set("pg.lobbies." + id + ".roundTime", roundTime);
+        // Persist minutes, the documented unit.
+        Settings.lobbies.set("pg.lobbies." + id + ".roundTime", Math.max(1, roundTime / 60));
         Settings.lobbies.set("pg.lobbies." + id + ".maxPlayers", maxPlayers);
         Settings.lobbies.set("pg.lobbies." + id + ".minPlayers", minPlayers);
         Settings.lobbies.set("pg.lobbies." + id + ".teamSize", teamSize);
@@ -701,7 +702,7 @@ public class Lobby {
                         applyGameRules();
                         giveSpawnItems();
                     }
-                    gameTimer = Math.max(1, roundTime * 60);
+                    gameTimer = Math.max(1, roundTime);
                     deathmatch = false;
                     playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1f, 1f);
                     playLobbySound(Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);

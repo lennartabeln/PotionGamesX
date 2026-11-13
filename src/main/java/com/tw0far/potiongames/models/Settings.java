@@ -57,7 +57,8 @@ public final class Settings {
         maxPlayers = cfg.getInt("pg.defaults.maxPlayers", 24);
         minPlayers = cfg.getInt("pg.defaults.minPlayers", 2);
         teamSize = cfg.getInt("pg.defaults.teamSize", 2);
-        roundTime = cfg.getInt("pg.defaults.roundTime", 30) * 60;
+        // Configured in minutes; LobbyConfig converts to seconds exactly once.
+        roundTime = cfg.getInt("pg.defaults.roundTime", 30);
         language = cfg.getString("pg.language", "en_US");
     }
 }
