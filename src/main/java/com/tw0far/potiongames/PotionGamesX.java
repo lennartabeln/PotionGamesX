@@ -21,6 +21,7 @@ import com.tw0far.potiongames.managers.*;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.util.PluginVersion;
 import com.tw0far.potiongames.util.UpdateChecker;
 
 import java.util.logging.Level;
@@ -145,17 +146,18 @@ public class PotionGamesX extends JavaPlugin {
         if (configManager.isActivateMysql() && !databaseManager.isConnected()) {
             Bukkit.getPluginManager().disablePlugin(this);
         } else {
-            getComponentLogger().info(Messages.PluginStarted());
+            getComponentLogger().info(Messages.PluginStartedText());
         }
-        new UpdateChecker(this, 87633).getVersion(version -> {
+        new UpdateChecker(this).getVersion(version -> {
             if (version == null) {
-                getComponentLogger().info(Messages.UpdateCheckerError());
+                getComponentLogger().info(Messages.UpdateCheckerErrorText());
                 return;
             }
-            if (getPluginMeta().getVersion().equalsIgnoreCase(version)) {
-                getComponentLogger().info(Messages.UpdateNotAvailable().append(Component.text(" " + getPluginMeta().getVersion()).color(NamedTextColor.GRAY)));
+            String current = getPluginMeta().getVersion();
+            if (PluginVersion.isNewer(version, current)) {
+                getComponentLogger().info(Messages.UpdateAvailableText(current, version));
             } else {
-                getComponentLogger().info(Messages.UpdateAvailable(getPluginMeta().getVersion(), version));
+                getComponentLogger().info(Messages.UpdateNotAvailableText(current));
             }
         });
         if (configManager.isEnableRewards() && !setupEconomy()) {
@@ -211,7 +213,7 @@ public class PotionGamesX extends JavaPlugin {
         if (configManager != null) configManager.onDisable();
         if (databaseManager != null) databaseManager.onDisable();
 
-        getComponentLogger().info(Messages.PluginStopped());
+        getComponentLogger().info(Messages.PluginStoppedText());
     }
 
     private boolean setupEconomy() {

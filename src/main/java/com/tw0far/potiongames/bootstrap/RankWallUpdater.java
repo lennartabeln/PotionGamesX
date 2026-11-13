@@ -44,7 +44,7 @@ public class RankWallUpdater {
                 plugin.getServer().getGlobalRegionScheduler().execute(plugin, () -> applyRankWall(entries));
             } catch (Exception ex) {
                 // Never let an exception cancel this repeating task
-                plugin.getComponentLogger().info(Messages.RankwallCouldNotUpdate());
+                plugin.getComponentLogger().info(Messages.RankwallCouldNotUpdateText());
             }
         }, 5, PERIOD_SECONDS, TimeUnit.SECONDS);
     }

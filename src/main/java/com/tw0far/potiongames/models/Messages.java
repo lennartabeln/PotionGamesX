@@ -28,6 +28,21 @@ public class Messages {
         return Settings.prefix.append(message);
     }
 
+    /**
+     * Console output already carries the plugin name through the logger, so log
+     * lines are built without {@link Settings#prefix}.
+     */
+    private static Component bare(String key, String def, NamedTextColor color) {
+        return Component.text(get(key, def)).color(color);
+    }
+
+    /** Plugin name in the brand colours: Potion / Games / X. */
+    public static Component PluginName() {
+        return Component.text("Potion").color(NamedTextColor.DARK_PURPLE)
+            .append(Component.text("Games").color(NamedTextColor.GOLD))
+            .append(Component.text("X").color(NamedTextColor.AQUA));
+    }
+
     public static void seed() {
         String lang = "en_US";
         mergeBundledMessages();
@@ -401,6 +416,10 @@ public class Messages {
         return prefix(Component.text(get("file.save_failed", "File loading / saving fail! For more information see console.")).color(NamedTextColor.RED));
     }
 
+    public static Component FileSaveFailedText() {
+        return bare("file.save_failed", "File loading / saving failed!", NamedTextColor.RED);
+    }
+
     public static Component GameAlreadyStarted() {
         return prefix(Component.text(get("game.already_started", "The game has already started!")).color(NamedTextColor.RED));
     }
@@ -680,8 +699,16 @@ public class Messages {
         return prefix(Component.text(get("plugin.started", "Plugin started successfully!")).color(NamedTextColor.GREEN));
     }
 
+    public static Component PluginStartedText() {
+        return bare("plugin.started", "Plugin started successfully!", NamedTextColor.GREEN);
+    }
+
     public static Component PluginStopped() {
         return prefix(Component.text(get("plugin.stopped", "Plugin stopped successfully!")).color(NamedTextColor.RED));
+    }
+
+    public static Component PluginStoppedText() {
+        return bare("plugin.stopped", "Plugin stopped successfully!", NamedTextColor.RED);
     }
 
     public static Component PriceLabel() {
@@ -698,6 +725,10 @@ public class Messages {
 
     public static Component RankwallCouldNotUpdate() {
         return prefix(Component.text(get("rankwall.could_not_update", "Could not update Rank-Wall!")).color(NamedTextColor.RED));
+    }
+
+    public static Component RankwallCouldNotUpdateText() {
+        return bare("rankwall.could_not_update", "Could not update Rank-Wall!", NamedTextColor.RED);
     }
 
     public static Component RoundNobodyWon() {
@@ -780,16 +811,35 @@ public class Messages {
         return prefix(Component.text(get("type.arena_name_add", "Type arena name in chat to add it!")).color(NamedTextColor.YELLOW));
     }
 
+    public static Component VersionCurrent(String version) {
+        return prefix(Component.text(String.format(get("version.current", "Running version %s"), version))
+            .color(NamedTextColor.GRAY));
+    }
+
     public static Component UpdateAvailable(String currentVersion, String newVersion) {
-        return prefix(Component.text(String.format(get("update.available", "There is a new update available. %s -> %s"), currentVersion, newVersion)).color(NamedTextColor.GREEN));
+        return prefix(Component.text(String.format(get("update.available", "A new version is available: %s -> %s"), currentVersion, newVersion)).color(NamedTextColor.GREEN));
+    }
+
+    public static Component UpdateAvailableText(String currentVersion, String newVersion) {
+        return Component.text(String.format(get("update.available", "A new version is available: %s -> %s"),
+            currentVersion, newVersion)).color(NamedTextColor.GREEN);
     }
 
     public static Component UpdateCheckerError() {
-        return prefix(Component.text(get("update.checker_error", "Update-Checker-Error")).color(NamedTextColor.RED));
+        return prefix(Component.text(get("update.checker_error", "Could not check for updates.")).color(NamedTextColor.RED));
+    }
+
+    public static Component UpdateCheckerErrorText() {
+        return bare("update.checker_error", "Could not check for updates.", NamedTextColor.RED);
     }
 
     public static Component UpdateNotAvailable() {
-        return prefix(Component.text(get("update.not_available", "There is not a new update available.")).color(NamedTextColor.GRAY));
+        return prefix(Component.text(get("update.not_available", "You are running the latest version.")).color(NamedTextColor.GRAY));
+    }
+
+    public static Component UpdateNotAvailableText(String currentVersion) {
+        return Component.text(get("update.not_available", "You are running the latest version.") + " " + currentVersion)
+            .color(NamedTextColor.GRAY);
     }
 
     public static String VoteText() {
@@ -995,6 +1045,20 @@ public class Messages {
     public static String ReloadErrorText() { return get("command.reload_error", "Unexpected error during reload!"); }
     public static String PluginReloadedText() { return get("plugin.reloaded", "Plugin successfully reloaded!"); }
     public static String SelectLobbyFirstText() { return get("setup.select_lobby_first", "Please select a lobby first!"); }
+    /**
+     * Announcement that stands apart from normal chat: two dark aqua rules around a
+     * bold white message. The old gold text disappeared between chat lines.
+     */
+    public static Component Broadcast(String message) {
+        Component rule = Component.text("▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬").color(NamedTextColor.DARK_AQUA);
+        Component label = Component.text(" " + get("broadcast.label", "BROADCAST") + " ")
+            .color(NamedTextColor.AQUA).decorate(net.kyori.adventure.text.format.TextDecoration.BOLD);
+        Component body = Component.text(message).color(NamedTextColor.WHITE)
+            .decorate(net.kyori.adventure.text.format.TextDecoration.BOLD);
+        return rule.append(Component.newline()).append(label).append(body)
+            .append(Component.newline()).append(rule);
+    }
+
     public static String BroadcastUsageText() { return get("command.broadcast_usage", "Usage: /pg broadcast <message>"); }
     public static String BroadcastSentText() { return get("command.broadcast_sent", "Broadcast sent to all players"); }
     public static String InvalidLobbyIdText() { return get("command.invalid_lobby_id", "Invalid lobby ID. Must be a number."); }

@@ -65,7 +65,7 @@ public final class BootstrapInitializer {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                plugin.getComponentLogger().info(Messages.FileSaveFailed()
+                plugin.getComponentLogger().info(Messages.FileSaveFailedText()
                     .append(Component.text(": Could not create " + name + " - " + e.getMessage()).color(NamedTextColor.RED)));
             }
         }
@@ -143,7 +143,7 @@ public final class BootstrapInitializer {
         try {
             Settings.shopdata.save(Settings.shopFile);
         } catch (Exception ex) {
-            plugin.getComponentLogger().info(Messages.FileSaveFailed()
+            plugin.getComponentLogger().info(Messages.FileSaveFailedText()
                 .append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
     }
@@ -191,7 +191,7 @@ public final class BootstrapInitializer {
         try {
             Settings.kitdata.save(Settings.kitsFile);
         } catch (IOException ex) {
-            plugin.getComponentLogger().info(Messages.FileSaveFailed()
+            plugin.getComponentLogger().info(Messages.FileSaveFailedText()
                 .append(Component.text(": " + ex.getMessage()).color(NamedTextColor.RED)));
         }
     }

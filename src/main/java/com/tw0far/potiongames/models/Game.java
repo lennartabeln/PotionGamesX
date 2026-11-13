@@ -60,7 +60,7 @@ public class Game {
         }
 
         if (lobbies.isEmpty()) {
-            PotionGamesX.getInstance().getLogger().info("PotionGamesX: No lobbies configured.");
+            PotionGamesX.getInstance().getLogger().info("No lobbies configured - use /pg addlobby to create one.");
         }
     }
 

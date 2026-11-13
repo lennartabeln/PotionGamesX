@@ -44,7 +44,7 @@ public class BroadcastCommand implements ICommand {
             if (i < args.length - 1) message.append(" ");
         }
 
-        Bukkit.broadcast(Settings.prefix.append(Component.text(message.toString()).color(NamedTextColor.YELLOW)));
+        Bukkit.broadcast(Messages.Broadcast(message.toString()));
 
         player.sendMessage(Settings.prefix.append(
             Component.text(Messages.BroadcastSentText()).color(NamedTextColor.GREEN)));

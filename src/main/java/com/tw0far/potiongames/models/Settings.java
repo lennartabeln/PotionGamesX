@@ -21,7 +21,13 @@ public final class Settings {
     public static FileConfiguration kitdata;
     public static FileConfiguration messages;
     public static FileConfiguration shopdata;
-    public static Component prefix = Component.text("[").color(NamedTextColor.DARK_GRAY).append(Component.text("Potion").color(NamedTextColor.DARK_PURPLE)).append(Component.text("Games").color(NamedTextColor.GOLD)).append(Component.text("]").color(NamedTextColor.DARK_GRAY)).append(Component.text(" ").color(NamedTextColor.GRAY));
+    /** Chat prefix: [PotionGamesX] - the trailing X carries its own colour. */
+    public static Component prefix = Component.text("[").color(NamedTextColor.DARK_GRAY)
+        .append(Component.text("Potion").color(NamedTextColor.DARK_PURPLE))
+        .append(Component.text("Games").color(NamedTextColor.GOLD))
+        .append(Component.text("X").color(NamedTextColor.AQUA))
+        .append(Component.text("]").color(NamedTextColor.DARK_GRAY))
+        .append(Component.text(" ").color(NamedTextColor.GRAY));
     public static boolean activateTeams = true;
     public static boolean activateKits = true;
     public static boolean activateShop = true;
