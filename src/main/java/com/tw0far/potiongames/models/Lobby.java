@@ -82,6 +82,9 @@ public class Lobby {
     private World gameruleWorld = null;
     private Boolean prevDaylight = null;
     private Boolean prevWeather = null;
+    private Boolean prevFireTick = null;
+    private Boolean prevMobGriefing = null;
+    private Boolean prevMobSpawning = null;
 
     // Per-lobby chests
     private HashMap<Location, ItemStack[]> chests = new HashMap<>();
@@ -655,8 +658,16 @@ public class Lobby {
         gameruleWorld = world;
         prevDaylight = world.getGameRuleValue(GameRule.DO_DAYLIGHT_CYCLE);
         prevWeather = world.getGameRuleValue(GameRule.DO_WEATHER_CYCLE);
+        prevFireTick = world.getGameRuleValue(GameRule.DO_FIRE_TICK);
+        prevMobGriefing = world.getGameRuleValue(GameRule.MOB_GRIEFING);
+        prevMobSpawning = world.getGameRuleValue(GameRule.DO_MOB_SPAWNING);
         world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
         world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+        // Fire spread and mob grief would otherwise remove arena blocks that
+        // the round cannot restore.
+        world.setGameRule(GameRule.DO_FIRE_TICK, false);
+        world.setGameRule(GameRule.MOB_GRIEFING, false);
+        world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
     }
 
     private void restoreGameRules() {
@@ -669,9 +680,21 @@ public class Lobby {
         if (prevWeather != null) {
             gameruleWorld.setGameRule(GameRule.DO_WEATHER_CYCLE, prevWeather);
         }
+        if (prevFireTick != null) {
+            gameruleWorld.setGameRule(GameRule.DO_FIRE_TICK, prevFireTick);
+        }
+        if (prevMobGriefing != null) {
+            gameruleWorld.setGameRule(GameRule.MOB_GRIEFING, prevMobGriefing);
+        }
+        if (prevMobSpawning != null) {
+            gameruleWorld.setGameRule(GameRule.DO_MOB_SPAWNING, prevMobSpawning);
+        }
         gameruleWorld = null;
         prevDaylight = null;
         prevWeather = null;
+        prevFireTick = null;
+        prevMobGriefing = null;
+        prevMobSpawning = null;
     }
 
     private World resolveArenaWorld() {
@@ -1060,6 +1083,21 @@ public class Lobby {
 
     public int getGameTimer() {
         return this.gameTimer;
+    }
+
+    /**
+     * True when the given world hosts this lobby's hub or one of its arenas.
+     * Used to keep world-level events (flow, fade, decay, fire) away.
+     */
+    public boolean isGameWorld(World world) {
+        if (world == null) {
+            return false;
+        }
+        Location lobbySpawn = this.spawn;
+        if (lobbySpawn != null && world.equals(lobbySpawn.getWorld())) {
+            return true;
+        }
+        return isArenaWorld(world);
     }
 
     /**
