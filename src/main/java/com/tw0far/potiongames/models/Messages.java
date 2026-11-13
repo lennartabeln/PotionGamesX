@@ -923,6 +923,23 @@ public class Messages {
     public static String BroadcastSentText() { return get("command.broadcast_sent", "Broadcast sent to all players"); }
     public static String InvalidLobbyIdText() { return get("command.invalid_lobby_id", "Invalid lobby ID. Must be a number."); }
     public static String ConfigHeaderText() { return get("config.header", "PotionGamesX Configuration"); }
+    public static String ConfigSectionCoreText() { return get("config.section_core", "Core"); }
+    public static String ConfigSectionDefaultsText() { return get("config.section_defaults", "Defaults"); }
+    public static String ConfigSectionFeaturesText() { return get("config.section_features", "Features"); }
+    public static String ConfigLanguageText() { return get("config.language", "Language"); }
+    public static String ConfigGameServerText() { return get("config.game_server", "Game Server Mode"); }
+    public static String ConfigDatabaseModeText() { return get("config.database_mode", "Database Mode"); }
+    public static String ConfigCountdownText() { return get("config.countdown", "Countdown"); }
+    public static String ConfigRoundTimeText() { return get("config.round_time", "Round Time"); }
+    public static String ConfigMaxPlayersText() { return get("config.max_players", "Max Players"); }
+    public static String ConfigMinPlayersText() { return get("config.min_players", "Min Players"); }
+    public static String ConfigTeamSizeText() { return get("config.team_size", "Team Size"); }
+    public static String ConfigTeamsText() { return get("config.teams", "Teams"); }
+    public static String ConfigKitsText() { return get("config.kits", "Kits"); }
+    public static String ConfigShopText() { return get("config.shop", "Shop"); }
+    public static String ConfigAirdropsText() { return get("config.airdrops", "Airdrops"); }
+    public static String ConfigDeathmatchText() { return get("config.deathmatch", "Deathmatch"); }
+    public static String ConfigScoreboardText() { return get("config.scoreboard", "Scoreboard"); }
 
     public static String GameServerStateText() { return get("gameserver.state", "GameServer mode is now %s"); }
     public static String GameServerStateOtherText() { return get("gameserver.state_other", "%s switched GameServer mode to %s!"); }
