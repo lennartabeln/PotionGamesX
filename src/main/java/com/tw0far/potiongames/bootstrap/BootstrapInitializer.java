@@ -48,6 +48,15 @@ public final class BootstrapInitializer {
         seedKitData();
     }
 
+    /** Reload mutable data from the existing plugin configuration files. */
+    public void reload() {
+        Settings.loadConfigurations();
+        Settings.loadSettings(plugin);
+        Messages.seed();
+        seedShopData();
+        seedKitData();
+    }
+
     private void ensureFileExists(File file, String name) {
         if (!file.exists()) {
             try {
