@@ -49,6 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Lobby capacity is capped by the fewest usable arena spawns (join check, join sign, sidebar, lobby list, `/pg status`, server ping); a round with no usable spawn aborts back to `WAITING` instead of half-starting, and a spawn shortage is reported to the round
+- The deathmatch now starts when the remaining players fit onto the arena's usable deathmatch spawns (`max(2, spawns)`), so 2 DM spawns keep the legacy behaviour
 - Upgrading an installation now merges message keys that only the new jar ships - in every locale - so a German server gets the German text of a new screen instead of the English in-code fallback (edited texts are never overwritten)
 - `pg.admin` now grants every admin subcommand (`children:` in `plugin.yml`); before it only changed the `/pg help` list while `KickCommand`/`BroadcastCommand` documented "or pg.admin"
 - `/pg stats` runs its six database getters on the async scheduler instead of the main thread, sharing a new `PlayerStats` record with the compass stat sheet
