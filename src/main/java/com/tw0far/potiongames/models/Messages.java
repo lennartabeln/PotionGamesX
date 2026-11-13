@@ -821,7 +821,7 @@ public class Messages {
     public static String HelpDellobbyText() { return get("help.dellobby", "/pg dellobby <lobbynumber> - Remove a lobby"); }
     public static String HelpForceText() { return get("help.force", "/pg force [arenaname] - Force an arena"); }
     public static String HelpForceUsageText() { return get("help.force_usage", "/pg force <arena_name> - Force a specific arena (requires pg.force)"); }
-    public static String HelpGameserverText() { return get("help.gameserver", "/pg gameserver - Toggle gameserver mode (online/offline)"); }
+    public static String HelpGameserverText() { return get("help.gameserver", "/pg gameserver - Toggle gameserver mode (true/false)"); }
     public static String HelpGameserverUsageText() { return get("help.gameserver_usage", "/pg gameserver - Toggle gameserver mode (requires pg.gameserver)"); }
     public static String HelpHeadText() { return get("help.head", "/pg headp1(2;3) - Add Player Head to Stats-Wall"); }
     public static String HelpHeadp1UsageText() { return get("help.headp1_usage", "/pg headp1 (Look at 1st place head)"); }
