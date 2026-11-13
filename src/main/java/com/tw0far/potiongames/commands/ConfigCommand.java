@@ -37,36 +37,39 @@ public class ConfigCommand implements ICommand {
 
         player.sendMessage(Settings.prefix.append(Component.text(Messages.ConfigHeaderText()).color(NamedTextColor.GOLD)));
 
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("Core:").color(NamedTextColor.GOLD)));
+        player.sendMessage(section(Messages.ConfigSectionCoreText()));
 
-        player.sendMessage(formatConfigLine("  Language", config.getLanguage()));
-        player.sendMessage(flagLine("  Game Server Mode", config.isGameServer()));
-        player.sendMessage(formatConfigLine("  Database Mode", config.isActivateMysql() ? "MySQL" : "SQLite"));
+        player.sendMessage(formatConfigLine("  " + Messages.ConfigLanguageText(), config.getLanguage()));
+        player.sendMessage(flagLine("  " + Messages.ConfigGameServerText(), config.isGameServer()));
+        player.sendMessage(formatConfigLine("  " + Messages.ConfigDatabaseModeText(), config.isActivateMysql() ? "MySQL" : "SQLite"));
 
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("Defaults:").color(NamedTextColor.GOLD)));
+        player.sendMessage(section(Messages.ConfigSectionDefaultsText()));
 
-        player.sendMessage(formatConfigLine("  Countdown", config.getCountdown() + "s"));
-        player.sendMessage(formatConfigLine("  Round Time", config.getRoundTime() + " min"));
-        player.sendMessage(formatConfigLine("  Max Players", config.getMaxPlayers() + ""));
-        player.sendMessage(formatConfigLine("  Min Players", config.getMinPlayers() + ""));
-        player.sendMessage(formatConfigLine("  Team Size", config.getTeamSize() + ""));
+        player.sendMessage(formatConfigLine("  " + Messages.ConfigCountdownText(), config.getCountdown() + "s"));
+        player.sendMessage(formatConfigLine("  " + Messages.ConfigRoundTimeText(), config.getRoundTime() + " min"));
+        player.sendMessage(formatConfigLine("  " + Messages.ConfigMaxPlayersText(), config.getMaxPlayers() + ""));
+        player.sendMessage(formatConfigLine("  " + Messages.ConfigMinPlayersText(), config.getMinPlayers() + ""));
+        player.sendMessage(formatConfigLine("  " + Messages.ConfigTeamSizeText(), config.getTeamSize() + ""));
 
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("Features:").color(NamedTextColor.GOLD)));
+        player.sendMessage(section(Messages.ConfigSectionFeaturesText()));
 
-        player.sendMessage(flagLine("  Teams", config.isActivateTeams()));
-        player.sendMessage(flagLine("  Kits", config.isActivateKits()));
-        player.sendMessage(flagLine("  Shop", config.isActivateShop()));
-        player.sendMessage(flagLine("  Airdrops", config.isActivateAirdrops()));
-        player.sendMessage(flagLine("  Deathmatch", config.isActivateDeathmatch()));
-        player.sendMessage(flagLine("  Scoreboard", config.isActivateScoreboard()));
+        player.sendMessage(flagLine("  " + Messages.ConfigTeamsText(), config.isActivateTeams()));
+        player.sendMessage(flagLine("  " + Messages.ConfigKitsText(), config.isActivateKits()));
+        player.sendMessage(flagLine("  " + Messages.ConfigShopText(), config.isActivateShop()));
+        player.sendMessage(flagLine("  " + Messages.ConfigAirdropsText(), config.isActivateAirdrops()));
+        player.sendMessage(flagLine("  " + Messages.ConfigDeathmatchText(), config.isActivateDeathmatch()));
+        player.sendMessage(flagLine("  " + Messages.ConfigScoreboardText(), config.isActivateScoreboard()));
 
         player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
             .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
 
         return true;
+    }
+
+    /** Section heading of the config screen. */
+    private Component section(String title) {
+        return Component.text("").color(NamedTextColor.DARK_GRAY)
+            .append(Component.text(title + ":").color(NamedTextColor.GOLD));
     }
 
     private Component formatConfigLine(String key, String value) {
