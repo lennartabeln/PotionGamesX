@@ -31,9 +31,7 @@ public class StatsWallCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        // One node per command (pg.headp1 ... pg.signp3), so an admin can hand
-        // out a single wall slot instead of the whole setup group.
-        return "pg." + name;
+        return "pg.setup";
     }
 
     @Override

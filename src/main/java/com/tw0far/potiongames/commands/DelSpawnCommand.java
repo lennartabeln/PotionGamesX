@@ -24,7 +24,7 @@ public class DelSpawnCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.delspawn";
+        return "pg.setup";
     }
 
 

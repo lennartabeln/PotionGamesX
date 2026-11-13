@@ -24,7 +24,7 @@ public class AddArenaCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.addarena";
+        return "pg.setup";
     }
 
 

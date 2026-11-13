@@ -24,7 +24,7 @@ public class AddDeathmatchCommand implements ICommand {
 
     @Override
     public String getPermission() {
-        return "pg.adddeathmatch";
+        return "pg.setup";
     }
 
 
