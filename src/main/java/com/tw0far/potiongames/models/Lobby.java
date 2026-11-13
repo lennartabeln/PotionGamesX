@@ -595,9 +595,20 @@ public class Lobby {
         removeParticipant(p);
     }
 
+    /**
+     * Stores the join sign. Returns false when the block is not a sign, so the
+     * caller can report it instead of throwing a ClassCastException out of the
+     * event handler.
+     */
     public boolean setJoinSign(Location loc) {
+        if (loc == null || loc.getWorld() == null) {
+            return false;
+        }
         BlockState b = loc.getBlock().getState();
-        joinSign = (Sign) b;
+        if (!(b instanceof Sign sign)) {
+            return false;
+        }
+        joinSign = sign;
         Settings.lobbies.set("pg.lobbies." + id + ".joinSign", loc);
         try {
             Settings.lobbies.save(Settings.lobbiesFile);

@@ -165,6 +165,10 @@ public class SetupHandler implements ISetupHandler {
             p.sendMessage(Settings.prefix.append(Component.text(Messages.SetupNoBlockInRangeText()).color(NamedTextColor.RED)));
             return;
         }
+        if (!(target.getState() instanceof org.bukkit.block.Sign)) {
+            p.sendMessage(Settings.prefix.append(Component.text(Messages.SetupNotASignText()).color(NamedTextColor.RED)));
+            return;
+        }
         boolean success = lobby.setJoinSign(target.getLocation());
         if (success) {
             p.sendMessage(Messages.SignSet());

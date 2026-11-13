@@ -141,6 +141,7 @@ en_US:
       version: "/pg version - Show your and latest version of plugin"
       version_usage: "/pg version - Check plugin version and updates (requires pg.version)"
       kick: "/pg kick <player> - Remove player from lobby"
+      kick_usage: "Usage: /pg kick <player>"
       broadcast: "/pg broadcast <message> - Send announcement to all players"
       status: "/pg status - Show server status and active lobbies"
       config: "/pg config - View current configuration"
@@ -149,6 +150,10 @@ en_US:
       gameserver: "/pg gameserver - Toggle gameserver mode (online/offline)"
       gameserver_usage: "/pg gameserver - Toggle gameserver mode (requires pg.gameserver)"
       top: "/pg top [type] - Show leaderboard (kills/deaths/wins/kd)"
+    kick:
+      not_in_lobby: "%s is not in a lobby!"
+      success: "%s has been kicked from lobby %s!"
+      notice: "You have been kicked from the lobby by an admin!"
     join:
       could_not_join_lobby: "Could not join lobby!"
       already_in_lobby: "You are already in a lobby!"
@@ -198,6 +203,7 @@ en_US:
       invalid_selection: "Invalid lobby selection!"
     setup:
       incomplete: "Lobby setup is incomplete: add at least one arena with one spawn before enabling the lobby."
+      not_a_sign: "That is not a sign!"
       no_block_in_range: "No block in range to set as join sign."
       no_spawns: "No spawns are configured for that arena."
       no_deathmatch_spawns: "No deathmatch spawns are configured for that arena."
@@ -470,6 +476,7 @@ de_DE:
       version_usage: "/pg version - Plugin-Version prüfen und Updates suchen (benötigt pg.version)"
       dellobby: "/pg dellobby <lobbynumber> - Lobby entfernen"
       kick: "/pg kick <player> - Spieler aus der Lobby entfernen"
+      kick_usage: "Verwendung: /pg kick <player>"
       broadcast: "/pg broadcast <message> - Ankündigung an alle Spieler senden"
       status: "/pg status - Serverstatus und aktive Lobbys anzeigen"
       config: "/pg config - Aktuelle Konfiguration anzeigen"
@@ -478,6 +485,10 @@ de_DE:
       gameserver: "/pg gameserver - Gameserver-Modus umschalten (online/offline)"
       gameserver_usage: "/pg gameserver - Gameserver-Modus umschalten (benötigt pg.gameserver)"
       top: "/pg top [type] - Rangliste anzeigen (kills/deaths/wins/kd)"
+    kick:
+      not_in_lobby: "%s ist in keiner Lobby!"
+      success: "%s wurde aus Lobby %s gekickt!"
+      notice: "Du wurdest von einem Admin aus der Lobby gekickt!"
     join:
       could_not_join_lobby: "Konnte der Lobby nicht beitreten!"
       already_in_lobby: "Du bist bereits in einer Lobby!"
@@ -527,6 +538,7 @@ de_DE:
       invalid_selection: "Ungültige Lobbyauswahl!"
     setup:
       incomplete: "Das Lobby-Setup ist unvollständig: Füge mindestens eine Arena mit einem Spawn hinzu, bevor du die Lobby aktivierst."
+      not_a_sign: "Das ist kein Schild!"
       no_block_in_range: "Kein Block in Reichweite, um ihn als Beitrittsschild zu setzen."
       no_spawns: "Für diese Arena sind keine Spawns konfiguriert."
       no_deathmatch_spawns: "Für diese Arena sind keine Deathmatch-Spawns konfiguriert."
