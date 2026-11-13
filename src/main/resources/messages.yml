@@ -200,6 +200,7 @@ en_US:
       success: "Successfully left the lobby!"
     lobby:
       added: "Lobby %d added successfully."
+      connecting: "Connecting to %s..."
       added_failed: "Failed to add lobby %d."
       does_not_exist: "This lobby does not exist!"
       invalid_id: "Invalid lobby ID. Must be a positive number."
@@ -542,6 +543,7 @@ de_DE:
       success: "Lobby erfolgreich verlassen!"
     lobby:
       added: "Lobby %d erfolgreich hinzugefügt."
+      connecting: "Verbinde mit %s..."
       added_failed: "Lobby %d konnte nicht hinzugefügt werden."
       does_not_exist: "Diese Lobby existiert nicht!"
       invalid_id: "Ungültige Lobby-ID. Muss eine positive Zahl sein."

@@ -192,10 +192,14 @@ public class GameItemListener implements Listener {
         if (plugin.getLobbyStateManager().getGameState(s) != GameStates.INGAME) {
             return;
         }
+        // Check the column above the player up to the world ceiling, using the
+        // world's real height instead of a hardcoded 320.
+        int maxY = p.getWorld().getMaxHeight() - 1;
         boolean blocked = false;
         Location loc = p.getEyeLocation().add(0, 1, 0);
-        while (loc.getY() <= 320) {
-            if (loc.getBlock().getType() != Material.AIR) {
+        while (loc.getY() <= maxY) {
+            Material type = loc.getBlock().getType();
+            if (type != Material.AIR && type != Material.CAVE_AIR) {
                 p.sendMessage(Messages.YouBlockAbove());
                 blocked = true;
                 break;
@@ -211,7 +215,9 @@ public class GameItemListener implements Listener {
         }
         p.sendMessage(Messages.AirdropFallingHere());
         BlockData b = Material.DRIED_KELP_BLOCK.createBlockData();
-        Location spawnLoc = new Location(p.getWorld(), ploc.getX(), ploc.getY() + 100, ploc.getZ());
+        // Keep the drop inside the world: a shallow world would otherwise lose it.
+        double spawnY = Math.min(ploc.getY() + 100, maxY - 1);
+        Location spawnLoc = new Location(p.getWorld(), ploc.getX(), spawnY, ploc.getZ());
         p.getWorld().spawn(spawnLoc, FallingBlock.class, fallingBlock -> fallingBlock.setBlockData(b));
         lobby.addPlacedBlock(ploc, b.getMaterial());
         var held = p.getInventory().getItemInMainHand();
