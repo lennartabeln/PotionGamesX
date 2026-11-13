@@ -47,8 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The compile fails on javac warnings (`failOnWarning`, i.e. `-Werror`, with `-Xlint:all`), locally and in CI
 - Unit tests for the team amount/assignment contract (`LobbyTeamTest`) and for enabling/disabling kits (`LobbyConfigTest`)
 
-### Fixed
+### Security
 
+- The update checker parses the GitHub release list with a linear scan instead of a backtracking regex (CodeQL `java/polynomial-redos`)
 - `/pg start`, `/pg pause`, `/pg build`, `/pg force` and `/pg leave` report `You are not in a lobby!` instead of doing nothing when the sender has no lobby
 - Update checks read the GitHub releases instead of the legacy SpigotMC resource, so 1.x installs are no longer told to "update" to 7.0.1; versions are compared numerically (`PluginVersion`)
 - Console lines no longer repeat the prefix (`[PotionGamesX] [Potion Games]`) and the prefix now reads `[PotionGamesX]` with a coloured `X`
