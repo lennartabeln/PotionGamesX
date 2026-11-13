@@ -152,6 +152,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- `/pg broadcast` and its `pg.broadcast` permission; `pg.broadcastStarting` (lobby countdown announcement) is untouched
+
+### Fixed
+
+- Every message carries the `[PotionGamesX]` prefix, including `/pg list` without lobbies, setup toggles, bucket guards, setup chat input, `/pg gameserver`, `/pg headpN`/`signpN`, `/pg top` errors, the `/pg status` title and all dispatcher info/error lines
 - Hardcoded chest loot (now config-driven)
 - Hardcoded shop data (now in config)
 - Monolithic event/command classes
