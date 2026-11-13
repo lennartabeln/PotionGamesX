@@ -17,6 +17,9 @@ public interface IArenaStateManager extends IManager {
     String getPlayerVoteInLobby(String lobbyId, Player player);
     boolean hasPlayerVotedInLobby(String lobbyId, Player player);
 
+    /** Drop one player's vote record (the count is removed via removeLobbyVote). */
+    void removePlayerVoteInLobby(String lobbyId, Player player);
+
     /** Clear votes (counts and per-player records) for one lobby. */
     void resetLobbyVotes(String lobbyId);
 
@@ -32,6 +35,9 @@ public interface IArenaStateManager extends IManager {
     boolean hasPlayerTeamInLobby(String lobbyId, Player player);
     Map<Integer, Integer> getLobbyTeams(String lobbyId);
     void initializeLobbyTeams(String lobbyId, Integer teamCount);
+
+    /** Clear team counts and team assignments for one lobby. */
+    void resetLobbyTeams(String lobbyId);
     void setLobbyTeamSize(String lobbyId, Integer teamSize);
     Integer getLobbyTeamSize(String lobbyId);
 
