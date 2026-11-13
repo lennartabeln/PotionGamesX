@@ -15,6 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
@@ -40,6 +42,11 @@ public class GameInventoryListener implements Listener {
         if (!(e.getWhoClicked() instanceof Player p)) {
             return;
         }
+        // Protect every PotionGames GUI by title, even when the player left the
+        // lobby while it was still open (otherwise its items can be taken).
+        if (isGameGui(e.getView())) {
+            e.setCancelled(true);
+        }
         String s = plugin.getGame().getPlayerLobby(p);
         if (s != null) {
             GameStates lobbyState = plugin.getLobbyStateManager().getGameState(s);
@@ -49,8 +56,27 @@ public class GameInventoryListener implements Listener {
                 handleTeamSelection(e, p, s);
                 handleKitSelection(e, p, s);
             }
-            handleShop(e, p, s);
         }
+        handleShop(e, p, s);
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent e) {
+        if (isGameGui(e.getView())) {
+            e.setCancelled(true);
+        }
+    }
+
+    /** True for every inventory this plugin opens as a menu (loot chests excluded). */
+    private boolean isGameGui(InventoryView view) {
+        Component title = view.title();
+        return title.equals(Messages.ArenaSelectorTitle())
+                || title.equals(Messages.SelectorTeamTitle())
+                || title.equals(Messages.KitSelector())
+                || title.equals(Messages.ShopTitle())
+                || title.equals(Messages.LobbyListTitle())
+                || title.equals(Messages.ChooseArenaTitle())
+                || title.equals(Messages.ChooseLobbyTitle());
     }
 
     private void handleArenaVoting(InventoryClickEvent e, Player p, String s) {
@@ -270,8 +296,15 @@ public class GameInventoryListener implements Listener {
         }
         // The shop GUI is only open during a running game; always protect its items
         e.setCancelled(true);
-        if (plugin.getLobbyStateManager().getGameState(s) != GameStates.INGAME
-                && plugin.getLobbyStateManager().getGameState(s) != GameStates.DEATHMATCH) {
+        if (s == null) {
+            return;
+        }
+        GameStates state = plugin.getLobbyStateManager().getGameState(s);
+        if (state != GameStates.INGAME && state != GameStates.DEATHMATCH) {
+            return;
+        }
+        // Only clicks inside the shop itself may buy something
+        if (e.getClickedInventory() == null || !e.getClickedInventory().equals(e.getView().getTopInventory())) {
             return;
         }
         String displayname = InteractionSupport.plainName(e.getCurrentItem());
