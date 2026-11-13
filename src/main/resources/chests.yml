@@ -16,6 +16,9 @@ pg:
         armour5: 3.0
         weapons1: 20.0
         weapons2: 5.0
+        # Shop currency (glass bottle + coin). Only rolled while the lobby has
+        # its shop enabled; otherwise the roll becomes food.
+        shop: 10.0
 
       items:
         food1:
