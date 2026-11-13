@@ -127,6 +127,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Incomplete commands print their own `/pg help` line with the plugin prefix instead of ad-hoc usage strings; the help texts follow one shape and cover every command
+- `/pg broadcast` targets only PotionGamesX players, supports `-l <lobby>` and renders as `[PotionGamesX] [Broadcast] <message>`
 - The trailing `X` of the `[PotionGamesX]` prefix and the MOTD name uses dark aqua, matching the accent colour of the rest of the UI
 - Java 21 → 25 across all build configs and CI workflows
 - `maven-resources-plugin` pinned to 3.5.0 for Eclipse M2E compat
