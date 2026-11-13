@@ -32,7 +32,7 @@ public class JoinCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(Component.text("This command can only be used by players!").color(NamedTextColor.RED));
+            sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
         if (args.length <= 1) {

@@ -2,11 +2,8 @@ package com.tw0far.potiongames.commands;
 
 import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.PotionGamesX;
-import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.models.GameStates;
-import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.models.Lobby;
-import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.models.Messages;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -44,7 +41,7 @@ public class ListCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof org.bukkit.entity.Player player)) {
-            sender.sendMessage(net.kyori.adventure.text.Component.text("This command can only be used by players!").color(net.kyori.adventure.text.format.NamedTextColor.RED));
+            sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
         // Build an inventory GUI listing all lobbies with basic info
@@ -54,8 +51,9 @@ public class ListCommand implements ICommand {
             return true;
         }
 
-        int size = ((lobbies.size() + 8) / 9) * 9; // round up to multiple of 9
-        Inventory inv = Bukkit.createInventory(null, Math.max(9, size), Messages.LobbyListTitle());
+        // Bukkit only supports inventories with up to 54 slots; cap the page.
+        int size = Math.min(54, Math.max(9, ((lobbies.size() + 8) / 9) * 9));
+        Inventory inv = Bukkit.createInventory(null, size, Messages.LobbyListTitle());
 
         for (Lobby lobby : lobbies) {
             int id = lobby.getId();

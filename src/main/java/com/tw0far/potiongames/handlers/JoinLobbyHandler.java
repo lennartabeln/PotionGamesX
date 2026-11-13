@@ -26,12 +26,14 @@ public class JoinLobbyHandler {
 
             if (lobby.canJoin()) {
                 lobby.join(player);
+                player.sendMessage(Messages.JoinSuccess());
                 return;
             }
 
             // Late join: watch a running round as spectator when allowed
             if (plugin.getConfigManager().isJoinStarted() && lobby.canSpectate()) {
                 lobby.joinAsSpectator(player);
+                player.sendMessage(Messages.JoinSuccess());
                 return;
             }
 
