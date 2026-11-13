@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/pg stats <player>` also resolves offline players whose profile is cached by Paper
 - `/pg join <id>` now goes through the shared lobby join validation (capacity, state, `pg.joinStarted`) instead of adding the player to `activePlayers` unconditionally; a full lobby can no longer leave a player half-joined
 - Per-round kills are tracked through `Lobby#addKill` again (previously the scoreboard kill counter parsed its own team prefix, and `Lobby#getKills` was always 0)
+- Server list now reflects the plugin state again: the MOTD shows `WAITING`/`VOTING`/the voted arena/`INGAME` for the busiest lobby and the max player count is the summed capacity of all lobbies
 
 ### Changed
 
