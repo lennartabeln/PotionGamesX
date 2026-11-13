@@ -60,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Winning a round now actually pays `pg.winningReward` through Vault (previously the reward was only announced), logs failed transactions, and spawns the celebratory firework from the legacy release
 - Free-for-all lobbies can fight again: the friendly-fire check only compares teams when the lobby actually uses teams, and teammates may attack each other in `DEATHMATCH` (previously `friendlyFire: false` cancelled every player hit without teams because all teams were `null`)
 - Player-finder compass points at enemies again: it ignored same-team players only when teams are active, targets any other player in free-for-all, also works in `DEATHMATCH`, and only considers players of the same running lobby
+- Explosions in arena worlds no longer permanently remove blocks (only entity damage applies); build mode still allows admins to reshape the arena, matching the legacy TNT whitelist behaviour
 
 ### Changed
 
