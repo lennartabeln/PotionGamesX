@@ -25,6 +25,7 @@ en_US:
       list_footer: "═════════════════════════════════════════"
       not_game_server: "This is not a game server!"
       execution_error: "An error occurred while executing this command!"
+      unknown: "Unknown command! Use /pg help for help."
       addarena:
         usage: "Usage: /pg addarena <lobbynumber> <arenaname>"
       addspawn:
@@ -75,8 +76,15 @@ en_US:
       starts_in: "The game starts in"
       starts_now: "The game starts now!"
       waiting: "Waiting for players! [%d/%d]"
+      not_enough_players: "Not enough players to start the game!"
     head:
       set: "Head successfully set!"
+      look_block_1: "Look at a block to set the 1st place head."
+      look_block_2: "Look at a block to set the 2nd place head."
+      look_block_3: "Look at a block to set the 3rd place head."
+      set_1: "1st place head set."
+      set_2: "2nd place head set."
+      set_3: "3rd place head set."
     help:
       use_pg_help: "Use /pg help for help!"
       help_usage: "/pg help - Show this help message"
@@ -126,6 +134,16 @@ en_US:
       stats_usage: "/pg stats [player] - Show player statistics"
       version: "/pg version - Show your and latest version of plugin"
       version_usage: "/pg version - Check plugin version and updates (requires pg.version)"
+      kick: "/pg kick <player> - Remove player from lobby"
+      broadcast: "/pg broadcast <message> - Send announcement to all players"
+      status: "/pg status - Show server status and active lobbies"
+      config: "/pg config - View current configuration"
+      debug: "/pg debug - Toggle debug logging mode"
+      database: "/pg database - Toggle database mode (MySQL/SQLite)"
+      database_usage: "/pg database - Toggle database mode MySQL/SQLite (requires pg.database)"
+      gameserver: "/pg gameserver - Toggle gameserver mode (online/offline)"
+      gameserver_usage: "/pg gameserver - Toggle gameserver mode (requires pg.gameserver)"
+      top: "/pg top [type] - Show leaderboard (kills/deaths/wins/kd)"
     join:
       could_not_join_lobby: "Could not join lobby!"
       already_in_lobby: "You are already in a lobby!"
@@ -162,6 +180,7 @@ en_US:
       disabled: "Lobby disabled!"
       does_not_exist: "This lobby does not exist!"
       invalid_id: "Invalid lobby ID. Must be a positive number."
+      full: "This lobby is full!"
       enabled: "Lobby enabled!"
       removed: "Lobby %d removed successfully."
       removed_failed: "Failed to remove lobby %d."
@@ -176,8 +195,16 @@ en_US:
       no_block_in_range: "No block in range to set as join sign."
       no_spawns: "No spawns are configured for that arena."
       no_deathmatch_spawns: "No deathmatch spawns are configured for that arena."
+      add_delete_lobby: "Add(Left)/Del(Right) Lobby"
+      add_delete_arena: "Add(Left)/Del(Right) Arena"
+      add_delete_spawn: "Add(Left)/Del(Right) Spawn"
+      add_delete_deathmatch_spawn: "Add(Left)/Del(Right) Deathmatch-Spawn"
+      join_sign: "Set Join-Sign"
+      leave_mode: "Leave Setup-Mode"
+      enabled: "Setup mode enabled."
+      disabled: "Setup mode disabled."
     lost:
-      label: "Lost"
+      label: "Losses"
     map:
       label: "Map"
       voting: "Voting"
@@ -188,6 +215,7 @@ en_US:
       label: "Place"
     player:
       finder: "Player-Finder"
+      finder_distance: "Blocks away from next player"
     players:
       label: "Players"
     plugin:
@@ -205,6 +233,7 @@ en_US:
     round:
       nobody_won: "Nobody won this round!"
       seconds_remaining: "seconds remaining to end this round!"
+      minutes_remaining: "minutes remaining to end this round!"
     rounds:
       label: "Rounds"
     scoreboard:
@@ -226,12 +255,11 @@ en_US:
       set_1: "1st place sign set."
       set_2: "2nd place sign set."
       set_3: "3rd place sign set."
-    setup:
-      add_delete_lobby: "Add(Left)/Del(Right) Lobby"
-      add_delete_arena: "Add(Left)/Del(Right) Arena"
-      add_delete_spawn: "Add(Left)/Del(Right) Spawn"
-      join_sign: "Set Join-Sign"
-      leave_mode: "Leave Setup-Mode"
+      place: "Place"
+      wins: "Wins"
+      kd: "K/D"
+    deathmatch_spawn:
+      none_to_remove: "No deathmatch spawns to remove!"
     spawn:
       added: "Spawn %d added successfully. (Arena: %s, Lobby: %d)"
       removed: "Spawn %d removed successfully. (Arena: %s, Lobby: %d)"
@@ -259,13 +287,6 @@ en_US:
       lobby_number_remove: "Type lobby number in chat to remove it!"
     bucket:
       water_not_allowed: "Water buckets are not allowed during games!"
-    head:
-      look_block_1: "Look at a block to set the 1st place head."
-      look_block_2: "Look at a block to set the 2nd place head."
-      look_block_3: "Look at a block to set the 3rd place head."
-      set_1: "1st place head set."
-      set_2: "2nd place head set."
-      set_3: "3rd place head set."
     update:
       available: "There is a new update available. %s -> %s"
       checker_error: "Update-Checker-Error"
@@ -277,7 +298,8 @@ en_US:
     winner:
       has_won_the_game: "has won the game!"
     won:
-      label: "Won"
+      label: "Wins"
+      reward: "For winning the round you get"
     you:
       block_above: "You have a block above you!"
       in_spectator_mode: "in spectator mode"
@@ -311,6 +333,7 @@ de_DE:
       list_footer: "═══════════════════════════════════════"
       not_game_server: "Dies ist kein Spielserver!"
       execution_error: "Beim Ausführen dieses Befehls ist ein Fehler aufgetreten!"
+      unknown: "Unbekannter Befehl! Benutze /pg help für Hilfe."
       addarena:
         usage: "Usage: /pg addarena <lobbynumber> <arenaname>"
       addspawn:
@@ -354,7 +377,6 @@ de_DE:
     error:
       generic: "Ein Fehler ist aufgetreten"
     file:
-      fail: "Datei laden/speichern fehlgeschlagen! Weitere Informationen in der Konsole."
       save_failed: "Datei laden/speichern fehlgeschlagen! Weitere Informationen in der Konsole."
     game:
       already_started: "Das Spiel hat bereits begonnen!"
@@ -362,15 +384,21 @@ de_DE:
       starts_in: "Das Spiel startet in"
       starts_now: "Das Spiel startet jetzt!"
       waiting: "Warte auf Spieler! [%d/%d]"
+      not_enough_players: "Nicht genug Spieler, um das Spiel zu starten!"
     head:
       set: "Kopf erfolgreich gesetzt!"
+      look_block_1: "Schau auf einen Block, um den Kopf für den 1. Platz zu setzen."
+      look_block_2: "Schau auf einen Block, um den Kopf für den 2. Platz zu setzen."
+      look_block_3: "Schau auf einen Block, um den Kopf für den 3. Platz zu setzen."
+      set_1: "Kopf für den 1. Platz gesetzt."
+      set_2: "Kopf für den 2. Platz gesetzt."
+      set_3: "Kopf für den 3. Platz gesetzt."
     help:
       use_pg_help: "Benutze /pg help für Hilfe!"
       help_usage: "/pg help - Show this help message"
       setup_usage: "/pg setup - Start setup mode (requires pg.setup)"
       setup: "/pg setup - Plugin einrichten"
       addlobby: "/pg addlobby [lobbynumber] - Lobby hinzufügen"
-      removelobby: "/pg removelobby [lobbynumber] - Lobby entfernen"
       addarena: "/pg addarena [lobbynumber] [arenaname] - Arena hinzufügen"
       addarena_usage: "/pg addarena <lobbynumber> <arenaname>"
       addspawn: "/pg addspawn [lobbynumber] [arenaname] - Spawn hinzufügen"
@@ -412,9 +440,21 @@ de_DE:
       stats: "/pg stats [player] - Spielerstatistiken anzeigen"
       stats_usage: "/pg stats [player] - Show player statistics"
       version: "/pg version - Deine und die neueste Plugin-Version anzeigen"
-      version_usage: "/pg version - Check plugin version and updates (requires pg.version)"
+      version_usage: "/pg version - Plugin-Version prüfen und Updates suchen (benötigt pg.version)"
+      dellobby: "/pg dellobby [lobbynumber] - Lobby entfernen"
+      kick: "/pg kick <player> - Spieler aus der Lobby entfernen"
+      broadcast: "/pg broadcast <message> - Ankündigung an alle Spieler senden"
+      status: "/pg status - Serverstatus und aktive Lobbys anzeigen"
+      config: "/pg config - Aktuelle Konfiguration anzeigen"
+      debug: "/pg debug - Debug-Protokollierung umschalten"
+      database: "/pg database - Datenbankmodus umschalten (MySQL/SQLite)"
+      database_usage: "/pg database - Datenbankmodus MySQL/SQLite umschalten (benötigt pg.database)"
+      gameserver: "/pg gameserver - Gameserver-Modus umschalten (online/offline)"
+      gameserver_usage: "/pg gameserver - Gameserver-Modus umschalten (benötigt pg.gameserver)"
+      top: "/pg top [type] - Rangliste anzeigen (kills/deaths/wins/kd)"
     join:
       could_not_join_lobby: "Konnte der Lobby nicht beitreten!"
+      already_in_lobby: "Du bist bereits in einer Lobby!"
       success: "Erfolgreich der Lobby beigetreten"
       join_success: "Successfully joined lobby"
     list:
@@ -448,6 +488,7 @@ de_DE:
       disabled: "Lobby deaktiviert!"
       does_not_exist: "Diese Lobby existiert nicht!"
       invalid_id: "Ungültige Lobby-ID. Muss eine positive Zahl sein."
+      full: "Diese Lobby ist voll!"
       enabled: "Lobby aktiviert!"
       removed: "Lobby %d erfolgreich entfernt."
       removed_failed: "Lobby %d konnte nicht entfernt werden."
@@ -462,8 +503,16 @@ de_DE:
       no_block_in_range: "Kein Block in Reichweite, um ihn als Beitrittsschild zu setzen."
       no_spawns: "Für diese Arena sind keine Spawns konfiguriert."
       no_deathmatch_spawns: "Für diese Arena sind keine Deathmatch-Spawns konfiguriert."
+      add_delete_lobby: "Lobby hinzufügen(Links)/löschen(Rechts)"
+      add_delete_arena: "Arena hinzufügen(Links)/löschen(Rechts)"
+      add_delete_spawn: "Spawn hinzufügen(Links)/löschen(Rechts)"
+      add_delete_deathmatch_spawn: "Deathmatch-Spawn hinzufügen(Links)/löschen(Rechts)"
+      join_sign: "Beitritts-Schild setzen"
+      leave_mode: "Setup-Modus verlassen"
+      enabled: "Setup-Modus aktiviert."
+      disabled: "Setup-Modus deaktiviert."
     lost:
-      label: "Verloren"
+      label: "Niederlagen"
     map:
       label: "Karte"
       voting: "Abstimmung"
@@ -474,6 +523,7 @@ de_DE:
       label: "Platz"
     player:
       finder: "Spieler-Finder"
+      finder_distance: "Blöcke bis zum nächsten Spieler"
     players:
       label: "Spieler"
     plugin:
@@ -491,6 +541,7 @@ de_DE:
     round:
       nobody_won: "Niemand hat diese Runde gewonnen!"
       seconds_remaining: "Sekunden verbleiben bis zum Ende dieser Runde!"
+      minutes_remaining: "Minuten verbleiben bis zum Ende dieser Runde!"
     rounds:
       label: "Runden"
     scoreboard:
@@ -512,12 +563,11 @@ de_DE:
       set_1: "Schild für den 1. Platz gesetzt."
       set_2: "Schild für den 2. Platz gesetzt."
       set_3: "Schild für den 3. Platz gesetzt."
-    setup:
-      add_delete_lobby: "Lobby hinzufügen(Links)/löschen(Rechts)"
-      add_delete_arena: "Arena hinzufügen(Links)/löschen(Rechts)"
-      add_delete_spawn: "Spawn hinzufügen(Links)/löschen(Rechts)"
-      join_sign: "Beitritts-Schild setzen"
-      leave_mode: "Setup-Modus verlassen"
+      place: "Platz"
+      wins: "Siege"
+      kd: "K/D"
+    deathmatch_spawn:
+      none_to_remove: "Keine Deathmatch-Spawns zum Entfernen!"
     spawn:
       added: "Spawn %d erfolgreich hinzugefügt. (Arena: %s, Lobby: %d)"
       removed: "Spawn %d erfolgreich entfernt. (Arena: %s, Lobby: %d)"
@@ -545,13 +595,6 @@ de_DE:
       lobby_number_remove: "Gib die Lobbynummer im Chat ein, um sie zu entfernen!"
     bucket:
       water_not_allowed: "Wassereimer sind während des Spiels nicht erlaubt!"
-    head:
-      look_block_1: "Schau auf einen Block, um den Kopf für den 1. Platz zu setzen."
-      look_block_2: "Schau auf einen Block, um den Kopf für den 2. Platz zu setzen."
-      look_block_3: "Schau auf einen Block, um den Kopf für den 3. Platz zu setzen."
-      set_1: "Kopf für den 1. Platz gesetzt."
-      set_2: "Kopf für den 2. Platz gesetzt."
-      set_3: "Kopf für den 3. Platz gesetzt."
     update:
       available: "Es ist ein neues Update verfügbar. %s -> %s"
       checker_error: "Update-Checker-Fehler"
@@ -563,7 +606,8 @@ de_DE:
     winner:
       has_won_the_game: "hat das Spiel gewonnen!"
     won:
-      label: "Gewonnen"
+      label: "Siege"
+      reward: "Für den Sieg in dieser Runde erhältst du"
     you:
       block_above: "Über dir befindet sich ein Block!"
       in_spectator_mode: "im Zuschauermodus"

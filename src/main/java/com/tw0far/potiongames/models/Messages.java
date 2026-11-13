@@ -2,6 +2,7 @@ package com.tw0far.potiongames.models;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.configuration.Configuration;
 
 import java.io.IOException;
 
@@ -132,9 +133,44 @@ public class Messages {
         addDefault(lang, "you.not_enough_coins", "You don't have enough coins!");
 
         Settings.messages.options().copyDefaults(true);
+        seedMissingTranslations("en_US");
         try {
             Settings.messages.save(Settings.messagesFile);
         } catch (IOException ignored) {
+        }
+    }
+
+    /**
+     * Fill keys that exist in the source language into every other configured
+     * language, so a new message never stays untranslated (and invisible) in
+     * an upgraded messages.yml.
+     */
+    private static void seedMissingTranslations(String sourceLang) {
+        Configuration defaults = Settings.messages.getDefaults();
+        if (defaults == null) {
+            return;
+        }
+        String prefix = sourceLang + ".messages.";
+        for (String root : Settings.messages.getKeys(false)) {
+            if (root.equals(sourceLang)) {
+                continue;
+            }
+            if (Settings.messages.getConfigurationSection(root + ".messages") == null) {
+                continue;
+            }
+            for (String path : defaults.getKeys(true)) {
+                if (!path.startsWith(prefix)) {
+                    continue;
+                }
+                Object value = defaults.get(path);
+                if (value == null) {
+                    continue;
+                }
+                String target = root + ".messages." + path.substring(prefix.length());
+                if (Settings.messages.get(target) == null) {
+                    Settings.messages.set(target, value);
+                }
+            }
         }
     }
 
