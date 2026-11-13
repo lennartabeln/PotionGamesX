@@ -5,6 +5,7 @@ import com.tw0far.potiongames.models.Messages;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.entity.Player;
 
 /**
@@ -43,6 +44,31 @@ public class BucketEventListener implements Listener {
 
         // Allow lava bucket (for damage purposes)
         // Allow milk bucket (for potion effects)
+    }
+
+    /**
+     * A placed lava bucket could be scooped up again for free, which made lava
+     * buckets infinite (and the tracked liquid block disappear).
+     */
+    @EventHandler
+    public void onBucketFill(PlayerBucketFillEvent e) {
+        // Clicking no block means milking a cow, which stays allowed.
+        if (e.getBlockClicked() == null) {
+            return;
+        }
+        Player p = e.getPlayer();
+        if (!plugin.getGame().isActivePlayer(p)) {
+            return;
+        }
+        String lobbyId = plugin.getGame().getPlayerLobby(p);
+        if (lobbyId == null) {
+            return;
+        }
+        if (plugin.getLobbyStateManager().isBuildAllowed(lobbyId)) {
+            return;
+        }
+        e.setCancelled(true);
+        p.sendMessage(Messages.BucketFillNotAllowedText());
     }
 }
 

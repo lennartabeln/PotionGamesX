@@ -118,6 +118,8 @@ public class Messages {
         addDefault(lang, "update.not_available", "There is not a new update available.");
         addDefault(lang, "vote.label", "Votes");
         addDefault(lang, "map.label", "Map");
+        addDefault(lang, "bucket.water_not_allowed", "Water buckets are not allowed during games!");
+        addDefault(lang, "bucket.fill_not_allowed", "You cannot fill buckets during a game!");
         addDefault(lang, "map.voting", "Voting");
         addDefault(lang, "team.label", "Team");
         addDefault(lang, "kit.label", "Kit");
@@ -697,6 +699,7 @@ public class Messages {
     }
 
     public static String BucketWaterNotAllowedText() { return get("bucket.water_not_allowed", "Water buckets are not allowed during games!"); }
+    public static String BucketFillNotAllowedText() { return get("bucket.fill_not_allowed", "You cannot fill buckets during a game!"); }
     public static String CommandAddarenaUsageText() { return get("command.addarena.usage", "Usage: /pg addarena <lobbynumber> <arenaname>"); }
     public static String CommandAdddeathmatchUsageText() { return get("command.adddeathmatch.usage", "Usage: /pg adddeathmatch <lobbynumber> <arenaname>"); }
     public static String CommandAddlobbyUsageText() { return get("command.addlobby.usage", "Usage: /pg addlobby <lobbynumber>"); }

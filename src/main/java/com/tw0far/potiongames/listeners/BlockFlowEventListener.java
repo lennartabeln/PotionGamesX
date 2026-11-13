@@ -21,9 +21,7 @@ public class BlockFlowEventListener implements Listener {
     @EventHandler
     public void onBlockFlow(BlockFromToEvent e) {
         for (Lobby lobby : plugin.getGame().getLobbies()) {
-            if (isGameRunning(lobby)
-                    && lobby.getSpawn() != null
-                    && lobby.getSpawn().getWorld().equals(e.getBlock().getWorld())) {
+            if (isGameRunning(lobby) && lobby.isGameWorld(e.getBlock().getWorld())) {
                 e.setCancelled(true);
                 return;
             }

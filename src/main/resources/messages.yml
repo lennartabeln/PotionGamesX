@@ -287,6 +287,7 @@ en_US:
       lobby_number_remove: "Type lobby number in chat to remove it!"
     bucket:
       water_not_allowed: "Water buckets are not allowed during games!"
+      fill_not_allowed: "You cannot fill buckets during a game!"
     update:
       available: "There is a new update available. %s -> %s"
       checker_error: "Update-Checker-Error"
@@ -595,6 +596,7 @@ de_DE:
       lobby_number_remove: "Gib die Lobbynummer im Chat ein, um sie zu entfernen!"
     bucket:
       water_not_allowed: "Wassereimer sind während des Spiels nicht erlaubt!"
+      fill_not_allowed: "Du kannst während eines Spiels keine Eimer füllen!"
     update:
       available: "Es ist ein neues Update verfügbar. %s -> %s"
       checker_error: "Update-Checker-Fehler"
