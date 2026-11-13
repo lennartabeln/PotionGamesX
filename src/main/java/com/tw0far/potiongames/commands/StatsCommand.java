@@ -35,7 +35,7 @@ public class StatsCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof org.bukkit.entity.Player player)) {
-            sender.sendMessage(net.kyori.adventure.text.Component.text("This command can only be used by players!").color(net.kyori.adventure.text.format.NamedTextColor.RED));
+            sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
         if (args.length < 2) {

@@ -1,5 +1,6 @@
 package com.tw0far.potiongames.commands;
 
+import com.tw0far.potiongames.models.Messages;
 import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.PotionGamesX;
 import net.kyori.adventure.text.Component;
@@ -29,7 +30,7 @@ public class DebugCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof org.bukkit.entity.Player player)) {
-            sender.sendMessage(net.kyori.adventure.text.Component.text("This command can only be used by players!").color(net.kyori.adventure.text.format.NamedTextColor.RED));
+            sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
         debugMode = !debugMode;

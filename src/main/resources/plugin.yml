@@ -62,8 +62,8 @@ permissions:
   pg.config:
     description: View current configuration
     default: op
-  pg.reload:
-    description: Reload the plugin configuration
+  pg.admin:
+    description: See the administrative command list in /pg help
     default: op
   pg.debug:
     description: Toggle debug mode

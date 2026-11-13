@@ -37,7 +37,7 @@ public class StatsWallCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(CommandDispatcher.createError("This command can only be used by players!"));
+            sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
         Block target = player.getTargetBlockExact(5);

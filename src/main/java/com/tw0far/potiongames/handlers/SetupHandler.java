@@ -118,21 +118,33 @@ public class SetupHandler implements ISetupHandler {
 
     @Override
     public void addLobby(Player p, int lobbyId) {
+        if (lobbyId < 1) {
+            p.sendMessage(Messages.InvalidLobbyId());
+            return;
+        }
+        if (pg.getGame().getLobby(lobbyId) != null) {
+            p.sendMessage(Messages.LobbyAlreadyExists(lobbyId));
+            return;
+        }
         boolean success = pg.getGame().addLobby(lobbyId, p.getLocation());
         if (success) {
             p.sendMessage(Messages.LobbyAdded(lobbyId));
         } else {
-            p.sendMessage(Messages.FileSaveFailed());
+            p.sendMessage(Messages.LobbyAddedFailed(lobbyId));
         }
     }
 
     @Override
     public void removeLobby(Player p, int lobbyId) {
+        if (pg.getGame().getLobby(lobbyId) == null) {
+            p.sendMessage(Messages.LobbyDoesNotExist());
+            return;
+        }
         boolean success = pg.getGame().removeLobby(lobbyId);
         if (success) {
             p.sendMessage(Messages.LobbyRemoved(lobbyId));
         } else {
-            p.sendMessage(Messages.FileSaveFailed());
+            p.sendMessage(Messages.LobbyRemovedFailed(lobbyId));
         }
     }
 
@@ -168,6 +180,10 @@ public class SetupHandler implements ISetupHandler {
             p.sendMessage(Messages.LobbyDoesNotExist());
             return;
         }
+        if (lobby.getArena(arenaName) != null) {
+            p.sendMessage(Messages.ArenaAlreadyExists(arenaName));
+            return;
+        }
         boolean success = lobby.addArena(arenaName);
         if (success) {
             p.sendMessage(Messages.ArenaAdded(arenaName, lobbyId));
@@ -181,6 +197,10 @@ public class SetupHandler implements ISetupHandler {
         Lobby lobby = pg.getGame().getLobby(lobbyId);
         if (lobby == null) {
             p.sendMessage(Messages.LobbyDoesNotExist());
+            return;
+        }
+        if (lobby.getArena(arenaName) == null) {
+            p.sendMessage(Messages.ArenaDoesNotExist());
             return;
         }
         boolean success = lobby.removeArena(arenaName);

@@ -25,7 +25,12 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
 
     /** Subcommands that also work from the server console. */
     private static final Set<String> CONSOLE_ALLOWED = Set.of(
-        "reload", "status", "top", "broadcast", "version", "database", "gameserver", "config");
+        "reload", "status", "top", "broadcast", "version", "database", "gameserver", "config",
+        "help", "kick");
+
+    /** Legacy aliases that map onto an existing subcommand. */
+    private static final Map<String, String> ALIASES = Map.of(
+        "commands", "help");
 
     public CommandDispatcher(PotionGamesX plugin) {
         this.plugin = plugin;
@@ -99,6 +104,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
         }
 
         String subCommand = args[0].toLowerCase();
+        subCommand = ALIASES.getOrDefault(subCommand, subCommand);
 
         // Get and execute command
         ICommand command = commands.get(subCommand);
@@ -110,7 +116,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
 
         // Check if the command requires a player (most do; a subset is console-safe)
         if (!(sender instanceof Player) && !CONSOLE_ALLOWED.contains(subCommand)) {
-            sender.sendMessage(Component.text("This command can only be used by players!").color(NamedTextColor.RED));
+            sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
 
@@ -151,7 +157,8 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
             for (ICommand command : commands.values()) {
                 String name = command.getName().toLowerCase();
                 if (name.startsWith(prefix)) {
-                    if (command.getPermission() == null || sender.hasPermission(command.getPermission())) {
+                    boolean consoleSafe = sender instanceof Player || CONSOLE_ALLOWED.contains(name);
+                    if (consoleSafe && (command.getPermission() == null || sender.hasPermission(command.getPermission()))) {
                         result.add(name);
                     }
                 }

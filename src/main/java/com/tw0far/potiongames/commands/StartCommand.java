@@ -2,11 +2,8 @@ package com.tw0far.potiongames.commands;
 
 import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.PotionGamesX;
-import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.models.GameStates;
-import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.models.Lobby;
-import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.models.Messages;
 import org.bukkit.entity.Player;
 
@@ -34,7 +31,7 @@ public class StartCommand implements ICommand {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (!(sender instanceof org.bukkit.entity.Player player)) {
-            sender.sendMessage(net.kyori.adventure.text.Component.text("This command can only be used by players!").color(net.kyori.adventure.text.format.NamedTextColor.RED));
+            sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
         // Multi-lobby mode
@@ -47,8 +44,7 @@ public class StartCommand implements ICommand {
                     // Check if enough players
                     if (lobby.getPlayerCount() >= lobby.getMinPlayers()) {
                         if (lobby.getState() == GameStates.WAITING) {
-                            lobby.setCountdown(10);
-                            lobby.startCountdown();
+                            lobby.forceStart(10);
                             // Broadcast to all players in this lobby
                             for (Player all : plugin.getGame().getPlayersInLobby(lobbyId)) {
                                 all.sendMessage(Messages.GameStarted());

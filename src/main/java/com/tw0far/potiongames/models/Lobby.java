@@ -511,6 +511,21 @@ public class Lobby {
         }
     }
 
+    /**
+     * Start the current countdown with a different length without changing the
+     * configured countdown of later rounds.
+     */
+    public void forceStart(int seconds) {
+        if (state != GameStates.WAITING) {
+            return;
+        }
+        prepareTimer = Math.max(1, seconds);
+        setState(GameStates.PREPARING);
+        if (tickTask == null || tickTask.isCancelled()) {
+            startTick();
+        }
+    }
+
     public void cancelCountdown() {
         if (state == GameStates.PREPARING) {
             prepareTimer = Math.max(1, countdown);
