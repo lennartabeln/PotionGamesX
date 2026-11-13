@@ -17,6 +17,7 @@ import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -583,8 +584,19 @@ public class Lobby {
     }
 
     public void endRound() {
+        playLobbySound(Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 1f);
         setState(GameStates.ENDING);
         endingTimer = Math.max(1, reset);
+    }
+
+    /** Plays a round feedback sound for everyone currently in this lobby. */
+    private void playLobbySound(Sound sound, float volume, float pitch) {
+        for (Participant participant : participants) {
+            Player player = participant.getPlayer();
+            if (player != null && player.isOnline()) {
+                player.playSound(player.getLocation(), sound, volume, pitch);
+            }
+        }
     }
 
     /**
@@ -685,6 +697,8 @@ public class Lobby {
                     }
                     gameTimer = Math.max(1, roundTime * 60);
                     deathmatch = false;
+                    playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1f, 1f);
+                    playLobbySound(Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
                     setState(GameStates.INGAME);
                 } else if (prepareTimer == countdown) {
                     if (currentArena == null) {
@@ -695,6 +709,10 @@ public class Lobby {
                             participant.sendMessage(Messages.WillBePlayed(currentArena.getName()));
                         }
                     }
+                    playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1f, 1f);
+                }
+                if (prepareTimer > 0 && prepareTimer <= 5) {
+                    playLobbySound(Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f);
                 }
                 if (playerCount < minPlayers) {
                     cancelCountdown();

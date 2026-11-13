@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/pg join <id>` now goes through the shared lobby join validation (capacity, state, `pg.joinStarted`) instead of adding the player to `activePlayers` unconditionally; a full lobby can no longer leave a player half-joined
 - Per-round kills are tracked through `Lobby#addKill` again (previously the scoreboard kill counter parsed its own team prefix, and `Lobby#getKills` was always 0)
 - Server list now reflects the plugin state again: the MOTD shows `WAITING`/`VOTING`/the voted arena/`INGAME` for the busiest lobby and the max player count is the summed capacity of all lobbies
+- Restored the legacy in-game audio cues: countdown bells in the last five seconds, a launch firework when the countdown starts, blast/dragon sounds at round start, a dragon growl when a round ends, a death sound for the eliminated player, and click/error sounds in the arena, kit, team and shop GUIs
 
 ### Changed
 
