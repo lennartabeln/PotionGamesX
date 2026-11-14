@@ -47,21 +47,32 @@ public class PlayerScoreboardManager {
     private static final String TEAM_KIT = "kit";
     private static final String TEAM_PLAYERS = "players";
     private static final String TEAM_TIME = "timeScoreboard";
+    private static final String TEAM_ALIVE = "aliveScoreboard";
     private static final String TEAM_KILLS = "kills";
+
+    /** Which rows the sidebar shows; the deathmatch has no clock to display. */
+    private enum Layout {
+        LOBBY, INGAME, DEATHMATCH
+    }
 
     /** Lobby rows, top to bottom. */
     private static final String[] LOBBY_ROWS = {TEAM_MAP, TEAM_TEAM, TEAM_KIT, TEAM_PLAYERS};
-    /** Round rows, top to bottom. */
-    private static final String[] ROUND_ROWS = {TEAM_TIME, TEAM_KILLS};
-    private static final String[] ALL_ROWS = {
+    /** Round rows: same top block as the lobby, plus the round fields. */
+    private static final String[] INGAME_ROWS = {
         TEAM_MAP, TEAM_TEAM, TEAM_KIT, TEAM_PLAYERS, TEAM_TIME, TEAM_KILLS
+    };
+    private static final String[] DEATHMATCH_ROWS = {
+        TEAM_MAP, TEAM_TEAM, TEAM_KIT, TEAM_PLAYERS, TEAM_ALIVE, TEAM_KILLS
+    };
+    private static final String[] ALL_ROWS = {
+        TEAM_MAP, TEAM_TEAM, TEAM_KIT, TEAM_PLAYERS, TEAM_TIME, TEAM_ALIVE, TEAM_KILLS
     };
 
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacySection();
 
     private final PotionGamesX plugin;
     /** Players that currently own a managed sidebar, mapped to the layout in use. */
-    private final Map<UUID, Boolean> roundLayout = new HashMap<>();
+    private final Map<UUID, Layout> currentLayout = new HashMap<>();
     /** Row team name to the score entry that carries its label. */
     private final Map<String, String> entries = new LinkedHashMap<>();
 
@@ -90,11 +101,12 @@ public class PlayerScoreboardManager {
         registerRow(board, TEAM_KIT, Messages.KitLabel(), 2);
         registerRow(board, TEAM_PLAYERS, darkAqua(Messages.PlayersText()), 3);
         registerRow(board, TEAM_TIME, Messages.TimeLabel(), 4);
-        registerRow(board, TEAM_KILLS, darkAqua(Messages.KillsText()), 5);
+        registerRow(board, TEAM_ALIVE, darkAqua(Messages.AliveLabelCapitalised()), 5);
+        registerRow(board, TEAM_KILLS, darkAqua(Messages.KillsText()), 6);
 
         player.setScoreboard(board);
-        entryLayout(objective, false);
-        roundLayout.put(player.getUniqueId(), false);
+        entryLayout(objective, Layout.LOBBY);
+        currentLayout.put(player.getUniqueId(), Layout.LOBBY);
     }
 
     /** Restores the server scoreboard when a player leaves the lobby. */
@@ -102,7 +114,7 @@ public class PlayerScoreboardManager {
         if (player == null) {
             return;
         }
-        roundLayout.remove(player.getUniqueId());
+        currentLayout.remove(player.getUniqueId());
         if (player.getScoreboard().getObjective(OBJECTIVE_NAME) != null) {
             player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
         }
@@ -143,11 +155,15 @@ public class PlayerScoreboardManager {
         }
 
         GameStates state = lobby.getState();
-        boolean round = state == GameStates.INGAME || state == GameStates.DEATHMATCH;
-        Boolean previous = roundLayout.get(player.getUniqueId());
-        if (previous == null || previous != round) {
-            entryLayout(objective, round);
-            roundLayout.put(player.getUniqueId(), round);
+        Layout layout = switch (state) {
+            case INGAME -> Layout.INGAME;
+            case DEATHMATCH -> Layout.DEATHMATCH;
+            default -> Layout.LOBBY;
+        };
+        Layout previous = currentLayout.get(player.getUniqueId());
+        if (previous != layout) {
+            entryLayout(objective, layout);
+            currentLayout.put(player.getUniqueId(), layout);
         }
 
         row(board, TEAM_MAP, arenaName(lobby));
@@ -155,8 +171,12 @@ public class PlayerScoreboardManager {
         row(board, TEAM_KIT, kitName(lobby, player));
         row(board, TEAM_PLAYERS, lobby.getPlayerCount() + "/" + lobby.getCapacity());
 
-        if (round) {
+        if (layout == Layout.INGAME) {
             row(board, TEAM_TIME, clock(lobby.getGameTimer()));
+            row(board, TEAM_KILLS, Integer.toString(lobby.getKills(player)));
+        } else if (layout == Layout.DEATHMATCH) {
+            // No deathmatch timer (legacy): show how many players are left.
+            row(board, TEAM_ALIVE, Integer.toString(lobby.getAlivePlayerCount()));
             row(board, TEAM_KILLS, Integer.toString(lobby.getKills(player)));
         }
     }
@@ -226,7 +246,7 @@ public class PlayerScoreboardManager {
      * Shows only the rows that belong to the requested layout. Scores of
      * unused rows are reset so the previous layout disappears immediately.
      */
-    private void entryLayout(Objective objective, boolean round) {
+    private void entryLayout(Objective objective, Layout layout) {
         for (String teamName : ALL_ROWS) {
             String entry = entries.get(teamName);
             if (entry == null) {
@@ -237,7 +257,11 @@ public class PlayerScoreboardManager {
                 score.resetScore();
             }
         }
-        String[] rows = round ? ROUND_ROWS : LOBBY_ROWS;
+        String[] rows = switch (layout) {
+            case LOBBY -> LOBBY_ROWS;
+            case INGAME -> INGAME_ROWS;
+            case DEATHMATCH -> DEATHMATCH_ROWS;
+        };
         for (int i = 0; i < rows.length; i++) {
             String entry = entries.get(rows[i]);
             if (entry != null) {

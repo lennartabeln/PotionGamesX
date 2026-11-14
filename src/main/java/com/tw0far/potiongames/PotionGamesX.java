@@ -132,10 +132,11 @@ public class PotionGamesX extends JavaPlugin {
             pgCommand.setTabCompleter(dispatcher);
         }
 
-        new BootstrapInitializer(this).initialize();
-        new ChestLootInitializer(this).seed();
-
-        new EnableBootstrapInitializer(this).initialize();
+        // Each bootstrap step runs on its own: a broken shop entry must not stop
+        // the chest/kit seeding behind it (and vice versa).
+        runBootstrapStep("configuration", () -> new BootstrapInitializer(this).initialize());
+        runBootstrapStep("chest loot", () -> new ChestLootInitializer(this).seed());
+        runBootstrapStep("game data", () -> new EnableBootstrapInitializer(this).initialize());
 
         // Auto-join first lobby if enabled
         if (configManager.isGameServer() || configManager.isStartOnJoin()) {
@@ -173,6 +174,17 @@ public class PotionGamesX extends JavaPlugin {
     }
 
 
+
+    private void runBootstrapStep(String name, Runnable step) {
+        try {
+            step.run();
+        } catch (RuntimeException e) {
+            getComponentLogger().error(net.kyori.adventure.text.Component.text(
+                "Bootstrap step \"" + name + "\" failed - continuing with the rest: " + e.getMessage())
+                .color(net.kyori.adventure.text.format.NamedTextColor.RED));
+            getLogger().log(java.util.logging.Level.SEVERE, "Bootstrap step " + name + " failed", e);
+        }
+    }
 
     @Override
     public void onDisable() {

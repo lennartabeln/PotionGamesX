@@ -71,7 +71,8 @@ pg:
   # ═══════════════════════════════════════════════════════
 
   # Gameplay
-  activateDeathmatch: true
+  activateDeathmatch: true      # Requires at least two deathmatch spawns on the arena;
+                                # without them the round has no deathmatch phase
   activateScoreboard: true
   broadcastStarting: false
   changeGamerules: true
