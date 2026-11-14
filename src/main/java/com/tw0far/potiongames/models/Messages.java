@@ -427,6 +427,11 @@ public class Messages {
         return prefix(Component.text(get("game.already_started", "The game has already started!")).color(NamedTextColor.RED));
     }
 
+    /** Round start after the freeze: "The game starts now!". */
+    public static Component GameStartsNow() {
+        return prefix(Component.text(get("game.starts_now", "The game starts now!")).color(NamedTextColor.GREEN));
+    }
+
     public static Component GameStarted() {
         return prefix(Component.text(get("game.started", "The game has been started!")).color(NamedTextColor.GREEN));
     }

@@ -118,6 +118,7 @@ public class PotionGamesX extends JavaPlugin {
         pm.registerEvents(new ServerListPingEventListener(this), this);
 
         // Inventory & interaction events
+        pm.registerEvents(new StartLockListener(this), this);
         pm.registerEvents(new GameInventoryListener(this), this);
         pm.registerEvents(new GameItemListener(this), this);
         pm.registerEvents(new SetupInteractionListener(this), this);

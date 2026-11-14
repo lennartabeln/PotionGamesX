@@ -80,6 +80,9 @@ public class Lobby {
 
     // Runtime boolean flags (per-lobby state)
     private boolean deathmatch = false;
+    /** Seconds the players stay frozen after the teleport into the arena. */
+    private static final int ROUND_START_DELAY = 10;
+    private int startTimer = 0;
     private boolean joinable = true;
     private boolean pause = false;
 
@@ -993,6 +996,7 @@ public class Lobby {
     }
 
     public void endRound() {
+        releaseLocks();
         playLobbySound(Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 1f);
         setState(GameStates.ENDING);
         endingTimer = Math.max(1, reset);
@@ -1161,6 +1165,9 @@ public class Lobby {
                         // the whole arena block system unreachable.
                         for (Participant participant : participants) {
                             participant.startRound();
+                            // Legacy froze everyone for ten seconds after the
+                            // teleport, then started the round with SURVIVAL.
+                            participant.lockMovement();
                         }
                         giveRichKidCoins();
                         applyGameRules();
@@ -1169,8 +1176,8 @@ public class Lobby {
                     }
                     gameTimer = Math.max(1, roundTime);
                     deathmatch = false;
+                    startTimer = ROUND_START_DELAY;
                     playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1f, 1f);
-                    playLobbySound(Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
                     setState(GameStates.INGAME);
                 } else if (prepareTimer == countdown) {
                     if (currentArena == null) {
@@ -1193,6 +1200,19 @@ public class Lobby {
                 prepareTimer--;
                 break;
             case INGAME:
+                if (startTimer > 0) {
+                    for (Participant participant : participants) {
+                        participant.sendActionBar(Messages.GameStartsIn(startTimer));
+                    }
+                    if (startTimer <= 5) {
+                        playLobbySound(Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f);
+                    }
+                    startTimer--;
+                    if (startTimer == 0) {
+                        beginRound();
+                    }
+                    break;
+                }
                 if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
                     for (Participant participant : participants) {
                         if (gameTimer <= 60) {
@@ -1209,6 +1229,19 @@ public class Lobby {
                 gameTimer--;
                 break;
             case DEATHMATCH:
+                if (startTimer > 0) {
+                    for (Participant participant : participants) {
+                        participant.sendActionBar(Messages.DeathmatchStartingIn(startTimer));
+                    }
+                    if (startTimer <= 5) {
+                        playLobbySound(Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f);
+                    }
+                    startTimer--;
+                    if (startTimer == 0) {
+                        beginDeathmatch();
+                    }
+                    break;
+                }
                 if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
                     for (Participant participant : participants) {
                         participant.sendMessage(Messages.DeathmatchStartingIn(gameTimer));
@@ -1231,6 +1264,8 @@ public class Lobby {
                 endingTimer--;
                 break;
             case RESET:
+                releaseLocks();
+                startTimer = 0;
                 restoreBlocks();
                 restoreGameRules();
                 PotionGamesX plugin = PotionGamesX.getInstance();
@@ -1321,6 +1356,8 @@ public class Lobby {
      * the lobby returns to waiting, everyone is told, nothing is half-started.
      */
     private void abortRoundStart(Arena arena) {
+        releaseLocks();
+        startTimer = 0;
         setState(GameStates.WAITING);
         prepareTimer = countdown;
         gameTimer = Math.max(1, roundTime);
@@ -1356,10 +1393,36 @@ public class Lobby {
             player.teleport(spawn != null ? spawn : fallback);
         }
         for (Participant participant : participants) {
-            participant.sendMessage(Messages.DeathmatchStarted());
+            participant.lockMovement();
         }
         gameTimer = 60;
+        startTimer = ROUND_START_DELAY;
         setState(GameStates.DEATHMATCH);
+    }
+
+    /** Clears every movement lock without touching the game mode. */
+    private void releaseLocks() {
+        for (Participant participant : participants) {
+            participant.clearMovementLock();
+        }
+    }
+
+    /** Releases the pre-round freeze and starts the round. */
+    private void beginRound() {
+        for (Participant participant : participants) {
+            participant.unlockMovement();
+            participant.sendMessage(Messages.GameStartsNow());
+        }
+        playLobbySound(Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
+    }
+
+    /** Releases the deathmatch freeze and starts the deathmatch. */
+    private void beginDeathmatch() {
+        for (Participant participant : participants) {
+            participant.unlockMovement();
+            participant.sendMessage(Messages.DeathmatchStarted());
+        }
+        playLobbySound(Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
     }
 
     private void announceWinner(Player winner) {
