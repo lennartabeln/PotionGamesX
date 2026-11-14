@@ -496,6 +496,11 @@ public class Messages {
         return Component.text(get("kit.label", "Kit")).color(NamedTextColor.DARK_AQUA);
     }
 
+    /** Capitalised label for the deathmatch sidebar row. */
+    public static String AliveLabelCapitalised() {
+        return get("scoreboard.alive_label", "Alive");
+    }
+
     /** "12 alive" row in the deathmatch sidebar. */
     public static String AliveLabel() {
         return get("scoreboard.alive", "alive");
