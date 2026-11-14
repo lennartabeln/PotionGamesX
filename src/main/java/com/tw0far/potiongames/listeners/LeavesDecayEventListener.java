@@ -20,13 +20,9 @@ public class LeavesDecayEventListener implements Listener {
 
     @EventHandler
     public void onLeavesDecay(LeavesDecayEvent e) {
-        // Prevent leaves decay in the worlds of a running round only
-        for (Lobby lobby : plugin.getGame().getLobbies()) {
-            if ((lobby.getState() == GameStates.INGAME || lobby.getState() == GameStates.DEATHMATCH)
-                    && lobby.isGameWorld(e.getBlock().getWorld())) {
-                e.setCancelled(true);
-                return;
-            }
+        // Arena worlds keep their blocks between rounds (legacy pg.worlds).
+        if (plugin.getGame().isProtectedArenaWorld(e.getBlock().getWorld())) {
+            e.setCancelled(true);
         }
     }
 }

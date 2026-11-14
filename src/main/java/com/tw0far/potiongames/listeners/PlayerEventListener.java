@@ -42,6 +42,11 @@ public class PlayerEventListener implements Listener {
         if (plugin.getConfigManager().isGameServer() || plugin.getConfigManager().isStartOnJoin()) {
             plugin.getGame().autoJoinLobby(p);
         }
+        // Legacy hid the join message of a player who lands straight in a game
+        // server lobby (`e.joinMessage(null)`).
+        if (plugin.getConfigManager().isGameServer() && plugin.getGame().isInLobby(p)) {
+            e.joinMessage(null);
+        }
     }
 
     @EventHandler
