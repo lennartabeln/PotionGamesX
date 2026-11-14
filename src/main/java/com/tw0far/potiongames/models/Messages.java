@@ -1065,6 +1065,7 @@ public class Messages {
     public static String ConfigGameServerText() { return get("config.game_server", "Game Server Mode"); }
     public static String ConfigDatabaseModeText() { return get("config.database_mode", "Database Mode"); }
     public static String ConfigCountdownText() { return get("config.countdown", "Countdown"); }
+    public static String ConfigStartDelayText() { return get("config.start_delay", "Start freeze"); }
     public static String ConfigRoundTimeText() { return get("config.round_time", "Round Time"); }
     public static String ConfigMaxPlayersText() { return get("config.max_players", "Max Players"); }
     public static String ConfigMinPlayersText() { return get("config.min_players", "Min Players"); }

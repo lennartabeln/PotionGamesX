@@ -52,6 +52,7 @@ pg:
     # Timing
     countdown: 60              # Seconds before game starts
     roundTime: 30              # Minutes per round
+    startDelay: 10             # Seconds players stay frozen after the arena teleport
 
     # Player limits
     maxPlayers: 24             # Upper bound; the effective capacity is capped by

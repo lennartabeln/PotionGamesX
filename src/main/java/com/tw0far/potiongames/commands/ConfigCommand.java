@@ -46,6 +46,7 @@ public class ConfigCommand implements ICommand {
         player.sendMessage(section(Messages.ConfigSectionDefaultsText()));
 
         player.sendMessage(formatConfigLine("  " + Messages.ConfigCountdownText(), config.getCountdown() + "s"));
+        player.sendMessage(formatConfigLine("  " + Messages.ConfigStartDelayText(), config.getStartDelay() + "s"));
         player.sendMessage(formatConfigLine("  " + Messages.ConfigRoundTimeText(), config.getRoundTime() + " min"));
         player.sendMessage(formatConfigLine("  " + Messages.ConfigMaxPlayersText(), config.getMaxPlayers() + ""));
         player.sendMessage(formatConfigLine("  " + Messages.ConfigMinPlayersText(), config.getMinPlayers() + ""));

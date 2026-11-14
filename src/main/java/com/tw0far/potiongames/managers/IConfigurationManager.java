@@ -9,6 +9,8 @@ public interface IConfigurationManager extends IManager {
 
     String getLanguage();
     int getCountdown();
+
+    int getStartDelay();
     int getRoundTime();
     int getMinPlayers();
     int getTeamSize();
