@@ -80,7 +80,6 @@ public class Lobby {
 
     // Runtime boolean flags (per-lobby state)
     private boolean deathmatch = false;
-    private boolean joinable = true;
     private boolean pause = false;
 
     /** Guards {@link #startTick()} against a second concurrent scheduling. */
@@ -1662,8 +1661,6 @@ public class Lobby {
     public void setDeathmatch(boolean value) { this.deathmatch = value; }
 
 
-    public boolean isJoinable() { return joinable; }
-    public void setJoinable(boolean value) { this.joinable = value; }
 
     public boolean isPaused() { return pause; }
     public void setPaused(boolean value) { this.pause = value; }

@@ -111,7 +111,6 @@ public class ReloadHandler {
                         lobby.restoreWorldState();
                         lobby.setCurrentArena(null);
                         lobby.setState(GameStates.WAITING);
-                        lobby.setJoinable(true);
                         lobby.setPaused(false);
                         lobby.setDeathmatch(false);
                     } catch (Exception e) {
