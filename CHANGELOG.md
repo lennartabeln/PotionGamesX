@@ -9,6 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.27] - 2026-11-14
+
+### Added
+
+- Configurable start freeze: `pg.defaults.startDelay` (default `10`, per lobby via `settings.startDelay`), shown in `/pg config`
+- The round length is announced when the players land in the arena
+- The lobby countdown is visible on the XP bar again
+- Vote tally when the arena is revealed (`Votes (3)` plus one line per arena, including `Random`)
+- `/pg status` shows per lobby whether a deathmatch is possible (`DM 4 spawns` / `no deathmatch`)
+
+### Changed
+
+- Round time announcements use the legacy thresholds (600, 300, 240, 180, 120, 60, 30, 20, 10, 5..1)
+- The join sign header shows `PotionGamesX`; the lobby number moved into the count line
+- Sidebar keeps map, team, kit and player count during the round and shows `Alive` instead of a frozen clock in the deathmatch
+
+### Fixed
+
+- A deathmatch requires at least two deathmatch spawns; without them the round ends normally
+- Players are frozen for the start delay after the arena teleport (position locked, no damage) and the round starts with `SURVIVAL`
+- An emptied round resets immediately instead of running the end countdown
+- A timed-out round no longer declares a winner after the draw message
+- A lobby without an arena aborts the round start instead of playing in the lobby
+- The arena reveal also fires when the lobby countdown is shorter than ten seconds
+- Voting and `/pg force` are closed once the countdown starts, so the announced arena is final
+- Lobby players take no damage and no hunger, and cannot build or use buckets outside a running round
+- The arena is cleaned of dropped items, arrows, TNT and mobs on reset
+- Shop and kit defaults are seeded once instead of doubling on every `/pg reload`; a failing bootstrap step no longer skips the following ones
+- Chest blocks open on a fresh or half-migrated install (legacy `END_PORTAL_FRAME`/`COMPOSTER` fallback) and loot chests work in the deathmatch
+- Dropped the write-only `Lobby#joinable` flag
+
 ## [1.0.0-dev.26] - 2026-11-13
 
 ### Added
