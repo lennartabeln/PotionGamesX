@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.31] - 2026-11-14
+
+### Fixed
+
+- Players can damage each other again as soon as the round is running: the start freeze only pins the position (legacy `move = false` never suppressed damage), and the PvP gate checks the lobby state instead of the internal player list
+- Arrows and other projectiles are resolved to their shooter, so hits from outside the round stay blocked
+- A participant that stayed frozen after the countdown is unlocked by the tick, so nobody is stuck without movement or combat
+
 ## [1.0.0-dev.30] - 2026-11-14
 
 ### Added
