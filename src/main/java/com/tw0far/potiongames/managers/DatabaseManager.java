@@ -440,6 +440,44 @@ public class DatabaseManager implements IDatabaseManager {
         increment(uuid, "LOSSES", losses, false);
     }
 
+    @Override
+    public void addWinsAsync(String uuid, int wins) {
+        offThread(() -> addWins(uuid, wins));
+    }
+
+    @Override
+    public void addLossesAsync(String uuid, int losses) {
+        offThread(() -> addLosses(uuid, losses));
+    }
+
+    @Override
+    public void addKillsAsync(String uuid, int kills) {
+        offThread(() -> addKills(uuid, kills));
+    }
+
+    @Override
+    public void addDeathsAsync(String uuid, int deaths) {
+        offThread(() -> addDeaths(uuid, deaths));
+    }
+
+    /**
+     * Runs a stats write on the async scheduler: a JDBC round trip on the region
+     * thread stalls the round, and with MySQL it can take real time. Falls back
+     * to the caller thread when the server is shutting down or unavailable.
+     */
+    private void offThread(Runnable write) {
+        PotionGamesX server = this.plugin;
+        if (server == null || !server.isEnabled()) {
+            write.run();
+            return;
+        }
+        try {
+            server.getServer().getAsyncScheduler().runNow(server, task -> write.run());
+        } catch (IllegalStateException e) {
+            write.run();
+        }
+    }
+
     /**
      * Increments a counter inside the database, so two threads cannot overwrite
      * each other's read-modify-write result.

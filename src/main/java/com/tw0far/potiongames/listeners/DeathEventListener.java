@@ -75,11 +75,11 @@ public class DeathEventListener implements Listener {
         Player killer = p.getKiller();
 
         // Update database stats
-        plugin.getDatabaseManager().addDeaths(p.getUniqueId().toString(), 1);
-        plugin.getDatabaseManager().addLosses(p.getUniqueId().toString(), 1);
+        plugin.getDatabaseManager().addDeathsAsync(p.getUniqueId().toString(), 1);
+        plugin.getDatabaseManager().addLossesAsync(p.getUniqueId().toString(), 1);
 
         if (killer != null) {
-            plugin.getDatabaseManager().addKills(killer.getUniqueId().toString(), 1);
+            plugin.getDatabaseManager().addKillsAsync(killer.getUniqueId().toString(), 1);
 
             // Economy reward for killer
             if (plugin.getConfigManager().isEnableRewards() && PotionGamesX.getEconomy() != null) {

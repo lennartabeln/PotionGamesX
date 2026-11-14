@@ -191,4 +191,16 @@ public interface IDatabaseManager extends IManager {
      * @param losses Number of losses to add
      */
     void addLosses(String uuid, int losses);
+
+    /**
+     * Async variants of the four incrementers: a JDBC round trip must not block
+     * the region thread, especially with a remote MySQL.
+     */
+    void addWinsAsync(String uuid, int wins);
+
+    void addLossesAsync(String uuid, int losses);
+
+    void addKillsAsync(String uuid, int kills);
+
+    void addDeathsAsync(String uuid, int deaths);
 }

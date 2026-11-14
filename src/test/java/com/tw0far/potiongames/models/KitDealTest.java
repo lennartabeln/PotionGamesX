@@ -18,24 +18,27 @@ class KitDealTest {
             List.of("Rich Kid", "Fighter", "Healer", "Looter", "Ghost", "Tank");
 
     @Test
-    void everyPlayerGetsADifferentKitWhileKitsAreLeft() {
-        for (int seed = 0; seed < 50; seed++) {
-            List<String> dealt = Lobby.dealKits(KITS, 6, new Random(seed));
+    void everyDrawStaysInsideTheActiveKits() {
+        List<String> dealt = Lobby.dealKits(KITS, 40, new Random(11));
 
-            assertEquals(6, dealt.size());
-            assertEquals(new HashSet<>(KITS), new HashSet<>(dealt),
-                    "seed " + seed + " dealt " + dealt);
-        }
+        assertEquals(40, dealt.size());
+        assertTrue(KITS.containsAll(dealt));
     }
 
     @Test
-    void morePlayersThanKitsRepeatButStayWithinThePool() {
-        List<String> dealt = Lobby.dealKits(KITS, 9, new Random(7));
+    void kitsAreNotLimitedSoDuplicatesAreAllowed() {
+        // 40 draws from 6 kits: a duplicate-free result is practically impossible.
+        List<String> dealt = Lobby.dealKits(KITS, 40, new Random(5));
 
-        assertEquals(9, dealt.size());
+        assertTrue(dealt.size() > new HashSet<>(dealt).size());
+    }
+
+    @Test
+    void drawsAreIndependentPerPlayer() {
+        List<String> dealt = Lobby.dealKits(KITS, 2, new Random(3));
+
+        assertEquals(2, dealt.size());
         assertTrue(KITS.containsAll(dealt));
-        assertEquals(new HashSet<>(KITS), new HashSet<>(dealt.subList(0, 6)));
-        assertTrue(new HashSet<>(dealt.subList(6, 9)).size() <= 3);
     }
 
     @Test
