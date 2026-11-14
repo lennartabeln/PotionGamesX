@@ -1180,6 +1180,12 @@ public class Lobby {
                 prepareTimer--;
                 break;
             case INGAME:
+                if (activePlayers.isEmpty()) {
+                    // Nobody left: skip the end countdown, clean up right away
+                    // (legacy did the same with playerAmount == 0).
+                    setState(GameStates.RESET);
+                    break;
+                }
                 if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
                     for (Participant participant : participants) {
                         if (gameTimer <= 60) {
@@ -1196,6 +1202,10 @@ public class Lobby {
                 gameTimer--;
                 break;
             case DEATHMATCH:
+                if (activePlayers.isEmpty()) {
+                    setState(GameStates.RESET);
+                    break;
+                }
                 if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
                     for (Participant participant : participants) {
                         participant.sendMessage(Messages.DeathmatchStartingIn(gameTimer));
