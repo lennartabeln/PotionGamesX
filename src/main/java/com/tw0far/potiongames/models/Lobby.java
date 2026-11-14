@@ -630,7 +630,10 @@ public class Lobby {
             Location signLoc = joinSign.getLocation();
             if (signLoc != null && signLoc.getBlock().getState() instanceof Sign) {
                 Sign sign = (Sign) signLoc.getBlock().getState();
-                sign.getSide(Side.FRONT).line(0, Component.text(id));
+                // Legacy put the plugin name on top of the join sign; the lobby
+                // number moved into the count line so multi-lobby installs stay
+                // readable.
+                sign.getSide(Side.FRONT).line(0, Messages.PluginName());
                 if (state == GameStates.WAITING || state == GameStates.PREPARING) {
                     sign.getSide(Side.FRONT).line(1, Component.text(state.toString()).color(NamedTextColor.GREEN));
                 } else {
@@ -642,7 +645,8 @@ public class Lobby {
                 } else {
                     sign.getSide(Side.FRONT).line(2, Component.text("VOTING").color(NamedTextColor.AQUA));
                 }
-                sign.getSide(Side.FRONT).line(3, Component.text("[" + playerCount + "/" + getCapacity() + "]").color(NamedTextColor.GRAY));
+                sign.getSide(Side.FRONT).line(3,
+                    Component.text("[" + id + ": " + playerCount + "/" + getCapacity() + "]").color(NamedTextColor.GRAY));
                 sign.update();
                 joinSign = sign;
             }
