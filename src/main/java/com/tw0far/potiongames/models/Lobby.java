@@ -1213,6 +1213,9 @@ public class Lobby {
                     gameTimer = Math.max(1, roundTime);
                     deathmatch = false;
                     startTimer = startDelay;
+                    // Legacy told the players how long the round runs when they
+                    // landed in the arena.
+                    sendToLobby(Messages.RoundLength(roundTime / 60));
                     playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1f, 1f);
                     setState(GameStates.INGAME);
                 } else if (prepareTimer == REVEAL_SECONDS) {

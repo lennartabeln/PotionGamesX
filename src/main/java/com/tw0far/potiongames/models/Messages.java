@@ -427,6 +427,12 @@ public class Messages {
         return prefix(Component.text(get("game.already_started", "The game has already started!")).color(NamedTextColor.RED));
     }
 
+    /** How long the round runs, announced when the players land in the arena. */
+    public static Component RoundLength(int minutes) {
+        return prefix(Component.text(String.format(get("game.round_length", "This round lasts %s minutes."), minutes))
+            .color(NamedTextColor.AQUA));
+    }
+
     /** Round start after the freeze: "The game starts now!". */
     public static Component GameStartsNow() {
         return prefix(Component.text(get("game.starts_now", "The game starts now!")).color(NamedTextColor.GREEN));
