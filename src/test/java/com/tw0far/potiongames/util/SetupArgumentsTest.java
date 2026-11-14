@@ -48,9 +48,9 @@ class SetupArgumentsTest {
 
     @Test
     void lobbyOnlyArguments() {
-        assertEquals(3, SetupArguments.parseLobbyOnly(false, new String[]{"joinsign", "3"}).intValue());
-        assertEquals(1, SetupArguments.parseLobbyOnly(true, new String[]{"joinsign"}).intValue());
-        assertNull(SetupArguments.parseLobbyOnly(false, new String[]{"joinsign"}));
+        assertEquals(3, SetupArguments.parseLobbyOnly(false, new String[]{"sign", "3"}).intValue());
+        assertEquals(1, SetupArguments.parseLobbyOnly(true, new String[]{"sign"}).intValue());
+        assertNull(SetupArguments.parseLobbyOnly(false, new String[]{"sign"}));
         assertNull(SetupArguments.parseLobbyOnly(true, new String[]{"joinsign", "abc"}));
     }
 }

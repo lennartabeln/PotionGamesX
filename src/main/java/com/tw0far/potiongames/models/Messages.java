@@ -1009,7 +1009,8 @@ public class Messages {
     public static String HelpGameserverText() { return get("help.gameserver", "/pg gameserver - Toggle gameserver mode (true/false)"); }
     public static String HelpHeadText() { return get("help.head", "/pg headp1(2;3) - Add Player Head to Stats-Wall"); }
     public static String HelpJoinText() { return get("help.join", "/pg join # - Join a game"); }
-    public static String HelpJoinsignText() { return get("help.joinsign", "/pg joinsign <lobbynumber> - Add Join-Sign"); }
+    /** Aggregated stats-wall sign line (signp1..3). */
+    public static String HelpSignpText() { return get("help.signp", "/pg signp1|signp2|signp3 - Add a player sign to the stats wall"); }
     public static Component KickNotInLobby(String player) {
         return prefix(Component.text(String.format(get("kick.not_in_lobby", "%s is not in a lobby!"), player))
             .color(NamedTextColor.RED));
@@ -1031,7 +1032,7 @@ public class Messages {
     public static String HelpDelspawnText() { return get("help.delspawn", "/pg delspawn <lobbynumber> <arenaname> - Remove last spawn"); }
     public static String HelpDeldeathmatchText() { return get("help.deldeathmatch", "/pg deldeathmatch <lobbynumber> <arenaname> - Remove last deathmatch spawn"); }
     public static String HelpSetupText() { return get("help.setup", "/pg setup - Set up plugin"); }
-    public static String HelpSignText() { return get("help.sign", "/pg signp1(2;3) - Add Player Sign to Stats-Wall"); }
+    public static String HelpSignText() { return get("help.sign", "/pg sign <lobby> - Set the join sign (look at a sign)"); }
     public static String HelpStartText() { return get("help.start", "/pg start - Set lobby countdown to 10"); }
     public static String HelpStatsText() { return get("help.stats", "/pg stats [player] - Show player stats"); }
     public static String HelpStatusText() { return get("help.status", "/pg status - Show server status and active lobbies"); }

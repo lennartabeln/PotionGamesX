@@ -43,8 +43,8 @@ public class HelpCommand implements ICommand {
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpDelspawnText()).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpDeldeathmatchText()).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpHeadText()).color(NamedTextColor.GRAY)));
+            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpSignpText()).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpSignText()).color(NamedTextColor.GRAY)));
-            player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpJoinsignText()).color(NamedTextColor.GRAY)));
             player.sendMessage(Settings.prefix.append(Component.text(Messages.HelpSetcountdownText()).color(NamedTextColor.GRAY)));
         }
 
