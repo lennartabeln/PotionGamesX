@@ -1249,6 +1249,7 @@ public class Lobby {
             case RESET:
                 releaseLocks();
                 startTimer = 0;
+                clearArenaEntities();
                 restoreBlocks();
                 restoreGameRules();
                 PotionGamesX plugin = PotionGamesX.getInstance();
