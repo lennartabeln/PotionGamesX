@@ -889,7 +889,7 @@ public class Lobby {
         if (names.isEmpty()) {
             return;
         }
-        // Players without a choice get different kits while the deck lasts.
+        // Players without a choice draw their own random kit.
         List<String> pool = new ArrayList<>();
         for (Participant participant : participants) {
             if (participant.getKit() == null) {
@@ -911,16 +911,14 @@ public class Lobby {
     }
 
     /**
-     * Deals {@code count} kits from {@code names}: every player gets a different
-     * kit while kits are left, afterwards the picks repeat. Separate from the
-     * lobby state so the distribution can be tested without a server.
+     * Draws {@code count} random kits from {@code names}. Kits are not limited:
+     * every player draws on their own, so two players can end up with the same
+     * kit (legacy drew {@code rnd.nextInt(activeKits)} per player as well).
      */
     static List<String> dealKits(List<String> names, int count, Random random) {
-        List<String> deck = new ArrayList<>(names);
-        Collections.shuffle(deck, random);
         List<String> dealt = new ArrayList<>(Math.max(0, count));
         for (int i = 0; i < count; i++) {
-            dealt.add(i < deck.size() ? deck.get(i) : names.get(random.nextInt(names.size())));
+            dealt.add(names.get(random.nextInt(names.size())));
         }
         return dealt;
     }
@@ -1529,7 +1527,16 @@ public class Lobby {
                 }
             }
             if (aliveTeams.size() == 1 && !alive.isEmpty()) {
-                announceTeamWin(aliveTeams.iterator().next(), alive);
+                String winningTeam = aliveTeams.iterator().next();
+                // Only the members of that team win. A player without a team (or
+                // a stale assignment) is not part of it, even while still alive.
+                List<Player> winners = new ArrayList<>();
+                for (Player player : alive) {
+                    if (winningTeam.equals(lobbyteamplayernames.get(player))) {
+                        winners.add(player);
+                    }
+                }
+                announceTeamWin(winningTeam, winners);
                 endRound();
                 return;
             }
@@ -1677,7 +1684,7 @@ public class Lobby {
             if (player != null && player.equals(winner)) {
                 rewardWin(player);
             } else if (player != null) {
-                PotionGamesX.getInstance().getDatabaseManager().addLosses(player.getUniqueId().toString(), 1);
+                PotionGamesX.getInstance().getDatabaseManager().addLossesAsync(player.getUniqueId().toString(), 1);
             }
         }
     }
@@ -1690,7 +1697,7 @@ public class Lobby {
             if (winningTeam.contains(player)) {
                 rewardWin(player);
             } else {
-                PotionGamesX.getInstance().getDatabaseManager().addLosses(player.getUniqueId().toString(), 1);
+                PotionGamesX.getInstance().getDatabaseManager().addLossesAsync(player.getUniqueId().toString(), 1);
             }
         }
     }
@@ -1711,7 +1718,7 @@ public class Lobby {
                 }
             }
         }
-        plugin.getDatabaseManager().addWins(player.getUniqueId().toString(), 1);
+        plugin.getDatabaseManager().addWinsAsync(player.getUniqueId().toString(), 1);
         spawnWinFirework(player);
     }
 
