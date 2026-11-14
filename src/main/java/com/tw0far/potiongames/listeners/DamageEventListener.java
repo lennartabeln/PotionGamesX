@@ -3,17 +3,27 @@ package com.tw0far.potiongames.listeners;
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Lobby;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 /**
  * Handles entity damage events.
  * Manages player damage, damage cancellation, and damage tracking.
+ *
+ * <p>The PvP gate looks at the <em>state</em> of the two lobbies instead of the
+ * {@code activePlayers} list: a player who is playing a round may always hit
+ * another player who is playing a round, however the internal bookkeeping looks
+ * at that moment. Everyone else (lobby, lobby phase, spectator) stays
+ * protected.</p>
  */
 public class DamageEventListener implements Listener {
+
     private final PotionGamesX plugin;
 
     public DamageEventListener(PotionGamesX plugin) {
@@ -22,11 +32,9 @@ public class DamageEventListener implements Listener {
 
     @EventHandler
     public void onDamage(EntityDamageEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
+        if (!(e.getEntity() instanceof Player p)) {
             return;
         }
-
-        Player p = (Player) e.getEntity();
 
         boolean isActive = plugin.getGame().isActivePlayer(p);
         boolean isSpectator = plugin.getGame().isSpectatorPlayer(p);
@@ -50,6 +58,56 @@ public class DamageEventListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDamageByEntity(EntityDamageByEntityEvent e) {
+        if (!(e.getEntity() instanceof Player victim)) {
+            return;
+        }
+
+        Player attacker = attackerOf(e);
+        if (attacker == null || attacker.equals(victim)) {
+            return;
+        }
+
+        Lobby victimLobby = lobbyOf(victim);
+        Lobby attackerLobby = lobbyOf(attacker);
+
+        // Nobody involved: untouched (build mode, hub, other plugins).
+        if (victimLobby == null && attackerLobby == null) {
+            return;
+        }
+
+        // Two players in a running round may fight; friendly fire and the
+        // deathmatch rules are handled by CombatEventListener.
+        if (isPlaying(victimLobby) && isPlaying(attackerLobby)) {
+            return;
+        }
+
+        // A lobby player, a spectator or anyone outside the round stays safe.
+        e.setCancelled(true);
+    }
+
+    /** True when the lobby is in a state the players can fight in. */
+    private boolean isPlaying(Lobby lobby) {
+        if (lobby == null) {
+            return false;
+        }
+        GameStates state = lobby.getState();
+        return state == GameStates.INGAME || state == GameStates.DEATHMATCH;
+    }
+
+    /** Player behind the hit: the attacker itself or the shooter of a projectile. */
+    private Player attackerOf(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player player) {
+            return player;
+        }
+        if (event.getDamager() instanceof Projectile projectile
+                && projectile.getShooter() instanceof Player player) {
+            return player;
+        }
+        return null;
+    }
+
     private Lobby lobbyOf(Player player) {
         String lobbyId = plugin.getGame().getPlayerLobby(player);
         if (lobbyId == null) {
@@ -60,38 +118,5 @@ public class DamageEventListener implements Listener {
         } catch (NumberFormatException e) {
             return null;
         }
-    }
-
-    @EventHandler
-    public void onDamageByEntity(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof Player)) {
-            return;
-        }
-
-        Player victim = (Player) e.getEntity();
-
-        if (!(e.getDamager() instanceof Player)) {
-            return;
-        }
-
-        Player attacker = (Player) e.getDamager();
-
-        // Only manage PvP when at least one participant belongs to a game lobby
-        boolean victimInLobby = plugin.getGame().getPlayerLobby(victim) != null;
-        boolean attackerInLobby = plugin.getGame().getPlayerLobby(attacker) != null;
-        if (!victimInLobby && !attackerInLobby) {
-            return;
-        }
-
-        boolean victimActive = plugin.getGame().isActivePlayer(victim);
-        boolean attackerActive = plugin.getGame().isActivePlayer(attacker);
-
-        // Both must be active players to fight
-        if (!victimActive || !attackerActive) {
-            e.setCancelled(true);
-            return;
-        }
-
-        // Damage allowed - attacker has hit victim
     }
 }

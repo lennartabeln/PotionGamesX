@@ -1327,6 +1327,9 @@ public class Lobby {
                     }
                     break;
                 }
+                // Safety net: a participant that stayed locked (a failed unlock,
+                // a reload) would neither move nor fight for the whole round.
+                releaseStaleLocks();
                 if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
                     for (Participant participant : participants) {
                         if (gameTimer <= 60) {
@@ -1364,6 +1367,7 @@ public class Lobby {
                     }
                     break;
                 }
+                releaseStaleLocks();
                 // Legacy had no deathmatch timer: the phase ends with the last survivor.
                 checkWinCondition();
                 break;
@@ -1517,6 +1521,19 @@ public class Lobby {
     private void releaseLocks() {
         for (Participant participant : participants) {
             participant.clearMovementLock();
+        }
+    }
+
+    /**
+     * Unlocks every participant that is still frozen although the countdown is
+     * over. Cheap (one boolean per participant) and idempotent, so it runs in
+     * the tick as a safety net.
+     */
+    private void releaseStaleLocks() {
+        for (Participant participant : participants) {
+            if (participant.isMovementLocked()) {
+                participant.unlockMovement();
+            }
         }
     }
 
