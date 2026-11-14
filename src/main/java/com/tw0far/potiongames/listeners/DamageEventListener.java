@@ -1,6 +1,8 @@
 package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.models.GameStates;
+import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -39,8 +41,30 @@ public class DamageEventListener implements Listener {
             return;
         }
 
-        // Allow damage to active players
-        // Damage is processed normally during games
+        // Lobby phase: no damage at all. Legacy switched the lobby world to
+        // PEACEFUL with FALL_DAMAGE=false while waiting, so a fall off the lobby
+        // platform or a stray hit cannot hurt (or kill) anyone before the round.
+        Lobby lobby = lobbyOf(p);
+        if (lobby != null && lobbyPhase(lobby.getState())) {
+            e.setCancelled(true);
+        }
+    }
+
+    /** States in which players are in the lobby and must not take damage. */
+    static boolean lobbyPhase(GameStates state) {
+        return state == GameStates.WAITING || state == GameStates.PREPARING || state == GameStates.RESET;
+    }
+
+    private Lobby lobbyOf(Player player) {
+        String lobbyId = plugin.getGame().getPlayerLobby(player);
+        if (lobbyId == null) {
+            return null;
+        }
+        try {
+            return plugin.getGame().getLobby(Integer.parseInt(lobbyId));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     @EventHandler
