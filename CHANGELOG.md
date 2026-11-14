@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.33] - 2026-11-14
+
+### Fixed
+
+- The arena world gets `pvp` enabled and a `PEACEFUL` world is switched to `EASY` for the round (legacy `setGameRules`), so players can damage each other on a lobby world that ships `pvp: false` (e.g. a Multiverse lobby); both are restored afterwards
+- A join sign is recognised by its location instead of the first line, which now shows the plugin name - right clicking it joins the lobby again
+
 ## [1.0.0-dev.32] - 2026-11-14
 
 ### Fixed
