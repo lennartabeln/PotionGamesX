@@ -64,7 +64,7 @@ public class RankWallUpdater {
         if (!isConfigured()) {
             return entries;
         }
-        try (ResultSet rs = plugin.getDatabaseManager().query("SELECT UUID FROM Stats ORDER BY WINS DESC LIMIT 3")) {
+        try (ResultSet rs = plugin.getDatabaseManager().query("SELECT UUID FROM Stats ORDER BY WINS DESC, KD DESC LIMIT 3")) {
             if (rs == null) {
                 return entries;
             }
