@@ -236,6 +236,7 @@ en_US:
       label: "Rounds"
     scoreboard:
       none: "none"
+      alive: "alive"
     selector:
       team: "Team-Selector"
     server:
@@ -557,6 +558,7 @@ de_DE:
       label: "Runden"
     scoreboard:
       none: "keins"
+      alive: "übrig"
     selector:
       team: "Team-Auswahl"
     server:

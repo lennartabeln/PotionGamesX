@@ -156,7 +156,11 @@ public class PlayerScoreboardManager {
         row(board, TEAM_PLAYERS, lobby.getPlayerCount() + "/" + lobby.getCapacity());
 
         if (round) {
-            row(board, TEAM_TIME, clock(lobby.getGameTimer()));
+            // The deathmatch has no timer (legacy behaviour), so the frozen clock
+            // would be misleading: show how many players are left instead.
+            row(board, TEAM_TIME, state == GameStates.DEATHMATCH
+                ? lobby.getAlivePlayerCount() + " " + Messages.AliveLabel()
+                : clock(lobby.getGameTimer()));
             row(board, TEAM_KILLS, Integer.toString(lobby.getKills(player)));
         }
     }
