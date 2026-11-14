@@ -89,9 +89,13 @@ public class ConfigurationManager implements IConfigurationManager {
         countdown = config.getInt("pg.defaults.countdown", 60);
         startDelay = Math.max(1, config.getInt("pg.defaults.startDelay", 10));
         roundTime = config.getInt("pg.defaults.roundTime", 30);
-        minPlayers = config.getInt("pg.defaults.minPlayers", 2);
         teamSize = config.getInt("pg.defaults.teamSize", 2);
         maxPlayers = config.getInt("pg.defaults.maxPlayers", 24);
+        // Without an explicit value a lobby needs half of its slots, like the
+        // legacy release (minPlayers = maxPlayers / 2).
+        minPlayers = config.contains("pg.defaults.minPlayers")
+            ? Math.max(1, config.getInt("pg.defaults.minPlayers"))
+            : Math.max(1, maxPlayers / 2);
         activeKits = config.getInt("pg.activeKits", 6);
         activePotions = config.getInt("pg.activePotions", 0);
         winningReward = config.getInt("pg.winningReward", 100);

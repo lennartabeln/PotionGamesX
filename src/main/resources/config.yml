@@ -57,7 +57,8 @@ pg:
     # Player limits
     maxPlayers: 24             # Upper bound; the effective capacity is capped by
                                # the smallest usable arena spawn count
-    minPlayers: 2
+    # minPlayers: 12           # Optional. Without a value half of maxPlayers is
+                               # required to start a round.
     teamSize: 2
 
     # Feature flags
