@@ -10,6 +10,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.managers.IConfigurationManager;
 
 public class Game {
     private ArrayList<Lobby> lobbies = new ArrayList<>();
@@ -127,7 +128,16 @@ public class Game {
             return false;
         }
 
-        Lobby lobby = new Lobby(lobbyId);
+        // Build the lobby from the configured defaults (pg.defaults.*), so a new
+        // lobby starts with the values the admin configured once.
+        IConfigurationManager config = PotionGamesX.getInstance().getConfigManager();
+        LobbyConfig lobbyConfig = new LobbyConfig(
+            lobbyId, Settings.lobbies,
+            config.getCountdown(), config.getMaxPlayers(), config.getMinPlayers(),
+            config.getTeamSize(), config.getRoundTime(),
+            config.isActivateTeams(), config.isActivateKits(),
+            config.isActivateShop(), config.isActivateAirdrops());
+        Lobby lobby = new Lobby(lobbyId, lobbyConfig);
         boolean success = lobby.add(location);
         if (success) {
             lobbies.add(lobby);

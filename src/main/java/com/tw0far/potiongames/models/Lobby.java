@@ -264,18 +264,13 @@ public class Lobby {
 
     public boolean add(Location spawn) {
         this.spawn = spawn;
+        // Only the spawn is written: every other value is inherited from
+        // pg.defaults, so defaults changed later also apply to this lobby until
+        // it gets its own pg.lobbies.<id>.settings.<key>.
         Settings.lobbies.set("pg.lobbies." + id + ".spawn", spawn);
-        Settings.lobbies.set("pg.lobbies." + id + ".activateTeams", activateTeams);
-        Settings.lobbies.set("pg.lobbies." + id + ".activateKits", activateKits);
-        Settings.lobbies.set("pg.lobbies." + id + ".activateShop", activateShop);
-        Settings.lobbies.set("pg.lobbies." + id + ".activateAirdrops", activateAirdrops);
-        // Persist minutes, the documented unit.
-        Settings.lobbies.set("pg.lobbies." + id + ".roundTime", Math.max(1, roundTime / 60));
-        Settings.lobbies.set("pg.lobbies." + id + ".maxPlayers", maxPlayers);
-        Settings.lobbies.set("pg.lobbies." + id + ".minPlayers", minPlayers);
-        Settings.lobbies.set("pg.lobbies." + id + ".teamSize", teamSize);
         try {
             Settings.lobbies.save(Settings.lobbiesFile);
+            load();
             syncTeamSelector();
             return true;
         } catch (Exception ex) {

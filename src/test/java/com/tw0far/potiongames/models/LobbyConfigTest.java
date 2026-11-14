@@ -99,4 +99,38 @@ class LobbyConfigTest {
         LobbyConfig config = new LobbyConfig(5, yml, 60, 24, 2, 2, 30, true, true, true, true);
         assertEquals(6, config.getTeamSize());
     }
+
+    @Test
+    void minPlayersFallsBackToHalfOfMaxPlayers() {
+        LobbyConfig config = new LobbyConfig(
+                3, emptyYml(),
+                60,   // countdown
+                24,   // maxPlayers
+                0,    // minPlayers not configured
+                2,    // teamSize
+                30,   // roundTime
+                true, true, true, true);
+
+        assertEquals(24, config.getMaxPlayers());
+        assertEquals(12, config.getMinPlayers());
+    }
+
+    @Test
+    void configuredDefaultsReachANewLobby() {
+        YamlConfiguration yml = emptyYml();
+        yml.set("pg.defaults.countdown", 20);
+        yml.set("pg.defaults.minPlayers", 6);
+        yml.set("pg.defaults.teamSize", 3);
+        yml.set("pg.defaults.activateKits", false);
+
+        LobbyConfig config = new LobbyConfig(
+                4, yml,
+                60, 24, 12, 2, 30,
+                true, true, true, true);
+
+        assertEquals(20, config.getCountdown());
+        assertEquals(6, config.getMinPlayers());
+        assertEquals(3, config.getTeamSize());
+        assertFalse(config.isActivateKits());
+    }
 }

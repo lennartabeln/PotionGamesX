@@ -51,7 +51,11 @@ public class LobbyConfig {
 
         int resolvedGlobalCountdown = getIntOrDefault(defaultsPath + ".countdown", getIntOrDefault("pg.countdown", globalCountdown));
         int resolvedGlobalMaxPlayers = getIntOrDefault(defaultsPath + ".maxPlayers", getIntOrDefault("pg.maxPlayers", globalMaxPlayers));
-        int resolvedGlobalMinPlayers = getIntOrDefault(defaultsPath + ".minPlayers", getIntOrDefault("pg.minPlayers", globalMinPlayers));
+        // A lobby that configures nothing needs half of the slots unless the
+        // defaults or the legacy global keys say otherwise.
+        int fallbackMinPlayers = globalMinPlayers > 0 ? globalMinPlayers : Math.max(1, resolvedGlobalMaxPlayers / 2);
+        int resolvedGlobalMinPlayers = getIntOrDefault(defaultsPath + ".minPlayers",
+            getIntOrDefault("pg.minPlayers", fallbackMinPlayers));
         int resolvedGlobalTeamSize = getIntOrDefault(defaultsPath + ".teamSize", getIntOrDefault("pg.teamSize", globalTeamSize));
         int resolvedGlobalRoundTime = getIntOrDefault(defaultsPath + ".roundTime", getIntOrDefault("pg.roundTime", globalRoundTime));
 
