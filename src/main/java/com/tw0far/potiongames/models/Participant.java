@@ -164,6 +164,13 @@ public class Participant {
         }
     }
 
+    /** XP bar level, used as the visible countdown in the lobby (legacy did the same). */
+    public void setLevel(int level) {
+        if (player != null) {
+            player.setLevel(Math.max(0, level));
+        }
+    }
+
     public void sendMessage(Component message) {
         player.sendMessage(message);
     }

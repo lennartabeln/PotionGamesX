@@ -1120,6 +1120,7 @@ public class Lobby {
             case WAITING:
                 for (Participant participant : participants) {
                     participant.sendActionBar(Messages.GameWaiting(playerCount, minPlayers));
+                    participant.setLevel(0);
                 }
                 if (playerCount >= minPlayers) {
                     prepareTimer = Math.max(1, countdown);
@@ -1133,6 +1134,8 @@ public class Lobby {
             case PREPARING:
                 for (Participant participant : participants) {
                     participant.sendActionBar(Messages.GameStartsIn(prepareTimer));
+                    // The XP bar shows the same countdown as the action bar.
+                    participant.setLevel(prepareTimer);
                 }
                 if (prepareTimer <= 0) {
                     if (currentArena == null) {
