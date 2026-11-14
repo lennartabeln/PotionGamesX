@@ -1,9 +1,11 @@
 package com.tw0far.potiongames.models;
 
+import com.tw0far.potiongames.PotionGamesX;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -64,9 +66,17 @@ public class Participant {
             inv.setItem(SLOT_KIT_SELECTOR, item(Material.ENDER_CHEST, Messages.KitSelectorItem()));
         }
 
-        inv.setItem(SLOT_TEAM_SELECTOR, item(Material.CLOCK, Messages.SelectorTeamItem()));
+        // The team selector is pointless without active teams, and a game server
+        // with startOnJoin does not offer leaving (legacy gated both items).
+        if (lobby.isActivateTeams()) {
+            inv.setItem(SLOT_TEAM_SELECTOR, item(Material.CLOCK, Messages.SelectorTeamItem()));
+        }
         inv.setItem(SLOT_STATS, item(Material.EMERALD, Messages.StatsItem()));
-        inv.setItem(SLOT_LEAVE, item(Material.MAGMA_CREAM, Messages.LeaveItem()));
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (plugin == null || !plugin.getConfigManager().isStartOnJoin()) {
+            inv.setItem(SLOT_LEAVE, item(Material.MAGMA_CREAM, Messages.LeaveItem()));
+        }
+        player.playSound(player.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
     }
 
     /**
