@@ -3,8 +3,10 @@ package com.tw0far.potiongames.models;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
@@ -886,18 +889,40 @@ public class Lobby {
         if (names.isEmpty()) {
             return;
         }
-        Random random = new Random();
+        // Players without a choice get different kits while the deck lasts.
+        List<String> pool = new ArrayList<>();
+        for (Participant participant : participants) {
+            if (participant.getKit() == null) {
+                pool.add(null);
+            }
+        }
+        Iterator<String> dealtKits = dealKits(names, pool.size(), ThreadLocalRandom.current()).iterator();
         for (Participant participant : participants) {
             if (participant.getKit() != null) {
                 continue;
             }
-            String name = names.get(random.nextInt(names.size()));
+            String name = dealtKits.next();
             participant.setKit(new Kit(name));
             Player player = participant.getPlayer();
             if (player != null && player.isOnline()) {
                 player.sendMessage(Messages.KitNowHave(name));
             }
         }
+    }
+
+    /**
+     * Deals {@code count} kits from {@code names}: every player gets a different
+     * kit while kits are left, afterwards the picks repeat. Separate from the
+     * lobby state so the distribution can be tested without a server.
+     */
+    static List<String> dealKits(List<String> names, int count, Random random) {
+        List<String> deck = new ArrayList<>(names);
+        Collections.shuffle(deck, random);
+        List<String> dealt = new ArrayList<>(Math.max(0, count));
+        for (int i = 0; i < count; i++) {
+            dealt.add(i < deck.size() ? deck.get(i) : names.get(random.nextInt(names.size())));
+        }
+        return dealt;
     }
 
     public void distributeTeams() {
