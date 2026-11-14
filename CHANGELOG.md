@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.36] - 2026-11-14
+
+### Fixed
+
+- Kits are unlimited again: every player without a choice draws independently, so two players may share a kit (legacy behaviour)
+- A team win only credits the alive members of the surviving team; a player without a team assignment no longer receives a win
+- Kill, death, win and loss counters are written off the tick thread, so a JDBC round trip can no longer stall a kill or a round end
+
 ## [1.0.0-dev.35] - 2026-11-14
 
 ### Changed
