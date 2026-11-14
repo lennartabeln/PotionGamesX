@@ -1154,6 +1154,12 @@ public class Lobby {
                         giveSpawnItems();
                         warnAboutSpawnShortage(currentArena);
                     }
+                    if (currentArena == null) {
+                        // No arena and no vote: without a map the round would start
+                        // in the lobby. Abort instead of half-starting.
+                        abortRoundStart(null);
+                        break;
+                    }
                     gameTimer = Math.max(1, roundTime);
                     deathmatch = false;
                     playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1f, 1f);
@@ -1189,8 +1195,12 @@ public class Lobby {
                         }
                     }
                 } else if (gameTimer < 0) {
-                    setState(GameStates.ENDING);
-                    endingTimer = Math.max(1, reset);
+                    // The round is over: announce the draw and stop here. Running
+                    // checkWinCondition() in the same tick would declare a winner
+                    // (or a team win) right after the draw message.
+                    sendToLobby(Messages.RoundNobodyWon());
+                    endRound();
+                    break;
                 }
                 checkWinCondition();
                 gameTimer--;
