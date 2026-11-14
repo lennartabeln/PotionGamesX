@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 /**
@@ -42,17 +41,6 @@ public class StartLockListener implements Listener {
         pinned.setYaw(to.getYaw());
         pinned.setPitch(to.getPitch());
         event.setTo(pinned);
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-        Participant participant = participantOf(player);
-        if (participant != null && participant.isMovementLocked()) {
-            event.setCancelled(true);
-        }
     }
 
     /** True when the player actually left their block (looking around is allowed). */
