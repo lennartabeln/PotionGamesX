@@ -23,6 +23,7 @@ public class LobbyConfig {
     private int minPlayers;
     private int teamSize;
     private int roundTime;
+    private int startDelay;
 
     private boolean activateTeams;
     private boolean activateKits;
@@ -64,6 +65,8 @@ public class LobbyConfig {
         this.minPlayers = getLobbyInt("minPlayers", lobbySettingsPath, lobbyRootPath, resolvedGlobalMinPlayers);
         this.teamSize = getLobbyInt("teamSize", lobbySettingsPath, lobbyRootPath, resolvedGlobalTeamSize);
         this.roundTime = normalizeRoundTime(getLobbyInt("roundTime", lobbySettingsPath, lobbyRootPath, resolvedGlobalRoundTime));
+        int resolvedGlobalStartDelay = getIntOrDefault(defaultsPath + ".startDelay", 10);
+        this.startDelay = Math.max(1, getLobbyInt("startDelay", lobbySettingsPath, lobbyRootPath, resolvedGlobalStartDelay));
 
         this.activateTeams = getLobbyBoolean("activateTeams", lobbySettingsPath, lobbyRootPath, resolvedGlobalActivateTeams);
         this.activateKits = getLobbyBoolean("activateKits", lobbySettingsPath, lobbyRootPath, resolvedGlobalActivateKits);
@@ -131,6 +134,10 @@ public class LobbyConfig {
             return value * 60;
         }
         return value;
+    }
+
+    public int getStartDelay() {
+        return startDelay;
     }
 
     public int getCountdown() {

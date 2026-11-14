@@ -81,7 +81,7 @@ public class Lobby {
     // Runtime boolean flags (per-lobby state)
     private boolean deathmatch = false;
     /** Seconds the players stay frozen after the teleport into the arena. */
-    private static final int ROUND_START_DELAY = 10;
+    private int startDelay = 10;
     private int startTimer = 0;
     private boolean joinable = true;
     private boolean pause = false;
@@ -137,6 +137,7 @@ public class Lobby {
         this.lobbyConfig = lobbyConfig;
         // Sync runtime fields from LobbyConfig for existing lobby accessors.
         this.countdown = lobbyConfig.getCountdown();
+        this.startDelay = lobbyConfig.getStartDelay();
         this.maxPlayers = lobbyConfig.getMaxPlayers();
         this.minPlayers = lobbyConfig.getMinPlayers();
         this.teamSize = lobbyConfig.getTeamSize();
@@ -171,6 +172,7 @@ public class Lobby {
             minPlayers = lobbyConfig.getMinPlayers();
             teamSize = lobbyConfig.getTeamSize();
             countdown = lobbyConfig.getCountdown();
+            startDelay = lobbyConfig.getStartDelay();
         } else {
             // Fallback loading directly from arena-data.yml when no LobbyConfig is provided.
             activateTeams = Settings.lobbies.getBoolean("pg.lobbies." + id + ".activateTeams");
@@ -1163,7 +1165,7 @@ public class Lobby {
                     }
                     gameTimer = Math.max(1, roundTime);
                     deathmatch = false;
-                    startTimer = ROUND_START_DELAY;
+                    startTimer = startDelay;
                     playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1f, 1f);
                     setState(GameStates.INGAME);
                 } else if (prepareTimer == countdown) {
@@ -1388,7 +1390,7 @@ public class Lobby {
             participant.lockMovement();
         }
         gameTimer = 60;
-        startTimer = ROUND_START_DELAY;
+        startTimer = startDelay;
         setState(GameStates.DEATHMATCH);
     }
 

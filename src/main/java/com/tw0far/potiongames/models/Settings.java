@@ -37,6 +37,7 @@ public final class Settings {
     public static int teamSize = 2;
     public static int roundTime = 30;
     public static int countdown = 60;
+    public static int startDelay = 10;
     public static String language = "en_US";
 
 
@@ -56,6 +57,7 @@ public final class Settings {
     public static void loadSettings(PotionGamesX pg) {
         FileConfiguration cfg = pg.getConfig();
         countdown = cfg.getInt("pg.defaults.countdown", 60);
+        startDelay = Math.max(1, cfg.getInt("pg.defaults.startDelay", 10));
         activateTeams = cfg.getBoolean("pg.defaults.activateTeams", true);
         activateKits = cfg.getBoolean("pg.defaults.activateKits", true);
         activateShop = cfg.getBoolean("pg.defaults.activateShop", true);

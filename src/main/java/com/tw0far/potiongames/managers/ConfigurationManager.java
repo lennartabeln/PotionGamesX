@@ -8,6 +8,7 @@ public class ConfigurationManager implements IConfigurationManager {
 
     private String language = "en_US";
     private int countdown = 60;
+    private int startDelay = 10;
     private int roundTime = 30;
     private int minPlayers = 2;
     private int teamSize = 2;
@@ -86,6 +87,7 @@ public class ConfigurationManager implements IConfigurationManager {
         FileConfiguration config = plugin.getConfig();
         language = config.getString("pg.language", "en_US");
         countdown = config.getInt("pg.defaults.countdown", 60);
+        startDelay = Math.max(1, config.getInt("pg.defaults.startDelay", 10));
         roundTime = config.getInt("pg.defaults.roundTime", 30);
         minPlayers = config.getInt("pg.defaults.minPlayers", 2);
         teamSize = config.getInt("pg.defaults.teamSize", 2);
@@ -125,6 +127,9 @@ public class ConfigurationManager implements IConfigurationManager {
 
     @Override
     public int getCountdown() { return countdown; }
+
+    /** Seconds players stay frozen after the teleport into the arena. */
+    public int getStartDelay() { return startDelay; }
 
     @Override
     public int getRoundTime() { return roundTime; }
