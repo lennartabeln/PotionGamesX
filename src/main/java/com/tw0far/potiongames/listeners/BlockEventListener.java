@@ -48,14 +48,14 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        if (ALLOWED_BLOCKS.contains(e.getBlock().getType())) {
-            // Track so the arena can be restored at reset (only during a game)
-            if (isGameState(plugin.getLobbyStateManager().getGameState(s))) {
-                lobby.addBrokenBlock(e.getBlock().getLocation(), e.getBlock().getType());
-            }
-        } else {
+        var state = plugin.getLobbyStateManager().getGameState(s);
+        // Only a running round allows edits, and only for the arena blocks.
+        if (!isGameState(state) || !ALLOWED_BLOCKS.contains(e.getBlock().getType())) {
             e.setCancelled(true);
+            return;
         }
+        // Track so the arena can be restored at reset
+        lobby.addBrokenBlock(e.getBlock().getLocation(), e.getBlock().getType());
     }
 
     @EventHandler
@@ -71,12 +71,15 @@ public class BlockEventListener implements Listener {
             return;
         }
 
-        boolean gameState = isGameState(plugin.getLobbyStateManager().getGameState(s));
+        var state = plugin.getLobbyStateManager().getGameState(s);
+
+        if (!isGameState(state)) {
+            // Building is only a round mechanic; the lobby stays as it is.
+            e.setCancelled(true);
+            return;
+        }
 
         if (e.getBlock().getType() == Material.TNT) {
-            if (!gameState) {
-                return;
-            }
             e.setCancelled(true);
             var itemInHand = p.getInventory().getItemInMainHand();
             if (itemInHand.getAmount() > 1) {
@@ -90,9 +93,7 @@ public class BlockEventListener implements Listener {
         }
 
         if (ALLOWED_BLOCKS.contains(e.getBlock().getType())) {
-            if (gameState) {
-                lobby.addPlacedBlock(e.getBlock().getLocation(), e.getBlock().getType());
-            }
+            lobby.addPlacedBlock(e.getBlock().getLocation(), e.getBlock().getType());
         } else {
             e.setCancelled(true);
         }
@@ -106,6 +107,8 @@ public class BlockEventListener implements Listener {
             return;
         }
         if (!isGameState(plugin.getLobbyStateManager().getGameState(s))) {
+            // No buckets outside a running round - the lobby stays untouched.
+            e.setCancelled(true);
             return;
         }
 

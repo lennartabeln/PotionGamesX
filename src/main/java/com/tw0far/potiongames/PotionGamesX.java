@@ -109,6 +109,7 @@ public class PotionGamesX extends JavaPlugin {
         // Combat-related events
         pm.registerEvents(new CombatEventListener(this), this);
         pm.registerEvents(new DamageEventListener(this), this);
+        pm.registerEvents(new LobbyHungerListener(this), this);
         pm.registerEvents(new DeathEventListener(this), this);
 
         // Environmental events

@@ -45,14 +45,9 @@ public class DamageEventListener implements Listener {
         // PEACEFUL with FALL_DAMAGE=false while waiting, so a fall off the lobby
         // platform or a stray hit cannot hurt (or kill) anyone before the round.
         Lobby lobby = lobbyOf(p);
-        if (lobby != null && lobbyPhase(lobby.getState())) {
+        if (lobby != null && lobby.getState().isLobbyPhase()) {
             e.setCancelled(true);
         }
-    }
-
-    /** States in which players are in the lobby and must not take damage. */
-    static boolean lobbyPhase(GameStates state) {
-        return state == GameStates.WAITING || state == GameStates.PREPARING || state == GameStates.RESET;
     }
 
     private Lobby lobbyOf(Player player) {

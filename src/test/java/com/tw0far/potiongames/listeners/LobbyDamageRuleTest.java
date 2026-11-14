@@ -11,19 +11,19 @@ class LobbyDamageRuleTest {
 
     @Test
     void waitingAndPreparingAreSafe() {
-        assertTrue(DamageEventListener.lobbyPhase(GameStates.WAITING));
-        assertTrue(DamageEventListener.lobbyPhase(GameStates.PREPARING));
+        assertTrue(GameStates.WAITING.isLobbyPhase());
+        assertTrue(GameStates.PREPARING.isLobbyPhase());
     }
 
     @Test
     void resetIsSafeAgain() {
-        assertTrue(DamageEventListener.lobbyPhase(GameStates.RESET));
+        assertTrue(GameStates.RESET.isLobbyPhase());
     }
 
     @Test
     void roundsKeepDamage() {
-        assertFalse(DamageEventListener.lobbyPhase(GameStates.INGAME));
-        assertFalse(DamageEventListener.lobbyPhase(GameStates.DEATHMATCH));
-        assertFalse(DamageEventListener.lobbyPhase(GameStates.ENDING));
+        assertFalse(GameStates.INGAME.isLobbyPhase());
+        assertFalse(GameStates.DEATHMATCH.isLobbyPhase());
+        assertFalse(GameStates.ENDING.isLobbyPhase());
     }
 }
