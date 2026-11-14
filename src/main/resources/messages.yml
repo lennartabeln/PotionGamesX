@@ -237,6 +237,7 @@ en_US:
     scoreboard:
       none: "none"
       alive: "alive"
+      alive_label: "Alive"
     selector:
       team: "Team-Selector"
     server:
@@ -562,6 +563,7 @@ de_DE:
     scoreboard:
       none: "keins"
       alive: "übrig"
+      alive_label: "Übrig"
     selector:
       team: "Team-Auswahl"
     server:
