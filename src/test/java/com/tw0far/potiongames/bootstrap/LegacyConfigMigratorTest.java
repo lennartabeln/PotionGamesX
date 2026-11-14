@@ -175,4 +175,42 @@ class LegacyConfigMigratorTest {
     void missingLegacyLobbyKeysDoNotCreateALobby() {
         assertFalse(LegacyConfigMigrator.createSingleLobby(new YamlConfiguration(), new YamlConfiguration()));
     }
+
+    @Test
+    void importsArenasStoredInsideLegacyLobbies() {
+        YamlConfiguration legacy = new YamlConfiguration();
+        // Legacy multi-lobby layout: the map lives inside the lobby section and
+        // shares it with scalar settings.
+        legacy.set("pg.lobbies.1.1.name", "Cave");
+        legacy.set("pg.lobbies.1.1.spawns.1", "spawn-a");
+        legacy.set("pg.lobbies.1.1.deathmatch.1", "dm-a");
+        legacy.set("pg.lobbies.1.countdown", 30);
+        legacy.set("pg.lobbies.1.coords", "lobby-spawn");
+        YamlConfiguration lobbies = new YamlConfiguration();
+        lobbies.createSection("pg.lobbies.1");
+
+        int imported = LegacyConfigMigrator.importNestedArenas(
+                legacy.getConfigurationSection("pg.lobbies"), lobbies);
+
+        assertEquals(1, imported);
+        assertEquals("spawn-a", lobbies.getString("pg.lobbies.1.arenas.Cave.spawns.1"));
+        assertEquals("dm-a", lobbies.getString("pg.lobbies.1.arenas.Cave.deathmatch.1"));
+        // Scalar settings next to the arenas are not arenas.
+        assertFalse(lobbies.contains("pg.lobbies.1.arenas.countdown"));
+    }
+
+    @Test
+    void nestedArenaImportDoesNotOverwriteExistingArenas() {
+        YamlConfiguration legacy = new YamlConfiguration();
+        legacy.set("pg.lobbies.1.1.name", "Cave");
+        legacy.set("pg.lobbies.1.1.spawns.1", "legacy-spawn");
+        YamlConfiguration lobbies = new YamlConfiguration();
+        lobbies.set("pg.lobbies.1.arenas.Cave.spawns.1", "own-spawn");
+
+        int imported = LegacyConfigMigrator.importNestedArenas(
+                legacy.getConfigurationSection("pg.lobbies"), lobbies);
+
+        assertEquals(0, imported);
+        assertEquals("own-spawn", lobbies.getString("pg.lobbies.1.arenas.Cave.spawns.1"));
+    }
 }

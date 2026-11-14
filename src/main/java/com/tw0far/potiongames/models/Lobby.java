@@ -680,12 +680,35 @@ public class Lobby {
         }
     }
 
+    /**
+     * Arena the round is played on: the vote leader, or a random map when the
+     * vote is empty or the {@code Random} option won it.
+     *
+     * <p>Legacy counted {@code Random} as a normal option, so a Random majority
+     * (or a tie with it) produced a random arena instead of the map with the
+     * second-most votes.</p>
+     */
     private Arena getVotedArena() {
         if (arenas.isEmpty()) {
             return null;
         }
         Arena leading = getLeadingVotedArena();
-        return leading != null ? leading : arenas.get((int)(Math.random() * arenas.size()));
+        int randomVotes = countVotes(Messages.RandomText());
+        int leadingVotes = leading == null ? 0 : countVotes(leading.getName());
+        if (randomVotes > 0 && randomVotes >= leadingVotes) {
+            return randomArena();
+        }
+        return leading != null ? leading : randomArena();
+    }
+
+    private Arena randomArena() {
+        return arenas.get((int) (Math.random() * arenas.size()));
+    }
+
+    /** Votes for one option in this lobby, 0 when nobody voted for it. */
+    private int countVotes(String option) {
+        var asm = PotionGamesX.getInstance().getArenaStateManager();
+        return asm == null ? 0 : asm.getLobbyVoteCount(Integer.toString(id), option);
     }
 
     /**

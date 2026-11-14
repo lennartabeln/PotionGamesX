@@ -3,6 +3,7 @@ package com.tw0far.potiongames.models;
 import com.tw0far.potiongames.PotionGamesX;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -195,7 +196,8 @@ public class Messages {
         seedMissingTranslations("en_US");
         try {
             Settings.messages.save(Settings.messagesFile);
-        } catch (IOException ignored) {
+        } catch (IOException ex) {
+            Bukkit.getLogger().warning("[PotionGamesX] Could not save messages.yml: " + ex.getMessage());
         }
     }
 
@@ -225,7 +227,9 @@ public class Messages {
                     mergeLocale(Settings.messages, section, locale);
                 }
             }
-        } catch (IOException | RuntimeException ignored) {
+        } catch (IOException | RuntimeException ex) {
+            // A broken bundled file would silently leave raw keys in the chat.
+            Bukkit.getLogger().warning("[PotionGamesX] Could not merge the bundled messages: " + ex.getMessage());
             // A broken bundled resource must never stop the plugin from starting.
         }
     }
@@ -593,6 +597,29 @@ public class Messages {
     public static Component ArenaAlreadyExists(String arenaName) {
         String pattern = get("arena.already_exists", "Arena %s already exists!");
         return prefix(Component.text(String.format(pattern, arenaName)).color(NamedTextColor.RED));
+    }
+
+    /** Confirmation of {@code /pg setcountdown}. */
+    public static Component CountdownSet(int seconds) {
+        return prefix(Component.text(String.format(get("setup.countdown_set",
+            "Countdown set to %d seconds."), seconds)).color(NamedTextColor.GREEN));
+    }
+
+    /** Confirmation for the global default written by {@code /pg setcountdown}. */
+    public static Component CountdownSetDefault(int seconds) {
+        return prefix(Component.text(String.format(get("setup.countdown_set_default",
+            "Default countdown set to %d seconds (lobbies without their own value follow)."), seconds))
+            .color(NamedTextColor.GREEN));
+    }
+
+    /** Rejected value for {@code /pg setcountdown}. */
+    public static Component CountdownInvalid(int max) {
+        return prefix(Component.text(String.format(get("setup.countdown_invalid",
+            "Use a countdown between 1 and %d seconds."), max)).color(NamedTextColor.RED));
+    }
+
+    public static String HelpSetcountdownText() {
+        return get("help.setcountdown", "/pg setcountdown <seconds> - Change the lobby countdown");
     }
 
     public static Component LobbySuccessSet() {
