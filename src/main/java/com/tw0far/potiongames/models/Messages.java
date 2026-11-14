@@ -861,6 +861,16 @@ public class Messages {
             .color(NamedTextColor.GRAY);
     }
 
+    public static Component VoteResultsHeader(int votes) {
+        return prefix(Component.text(String.format(get("vote.results_header", "Votes (%d)"), votes))
+            .color(NamedTextColor.GOLD));
+    }
+
+    public static Component VoteResultLine(String arena, int votes) {
+        return prefix(Component.text(String.format(get("vote.result_line", "%s: %d"), arena, votes))
+            .color(NamedTextColor.AQUA));
+    }
+
     public static String VoteClosedText() {
         return get("vote.closed", "Voting is closed for this round.");
     }

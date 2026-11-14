@@ -312,6 +312,8 @@ en_US:
       not_available: "You are running the latest version."
     vote:
       label: "Votes"
+      results_header: "Votes (%d)"
+      result_line: "%s: %d"
       closed: "Voting is closed for this round."
     will_be_played: "will be played!"
     winner:
@@ -638,6 +640,8 @@ de_DE:
       not_available: "Du verwendest bereits die neueste Version."
     vote:
       label: "Stimmen"
+      results_header: "Stimmen (%d)"
+      result_line: "%s: %d"
       closed: "Die Abstimmung für diese Runde ist geschlossen."
     will_be_played: "wird gespielt!"
     winner:
