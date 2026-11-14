@@ -308,6 +308,8 @@ en_US:
       not_available: "You are running the latest version."
     vote:
       label: "Votes"
+      results_header: "Votes (%d)"
+      result_line: "%s: %d"
     will_be_played: "will be played!"
     winner:
       has_won_the_game: "has won the game!"
@@ -629,6 +631,8 @@ de_DE:
       not_available: "Du verwendest bereits die neueste Version."
     vote:
       label: "Stimmen"
+      results_header: "Stimmen (%d)"
+      result_line: "%s: %d"
     will_be_played: "wird gespielt!"
     winner:
       has_won_the_game: "hat das Spiel gewonnen!"

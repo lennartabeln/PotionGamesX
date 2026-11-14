@@ -1168,6 +1168,7 @@ public class Lobby {
                             participant.sendMessage(Messages.WillBePlayed(currentArena.getName()));
                         }
                     }
+                    announceVoteResults();
                     playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1f, 1f);
                 }
                 if (prepareTimer > 0 && prepareTimer <= 5) {
@@ -1352,6 +1353,37 @@ public class Lobby {
         }
         gameTimer = 60;
         setState(GameStates.DEATHMATCH);
+    }
+
+    /**
+     * Shows the vote tally when the arena is revealed, like the legacy
+     * {@code voteResults()}. Arenas without a vote and an empty tally are skipped.
+     */
+    private void announceVoteResults() {
+        var asm = PotionGamesX.getInstance().getArenaStateManager();
+        String lobbyId = Integer.toString(id);
+        List<Component> lines = new ArrayList<>();
+        int total = 0;
+        for (Arena arena : arenas) {
+            int votes = asm.getLobbyVoteCount(lobbyId, arena.getName());
+            if (votes > 0) {
+                total += votes;
+                lines.add(Messages.VoteResultLine(arena.getName(), votes));
+            }
+        }
+        String randomKey = Messages.RandomText();
+        int randomVotes = asm.getLobbyVoteCount(lobbyId, randomKey);
+        if (randomVotes > 0) {
+            total += randomVotes;
+            lines.add(Messages.VoteResultLine(randomKey, randomVotes));
+        }
+        if (total == 0) {
+            return;
+        }
+        sendToLobby(Messages.VoteResultsHeader(total));
+        for (Component line : lines) {
+            sendToLobby(line);
+        }
     }
 
     private void announceWinner(Player winner) {
