@@ -28,6 +28,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -71,7 +72,14 @@ public class Lobby {
     private int endingTimer = 10;
     private int prepareTimer = 60;
     private int gameTimer = roundTime;
-    private int[] announceRoundTimes = new int[] { 0, 1, 2, 3, 4, 5, 10, 30, 60, 60 * 5, 60 * 10, 60 * 30 };
+    /**
+     * Remaining seconds at which the round time is announced. Same list as the
+     * legacy tick (600, 300, 240, 180, 120, 60, 30, 20, 10, 5, 4, 3, 2, 1) -
+     * no message at 0 any more, the timeout announces the draw instead.
+     */
+    private int[] announceRoundTimes = new int[] {
+        60 * 10, 60 * 5, 240, 180, 120, 60, 30, 20, 10, 5, 4, 3, 2, 1
+    };
 
     // =====
     // Countdown timers
@@ -80,6 +88,11 @@ public class Lobby {
 
     // Runtime boolean flags (per-lobby state)
     private boolean deathmatch = false;
+    /** Seconds the players stay frozen after the teleport into the arena. */
+    private static final int ROUND_START_DELAY = 10;
+    /** Remaining lobby countdown seconds at which the arena is revealed (legacy). */
+    private static final int REVEAL_SECONDS = 10;
+    private int startTimer = 0;
     private boolean pause = false;
 
     /** Guards {@link #startTick()} against a second concurrent scheduling. */
@@ -428,6 +441,17 @@ public class Lobby {
         return isActivePlayer(player) || isSpectatorPlayer(player) || getParticipant(player) != null;
     }
 
+    /** Players still alive in the running round (spectators and offline drop out). */
+    public int getAlivePlayerCount() {
+        int alive = 0;
+        for (Player player : activePlayers) {
+            if (player != null && player.isOnline() && player.getGameMode() != GameMode.SPECTATOR) {
+                alive++;
+            }
+        }
+        return alive;
+    }
+
     public ArrayList<Player> getActivePlayers() {
         return activePlayers;
     }
@@ -629,7 +653,10 @@ public class Lobby {
             Location signLoc = joinSign.getLocation();
             if (signLoc != null && signLoc.getBlock().getState() instanceof Sign) {
                 Sign sign = (Sign) signLoc.getBlock().getState();
-                sign.getSide(Side.FRONT).line(0, Component.text(id));
+                // Legacy put the plugin name on top of the join sign; the lobby
+                // number moved into the count line so multi-lobby installs stay
+                // readable.
+                sign.getSide(Side.FRONT).line(0, Messages.PluginName());
                 if (state == GameStates.WAITING || state == GameStates.PREPARING) {
                     sign.getSide(Side.FRONT).line(1, Component.text(state.toString()).color(NamedTextColor.GREEN));
                 } else {
@@ -641,7 +668,8 @@ public class Lobby {
                 } else {
                     sign.getSide(Side.FRONT).line(2, Component.text("VOTING").color(NamedTextColor.AQUA));
                 }
-                sign.getSide(Side.FRONT).line(3, Component.text("[" + playerCount + "/" + getCapacity() + "]").color(NamedTextColor.GRAY));
+                sign.getSide(Side.FRONT).line(3,
+                    Component.text("[" + id + ": " + playerCount + "/" + getCapacity() + "]").color(NamedTextColor.GRAY));
                 sign.update();
                 joinSign = sign;
             }
@@ -929,10 +957,23 @@ public class Lobby {
     }
 
     /**
+     * A deathmatch needs at least two configured deathmatch spawns: one for
+     * every survivor of a 1v1. Without them the arena simply has no deathmatch
+     * phase and the round ends with the last player or team standing.
+     */
+    public boolean hasDeathmatch() {
+        Arena arena = currentArena != null ? currentArena : getDisplayArena();
+        return arena != null && deathmatchAvailable(arena.usableDeathmatchSpawnCount());
+    }
+
+    /** Pure helper: a deathmatch needs two spawns or more. */
+    static boolean deathmatchAvailable(int usableDeathmatchSpawns) {
+        return usableDeathmatchSpawns >= 2;
+    }
+
+    /**
      * Remaining players at which the deathmatch starts: the number of usable
-     * deathmatch spawns, so every survivor gets one. Never below two (a
-     * deathmatch against yourself makes no sense), and the legacy minimum when
-     * no deathmatch spawn is configured.
+     * deathmatch spawns, so every survivor gets one.
      */
     public int getDeathmatchThreshold() {
         Arena arena = currentArena != null ? currentArena : getDisplayArena();
@@ -979,6 +1020,7 @@ public class Lobby {
     }
 
     public void endRound() {
+        releaseLocks();
         playLobbySound(Sound.ENTITY_ENDER_DRAGON_GROWL, 1f, 1f);
         setState(GameStates.ENDING);
         endingTimer = Math.max(1, reset);
@@ -1119,9 +1161,11 @@ public class Lobby {
             case WAITING:
                 for (Participant participant : participants) {
                     participant.sendActionBar(Messages.GameWaiting(playerCount, minPlayers));
+                    participant.setLevel(0);
                 }
                 if (playerCount >= minPlayers) {
                     prepareTimer = Math.max(1, countdown);
+                    playLobbySound(Sound.ENTITY_ARROW_HIT, 1f, 1f);
                     setState(GameStates.PREPARING);
                     PotionGamesX plugin = PotionGamesX.getInstance();
                     if (plugin.getConfigManager().isBroadcastStarting()) {
@@ -1132,6 +1176,8 @@ public class Lobby {
             case PREPARING:
                 for (Participant participant : participants) {
                     participant.sendActionBar(Messages.GameStartsIn(prepareTimer));
+                    // The XP bar shows the same countdown as the action bar.
+                    participant.setLevel(prepareTimer);
                 }
                 if (prepareTimer <= 0) {
                     if (currentArena == null) {
@@ -1147,6 +1193,9 @@ public class Lobby {
                         // the whole arena block system unreachable.
                         for (Participant participant : participants) {
                             participant.startRound();
+                            // Legacy froze everyone for ten seconds after the
+                            // teleport, then started the round with SURVIVAL.
+                            participant.lockMovement();
                         }
                         giveRichKidCoins();
                         applyGameRules();
@@ -1155,10 +1204,10 @@ public class Lobby {
                     }
                     gameTimer = Math.max(1, roundTime);
                     deathmatch = false;
+                    startTimer = ROUND_START_DELAY;
                     playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1f, 1f);
-                    playLobbySound(Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
                     setState(GameStates.INGAME);
-                } else if (prepareTimer == countdown) {
+                } else if (prepareTimer == REVEAL_SECONDS) {
                     if (currentArena == null) {
                         setCurrentArena(getVotedArena());
                     }
@@ -1179,6 +1228,19 @@ public class Lobby {
                 prepareTimer--;
                 break;
             case INGAME:
+                if (startTimer > 0) {
+                    for (Participant participant : participants) {
+                        participant.sendActionBar(Messages.GameStartsIn(startTimer));
+                    }
+                    if (startTimer <= 5) {
+                        playLobbySound(Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f);
+                    }
+                    startTimer--;
+                    if (startTimer == 0) {
+                        beginRound();
+                    }
+                    break;
+                }
                 if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
                     for (Participant participant : participants) {
                         if (gameTimer <= 60) {
@@ -1188,24 +1250,29 @@ public class Lobby {
                         }
                     }
                 } else if (gameTimer < 0) {
-                    setState(GameStates.ENDING);
-                    endingTimer = Math.max(1, reset);
+                    // Legacy announced a draw when the round timer ran out.
+                    sendToLobby(Messages.RoundNobodyWon());
+                    endRound();
                 }
                 checkWinCondition();
                 gameTimer--;
                 break;
             case DEATHMATCH:
-                if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
+                if (startTimer > 0) {
                     for (Participant participant : participants) {
-                        participant.sendMessage(Messages.DeathmatchStartingIn(gameTimer));
+                        participant.sendActionBar(Messages.DeathmatchStartingIn(startTimer));
                     }
-                } else if (gameTimer < 0) {
-                    announceDraw();
-                    setState(GameStates.ENDING);
-                    endingTimer = Math.max(1, reset);
+                    if (startTimer <= 5) {
+                        playLobbySound(Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f);
+                    }
+                    startTimer--;
+                    if (startTimer == 0) {
+                        beginDeathmatch();
+                    }
+                    break;
                 }
+                // Legacy had no deathmatch timer: the phase ends with the last survivor.
                 checkWinCondition();
-                gameTimer--;
                 break;
             case ENDING:
                 for (Participant participant : participants) {
@@ -1217,6 +1284,9 @@ public class Lobby {
                 endingTimer--;
                 break;
             case RESET:
+                releaseLocks();
+                startTimer = 0;
+                clearArenaEntities();
                 restoreBlocks();
                 restoreGameRules();
                 PotionGamesX plugin = PotionGamesX.getInstance();
@@ -1265,7 +1335,7 @@ public class Lobby {
             }
         }
         int threshold = getDeathmatchThreshold();
-        boolean deathmatchDue = alive.size() >= 2 && alive.size() <= threshold
+        boolean deathmatchDue = hasDeathmatch() && alive.size() >= 2 && alive.size() <= threshold
             && PotionGamesX.getInstance().getConfigManager().isActivateDeathmatch() && !deathmatch;
 
         // Team mode: the round ends when a single team remains
@@ -1307,6 +1377,8 @@ public class Lobby {
      * the lobby returns to waiting, everyone is told, nothing is half-started.
      */
     private void abortRoundStart(Arena arena) {
+        releaseLocks();
+        startTimer = 0;
         setState(GameStates.WAITING);
         prepareTimer = countdown;
         gameTimer = Math.max(1, roundTime);
@@ -1330,27 +1402,47 @@ public class Lobby {
     }
 
     private void activateDeathmatch() {
-        deathmatch = true;
         Arena arena = currentArena;
-        int spawns = arena != null ? arena.usableDeathmatchSpawnCount() : 0;
-        if (arena != null && spawns > 0) {
-            Location fallback = arena.getRandomDeathmatchSpawn();
-            for (Player player : new ArrayList<>(activePlayers)) {
-                Location spawn = arena.getRandomDeathmatchSpawn();
-                player.teleport(spawn != null ? spawn : fallback);
-            }
-        } else {
-            // No deathmatch spawn configured: keep everyone where they are instead
-            // of leaving the round in a half-teleported state.
-            PotionGamesX.getInstance().getLogger().info(
-                "Lobby " + id + ": no deathmatch spawn configured, players stay in the arena");
-            sendToLobby(Messages.DeathmatchNoSpawn());
+        if (arena == null || !deathmatchAvailable(arena.usableDeathmatchSpawnCount())) {
+            // Guard for direct callers: without two spawns there is no deathmatch.
+            return;
+        }
+        deathmatch = true;
+        Location fallback = arena.getRandomDeathmatchSpawn();
+        for (Player player : new ArrayList<>(activePlayers)) {
+            Location spawn = arena.getRandomDeathmatchSpawn();
+            player.teleport(spawn != null ? spawn : fallback);
         }
         for (Participant participant : participants) {
+            participant.lockMovement();
+        }
+        startTimer = ROUND_START_DELAY;
+        setState(GameStates.DEATHMATCH);
+    }
+
+    /** Clears every movement lock without touching the game mode. */
+    private void releaseLocks() {
+        for (Participant participant : participants) {
+            participant.clearMovementLock();
+        }
+    }
+
+    /** Releases the pre-round freeze and starts the round. */
+    private void beginRound() {
+        for (Participant participant : participants) {
+            participant.unlockMovement();
+            participant.sendMessage(Messages.GameStartsNow());
+        }
+        playLobbySound(Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
+    }
+
+    /** Releases the deathmatch freeze and starts the deathmatch. */
+    private void beginDeathmatch() {
+        for (Participant participant : participants) {
+            participant.unlockMovement();
             participant.sendMessage(Messages.DeathmatchStarted());
         }
-        gameTimer = 60;
-        setState(GameStates.DEATHMATCH);
+        playLobbySound(Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
     }
 
     private void announceWinner(Player winner) {
@@ -1447,6 +1539,40 @@ public class Lobby {
     public void restoreWorldState() {
         restoreBlocks();
         restoreGameRules();
+    }
+
+    /**
+     * Drops, arrows, TNT and mobs a round leaves behind are removed with the
+     * reset, like the legacy release did for every arena world. Lobby worlds are
+     * never touched - a shared hub world would lose its own entities.
+     */
+    private void clearArenaEntities() {
+        Arena arena = currentArena;
+        if (arena == null) {
+            return;
+        }
+        Set<World> worlds = new LinkedHashSet<>();
+        for (Location spawn : arena.getSpawns()) {
+            if (spawn != null && spawn.getWorld() != null) {
+                worlds.add(spawn.getWorld());
+            }
+        }
+        for (Location spawn : arena.getDeathmatchSpawns()) {
+            if (spawn != null && spawn.getWorld() != null) {
+                worlds.add(spawn.getWorld());
+            }
+        }
+        World lobbyWorld = spawn != null ? spawn.getWorld() : null;
+        for (World world : worlds) {
+            if (world.equals(lobbyWorld)) {
+                continue;
+            }
+            for (Entity entity : new ArrayList<>(world.getEntities())) {
+                if (!(entity instanceof Player)) {
+                    entity.remove();
+                }
+            }
+        }
     }
 
     private void restoreBlocks() {

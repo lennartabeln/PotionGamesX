@@ -392,10 +392,6 @@ public class Messages {
         return prefix(Component.text(get("deathmatch.starting_in", "Deathmatch is starting in") + " " + time).color(NamedTextColor.GOLD));
     }
 
-    public static Component DeathmatchNoSpawn() {
-        return prefix(Component.text(get("deathmatch.no_spawn", "No deathmatch spawn configured - staying in the arena.")).color(NamedTextColor.YELLOW));
-    }
-
     public static Component ArenaNoSpawn(String arena) {
         return prefix(Component.text(String.format(
             get("arena.no_spawn", "Arena %s has no usable spawn - the round cannot start."), arena)).color(NamedTextColor.RED));
@@ -429,6 +425,11 @@ public class Messages {
 
     public static Component GameAlreadyStarted() {
         return prefix(Component.text(get("game.already_started", "The game has already started!")).color(NamedTextColor.RED));
+    }
+
+    /** Round start after the freeze: "The game starts now!". */
+    public static Component GameStartsNow() {
+        return prefix(Component.text(get("game.starts_now", "The game starts now!")).color(NamedTextColor.GREEN));
     }
 
     public static Component GameStarted() {
@@ -494,6 +495,16 @@ public class Messages {
 
     public static Component KitLabel() {
         return Component.text(get("kit.label", "Kit")).color(NamedTextColor.DARK_AQUA);
+    }
+
+    /** Capitalised label for the deathmatch sidebar row. */
+    public static String AliveLabelCapitalised() {
+        return get("scoreboard.alive_label", "Alive");
+    }
+
+    /** "12 alive" row in the deathmatch sidebar. */
+    public static String AliveLabel() {
+        return get("scoreboard.alive", "alive");
     }
 
     public static Component TimeLabel() {
@@ -850,6 +861,10 @@ public class Messages {
             .color(NamedTextColor.GRAY);
     }
 
+    public static String VoteClosedText() {
+        return get("vote.closed", "Voting is closed for this round.");
+    }
+
     public static String VoteText() {
         return get("vote.label", "Votes");
     }
@@ -894,6 +909,8 @@ public class Messages {
     public static String StatusLobbiesText() { return get("status.lobbies", "Lobbies"); }
     public static String StatusNoLobbiesText() { return get("status.no_lobbies", "No active lobbies"); }
     public static String StatusDatabaseText() { return get("status.database", "Database"); }
+    public static String StatusDeathmatchText() { return get("status.deathmatch", "DM %d spawns"); }
+    public static String StatusNoDeathmatchText() { return get("status.no_deathmatch", "no deathmatch"); }
     public static String StatusModeText() { return get("status.mode", "Mode"); }
     public static String StatusConnectionText() { return get("status.connection", "Connection"); }
     public static String StatusConnectedText() { return get("status.connected", "Connected"); }

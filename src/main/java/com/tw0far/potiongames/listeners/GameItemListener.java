@@ -266,7 +266,11 @@ public class GameItemListener implements Listener {
 
     private void openArenaSelector(Player p, String s) {
         GameStates state = plugin.getLobbyStateManager().getGameState(s);
-        if (state != GameStates.WAITING && state != GameStates.PREPARING) {
+        if (state != GameStates.WAITING) {
+            // The arena is announced ten seconds before the teleport; a late vote
+            // would change the map after everybody has seen it (legacy closed
+            // voting when the countdown started).
+            p.sendMessage(Messages.line(Messages.VoteClosedText(), NamedTextColor.RED));
             return;
         }
         Map<String, Integer> lobbyVotesMap = new HashMap<>();
@@ -428,7 +432,8 @@ public class GameItemListener implements Listener {
         }
         Location loc = e.getClickedBlock().getLocation();
         Lobby lobby = plugin.getGame().getLobby(InteractionSupport.parseIntSafe(plugin.getGame().getPlayerLobby(p)));
-        if (lobby == null || plugin.getLobbyStateManager().getGameState(Integer.toString(lobby.getId())) != GameStates.INGAME) {
+        GameStates chestState = plugin.getLobbyStateManager().getGameState(Integer.toString(lobby == null ? -1 : lobby.getId()));
+        if (lobby == null || (chestState != GameStates.INGAME && chestState != GameStates.DEATHMATCH)) {
             return;
         }
         if (!lobby.hasChestInventory(loc)) {
@@ -465,7 +470,8 @@ public class GameItemListener implements Listener {
                         && customChest.getBoolean("activate")) {
                     String s = plugin.getGame().getPlayerLobby(p);
                     Lobby lobby = plugin.getGame().getLobby(InteractionSupport.parseIntSafe(s));
-                    if (lobby != null && plugin.getLobbyStateManager().getGameState(s) == GameStates.INGAME) {
+                    GameStates customState = plugin.getLobbyStateManager().getGameState(s);
+                    if (lobby != null && (customState == GameStates.INGAME || customState == GameStates.DEATHMATCH)) {
                         if (!lobby.hasChestInventory(loc)) {
                             Inventory inv = Bukkit.createInventory(p, customChest.getInt("chestsize"), Settings.prefix);
                             int chestitem = 1;
@@ -543,12 +549,15 @@ public class GameItemListener implements Listener {
      * Accepts both a single material name (legacy format) and a list of names.
      */
     private boolean matchesChestBlock(Block block, String key) {
-        if (block == null || Settings.chests == null) {
+        if (block == null) {
             return false;
         }
-        Object configured = Settings.chests.get(key);
-        if (configured == null) {
-            return false;
+        Object configured = Settings.chests != null ? Settings.chests.get(key) : null;
+        if (configured == null || configured instanceof List<?> empty && empty.isEmpty()) {
+            // Chests.yml missing or not seeded yet: fall back to the legacy
+            // defaults so the configured chest blocks still open.
+            Material fallback = key.endsWith(".shop") ? Material.COMPOSTER : Material.END_PORTAL_FRAME;
+            return block.getType() == fallback;
         }
         String type = block.getType().name();
         if (configured instanceof String name) {
