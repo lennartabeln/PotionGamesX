@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -106,6 +107,7 @@ public class Lobby {
     private Integer prevFireSpreadRadius = null;
     private Boolean prevMobGriefing = null;
     private Boolean prevMobSpawning = null;
+    private Boolean prevAnnounceAdvancements = null;
 
     // Per-lobby chests
     /**
@@ -817,6 +819,39 @@ public class Lobby {
         }
     }
 
+    /**
+     * Legacy handed out a random kit at round start to everyone who had not
+     * picked one. The kit gives no items, but it decides the shop discount and
+     * the Rich Kid start coins, so a round without a choice still ends up with
+     * a kit.
+     */
+    private void distributeKits() {
+        PotionGamesX plugin = PotionGamesX.getInstance();
+        if (plugin == null || !activateKits) {
+            return;
+        }
+        List<String> names = new ArrayList<>(plugin.getItemStateManager().getKitsRaw());
+        int active = plugin.getConfigManager().getActiveKits();
+        if (active > 0 && names.size() > active) {
+            names = new ArrayList<>(names.subList(0, active));
+        }
+        if (names.isEmpty()) {
+            return;
+        }
+        Random random = new Random();
+        for (Participant participant : participants) {
+            if (participant.getKit() != null) {
+                continue;
+            }
+            String name = names.get(random.nextInt(names.size()));
+            participant.setKit(new Kit(name));
+            Player player = participant.getPlayer();
+            if (player != null && player.isOnline()) {
+                player.sendMessage(Messages.KitNowHave(name));
+            }
+        }
+    }
+
     public void distributeTeams() {
         if (!activateTeams || activePlayers.isEmpty()) {
             return;
@@ -1102,6 +1137,7 @@ public class Lobby {
         prevFireSpreadRadius = world.getGameRuleValue(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER);
         prevMobGriefing = world.getGameRuleValue(GameRules.MOB_GRIEFING);
         prevMobSpawning = world.getGameRuleValue(GameRules.SPAWN_MOBS);
+        prevAnnounceAdvancements = world.getGameRuleValue(GameRules.SHOW_ADVANCEMENT_MESSAGES);
         world.setGameRule(GameRules.ADVANCE_TIME, false);
         world.setGameRule(GameRules.ADVANCE_WEATHER, false);
         // Fire spread and mob grief would otherwise remove arena blocks that
@@ -1109,6 +1145,8 @@ public class Lobby {
         world.setGameRule(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER, 0);
         world.setGameRule(GameRules.MOB_GRIEFING, false);
         world.setGameRule(GameRules.SPAWN_MOBS, false);
+        // Legacy silenced the advancement pop-ups while a round was running.
+        world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
     }
 
     private void restoreGameRules() {
@@ -1127,6 +1165,9 @@ public class Lobby {
         if (prevMobGriefing != null) {
             gameruleWorld.setGameRule(GameRules.MOB_GRIEFING, prevMobGriefing);
         }
+        if (prevAnnounceAdvancements != null) {
+            gameruleWorld.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, prevAnnounceAdvancements);
+        }
         if (prevMobSpawning != null) {
             gameruleWorld.setGameRule(GameRules.SPAWN_MOBS, prevMobSpawning);
         }
@@ -1136,6 +1177,7 @@ public class Lobby {
         prevFireSpreadRadius = null;
         prevMobGriefing = null;
         prevMobSpawning = null;
+        prevAnnounceAdvancements = null;
     }
 
     private World resolveArenaWorld() {
@@ -1187,6 +1229,7 @@ public class Lobby {
                     }
                     if (currentArena != null) {
                         distributeTeams();
+                        distributeKits();
                         if (!currentArena.teleport(participants)) {
                             abortRoundStart(currentArena);
                             break;
