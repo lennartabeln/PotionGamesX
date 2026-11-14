@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.35] - 2026-11-14
+
+### Changed
+
+- The rank wall ranks players with the same wins by KD (`ORDER BY WINS DESC, KD DESC`); `/pg top wins` uses the same tie-break
+- Players without a kit choice get different random kits while the active kits last (dealt like a shuffled deck) instead of possibly drawing the same kit
+
 ## [1.0.0-dev.34] - 2026-11-14
 
 ### Changed
