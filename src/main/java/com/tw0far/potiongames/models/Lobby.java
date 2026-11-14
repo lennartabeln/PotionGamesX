@@ -28,6 +28,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.sign.Side;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -82,6 +83,8 @@ public class Lobby {
     private boolean deathmatch = false;
     /** Seconds the players stay frozen after the teleport into the arena. */
     private static final int ROUND_START_DELAY = 10;
+    /** Remaining lobby countdown seconds at which the arena is revealed (legacy). */
+    private static final int REVEAL_SECONDS = 10;
     private int startTimer = 0;
     private boolean joinable = true;
     private boolean pause = false;
@@ -1127,6 +1130,7 @@ public class Lobby {
                 }
                 if (playerCount >= minPlayers) {
                     prepareTimer = Math.max(1, countdown);
+                    playLobbySound(Sound.ENTITY_ARROW_HIT, 1f, 1f);
                     setState(GameStates.PREPARING);
                     PotionGamesX plugin = PotionGamesX.getInstance();
                     if (plugin.getConfigManager().isBroadcastStarting()) {
@@ -1166,7 +1170,7 @@ public class Lobby {
                     startTimer = ROUND_START_DELAY;
                     playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1f, 1f);
                     setState(GameStates.INGAME);
-                } else if (prepareTimer == countdown) {
+                } else if (prepareTimer == REVEAL_SECONDS) {
                     if (currentArena == null) {
                         setCurrentArena(getVotedArena());
                     }
@@ -1209,8 +1213,9 @@ public class Lobby {
                         }
                     }
                 } else if (gameTimer < 0) {
-                    setState(GameStates.ENDING);
-                    endingTimer = Math.max(1, reset);
+                    // Legacy announced a draw when the round timer ran out.
+                    sendToLobby(Messages.RoundNobodyWon());
+                    endRound();
                 }
                 checkWinCondition();
                 gameTimer--;
@@ -1229,17 +1234,8 @@ public class Lobby {
                     }
                     break;
                 }
-                if (gameTimer >= 0 && Arrays.stream(announceRoundTimes).anyMatch(t -> t == gameTimer)) {
-                    for (Participant participant : participants) {
-                        participant.sendMessage(Messages.DeathmatchStartingIn(gameTimer));
-                    }
-                } else if (gameTimer < 0) {
-                    announceDraw();
-                    setState(GameStates.ENDING);
-                    endingTimer = Math.max(1, reset);
-                }
+                // Legacy had no deathmatch timer: the phase ends with the last survivor.
                 checkWinCondition();
-                gameTimer--;
                 break;
             case ENDING:
                 for (Participant participant : participants) {
@@ -1387,7 +1383,6 @@ public class Lobby {
         for (Participant participant : participants) {
             participant.lockMovement();
         }
-        gameTimer = 60;
         startTimer = ROUND_START_DELAY;
         setState(GameStates.DEATHMATCH);
     }
@@ -1511,6 +1506,40 @@ public class Lobby {
     public void restoreWorldState() {
         restoreBlocks();
         restoreGameRules();
+    }
+
+    /**
+     * Drops, arrows, TNT and mobs a round leaves behind are removed with the
+     * reset, like the legacy release did for every arena world. Lobby worlds are
+     * never touched - a shared hub world would lose its own entities.
+     */
+    private void clearArenaEntities() {
+        Arena arena = currentArena;
+        if (arena == null) {
+            return;
+        }
+        Set<World> worlds = new LinkedHashSet<>();
+        for (Location spawn : arena.getSpawns()) {
+            if (spawn != null && spawn.getWorld() != null) {
+                worlds.add(spawn.getWorld());
+            }
+        }
+        for (Location spawn : arena.getDeathmatchSpawns()) {
+            if (spawn != null && spawn.getWorld() != null) {
+                worlds.add(spawn.getWorld());
+            }
+        }
+        World lobbyWorld = spawn != null ? spawn.getWorld() : null;
+        for (World world : worlds) {
+            if (world.equals(lobbyWorld)) {
+                continue;
+            }
+            for (Entity entity : new ArrayList<>(world.getEntities())) {
+                if (!(entity instanceof Player)) {
+                    entity.remove();
+                }
+            }
+        }
     }
 
     private void restoreBlocks() {
