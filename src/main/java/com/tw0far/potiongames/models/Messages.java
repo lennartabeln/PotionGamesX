@@ -899,6 +899,8 @@ public class Messages {
     public static String StatusLobbiesText() { return get("status.lobbies", "Lobbies"); }
     public static String StatusNoLobbiesText() { return get("status.no_lobbies", "No active lobbies"); }
     public static String StatusDatabaseText() { return get("status.database", "Database"); }
+    public static String StatusDeathmatchText() { return get("status.deathmatch", "DM %d spawns"); }
+    public static String StatusNoDeathmatchText() { return get("status.no_deathmatch", "no deathmatch"); }
     public static String StatusModeText() { return get("status.mode", "Mode"); }
     public static String StatusConnectionText() { return get("status.connection", "Connection"); }
     public static String StatusConnectedText() { return get("status.connected", "Connected"); }

@@ -53,7 +53,8 @@ public class StatusCommand implements ICommand {
                         lobby.getActivePlayers().size(), lobby.getCapacity(),
                         lobby.getSpectatorPlayers().size()))
                     .color(NamedTextColor.GRAY)
-                    .append(Component.text(" (" + state + ")").color(getStateColor(state)));
+                    .append(Component.text(" (" + state + ")").color(getStateColor(state)))
+                    .append(deathmatchInfo(lobby));
                 sender.sendMessage(lobbyInfo);
             }
         }
@@ -69,6 +70,17 @@ public class StatusCommand implements ICommand {
 
         sender.sendMessage(divider());
         return true;
+    }
+
+    /** Deathmatch availability: it needs two deathmatch spawns on the arena. */
+    private Component deathmatchInfo(Lobby lobby) {
+        var arena = lobby.getDisplayArena();
+        int spawns = arena != null ? arena.usableDeathmatchSpawnCount() : 0;
+        if (spawns >= 2) {
+            return Component.text(" · " + String.format(Messages.StatusDeathmatchText(), spawns))
+                .color(NamedTextColor.DARK_AQUA);
+        }
+        return Component.text(" · " + Messages.StatusNoDeathmatchText()).color(NamedTextColor.GRAY);
     }
 
     private Component divider() {
