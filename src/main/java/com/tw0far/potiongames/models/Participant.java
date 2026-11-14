@@ -26,6 +26,8 @@ public class Participant {
     private Kit kit;
     private Player player;
     private PlayerState savedState;
+    private boolean movementLocked = false;
+    private Location lockedAt;
 
     public Participant(Lobby lobby, Player player) {
         this.lobby = lobby;
@@ -45,6 +47,7 @@ public class Participant {
             savedState = new PlayerState(player);
         }
         clearPlayer();
+        clearMovementLock();
         player.teleport(spawn);
         player.setGameMode(GameMode.ADVENTURE);
 
@@ -113,6 +116,44 @@ public class Participant {
         }
     }
 
+    /**
+     * Freezes the player in place, like the legacy pre-round countdown: the
+     * position is remembered, movement events are cancelled and the player is
+     * in ADVENTURE mode until the round really starts.
+     */
+    public void lockMovement() {
+        if (player == null) {
+            return;
+        }
+        movementLocked = true;
+        lockedAt = player.getLocation().clone();
+        player.setGameMode(GameMode.ADVENTURE);
+    }
+
+    /** Forgets the lock without changing the game mode (lobby/spectator paths). */
+    public void clearMovementLock() {
+        movementLocked = false;
+        lockedAt = null;
+    }
+
+    /** Releases the lock and puts the player into SURVIVAL. */
+    public void unlockMovement() {
+        movementLocked = false;
+        lockedAt = null;
+        if (player != null) {
+            player.setGameMode(GameMode.SURVIVAL);
+        }
+    }
+
+    public boolean isMovementLocked() {
+        return movementLocked;
+    }
+
+    /** Position the player is held at while frozen, or null when not locked. */
+    public Location getLockedAt() {
+        return lockedAt == null ? null : lockedAt.clone();
+    }
+
     public void teleportToOriginalLocation() {
         if (savedState == null) {
             return;
@@ -161,6 +202,13 @@ public class Participant {
         player.setSaturation(20f);
         if (player.getAttribute(Attribute.MAX_HEALTH) != null) {
             player.setHealth(player.getAttribute(Attribute.MAX_HEALTH).getValue());
+        }
+    }
+
+    /** XP bar level, used as the visible countdown in the lobby (legacy did the same). */
+    public void setLevel(int level) {
+        if (player != null) {
+            player.setLevel(Math.max(0, level));
         }
     }
 

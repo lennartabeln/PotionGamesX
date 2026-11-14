@@ -79,6 +79,11 @@ public final class BootstrapInitializer {
 
     private void seedShopData() {
         IItemStateManager ism = plugin.getItemStateManager();
+        if (!ism.getShopItemsRaw().isEmpty()) {
+            // Seeding twice doubled the shop (16 entries per reload) and pushed
+            // the configured entries out of pg.activePotions' reach.
+            return;
+        }
 
         List<String> shop = ism.getShopItemsRaw();
         List<PotionEffect> shoppotion = ism.getShopPotionsRaw();
@@ -161,6 +166,10 @@ public final class BootstrapInitializer {
 
     private void seedKitData() {
         IItemStateManager ism = plugin.getItemStateManager();
+        if (!ism.getKitsRaw().isEmpty()) {
+            // Same as the shop: reloading must not append another 21 kits.
+            return;
+        }
         List<String> kits = ism.getKitsRaw();
         Collections.addAll(kits, "Rich Kid", "Fighter", "Healer", "Looter", "Ghost", "Tank");
         for (int i = 7; i < 27; i++) {
