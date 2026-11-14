@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 
 import org.bukkit.Color;
+import org.bukkit.Difficulty;
 import org.bukkit.FireworkEffect;
 import org.bukkit.GameMode;
 import org.bukkit.GameRules;
@@ -111,6 +112,10 @@ public class Lobby {
     private Boolean prevImmediateRespawn = null;
     /** World time before the round; legacy forced noon, we restore it after. */
     private Long prevWorldTime = null;
+    /** Difficulty before the round; legacy switched the arena to EASY. */
+    private Difficulty prevDifficulty = null;
+    /** PvP gamerule of the arena world before the round (MV lobbies ship false). */
+    private Boolean prevPvp = null;
 
     // Per-lobby chests
     /**
@@ -655,6 +660,24 @@ public class Lobby {
         }
     }
 
+    /**
+     * True when the given block is this lobby's join sign.
+     *
+     * <p>The click handler used to parse line 0 as the lobby number, but the
+     * sign now shows the plugin name there, so a location match is the reliable
+     * check. The stored location covers signs that are not loaded yet.</p>
+     */
+    public boolean isJoinSign(Location location) {
+        if (location == null) {
+            return false;
+        }
+        if (joinSign != null && joinSign.getLocation().equals(location)) {
+            return true;
+        }
+        Location stored = Settings.lobbies.getLocation("pg.lobbies." + id + ".joinSign");
+        return stored != null && stored.equals(location);
+    }
+
     public void updateJoinSign() {
         if (joinSign != null) {
             Location signLoc = joinSign.getLocation();
@@ -1150,14 +1173,28 @@ public class Lobby {
      * {@code GameRule} constants are deprecated for removal.
      */
     private void applyGameRules() {
-        if (!PotionGamesX.getInstance().getConfigManager().isChangeGamerules()) {
-            return;
-        }
         World world = resolveArenaWorld();
         if (world == null || gameruleWorld != null) {
             return;
         }
         gameruleWorld = world;
+
+        // Time and difficulty are part of the round, not of the gamerule switch:
+        // without EASY a PEACEFUL arena would not let players hurt each other.
+        prevWorldTime = world.getTime();
+        prevDifficulty = world.getDifficulty();
+        prevPvp = world.getGameRuleValue(GameRules.PVP);
+        world.setTime(0);
+        if (prevDifficulty == Difficulty.PEACEFUL) {
+            world.setDifficulty(Difficulty.EASY);
+        }
+        // A lobby world created by Multiverse usually ships pvp: false. Nobody
+        // can hurt anybody there, so PvP is enabled while the round runs.
+        world.setGameRule(GameRules.PVP, true);
+
+        if (!PotionGamesX.getInstance().getConfigManager().isChangeGamerules()) {
+            return;
+        }
         prevAdvanceTime = world.getGameRuleValue(GameRules.ADVANCE_TIME);
         prevAdvanceWeather = world.getGameRuleValue(GameRules.ADVANCE_WEATHER);
         prevFireSpreadRadius = world.getGameRuleValue(GameRules.FIRE_SPREAD_RADIUS_AROUND_PLAYER);
@@ -1165,7 +1202,6 @@ public class Lobby {
         prevMobSpawning = world.getGameRuleValue(GameRules.SPAWN_MOBS);
         prevAnnounceAdvancements = world.getGameRuleValue(GameRules.SHOW_ADVANCEMENT_MESSAGES);
         prevImmediateRespawn = world.getGameRuleValue(GameRules.IMMEDIATE_RESPAWN);
-        prevWorldTime = world.getTime();
         world.setGameRule(GameRules.ADVANCE_TIME, false);
         world.setGameRule(GameRules.ADVANCE_WEATHER, false);
         // Fire spread and mob grief would otherwise remove arena blocks that
@@ -1178,7 +1214,6 @@ public class Lobby {
         // Legacy used DO_IMMEDIATE_RESPAWN so a death does not leave the
         // player on the respawn screen while the round runs on.
         world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
-        world.setTime(0);
     }
 
     private void restoreGameRules() {
@@ -1206,6 +1241,12 @@ public class Lobby {
         if (prevWorldTime != null) {
             gameruleWorld.setTime(prevWorldTime);
         }
+        if (prevDifficulty != null) {
+            gameruleWorld.setDifficulty(prevDifficulty);
+        }
+        if (prevPvp != null) {
+            gameruleWorld.setGameRule(GameRules.PVP, prevPvp);
+        }
         if (prevMobSpawning != null) {
             gameruleWorld.setGameRule(GameRules.SPAWN_MOBS, prevMobSpawning);
         }
@@ -1218,6 +1259,8 @@ public class Lobby {
         prevAnnounceAdvancements = null;
         prevImmediateRespawn = null;
         prevWorldTime = null;
+        prevDifficulty = null;
+        prevPvp = null;
     }
 
     private World resolveArenaWorld() {

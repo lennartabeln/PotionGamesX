@@ -71,19 +71,30 @@ public class GameItemListener implements Listener {
                 String line2 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(1));
                 String line3 = PlainTextComponentSerializer.plainText().serialize(sign.getSide(Side.FRONT).line(2));
 
-                // Check Join Signs
+                // Join signs are matched by their stored location: line 0 shows
+                // the plugin name, so it can no longer carry the lobby number.
+                Lobby joinLobby = joinSignLobby(e.getClickedBlock().getLocation());
+                if (joinLobby != null) {
+                    e.setCancelled(true);
+                    if (plugin.getGame().getPlayerLobby(p) == null
+                            && plugin.getGame().getSpectatorLobby(p) == null) {
+                        plugin.onJoinLobby(p, Integer.toString(joinLobby.getId()));
+                    }
+                    return;
+                }
+                // Sign written in the old layout (lobby number on line 0).
                 try {
                     int lobbyId = Integer.parseInt(line1);
-                    String signKey = "pg.lobbies." + lobbyId + ".joinSign";
-                    if (e.getClickedBlock().getLocation().equals(Settings.lobbies.getLocation(signKey))) {
+                    if (plugin.getGame().getLobby(lobbyId) != null) {
                         e.setCancelled(true);
-                        if (plugin.getGame().getPlayerLobby(p) == null && plugin.getGame().getSpectatorLobby(p) == null) {
+                        if (plugin.getGame().getPlayerLobby(p) == null
+                                && plugin.getGame().getSpectatorLobby(p) == null) {
                             plugin.onJoinLobby(p, line1);
                         }
                         return;
                     }
                 } catch (NumberFormatException ignored) {
-                    // Not a join sign (line 1 is not a lobby number) - ignore
+                    // Not a join sign (line 1 is not a lobby number)
                 }
 
                 // Check Stats Signs
@@ -114,6 +125,16 @@ public class GameItemListener implements Listener {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
             handleGameItems(e, p);
         }
+    }
+
+    /** Lobby whose join sign sits at the given block, or null. */
+    private Lobby joinSignLobby(org.bukkit.Location location) {
+        for (Lobby lobby : plugin.getGame().getLobbies()) {
+            if (lobby.isJoinSign(location)) {
+                return lobby;
+            }
+        }
+        return null;
     }
 
     /** Selector openers and one-shot items that work with either hand-independent checks. */
