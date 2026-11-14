@@ -1215,7 +1215,9 @@ public class Lobby {
                     startTimer = startDelay;
                     playLobbySound(Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1f, 1f);
                     setState(GameStates.INGAME);
-                } else if (prepareTimer == REVEAL_SECONDS) {
+                } else if (prepareTimer == Math.min(REVEAL_SECONDS, countdown)) {
+                    // The reveal must happen even when the lobby countdown is
+                    // shorter than ten seconds (test servers, /pg start).
                     if (currentArena == null) {
                         setCurrentArena(getVotedArena());
                     }
