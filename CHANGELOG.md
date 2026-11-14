@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.32] - 2026-11-14
+
+### Fixed
+
+- The arena runs with `doImmediateRespawn` and noon time during a round (legacy `setGameRules`); both are captured and restored afterwards
+- A dead player respawns at the death location instead of the world spawn, so dying turns into spectating without leaving the arena
+
 ## [1.0.0-dev.31] - 2026-11-14
 
 ### Fixed
