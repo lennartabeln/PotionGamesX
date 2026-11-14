@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.37] - 2026-11-14
+
+### Changed
+
+- `minPlayers` defaults to half of `maxPlayers` (legacy behaviour) unless `pg.defaults.minPlayers` is set; the key is optional in `config.yml`
+- A new lobby only stores its spawn and inherits countdown, round time, start delay, player limits, team size and the feature flags from `pg.defaults`, so defaults configured once apply to every lobby created later
+
 ## [1.0.0-dev.36] - 2026-11-14
 
 ### Fixed
