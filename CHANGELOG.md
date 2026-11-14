@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.28] - 2026-11-14
+
+### Fixed
+
+- Arena worlds stay protected between rounds: leaves do not decay, ice and snow do not melt, water and lava do not flow, no mobs spawn and no rain or lightning (legacy guarded its arena worlds whenever the plugin ran, not only during a round)
+- The join message is no longer broadcast for players who land in a lobby on a game server (`startOnJoin`), matching the legacy `joinMessage(null)`
+
 ## [1.0.0-dev.27] - 2026-11-14
 
 ### Added
