@@ -442,6 +442,17 @@ public class Lobby {
         return isActivePlayer(player) || isSpectatorPlayer(player) || getParticipant(player) != null;
     }
 
+    /** Players still alive in the running round (spectators and offline drop out). */
+    public int getAlivePlayerCount() {
+        int alive = 0;
+        for (Player player : activePlayers) {
+            if (player != null && player.isOnline() && player.getGameMode() != GameMode.SPECTATOR) {
+                alive++;
+            }
+        }
+        return alive;
+    }
+
     public ArrayList<Player> getActivePlayers() {
         return activePlayers;
     }

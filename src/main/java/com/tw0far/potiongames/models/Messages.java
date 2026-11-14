@@ -497,6 +497,11 @@ public class Messages {
         return Component.text(get("kit.label", "Kit")).color(NamedTextColor.DARK_AQUA);
     }
 
+    /** "12 alive" row in the deathmatch sidebar. */
+    public static String AliveLabel() {
+        return get("scoreboard.alive", "alive");
+    }
+
     public static Component TimeLabel() {
         return Component.text(get("time.label", "Time")).color(NamedTextColor.DARK_AQUA);
     }
