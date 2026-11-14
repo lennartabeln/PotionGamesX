@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.30] - 2026-11-14
+
+### Added
+
+- `/pg setcountdown <seconds>` changes the countdown of the lobby you stand in, or the global default from the console (`pg.setup`)
+- Legacy multi-lobby arenas (`pg.lobbies.<id>.<n>`) are migrated into `lobbies.yml`, not only the global `pg.arenas` section
+
+### Fixed
+
+- A `Random` vote now really plays a random map when it wins or ties the vote (it was recorded but ignored)
+- A failing `messages.yml` save or a broken bundled language file logs a warning instead of staying silent
+
 ## [1.0.0-dev.29] - 2026-11-14
 
 ### Fixed
