@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.34] - 2026-11-14
+
+### Changed
+
+- The join sign shows the lobby number again (state, arena and `[players/capacity]` below it) instead of the plugin name
+- `/pg joinsign` is renamed to `/pg sign`; `joinsign` stays available as an alias
+
 ## [1.0.0-dev.33] - 2026-11-14
 
 ### Fixed
