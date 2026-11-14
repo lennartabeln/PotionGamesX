@@ -20,15 +20,8 @@ public class BlockFlowEventListener implements Listener {
 
     @EventHandler
     public void onBlockFlow(BlockFromToEvent e) {
-        for (Lobby lobby : plugin.getGame().getLobbies()) {
-            if (isGameRunning(lobby) && lobby.isGameWorld(e.getBlock().getWorld())) {
-                e.setCancelled(true);
-                return;
-            }
+        if (plugin.getGame().isProtectedArenaWorld(e.getBlock().getWorld())) {
+            e.setCancelled(true);
         }
-    }
-
-    private boolean isGameRunning(Lobby lobby) {
-        return lobby.getState() == GameStates.INGAME || lobby.getState() == GameStates.DEATHMATCH;
     }
 }

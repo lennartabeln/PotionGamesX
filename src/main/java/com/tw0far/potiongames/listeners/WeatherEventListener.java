@@ -19,16 +19,16 @@ public class WeatherEventListener implements Listener {
 
     @EventHandler
     public void onWeatherChange(WeatherChangeEvent e) {
-        // Rain is only suppressed in the arena worlds of a running round; the
-        // global check used to silence the weather on the whole server.
-        if (e.toWeatherState() && plugin.getGame().isRoundWorld(e.getWorld())) {
+        // Rain is only suppressed in arena worlds; the global check used to
+        // silence the weather on the whole server.
+        if (e.toWeatherState() && plugin.getGame().isProtectedArenaWorld(e.getWorld())) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onLightningStrike(LightningStrikeEvent e) {
-        if (e.getWorld() != null && plugin.getGame().isRoundWorld(e.getWorld())) {
+        if (plugin.getGame().isProtectedArenaWorld(e.getWorld())) {
             e.setCancelled(true);
         }
     }

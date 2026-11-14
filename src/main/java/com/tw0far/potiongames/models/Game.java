@@ -209,6 +209,31 @@ public class Game {
         return false;
     }
 
+    /**
+     * True when the world hosts an arena of a lobby that is not in build mode.
+     *
+     * <p>The legacy release protected its arena worlds ({@code pg.worlds})
+     * whenever the plugin ran, not only during a round: leaves did not decay,
+     * water did not flow, ice did not melt and no mobs spawned while a lobby was
+     * waiting either. Build mode keeps the world editable for admins.</p>
+     */
+    public boolean isProtectedArenaWorld(World world) {
+        if (world == null) {
+            return false;
+        }
+        for (Lobby lobby : lobbies) {
+            if (!lobby.isArenaWorld(world)) {
+                continue;
+            }
+            if (PotionGamesX.getInstance().getLobbyStateManager()
+                    .isBuildAllowed(Integer.toString(lobby.getId()))) {
+                continue;
+            }
+            return true;
+        }
+        return false;
+    }
+
     public boolean isActivePlayer(Player player) {
         for (Lobby lobby : lobbies) {
             if (lobby.isActivePlayer(player)) {
