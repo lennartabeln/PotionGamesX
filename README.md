@@ -96,6 +96,7 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 | `/pg adddeathmatch <lobby> <arena>` | Add deathmatch spawn | `pg.setup` |
 | `/pg deldeathmatch <lobby> <arena>` | Remove deathmatch spawn | `pg.setup` |
 | `/pg joinsign <lobby>` | Set join sign | `pg.setup` |
+| `/pg setcountdown <seconds>` | Change the lobby countdown (console: global default) | `pg.setup` |
 | `/pg headp1\|p2\|p3` | Set stats wall head | `pg.setup` |
 | `/pg signp1\|p2\|p3` | Set stats wall sign | `pg.setup` |
 

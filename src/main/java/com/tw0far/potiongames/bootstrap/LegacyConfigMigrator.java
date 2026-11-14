@@ -71,7 +71,11 @@ public final class LegacyConfigMigrator {
         if (legacyFile.isFile()) {
             YamlConfiguration legacy = YamlConfiguration.loadConfiguration(legacyFile);
             lobbies = createMissingLobbies(legacy.getConfigurationSection("pg.lobbies"), Settings.lobbies);
-            arenas = importGlobalArenas(legacy.getConfigurationSection("pg.arenas"), Settings.lobbies).arenas();
+            // A legacy multi-lobby install kept its maps inside the lobby section
+            // (pg.lobbies.<id>.<n>), a single-lobby install globally under
+            // pg.arenas. Both layouts are imported; duplicates are skipped.
+            arenas = importNestedArenas(legacy.getConfigurationSection("pg.lobbies"), Settings.lobbies);
+            arenas += importGlobalArenas(legacy.getConfigurationSection("pg.arenas"), Settings.lobbies).arenas();
         }
 
         // A legacy single-lobby server kept its lobby in config.yml (pg.Lobby.*)
@@ -177,6 +181,38 @@ public final class LegacyConfigMigrator {
             created++;
         }
         return created;
+    }
+
+    /**
+     * Imports the arenas a legacy multi-lobby install stored inside its lobby
+     * sections ({@code pg.lobbies.<id>.<arenaNumber>} with {@code name},
+     * {@code world}, {@code spawns.<n>} and {@code deathmatch.<n>}).
+     *
+     * <p>{@link LegacyArenaImporter} only looks at sub-sections that carry a
+     * {@code name}, so the scalar settings next to the arenas ({@code countdown},
+     * {@code coords}, ...) are ignored.</p>
+     *
+     * @param legacyLobbies the {@code pg.lobbies} section of the legacy file
+     * @param lobbies       {@code lobbies.yml}
+     * @return number of arenas imported across all lobbies
+     */
+    public static int importNestedArenas(ConfigurationSection legacyLobbies, ConfigurationSection lobbies) {
+        if (legacyLobbies == null || lobbies == null) {
+            return 0;
+        }
+        int imported = 0;
+        for (String id : legacyLobbies.getKeys(false)) {
+            if (!isNumeric(id)) {
+                continue;
+            }
+            ConfigurationSection legacyLobby = legacyLobbies.getConfigurationSection(id);
+            ConfigurationSection target = lobbies.getConfigurationSection("pg.lobbies." + id);
+            if (legacyLobby == null || target == null) {
+                continue;
+            }
+            imported += LegacyArenaImporter.importArenas(legacyLobby, target).imported().size();
+        }
+        return imported;
     }
 
     /**

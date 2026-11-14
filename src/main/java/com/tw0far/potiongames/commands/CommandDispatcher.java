@@ -27,7 +27,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
     /** Subcommands that also work from the server console. */
     private static final Set<String> CONSOLE_ALLOWED = Set.of(
         "reload", "status", "top", "version", "database", "gameserver", "config",
-        "help", "kick");
+        "help", "kick", "setcountdown");
 
     /** Legacy aliases that map onto an existing subcommand. */
     private static final Map<String, String> ALIASES = Map.of(
@@ -62,6 +62,7 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
 
         // Admin commands - Setup
         registerCommand(new SetupCommand(plugin));
+        registerCommand(new SetCountdownCommand(plugin));
         registerCommand(new AddLobbyCommand(plugin));
         registerCommand(new DelLobbyCommand(plugin));
         registerCommand(new AddArenaCommand(plugin));
