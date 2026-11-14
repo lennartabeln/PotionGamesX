@@ -392,10 +392,6 @@ public class Messages {
         return prefix(Component.text(get("deathmatch.starting_in", "Deathmatch is starting in") + " " + time).color(NamedTextColor.GOLD));
     }
 
-    public static Component DeathmatchNoSpawn() {
-        return prefix(Component.text(get("deathmatch.no_spawn", "No deathmatch spawn configured - staying in the arena.")).color(NamedTextColor.YELLOW));
-    }
-
     public static Component ArenaNoSpawn(String arena) {
         return prefix(Component.text(String.format(
             get("arena.no_spawn", "Arena %s has no usable spawn - the round cannot start."), arena)).color(NamedTextColor.RED));

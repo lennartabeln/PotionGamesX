@@ -79,7 +79,6 @@ en_US:
     deathmatch:
       started: "Deathmatch started!"
       starting_in: "Deathmatch is starting in"
-      no_spawn: "No deathmatch spawn configured - staying in the arena."
     deaths:
       label: "Deaths"
     duration:
@@ -400,7 +399,6 @@ de_DE:
     deathmatch:
       started: "Deathmatch gestartet!"
       starting_in: "Deathmatch startet in"
-      no_spawn: "Kein Deathmatch-Spawn konfiguriert - die Spieler bleiben in der Arena."
     deaths:
       label: "Tode"
     duration:
