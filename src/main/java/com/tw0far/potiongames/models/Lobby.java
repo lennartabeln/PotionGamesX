@@ -930,10 +930,23 @@ public class Lobby {
     }
 
     /**
+     * A deathmatch needs at least two configured deathmatch spawns: one for
+     * every survivor of a 1v1. Without them the arena simply has no deathmatch
+     * phase and the round ends with the last player or team standing.
+     */
+    public boolean hasDeathmatch() {
+        Arena arena = currentArena != null ? currentArena : getDisplayArena();
+        return arena != null && deathmatchAvailable(arena.usableDeathmatchSpawnCount());
+    }
+
+    /** Pure helper: a deathmatch needs two spawns or more. */
+    static boolean deathmatchAvailable(int usableDeathmatchSpawns) {
+        return usableDeathmatchSpawns >= 2;
+    }
+
+    /**
      * Remaining players at which the deathmatch starts: the number of usable
-     * deathmatch spawns, so every survivor gets one. Never below two (a
-     * deathmatch against yourself makes no sense), and the legacy minimum when
-     * no deathmatch spawn is configured.
+     * deathmatch spawns, so every survivor gets one.
      */
     public int getDeathmatchThreshold() {
         Arena arena = currentArena != null ? currentArena : getDisplayArena();
@@ -1266,7 +1279,7 @@ public class Lobby {
             }
         }
         int threshold = getDeathmatchThreshold();
-        boolean deathmatchDue = alive.size() >= 2 && alive.size() <= threshold
+        boolean deathmatchDue = hasDeathmatch() && alive.size() >= 2 && alive.size() <= threshold
             && PotionGamesX.getInstance().getConfigManager().isActivateDeathmatch() && !deathmatch;
 
         // Team mode: the round ends when a single team remains
@@ -1331,21 +1344,16 @@ public class Lobby {
     }
 
     private void activateDeathmatch() {
-        deathmatch = true;
         Arena arena = currentArena;
-        int spawns = arena != null ? arena.usableDeathmatchSpawnCount() : 0;
-        if (arena != null && spawns > 0) {
-            Location fallback = arena.getRandomDeathmatchSpawn();
-            for (Player player : new ArrayList<>(activePlayers)) {
-                Location spawn = arena.getRandomDeathmatchSpawn();
-                player.teleport(spawn != null ? spawn : fallback);
-            }
-        } else {
-            // No deathmatch spawn configured: keep everyone where they are instead
-            // of leaving the round in a half-teleported state.
-            PotionGamesX.getInstance().getLogger().info(
-                "Lobby " + id + ": no deathmatch spawn configured, players stay in the arena");
-            sendToLobby(Messages.DeathmatchNoSpawn());
+        if (arena == null || !deathmatchAvailable(arena.usableDeathmatchSpawnCount())) {
+            // Guard for direct callers: without two spawns there is no deathmatch.
+            return;
+        }
+        deathmatch = true;
+        Location fallback = arena.getRandomDeathmatchSpawn();
+        for (Player player : new ArrayList<>(activePlayers)) {
+            Location spawn = arena.getRandomDeathmatchSpawn();
+            player.teleport(spawn != null ? spawn : fallback);
         }
         for (Participant participant : participants) {
             participant.sendMessage(Messages.DeathmatchStarted());
