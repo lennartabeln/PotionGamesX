@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.29] - 2026-11-14
+
+### Fixed
+
+- Every player who does not pick a kit gets a random kit out of the active kits when the round starts, so the shop discount and the Rich Kid start coins apply (legacy `rnd.nextInt(activeKits)`)
+- Advancement pop-ups are disabled for the arena world during a round and restored afterwards (`SHOW_ADVANCEMENT_MESSAGES`)
+- The team selector is only handed out when teams are active and the leave item only without `startOnJoin`; the legacy join sound plays on arrival
+
 ## [1.0.0-dev.28] - 2026-11-14
 
 ### Fixed
