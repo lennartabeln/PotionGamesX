@@ -62,7 +62,7 @@ public final class SetupArguments {
                 return null;
             }
         }
-        // Short form: "/pg joinsign" - only valid in single-lobby mode.
+        // Short form: "/pg sign" - only valid in single-lobby mode.
         return singleLobby ? Integer.valueOf(1) : null;
     }
 }

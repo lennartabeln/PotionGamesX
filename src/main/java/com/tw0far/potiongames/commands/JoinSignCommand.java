@@ -7,7 +7,7 @@ import com.tw0far.potiongames.util.SetupArguments;
 import org.bukkit.entity.Player;
 
 /**
- * /pg joinsign [lobbynumber] OR /pg joinsign
+ * /pg sign [lobbynumber] OR /pg sign
  * Creates a join sign at the player's current location
  */
 public class JoinSignCommand implements ICommand {
@@ -19,7 +19,7 @@ public class JoinSignCommand implements ICommand {
 
     @Override
     public String getName() {
-        return "joinsign";
+        return "sign";
     }
 
     @Override
@@ -34,10 +34,10 @@ public class JoinSignCommand implements ICommand {
             sender.sendMessage(Messages.PlayerOnly());
             return true;
         }
-        // /pg joinsign <lobbynumber>; with pg.singleLobby /pg joinsign targets lobby 1
+        // /pg sign <lobbynumber>; with pg.singleLobby /pg sign targets lobby 1
         Integer lobbyId = SetupArguments.parseLobbyOnly(plugin.getConfigManager().isSingleLobby(), args);
         if (lobbyId == null) {
-            player.sendMessage(Messages.CommandHelp("joinsign"));
+            player.sendMessage(Messages.CommandHelp("sign"));
             return false;
         }
         plugin.getSetupHandler().setJoinSign(player, lobbyId);
@@ -46,7 +46,7 @@ public class JoinSignCommand implements ICommand {
 
     @Override
     public String getUsage() {
-        return Messages.CommandHelpText("joinsign");
+        return Messages.CommandHelpText("sign");
     }
 }
 

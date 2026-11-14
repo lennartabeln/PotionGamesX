@@ -39,8 +39,8 @@ en_US:
         usage: "Usage: /pg dellobby <lobbynumber>"
       addlobby:
         usage: "Usage: /pg addlobby <lobbynumber>"
-      joinsign:
-        usage: "Usage: /pg joinsign <lobbynumber>"
+      sign:
+        usage: "Usage: /pg sign <lobbynumber>"
       invalid_lobby_id: "Invalid lobby ID. Must be a number."
       no_permission: "You don't have permission to use this command!"
       reloading: "Starting plugin reload... this may take a moment."
@@ -128,7 +128,7 @@ en_US:
       headp3: "/pg headp3 - Set place 3 of the stats wall (look at a head)"
       help: "/pg help - Show this help"
       join: "/pg join <lobby> - Join a lobby (without an argument: open the list)"
-      joinsign: "/pg joinsign <lobby> - Add a join sign (look at a sign)"
+      sign: "/pg sign <lobby> - Set the join sign (look at a sign)"
       setcountdown: "/pg setcountdown <seconds> - Change the lobby countdown"
       kick: "/pg kick <player> - Remove a player from the lobby"
       leave: "/pg leave - Leave the current game"
@@ -136,7 +136,7 @@ en_US:
       pause: "/pg pause - Pause or resume the round timer"
       reload: "/pg reload - Reload all configurations"
       setup: "/pg setup - Set up the plugin"
-      sign: "/pg signp1|signp2|signp3 - Add a player sign to the stats wall"
+      signp: "/pg signp1|signp2|signp3 - Add a player sign to the stats wall"
       signp1: "/pg signp1 - Set place 1 of the stats wall (look at a sign)"
       signp2: "/pg signp2 - Set place 2 of the stats wall (look at a sign)"
       signp3: "/pg signp3 - Set place 3 of the stats wall (look at a sign)"
@@ -373,8 +373,8 @@ de_DE:
         usage: "Usage: /pg dellobby <lobbynumber>"
       addlobby:
         usage: "Usage: /pg addlobby <lobbynumber>"
-      joinsign:
-        usage: "Usage: /pg joinsign <lobbynumber>"
+      sign:
+        usage: "Usage: /pg sign <lobbynumber>"
       invalid_lobby_id: "Ungültige Lobby-ID. Muss eine Zahl sein."
       no_permission: "Du hast keine Berechtigung für diesen Befehl!"
       reloading: "Plugin-Reload gestartet... das kann einen Moment dauern."
@@ -462,7 +462,7 @@ de_DE:
       headp3: "/pg headp3 - Platz 3 der Stats-Wand setzen (Kopf ansehen)"
       help: "/pg help - Diese Hilfe anzeigen"
       join: "/pg join <lobby> - Lobby betreten (ohne Angabe: Liste öffnen)"
-      joinsign: "/pg joinsign <lobby> - Join-Schild setzen (Schild ansehen)"
+      sign: "/pg sign <lobby> - Join-Schild setzen (Schild ansehen)"
       setcountdown: "/pg setcountdown <Sekunden> - Ändert den Lobby-Countdown"
       kick: "/pg kick <spieler> - Spieler aus der Lobby entfernen"
       leave: "/pg leave - Aktuelles Spiel verlassen"
@@ -470,7 +470,7 @@ de_DE:
       pause: "/pg pause - Rundentimer pausieren oder fortsetzen"
       reload: "/pg reload - Alle Konfigurationen neu laden"
       setup: "/pg setup - Plugin einrichten"
-      sign: "/pg signp1|signp2|signp3 - Spielerschild an die Stats-Wand setzen"
+      signp: "/pg signp1|signp2|signp3 - Spielerschild an die Stats-Wand setzen"
       signp1: "/pg signp1 - Platz 1 der Stats-Wand setzen (Schild ansehen)"
       signp2: "/pg signp2 - Platz 2 der Stats-Wand setzen (Schild ansehen)"
       signp3: "/pg signp3 - Platz 3 der Stats-Wand setzen (Schild ansehen)"
