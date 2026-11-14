@@ -79,7 +79,6 @@ en_US:
     deathmatch:
       started: "Deathmatch started!"
       starting_in: "Deathmatch is starting in"
-      no_spawn: "No deathmatch spawn configured - staying in the arena."
     deaths:
       label: "Deaths"
     duration:
@@ -91,6 +90,7 @@ en_US:
     game:
       already_started: "The game has already started!"
       started: "The game has been started!"
+      starts_now: "The game starts now!"
       starts_in: "The game starts in"
       waiting: "Waiting for players! [%d/%d]"
       not_enough_players: "Not enough players to start the game!"
@@ -271,6 +271,8 @@ en_US:
       total_players: "Total Players"
       lobbies: "Lobbies"
       no_lobbies: "No active lobbies"
+      deathmatch: "DM %d spawns"
+      no_deathmatch: "no deathmatch"
       lobby_line: "Lobby %s - Players: %d/%d, Spectators: %d"
       database: "Database"
       mode: "Mode"
@@ -309,6 +311,7 @@ en_US:
       not_available: "You are running the latest version."
     vote:
       label: "Votes"
+      closed: "Voting is closed for this round."
     will_be_played: "will be played!"
     winner:
       has_won_the_game: "has won the game!"
@@ -401,7 +404,6 @@ de_DE:
     deathmatch:
       started: "Deathmatch gestartet!"
       starting_in: "Deathmatch startet in"
-      no_spawn: "Kein Deathmatch-Spawn konfiguriert - die Spieler bleiben in der Arena."
     deaths:
       label: "Tode"
     duration:
@@ -413,6 +415,7 @@ de_DE:
     game:
       already_started: "Das Spiel hat bereits begonnen!"
       started: "Das Spiel wurde gestartet!"
+      starts_now: "Das Spiel beginnt jetzt!"
       starts_in: "Das Spiel startet in"
       waiting: "Warte auf Spieler! [%d/%d]"
       not_enough_players: "Nicht genug Spieler, um das Spiel zu starten!"
@@ -593,6 +596,8 @@ de_DE:
       total_players: "Spieler insgesamt"
       lobbies: "Lobbys"
       no_lobbies: "Keine aktiven Lobbys"
+      deathmatch: "DM %d Spawns"
+      no_deathmatch: "kein Deathmatch"
       lobby_line: "Lobby %s - Spieler: %d/%d, Zuschauer: %d"
       database: "Datenbank"
       mode: "Modus"
@@ -631,6 +636,7 @@ de_DE:
       not_available: "Du verwendest bereits die neueste Version."
     vote:
       label: "Stimmen"
+      closed: "Die Abstimmung für diese Runde ist geschlossen."
     will_be_played: "wird gespielt!"
     winner:
       has_won_the_game: "hat das Spiel gewonnen!"
