@@ -72,7 +72,14 @@ public class Lobby {
     private int endingTimer = 10;
     private int prepareTimer = 60;
     private int gameTimer = roundTime;
-    private int[] announceRoundTimes = new int[] { 0, 1, 2, 3, 4, 5, 10, 30, 60, 60 * 5, 60 * 10, 60 * 30 };
+    /**
+     * Remaining seconds at which the round time is announced. Same list as the
+     * legacy tick (600, 300, 240, 180, 120, 60, 30, 20, 10, 5, 4, 3, 2, 1) -
+     * no message at 0 any more, the timeout announces the draw instead.
+     */
+    private int[] announceRoundTimes = new int[] {
+        60 * 10, 60 * 5, 240, 180, 120, 60, 30, 20, 10, 5, 4, 3, 2, 1
+    };
 
     // =====
     // Countdown timers
