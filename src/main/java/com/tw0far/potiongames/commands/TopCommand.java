@@ -62,7 +62,10 @@ public class TopCommand implements ICommand {
         }
 
         final String queryType = type;
-        final String query = "SELECT UUID, " + column + " FROM Stats ORDER BY " + column + " DESC LIMIT 10";
+        // Equal wins are ranked by KD, the same tie-break the rank wall uses.
+        final String tieBreak = "wins".equals(type) ? ", KD DESC" : "";
+        final String query = "SELECT UUID, " + column + " FROM Stats ORDER BY " + column + " DESC"
+            + tieBreak + " LIMIT 10";
 
         sender.sendMessage(Component.text(DIVIDER).color(NamedTextColor.DARK_GRAY));
         sender.sendMessage(Component.text(String.format(Messages.TopHeaderText(), label)).color(NamedTextColor.GOLD));
