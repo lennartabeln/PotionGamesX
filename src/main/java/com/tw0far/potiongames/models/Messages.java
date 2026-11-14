@@ -851,6 +851,10 @@ public class Messages {
             .color(NamedTextColor.GRAY);
     }
 
+    public static String VoteClosedText() {
+        return get("vote.closed", "Voting is closed for this round.");
+    }
+
     public static String VoteText() {
         return get("vote.label", "Votes");
     }

@@ -266,7 +266,11 @@ public class GameItemListener implements Listener {
 
     private void openArenaSelector(Player p, String s) {
         GameStates state = plugin.getLobbyStateManager().getGameState(s);
-        if (state != GameStates.WAITING && state != GameStates.PREPARING) {
+        if (state != GameStates.WAITING) {
+            // The arena is announced ten seconds before the teleport; a late vote
+            // would change the map after everybody has seen it (legacy closed
+            // voting when the countdown started).
+            p.sendMessage(Messages.line(Messages.VoteClosedText(), NamedTextColor.RED));
             return;
         }
         Map<String, Integer> lobbyVotesMap = new HashMap<>();
