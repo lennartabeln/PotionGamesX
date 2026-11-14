@@ -108,6 +108,9 @@ public class Lobby {
     private Boolean prevMobGriefing = null;
     private Boolean prevMobSpawning = null;
     private Boolean prevAnnounceAdvancements = null;
+    private Boolean prevImmediateRespawn = null;
+    /** World time before the round; legacy forced noon, we restore it after. */
+    private Long prevWorldTime = null;
 
     // Per-lobby chests
     /**
@@ -1161,6 +1164,8 @@ public class Lobby {
         prevMobGriefing = world.getGameRuleValue(GameRules.MOB_GRIEFING);
         prevMobSpawning = world.getGameRuleValue(GameRules.SPAWN_MOBS);
         prevAnnounceAdvancements = world.getGameRuleValue(GameRules.SHOW_ADVANCEMENT_MESSAGES);
+        prevImmediateRespawn = world.getGameRuleValue(GameRules.IMMEDIATE_RESPAWN);
+        prevWorldTime = world.getTime();
         world.setGameRule(GameRules.ADVANCE_TIME, false);
         world.setGameRule(GameRules.ADVANCE_WEATHER, false);
         // Fire spread and mob grief would otherwise remove arena blocks that
@@ -1170,6 +1175,10 @@ public class Lobby {
         world.setGameRule(GameRules.SPAWN_MOBS, false);
         // Legacy silenced the advancement pop-ups while a round was running.
         world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
+        // Legacy used DO_IMMEDIATE_RESPAWN so a death does not leave the
+        // player on the respawn screen while the round runs on.
+        world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
+        world.setTime(0);
     }
 
     private void restoreGameRules() {
@@ -1191,6 +1200,12 @@ public class Lobby {
         if (prevAnnounceAdvancements != null) {
             gameruleWorld.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, prevAnnounceAdvancements);
         }
+        if (prevImmediateRespawn != null) {
+            gameruleWorld.setGameRule(GameRules.IMMEDIATE_RESPAWN, prevImmediateRespawn);
+        }
+        if (prevWorldTime != null) {
+            gameruleWorld.setTime(prevWorldTime);
+        }
         if (prevMobSpawning != null) {
             gameruleWorld.setGameRule(GameRules.SPAWN_MOBS, prevMobSpawning);
         }
@@ -1201,6 +1216,8 @@ public class Lobby {
         prevMobGriefing = null;
         prevMobSpawning = null;
         prevAnnounceAdvancements = null;
+        prevImmediateRespawn = null;
+        prevWorldTime = null;
     }
 
     private World resolveArenaWorld() {

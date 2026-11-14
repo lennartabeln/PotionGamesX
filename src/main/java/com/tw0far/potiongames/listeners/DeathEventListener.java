@@ -10,21 +10,35 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Handles player death events.
  * Manages death tracking, kill rewards, and game state after death.
  */
 public class DeathEventListener implements Listener {
+
+    /**
+     * Death location per player. The arena runs with {@code doImmediateRespawn}
+     * (legacy did the same), so the respawn happens right away and would
+     * otherwise drop the new spectator at the world spawn instead of the place
+     * where they died.
+     */
+    private final Map<UUID, Location> respawnAt = new ConcurrentHashMap<>();
+
     private final PotionGamesX plugin;
 
     public DeathEventListener(PotionGamesX plugin) {
@@ -100,6 +114,9 @@ public class DeathEventListener implements Listener {
 
         // Set spectator mode
         p.setGameMode(GameMode.SPECTATOR);
+        if (p.getLocation().getWorld() != null) {
+            respawnAt.put(p.getUniqueId(), p.getLocation().clone());
+        }
         p.setLevel(0);
         p.setExp(0);
         p.setFireTicks(0);
@@ -123,6 +140,25 @@ public class DeathEventListener implements Listener {
             lobby.addKill(killer);
         }
         lobby.addDeath(p);
+    }
+
+    /**
+     * Puts a dead player back where they died while the round is still running,
+     * so death turns into spectating instead of a trip to the world spawn.
+     */
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent e) {
+        Player player = e.getPlayer();
+        Location location = respawnAt.remove(player.getUniqueId());
+        if (location == null) {
+            return;
+        }
+        // A player who is no longer a spectator (round over, left) keeps the
+        // normal respawn point.
+        if (!plugin.getGame().isSpectatorPlayer(player)) {
+            return;
+        }
+        e.setRespawnLocation(location);
     }
 
     private Component buildDeathMessage(Player victim, Player killer, String verb, int aliveCount, int playerCount) {
