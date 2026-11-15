@@ -149,7 +149,6 @@ public class Messages {
         addDefault(lang, "status.connected", "Connected");
         addDefault(lang, "status.disconnected", "Disconnected");
         addDefault(lang, "setup.not_a_sign", "That is not a sign!");
-        addDefault(lang, "command.kick_usage", "Usage: /pg kick <player>");
         addDefault(lang, "kick.not_in_lobby", "%s is not in a lobby!");
         addDefault(lang, "kick.success", "%s has been kicked from lobby %s!");
         addDefault(lang, "kick.notice", "You have been kicked from the lobby by an admin!");

@@ -96,24 +96,6 @@ en_US:
       execution_error: "An error occurred while executing this command!"
       unknown: "Unknown command! Use /pg help for help."
       player_only: "This command can only be used by players!"
-      addarena:
-        usage: "Usage: /pg addarena <lobbynumber> <arenaname>"
-      addspawn:
-        usage: "Usage: /pg addspawn <lobbynumber> <arenaname>"
-      delarena:
-        usage: "Usage: /pg delarena <lobbynumber> <arenaname>"
-      delspawn:
-        usage: "Usage: /pg delspawn <lobbynumber> <arenaname>"
-      adddeathmatch:
-        usage: "Usage: /pg adddeathmatch <lobbynumber> <arenaname>"
-      deldeathmatch:
-        usage: "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"
-      dellobby:
-        usage: "Usage: /pg dellobby <lobbynumber>"
-      addlobby:
-        usage: "Usage: /pg addlobby <lobbynumber>"
-      sign:
-        usage: "Usage: /pg sign <lobbynumber>"
       invalid_lobby_id: "Invalid lobby ID. Must be a number."
       no_permission: "You don't have permission to use this command!"
       reloading: "Starting plugin reload... this may take a moment."
@@ -196,10 +178,6 @@ en_US:
       force: "/pg force <arena> - Force a specific arena"
       gameserver: "/pg gameserver - Toggle game server mode"
       head: "/pg headp1|headp2|headp3 - Add a player head to the stats wall"
-      headp1: "/pg headp1 - Set place 1 of the stats wall (look at a head)"
-      headp2: "/pg headp2 - Set place 2 of the stats wall (look at a head)"
-      headp3: "/pg headp3 - Set place 3 of the stats wall (look at a head)"
-      help: "/pg help - Show this help"
       join: "/pg join <lobby> - Join a lobby (without an argument: open the list)"
       sign: "/pg sign <lobby> - Set the join sign (look at a sign)"
       setcountdown: "/pg setcountdown <seconds> - Change the lobby countdown"
@@ -210,9 +188,6 @@ en_US:
       reload: "/pg reload - Reload all configurations"
       setup: "/pg setup - Set up the plugin"
       signp: "/pg signp1|signp2|signp3 - Add a player sign to the stats wall"
-      signp1: "/pg signp1 - Set place 1 of the stats wall (look at a sign)"
-      signp2: "/pg signp2 - Set place 2 of the stats wall (look at a sign)"
-      signp3: "/pg signp3 - Set place 3 of the stats wall (look at a sign)"
       start: "/pg start - Start the countdown of your lobby"
       stats: "/pg stats [player] - Show player statistics"
       status: "/pg status - Show server status and active lobbies"
@@ -261,7 +236,6 @@ en_US:
       no_spawn: "This lobby has no usable spawn - please tell an admin."
       removed: "Lobby %d removed successfully."
       removed_failed: "Failed to remove lobby %d."
-      removed_success: "Lobby successfully removed!"
       starting_broadcast: "Lobby %s is starting! Join with /pg join %s"
       success_set: "Lobby successfully set!"
       list: "Lobby List"
@@ -436,24 +410,6 @@ de_DE:
       execution_error: "Beim Ausführen dieses Befehls ist ein Fehler aufgetreten!"
       unknown: "Unbekannter Befehl! Benutze /pg help für Hilfe."
       player_only: "Dieser Befehl kann nur von Spielern verwendet werden!"
-      addarena:
-        usage: "Usage: /pg addarena <lobbynumber> <arenaname>"
-      addspawn:
-        usage: "Usage: /pg addspawn <lobbynumber> <arenaname>"
-      delarena:
-        usage: "Usage: /pg delarena <lobbynumber> <arenaname>"
-      delspawn:
-        usage: "Usage: /pg delspawn <lobbynumber> <arenaname>"
-      adddeathmatch:
-        usage: "Usage: /pg adddeathmatch <lobbynumber> <arenaname>"
-      deldeathmatch:
-        usage: "Usage: /pg deldeathmatch <lobbynumber> <arenaname>"
-      dellobby:
-        usage: "Usage: /pg dellobby <lobbynumber>"
-      addlobby:
-        usage: "Usage: /pg addlobby <lobbynumber>"
-      sign:
-        usage: "Usage: /pg sign <lobbynumber>"
       invalid_lobby_id: "Ungültige Lobby-ID. Muss eine Zahl sein."
       no_permission: "Du hast keine Berechtigung für diesen Befehl!"
       reloading: "Plugin-Reload gestartet... das kann einen Moment dauern."
@@ -536,10 +492,6 @@ de_DE:
       force: "/pg force <arena> - Bestimmte Arena erzwingen"
       gameserver: "/pg gameserver - Game-Server-Modus umschalten"
       head: "/pg headp1|headp2|headp3 - Spielerkopf an die Stats-Wand setzen"
-      headp1: "/pg headp1 - Platz 1 der Stats-Wand setzen (Kopf ansehen)"
-      headp2: "/pg headp2 - Platz 2 der Stats-Wand setzen (Kopf ansehen)"
-      headp3: "/pg headp3 - Platz 3 der Stats-Wand setzen (Kopf ansehen)"
-      help: "/pg help - Diese Hilfe anzeigen"
       join: "/pg join <lobby> - Lobby betreten (ohne Angabe: Liste öffnen)"
       sign: "/pg sign <lobby> - Join-Schild setzen (Schild ansehen)"
       setcountdown: "/pg setcountdown <Sekunden> - Ändert den Lobby-Countdown"
@@ -550,9 +502,6 @@ de_DE:
       reload: "/pg reload - Alle Konfigurationen neu laden"
       setup: "/pg setup - Plugin einrichten"
       signp: "/pg signp1|signp2|signp3 - Spielerschild an die Stats-Wand setzen"
-      signp1: "/pg signp1 - Platz 1 der Stats-Wand setzen (Schild ansehen)"
-      signp2: "/pg signp2 - Platz 2 der Stats-Wand setzen (Schild ansehen)"
-      signp3: "/pg signp3 - Platz 3 der Stats-Wand setzen (Schild ansehen)"
       start: "/pg start - Countdown deiner Lobby starten"
       stats: "/pg stats [spieler] - Statistiken anzeigen"
       status: "/pg status - Serverstatus und aktive Lobbys anzeigen"
@@ -601,7 +550,6 @@ de_DE:
       no_spawn: "Diese Lobby hat keinen nutzbaren Spawn - bitte informiere einen Admin."
       removed: "Lobby %d erfolgreich entfernt."
       removed_failed: "Lobby %d konnte nicht entfernt werden."
-      removed_success: "Lobby erfolgreich entfernt!"
       starting_broadcast: "Lobby %s startet! Trete mit /pg join %s bei"
       success_set: "Lobby erfolgreich gesetzt!"
       list: "Lobby-Liste"

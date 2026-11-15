@@ -213,6 +213,11 @@ Nothing yet - new entries belong here and are moved into a version section on re
 - Chest blocks open on a fresh or half-migrated install (legacy `END_PORTAL_FRAME`/`COMPOSTER` fallback) and loot chests work in the deathmatch
 - Dropped the write-only `Lobby#joinable` flag
 
+## Earlier development builds (1.0.0-dev.1 - 1.0.0-dev.25)
+
+These builds predate this changelog and shipped without separate notes; their tags and jars
+remain on the releases page. Everything from `1.0.0-dev.26` on is documented below.
+
 ## [1.0.0-dev.26] - 2026-11-13
 
 ### Added
