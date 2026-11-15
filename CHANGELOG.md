@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.51] - 2026-11-15
+
+### Changed
+
+- Documentation sweep before the 1.0 tag: `DOCUMENTATION.md` no longer lists the removed `/pg broadcast` command, has a complete admin command list and the current jar size; `README.md` documents `/pg help`
+
+### Removed
+
+- 17 message keys per locale that nothing ever sent (`command.*.usage` of the nine setup commands, `help.headp1-3`, `help.signp1-3`, `help.help`, `lobby.removed_success`) and the `command.kick_usage` seed - both locales now define the same 244 keys
+
 ## [1.0.0-dev.50] - 2026-11-15
 
 ### Changed
