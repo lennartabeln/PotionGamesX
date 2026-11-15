@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.54] - 2026-11-15
+
+### Fixed
+
+- The store description no longer uses `[HR][/HR]` (vBulletin syntax, Spigot shows it as literal text) - the dividers are a centered line of dashes now, and the store test rejects any tag outside the XenForo 1.5 whitelist
+
 ## [1.0.0-dev.53] - 2026-11-15
 
 ### Changed
