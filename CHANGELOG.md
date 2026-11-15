@@ -11,42 +11,50 @@ Nothing yet - new entries belong here and are moved into a version section on re
 
 ## [1.0.0] - 2026-11-15
 
-First stable release of the rework. Everything below is in this build; the release page additionally
-carries the complete `dev.N` development history in a collapsible block.
+PotionGamesX 1.0 is the complete rework of PotionGames 7.x: rebuilt from the ground up on Paper
+26.3, one plugin jar, one documented config layout, every game rule covered by a test. The full
+development history is in the collapsible block on the release page.
 
-### Added
+### Highlights
 
-- Multi-lobby minigames: lobbies, arenas, arena voting each round, per-lobby settings inherited from `pg.defaults.*`
-- Loot chests with weighted pools, custom chests with fixed content and the legacy feature items (compass player finder, airdrop torch, TNT, flint and steel)
-- Potion shop with kit prices, coins and glass bottles as currency, airdrops, teams with configurable size and a deathmatch phase
-- Spectators for eliminated players and late joiners, player-based lobby protection (no damage, no hunger, no PvP outside a running round)
-- Statistics in SQLite or MySQL with async writes, a top-3 stats wall and `/pg top` leaderboards with a KD tie-break
-- Join signs with live state, GUI or sign to join, BungeeCord game-server mode with `pg.kickOnRoundEnd` / `pg.kickOnLeave`
-- Vault reward support (kill and win rewards), optional and inert without Vault
-- Automatic migration from the 7.x layout (`arenadata.yml`, `pg.Lobby.*`, `pg.arenas`, `pg.lobbySystem`)
-- Every `.yml` file documented inline in English; messages in `en_US` and `de_DE`
-- Update check against the GitHub releases with separate channels: dev builds see newer dev builds and the stable release, stable builds only see stable releases
+**Lobbies and rounds**
+- Any number of lobbies side by side, each with its own arenas, spawns, deathmatch spawns and settings; a new lobby inherits `pg.defaults.*` instead of copying today's numbers
+- Players join through the GUI, a join sign or `/pg join`; each round votes on the arena, including a "Random" option
+- Countdown with configurable start delay, teams of a configurable size, arena voting lock, and a deathmatch phase once the field is small enough
+- Spectators for eliminated players and for late joiners, plus a full round reset afterwards (spawns, world state, inventory)
 
-### Changed
+**Items, economy and rewards**
+- Loot chests with weighted pools per world profile, custom chests with fixed content, and the 23 chest effects of the legacy release
+- The classic gear (player-finder compass, airdrop torch, bow, TNT, flint and steel, milk, stews) works wherever the player gets it - loot chest, custom chest or shop
+- Potion shop that spends coins and glass bottles, with kit discounts, sale entries and a toggleable entry count
+- Vault rewards for kills and for winning a round, optional and completely inert without Vault
 
-- Flags that were easy to mix up are renamed - `pg.joinStarted` → `pg.spectateRunningRound`, `pg.startOnJoin` → `pg.autoJoinOnConnect`, `pg.broadcastStarting` → `pg.broadcastCountdown`, `pg.allowOutsideChat` → `pg.lobbyChatInGlobalChat` - and related ones grouped: `pg.compass.spawnItem` / `pg.compass.tracking` and `pg.rewards.enabled` / `.kill` / `.win`. The old names are still read as a fallback, an existing `config.yml` keeps its values
-- Spectators of a running round are enabled with `pg.spectateRunningRound`, joining players are put into a lobby with `pg.autoJoinOnConnect`
-- The server-list MOTD and slot count are also taken over when `pg.autoJoinOnConnect` is on without `pg.gameServer`; only a plain lobby server keeps the entry from `server.properties`
-- Class-based architecture with manager delegation, one listener and one command class per topic
-- Lobby protection is decided per player from the game state instead of by world flags
-- Renamed the join sign command to `/pg sign`; `/pg joinsign` was removed
-- `pg.activeKits` and `pg.activePotions` are plain counts (`0` = none); both default to the legacy values
-- Build is warning-free (`-Xlint:all` + `-Werror`) and enforced in CI, with JUnit tests for the game rules
+**Statistics**
+- SQLite or MySQL, chosen in `config.yml` and switchable at runtime; all writes leave the tick thread
+- `/pg stats`, `/pg stats <player>`, `/pg top kills|deaths|wins|kd` and a top-3 wall built from player heads or signs
+- Ranking with a deterministic tie-break, and self-healing tables on upgrade (duplicate rows are merged before the unique key goes on)
 
-### Fixed
+**Server integration**
+- Server-list MOTD and slot count driven by the live round state, on game servers and on auto-join servers
+- Join signs that show state, arena and player count, GUI or sign to join, and a lobby number on the sign instead of the plugin name
+- BungeeCord game-server mode with `pg.bungeeServer`, plus independent `pg.kickOnRoundEnd` / `pg.kickOnLeave` behaviour (transfer when a proxy answers, otherwise a clean disconnect or stay in the lobby)
+- Player-based lobby protection: no damage, no hunger, no PvP outside a running round - the arena can sit in the same world
 
-- The kill and win reward message printed the amount twice (`you get 10 $10`); it now shows the amount as formatted by the economy (`you get $10`, `you get 10 Coins`)
-- Existing `Stats` tables are healed on start: duplicate rows per UUID are merged (counters summed, KD recomputed) before the unique key is added, and an already present key is detected instead of logging a false "UUID is not unique" line on every restart
-- PvP, gamerules and respawn parity with 7.0.1 (arena world PvP, difficulty, noon, immediate respawn)
-- Round start: random kits per player, team split that never leaves everyone in one team, arena abort on failed teleport
-- Shop and chest seeding idempotent, loot chests never empty after a reload, 23 legacy chest effects
-- Stats credited to the surviving team only, no blocking database calls on the tick thread
-- Proxy leave: players are transferred to the hub when a proxy is reachable and disconnected instead of being stranded otherwise
+**Configuration, messages and upgrades**
+- Every `.yml` file documented inline in English: what each toggle does, its unit, its default and the entry format; `messages.yml` ships `en_US` and `de_DE`
+- Clearer flag names (`pg.autoJoinOnConnect`, `pg.spectateRunningRound`, `pg.broadcastCountdown`, `pg.lobbyChatInGlobalChat`, `pg.compass.*`, `pg.rewards.*`) with the old spellings still read as a fallback
+- Automatic migration of a 7.x install: `arenadata.yml`, `pg.Lobby.*`, `pg.arenas` and `pg.lobbySystem` become lobby 1, existing arenas are never overwritten
+- Update check with separate channels: a development build also sees the stable release, a stable build only sees stable releases
+
+**Engineering**
+- Class-based architecture with manager delegation and one listener / one command class per topic
+- Round logic, config fallbacks and message files under JUnit; the build is warning-free (`-Xlint:all` + `-Werror`) and gated by CodeQL and automated releases
+
+### Upgrading from 7.x
+
+Drop the jar in, keep your `config.yml` and `arenadata.yml` - the plugin creates lobby 1 from them on
+start and leaves everything it already finds untouched. Delete `arenadata.yml` afterwards, otherwise
+the migration is checked again on every start.
 
 ## [1.0.0-dev.60] - 2026-11-15
 
