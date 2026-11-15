@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.48] - 2026-11-15
+
+### Fixed
+
+- `pg.activeKits` and `pg.activePotions` count entries the same way everywhere: `1` uses the first entry, `2` two, `20` all twenty, `0` none. `activeKits` previously treated `0` as "all" when dealing kits but as "none" in the selector.
+- Startup warning when `activeKits` or `activePotions` is `0` while the file has entries (an empty shop or an empty kit selector is easy to miss after an update)
+
 ## [1.0.0-dev.47] - 2026-11-15
 
 ### Changed
