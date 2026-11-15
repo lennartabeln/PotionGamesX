@@ -206,6 +206,8 @@ The build is warning-free and stays that way: `maven-compiler-plugin` runs `-Xli
 
 Architecture notes live in [DOCUMENTATION.md](DOCUMENTATION.md), the release notes in [CHANGELOG.md](CHANGELOG.md).
 
+Publishing the plugin: [docs/store](docs/store/README.md) holds the ready-to-paste store description for SpigotMC (BBCode), since Spigot does not accept Markdown.
+
 ## Release History
 
 Development builds are published as pre-releases (`1.0.0-dev.N`) with the changelog section of the commit; full releases use the `[version]` section of `CHANGELOG.md`.

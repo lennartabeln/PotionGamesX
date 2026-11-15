@@ -1,0 +1,140 @@
+[CENTER][SIZE=6][B][COLOR=#55FF55]PotionGamesX[/COLOR][/B][/SIZE]
+[SIZE=4]A minigames plugin for Paper servers - SurvivalGames with potions and effects[/SIZE][/CENTER]
+
+[HR][/HR]
+
+PotionGamesX is a complete rework of the original PotionGames. Players loot chests for potions, gear and coins, buy extra effects in a potion shop and fight until one team is left. Everything is configurable - loot tables, chest types, kits, shop prices, messages and per-lobby settings.
+
+[SIZE=5][B][COLOR=#FFAA00]Features[/COLOR][/B][/SIZE]
+[LIST]
+[*]Custom loot tables with probability-weighted chests
+[*]Custom potion effects from looting chests
+[*]Custom chest types (normal, target, netherite, composter shop)
+[*]Airdrops - right-click with a redstone torch
+[*]Coins and glass bottles as shop currency, found in the chests
+[*]Potion shop with kit-specific sale prices
+[*]Multiple lobbies with arena voting every round
+[*]Teams with custom team sizes - last team standing wins
+[*]Spectators for eliminated players and late joiners
+[*]Deathmatch phase for the final fight
+[*]Player statistics in SQLite or MySQL
+[*]Top 3 stats wall made of player heads and signs
+[*]Join signs with live player counts
+[*]BungeeCord / proxy support
+[*]Vault rewards for kills and wins
+[*]Every config file documented in English
+[/LIST]
+
+[SIZE=5][B][COLOR=#FFAA00]Requirements[/COLOR][/B][/SIZE]
+[LIST]
+[*][B]Java 25+[/B]
+[*][B]Paper 26.3+[/B]
+[*]Multiverse-Core (soft dependency)
+[*]Vault (optional, for economy rewards)
+[/LIST]
+
+[SIZE=5][B][COLOR=#FFAA00]Installation[/COLOR][/B][/SIZE]
+[LIST=1]
+[*]Download the latest release and put the .jar into your server's [FONT=Courier New]plugins/[/FONT] folder
+[*]Install Multiverse-Core if you use several worlds
+[*]Restart the server
+[*]Run [FONT=Courier New]/pg setup[/FONT] and follow the wizard
+[*]Adjust the settings in [FONT=Courier New]plugins/PotionGamesX/config.yml[/FONT]
+[/LIST]
+
+[SIZE=5][B][COLOR=#FFAA00]Quick start[/COLOR][/B][/SIZE]
+[LIST=1]
+[*]Create a lobby with [FONT=Courier New]/pg setup[/FONT]
+[*]Add arenas and their spawns (at least two spawns per arena)
+[*]Place the chest blocks: end portal frame for loot, composter for the shop
+[*]Optional: add deathmatch spawns with [FONT=Courier New]/pg adddeathmatch[/FONT]
+[*]Set the lobby spawn and a join sign, then test with two players
+[/LIST]
+
+[SIZE=5][B][COLOR=#FFAA00]Commands[/COLOR][/B][/SIZE]
+
+[B]Players[/B]
+[LIST]
+[*][FONT=Courier New]/pg join <id>[/FONT] - join a lobby ([FONT=Courier New]pg.join[/FONT])
+[*][FONT=Courier New]/pg leave[/FONT] - leave the current lobby ([FONT=Courier New]pg.leave[/FONT])
+[*][FONT=Courier New]/pg list[/FONT] - open the lobby list ([FONT=Courier New]pg.list[/FONT])
+[*][FONT=Courier New]/pg stats [player][/FONT] - statistics ([FONT=Courier New]pg.stats[/FONT])
+[*][FONT=Courier New]/pg top [kills|deaths|wins|kd][/FONT] - leaderboards ([FONT=Courier New]pg.top[/FONT])
+[*][FONT=Courier New]/pg help[/FONT] - every command and permission (alias [FONT=Courier New]/pg commands[/FONT])
+[/LIST]
+
+[B]Admins[/B]
+[LIST]
+[*][FONT=Courier New]/pg setup[/FONT] - interactive setup wizard
+[*][FONT=Courier New]/pg config[/FONT] - current configuration
+[*][FONT=Courier New]/pg status[/FONT] - server and lobby status
+[*][FONT=Courier New]/pg start[/FONT] - shorten the countdown to 10 seconds
+[*][FONT=Courier New]/pg pause[/FONT] - pause or resume the round timer
+[*][FONT=Courier New]/pg force <arena>[/FONT] - force a specific arena
+[*][FONT=Courier New]/pg build[/FONT] - toggle build mode
+[*][FONT=Courier New]/pg kick <player>[/FONT] - remove a player from a lobby
+[*][FONT=Courier New]/pg reload[/FONT] - reload every config file
+[*][FONT=Courier New]/pg version[/FONT] - version and update check
+[*][FONT=Courier New]/pg gameserver[/FONT] - toggle game / hub mode
+[*][FONT=Courier New]/pg database[/FONT] - switch between MySQL and SQLite
+[/LIST]
+
+[B]Setup (alternative to the wizard)[/B]
+[LIST]
+[*][FONT=Courier New]/pg addlobby <id>[/FONT] / [FONT=Courier New]/pg dellobby <id>[/FONT]
+[*][FONT=Courier New]/pg addarena <lobby> <name>[/FONT] / [FONT=Courier New]/pg delarena <lobby> <name>[/FONT]
+[*][FONT=Courier New]/pg addspawn <lobby> <arena>[/FONT] / [FONT=Courier New]/pg delspawn <lobby> <arena>[/FONT]
+[*][FONT=Courier New]/pg adddeathmatch <lobby> <arena>[/FONT] / [FONT=Courier New]/pg deldeathmatch <lobby> <arena>[/FONT]
+[*][FONT=Courier New]/pg setlobbyspawn <lobby>[/FONT] - set the lobby spawn
+[*][FONT=Courier New]/pg sign <lobby>[/FONT] - turn the sign you look at into a join sign
+[*][FONT=Courier New]/pg setcountdown <seconds>[/FONT] - change the lobby countdown
+[*][FONT=Courier New]/pg headp1|2|3[/FONT] and [FONT=Courier New]/pg signp1|2|3[/FONT] - build the stats wall
+[/LIST]
+
+[SIZE=5][B][COLOR=#FFAA00]Chests and shop[/COLOR][/B][/SIZE]
+[LIST]
+[*][B]End portal frame[/B] - normal loot chest: food, armour, weapons, coins and glass bottles
+[*][B]Target[/B] - flame bow and arrows
+[*][B]Netherite block[/B] - netherite ingots (smithing table upgrades diamond gear)
+[*][B]Composter[/B] - potion shop, paid with coins and one glass bottle
+[/LIST]
+Every chest type and every loot pool is defined in [FONT=Courier New]chests.yml[/FONT], custom chests with fixed content included.
+
+[SIZE=5][B][COLOR=#FFAA00]Lobby and arena[/COLOR][/B][/SIZE]
+Lobby and arena may share a world: a player who is in a lobby is protected while no round runs (no damage, no hunger, no PvP), and only a running round (INGAME, DEATHMATCH) turns damage, fall damage, hunger and PvP back on. Spectators are always protected.
+
+[SIZE=5][B][COLOR=#FFAA00]Feature items[/COLOR][/B][/SIZE]
+Some items carry game logic and are recognised by their material, wherever the player got them from:
+[LIST]
+[*][B]Compass[/B] - points to the nearest opponent ([FONT=Courier New]pg.playerFinder[/FONT])
+[*][B]Redstone torch[/B] - throws an airdrop above the player (per lobby [FONT=Courier New]activateAirdrops[/FONT])
+[*][B]TNT[/B] - explodes and damages players, blocks stay protected
+[*][B]Flint and steel, bow, arrows, fishing rod, shield[/B] - normal vanilla behaviour
+[*][B]Milk bucket, stews[/B] - clear effects / restore hunger
+[/LIST]
+Put any of them into a loot pool in [FONT=Courier New]chests.yml[/FONT] ([FONT=Courier New]MATERIAL:AMOUNT[/FONT]), into a custom chest or into [FONT=Courier New]shop.yml[/FONT] - no plugin change needed.
+
+[SIZE=5][B][COLOR=#FFAA00]Configuration[/COLOR][/B][/SIZE]
+[LIST]
+[*][B]config.yml[/B] - global settings, database, feature flags
+[*][B]lobbies.yml[/B] - lobbies, arenas, spawns, join signs
+[*][B]chests.yml[/B] - loot pools, chest blocks, custom chests
+[*][B]shop.yml[/B] - potion shop entries and prices
+[*][B]kits.yml[/B] - kit names
+[*][B]messages.yml[/B] - all texts, English and German included
+[/LIST]
+Every key is documented inside the files: what the toggle does, which values are allowed and how to add an entry. Settings are resolved as [FONT=Courier New]pg.lobbies.<id>.settings.*[/FONT] first, then [FONT=Courier New]pg.defaults.*[/FONT], then the built-in default - so you configure the defaults once and every new lobby inherits them.
+
+[SIZE=5][B][COLOR=#FFAA00]Upgrading from PotionGames 7.x[/COLOR][/B][/SIZE]
+Copy your old [FONT=Courier New]arenadata.yml[/FONT] and [FONT=Courier New]config.yml[/FONT] into [FONT=Courier New]plugins/PotionGamesX/[/FONT] and start the server. Lobbies, arenas, spawns and settings are migrated automatically, nothing that already exists is overwritten. Delete [FONT=Courier New]arenadata.yml[/FONT] afterwards so deleted arenas do not come back.
+
+[HR][/HR]
+
+[SIZE=5][B][COLOR=#FFAA00]Links[/COLOR][/B][/SIZE]
+[LIST]
+[*][URL=https://github.com/lennartabeln/PotionGamesX]Source code on GitHub[/URL]
+[*][URL=https://github.com/lennartabeln/PotionGamesX/releases]Releases and changelog[/URL]
+[*][URL=https://github.com/lennartabeln/PotionGamesX/issues]Report bugs and request features[/URL]
+[/LIST]
+
+Licensed under the MIT License.
