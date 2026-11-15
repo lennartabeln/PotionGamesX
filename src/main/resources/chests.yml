@@ -1,25 +1,57 @@
-# PotionGames Chest Loot Configuration
-# Defines loot tables for chests found in-game
-# factor: 1.0 = default density, 0.5 = half, 2.0 = double
+# ═══════════════════════════════════════════════════════════════════════════
+#  PotionGamesX - chest loot and chest block types
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#  Three sections matter here:
+#    pg.chestloot.<profile>   how full a chest is and which pool it draws from
+#    pg.chestblocks.<profile> which block opens which loot profile
+#    pg.customchests.<id>     fixed content chests (one entry per chest)
+#
+#  Everything is optional. Missing keys are kept after the built in defaults,
+#  missing sections are re-created on start - existing values are never
+#  overwritten, so your edits survive.
+# ═══════════════════════════════════════════════════════════════════════════
 
 pg:
   chestloot:
+    # The profile used by every normal loot chest (end portal frame).
     normal:
+      # ─────────────────────────────────────────────────────────────────────
+      # HOW OFTEN WHICH POOL IS USED
+      #
+      # The numbers are relative weights, not percentages: a pool with weight
+      # 20 is chosen about twice as often as a pool with weight 10. The sum
+      # does not have to be 100. Set a weight to 0.0 to remove that pool.
+      #
+      # "factor" multiplies the NUMBER OF ITEMS a chest contains:
+      #   1.0 = 2 to 6 items, 0.5 = half as many, 2.0 = twice as many,
+      #   0.0 = the chest stays empty.
+      # ─────────────────────────────────────────────────────────────────────
       loot:
         factor: 1.0
-        food1: 20.0
-        food2: 10.0
-        armour1: 15.0
-        armour2: 15.0
-        armour3: 7.0
-        armour4: 5.0
-        armour5: 3.0
-        weapons1: 20.0
-        weapons2: 5.0
+        food1: 20.0       # cheap food
+        food2: 10.0       # stews, golden carrot, milk bucket
+        armour1: 15.0     # leather
+        armour2: 15.0     # chainmail
+        armour3: 7.0      # gold
+        armour4: 5.0      # iron
+        armour5: 3.0      # diamond
+        weapons1: 20.0    # wooden and stone gear, bow, arrows, TNT, flint and steel
+        weapons2: 5.0     # iron and diamond gear, compass, redstone torch
         # Shop currency (glass bottle + coin). Only rolled while the lobby has
         # its shop enabled; otherwise the roll becomes food.
         shop: 10.0
 
+      # ─────────────────────────────────────────────────────────────────────
+      # WHAT EACH POOL CONTAINS
+      #
+      # One entry per line in the format "MATERIAL:AMOUNT":
+      #   "BREAD:3"      -> 3 bread
+      #   "DIAMOND_SWORD:1" -> one diamond sword
+      # The material is any Bukkit material name (upper case, underscores).
+      # An unknown name is skipped with a warning in the console.
+      # Pools may stay empty; they are then simply never chosen.
+      # ─────────────────────────────────────────────────────────────────────
       items:
         food1:
           - "CAKE:1"
@@ -81,17 +113,42 @@ pg:
           - "COMPASS:1"
           - "REDSTONE_TORCH:1"
 
-  # Chest block types: right-clicking one of these blocks opens a chest.
-  # A single material name or a list of material names is supported.
+  # ─────────────────────────────────────────────────────────────────────────
+  # WHICH BLOCK OPENS A CHEST
+  #
+  # Right-clicking one of these blocks opens a chest instead of placing a
+  # block. Write a single material or a list of materials:
+  #   normal:
+  #     - "END_PORTAL_FRAME"
+  #     - "CHEST"
+  # "normal" uses pg.chestloot.normal, "shop" opens the potion shop.
+  # ─────────────────────────────────────────────────────────────────────────
   chestblocks:
     normal:
       - "END_PORTAL_FRAME"
     shop:
       - "COMPOSTER"
 
-  # Custom chest loot profiles.
-  # Entries are seeded automatically on startup when missing, so the special
-  # chest blocks (command block, target, netherite block, dried kelp block)
-  # work out of the box. Delete an entry to stop it from being re-added and
-  # restart the server, or edit an existing entry freely.
+  # ─────────────────────────────────────────────────────────────────────────
+  # FIXED CONTENT CHESTS (optional)
+  #
+  # One entry per chest, numbered from 1 upwards. Example:
+  #
+  # customchests:
+  #   1:
+  #     activate: true          # false = the block does nothing
+  #     chesttype: TARGET       # block that opens this chest (any material)
+  #     chestsize: 9            # inventory size: 9, 18, 27, 36, 45 or 54
+  #     1:                      # entry number, counted from 1 per chest
+  #       slot: 0               # inventory slot, counted from 0
+  #       item:                 # a serialised Bukkit ItemStack
+  #         ==: org.bukkit.inventory.ItemStack
+  #         v: 4189
+  #         type: BOW
+  #         amount: 3
+  #
+  # The plugin seeds four examples on first start (command block, target,
+  # netherite block, dried kelp block). Delete an entry to stop it from being
+  # re-added, or edit it freely - existing entries are never overwritten.
+  # ─────────────────────────────────────────────────────────────────────────
   customchests: {}

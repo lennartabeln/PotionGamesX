@@ -1,6 +1,30 @@
-# PotionGames Kit Configuration
-# Structure: pg.kits.<number>.name
-# Populated on first run; edit to customize kit selection.
+# ═══════════════════════════════════════════════════════════════════════════
+#  PotionGamesX - kits
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#  A kit is only a NAME. It gives no items, no armour and no effects - exactly
+#  like the legacy release. The name has three effects:
+#
+#    1. it appears in the kit selector (ender chest during a round prep)
+#    2. it decides the reduced shop price: shop.yml entries whose "kit" matches
+#       the player's kit cost "sale" instead of "cost"
+#    3. the kit "Rich Kid" starts every round with 5 coins in the inventory
+#
+#  Who picks nothing gets one of the active kits at random when the round
+#  starts; two players can end up with the same kit.
+#
+#  How many entries are selectable is set in config.yml with "pg.activeKits":
+#    6  = entries 1 to 6 (default: Rich Kid, Fighter, Healer, Looter, Ghost, Tank)
+#    1  = only entry 1
+#    0  = no kit can be chosen
+#  Entries beyond that number stay in the file but are not used, which is what
+#  the placeholder names kit7 ... kit26 are for.
+#
+#  Format: pg.kits.<number>.name, numbers counted from 1.
+#  Adding a kit: append the next number with your own name (for example "Archer").
+#  Deleting a kit: remove the block, or lower pg.activeKits.
+#  The name in shop.yml -> pg.potions.<n>.kit must match this name exactly.
+# ═══════════════════════════════════════════════════════════════════════════
 
 pg:
   kits:

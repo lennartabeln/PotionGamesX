@@ -1,14 +1,36 @@
-# PotionGames Shop Configuration
-# Each entry defines a purchasable potion effect in the in-game shop.
-# Structure:
-#   pg.potions.<id>:
-#     name:             Display name of the potion
-#     shoppotion:       PotionEffect configuration (type, duration, amplifier, ambient, particles, icon)
-#     shoppotiontype:   ItemStack shown in the shop GUI (material, amount)
-#     kit:              Kit category (Fighter, Healer, Looter, Ghost, Tank)
-#     cost:             Price in coins
-#     sale:             Reduced price in coins for players whose kit matches
-#                       (must be below cost; 0 or missing = nobody gets a discount)
+# ═══════════════════════════════════════════════════════════════════════════
+#  PotionGamesX - potion shop
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#  The shop is opened with a composter block during a round. Every entry is one
+#  potion the players can buy. Payment is coins plus one glass bottle, both
+#  found in the loot chests.
+#
+#  How many entries are buyable is set in config.yml with "pg.activePotions":
+#  1 = only entry 1, 20 = all twenty, 0 = none.
+#
+#  A single entry looks like this:
+#
+#    pg:
+#      potions:
+#        1:
+#          name: "JUMP_BOOST"     # shown in the shop GUI and in chat
+#          kit: Looter            # kit that pays the reduced price
+#          cost: 4                # price in coins for everyone else
+#          sale: 2                # price for the kit above (0/missing = no discount)
+#
+#  Optional keys (written on first start, usually not needed):
+#    shoppotion:     the potion effect: type, duration in ticks (20 ticks =
+#                    1 second, 600 = 30 s), amplifier, ambient, particles, icon
+#    shoppotiontype: the item shown in the GUI, e.g. POTION or SPLASH_POTION
+#  Both use the Bukkit serialisation format ("==: org.bukkit.potion.PotionEffect"
+#  and "==: org.bukkit.inventory.ItemStack"). Missing keys are re-created from
+#  the built in catalogue.
+#
+#  Adding an entry: append the next free number with name, kit, cost and sale.
+#  Deleting an entry: remove the whole block. Numbers do not have to be
+#  contiguous, the order in the file is the order in the shop.
+# ═══════════════════════════════════════════════════════════════════════════
 
 pg:
   potions:

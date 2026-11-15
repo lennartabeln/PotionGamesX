@@ -1,4 +1,77 @@
-# Default localized messages for PotionGamesX
+# ═══════════════════════════════════════════════════════════════════════════
+#  PotionGamesX - all player facing text
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#  Structure:  <locale>.messages.<section>.<key>
+#
+#  The locale is chosen with config.yml -> pg.language (en_US or de_DE).
+#  A key that exists in the chosen locale is used from there, everything else
+#  falls back to en_US and finally to the text built into the plugin, so a
+#  missing translation never breaks a command.
+#
+#  Rules for the texts:
+#    - plain text only: colours are applied by the plugin, "&a" does NOT work
+#    - placeholders are printf style and must stay in the text if present:
+#        %s  text (names, arena names, labels)      %d  whole numbers
+#        %.2f a number with two decimals
+#      Swapping their order inside a sentence is fine, removing them is not.
+#    - most game messages get the "[PotionGamesX]" prefix automatically; chat
+#      and scoreboard texts do not
+#    - keep both locale blocks key-identical; an empty value ("") hides the line
+#
+#  Sections (same in every locale):
+#    airdrop      airdrop announcements
+#    arena        arena created/removed/selected and arena problems
+#    build        build mode messages
+#    command      generic command answers (usage, unknown command, ...)
+#    coin/coins   currency labels
+#    commands     /pg commands help lines
+#    config       /pg config output and reload results
+#    database     database connection messages
+#    deathmatch   deathmatch phase announcements
+#    duration     scoreboard/score label "Duration"
+#    error/file   generic errors and file problems
+#    game         round start/end, countdown, winners, draws
+#    gameserver   game server mode messages
+#    head         stats wall heads
+#    help         /pg help lines, one key per command
+#    join/kick    joining and kicking players
+#    kit          kit selector and kit messages
+#    leave        leaving a lobby or a round
+#    list/choose  /pg list GUI
+#    lobby        lobby state messages (full, closed, not in a lobby, ...)
+#    setup        setup wizard prompts and errors
+#    map/etc.     labels used on signs, scoreboard and walls
+#    permission   missing permission
+#    pause        /pg pause
+#    player(s)    player labels and player counts
+#    plugin       plugin name/version output
+#    price        "Price" label in the shop
+#    random       "Random" option in the selector
+#    rankwall     stats wall heads, round/wins/kills labels
+#    round(s)     "Round"/"Rounds" labels
+#    scoreboard   sidebar labels (alive, kills, coins, ...)
+#    selector     selector GUI titles
+#    server       server list MOTD lines
+#    shop         shop titles, buy messages and errors
+#    sign         join sign and stats wall signs
+#    spawn        spawn items and spawn messages
+#    stats        /pg stats output
+#    status       /pg status output
+#    team         team selector and team messages
+#    teleport     teleport messages
+#    time         "Time" label
+#    update       update check output
+#    version      /pg version output
+#    tnt          TNT display name
+#    top          /pg top output
+#    vote         arena voting
+#    you          messages about the player themself
+#  ═══════════════════════════════════════════════════════════════════════════
+
+# ───────────────────────────────────────────────────────────────────────────
+#  English (fallback for every other locale)
+# ───────────────────────────────────────────────────────────────────────────
 en_US:
   messages:
     airdrop:
@@ -336,6 +409,9 @@ en_US:
       not_enough_coins: "You don't have enough coins!"
     died: "died"
 
+# ───────────────────────────────────────────────────────────────────────────
+#  German - same keys as en_US
+# ───────────────────────────────────────────────────────────────────────────
 de_DE:
   messages:
     airdrop:

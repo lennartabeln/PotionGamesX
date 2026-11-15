@@ -778,7 +778,9 @@ public class GameItemListener implements Listener {
 
     private ChestLootProfile defaultNormalLootProfile() {
         ChestLootProfile profile = new ChestLootProfile();
-        var config = plugin.getConfig();
+        // The weights live in chests.yml; the hard coded values below are only
+        // the safety net for a missing or broken section.
+        var config = Settings.chests;
         if (config != null && config.contains("pg.chestloot.normal.loot")) {
             var lootConfig = config.getConfigurationSection("pg.chestloot.normal.loot");
             if (lootConfig != null) {

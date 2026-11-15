@@ -1,115 +1,196 @@
-# PotionGames Configuration File
-# Minecraft Paper 26.3.x
+# ═══════════════════════════════════════════════════════════════════════════
+#  PotionGamesX - main configuration
+#  Paper 26.3.x / Java 25
+# ═══════════════════════════════════════════════════════════════════════════
 #
-# Data Organization:
-#   config.yml (this file): Global settings, database, feature toggles
-#   lobbies.yml: Lobbies, arenas, spawns (all locations)
-#   chests.yml: Chest loot item definitions
-#   messages.yml: Localized text messages
-#   kits.yml: Kit definitions
-#   shop.yml: Shop items
+#  Which file holds what:
+#    config.yml    (this file) global settings, database, feature toggles
+#    lobbies.yml               lobbies, arenas, spawns, join signs (all locations)
+#    chests.yml                chest loot tables and chest block types
+#    shop.yml                  potion shop entries
+#    kits.yml                  kit names
+#    messages.yml              all player facing text (en_US / de_DE)
+#    plugin.yml                plugin metadata and permissions (do not edit)
+#
+#  How a setting is resolved (highest wins):
+#    1. pg.lobbies.<id>.settings.<key>   in lobbies.yml
+#    2. pg.defaults.<key>                in this file
+#    3. the built in default in the code
+#
+#  Only the keys in "defaults" and the feature flags below exist at the top
+#  level; everything can be overridden per lobby unless the comment says the
+#  key is global only.
+# ═══════════════════════════════════════════════════════════════════════════
 
 pg:
-  # ═══════════════════════════════════════════════════════
-  # CORE SETTINGS
-  # ═══════════════════════════════════════════════════════
+  # ─────────────────────────────────────────────────────────────────────────
+  # CORE
+  # ─────────────────────────────────────────────────────────────────────────
 
+  # true  = this server is a game server: players are moved to the lobby on
+  #         join and sent back to "bungeeServer" when a round ends
+  # false = a normal server, players only enter a lobby with /pg join
   gameServer: false
+
+  # Language used for every built in message, if it exists in messages.yml.
+  # Allowed values: en_US, de_DE (add the same block to messages.yml to add more).
   language: en_US
 
-  # Single-lobby compatibility mode (legacy behaviour): the setup commands accept
-  # their short form without a lobby number and always target lobby 1
-  # (/pg addarena <arena> instead of /pg addarena <lobby> <arena>).
+  # true  = single lobby mode (legacy behaviour): the setup commands accept
+  #         their short form without a lobby number and always target lobby 1,
+  #         e.g. /pg addarena <arena> instead of /pg addarena <lobby> <arena>
+  # false = every setup command needs the lobby number
   singleLobby: false
 
-  # BungeeCord / Proxy network support
-  # When game ends, players are sent back to this server
+  # Name of the proxy server players are sent back to when a round ends
+  # (only used when gameServer is true). Leave as "hub" without a proxy.
   bungeeServer: hub
 
-  # ═══════════════════════════════════════════════════════
-  # DATABASE CONFIGURATION
-  # ═══════════════════════════════════════════════════════
+  # ─────────────────────────────────────────────────────────────────────────
+  # DATABASE
+  # Statistics are stored in SQLite by default (no setup needed).
+  # ─────────────────────────────────────────────────────────────────────────
 
+  # true  = use MySQL with the settings below (needed for several servers)
+  # false = store the statistics in plugins/PotionGamesX/stats.db (SQLite)
   activateMySQL: false
+
   mysql:
     host: localhost
     port: 3306
     database: potiongames
+    # Keep the quotes: a password like 123456 would otherwise be read as a number.
     user: root
     password: "admin"
 
-  # ═══════════════════════════════════════════════════════
+  # ─────────────────────────────────────────────────────────────────────────
   # DEFAULT GAME SETTINGS
-  # (Applied to all lobbies unless overridden per lobby in lobbies.yml)
-  #
-  # Everything below can be overridden per lobby:
-  #   lobbies.yml -> pg.lobbies.<id>.settings.<key>
-  # The remaining feature flags further down (activateDeathmatch,
-  # activateScoreboard, changeGamerules, friendlyFire) are global only.
-  # ═══════════════════════════════════════════════════════
+  # Applied to every lobby that does not override them in lobbies.yml under
+  # pg.lobbies.<id>.settings.<key>. Configure them once here and every new
+  # lobby starts with these values.
+  # ─────────────────────────────────────────────────────────────────────────
 
   defaults:
-    # Timing
-    countdown: 60              # Seconds before game starts
-    roundTime: 30              # Minutes per round
-    startDelay: 10             # Seconds players stay frozen after the arena teleport
+    # Seconds the lobby counts down once enough players are there (60 = one
+    # minute). /pg start shortens the running countdown to 10 seconds.
+    countdown: 60
 
-    # Player limits
-    maxPlayers: 24             # Upper bound; the effective capacity is capped by
-                               # the smallest usable arena spawn count
-    # minPlayers: 12           # Optional. Without a value half of maxPlayers is
-                               # required to start a round.
+    # Length of a round in MINUTES (30 = half an hour). When the time is over
+    # the round ends in a draw, or switches to the deathmatch if enabled.
+    roundTime: 30
+
+    # Seconds players stay frozen after the teleport into the arena, so nobody
+    # starts moving before everyone is loaded.
+    startDelay: 10
+
+    # Upper bound for a lobby. The real capacity is capped by the smallest
+    # usable arena (its spawn count), so an arena with 8 spawns never lets 24
+    # players in.
+    maxPlayers: 24
+
+    # Optional: players needed to start a round. Without this key half of
+    # maxPlayers is required (24 -> 12). Remove the "#" to set it explicitly.
+    # minPlayers: 12
+
+    # Players per team when teams are enabled. Team count is
+    # maxPlayers / teamSize (24 / 2 = 12 teams).
     teamSize: 2
 
-    # Feature flags
-    activateAirdrops: true
-    activateKits: true
-    activateShop: true
-    activateTeams: true
+    # Feature flags for this lobby (see the global section below for the rest).
+    # true = enabled, false = disabled. A disabled feature removes its item,
+    # its listener behaviour and its messages for that lobby.
+    activateAirdrops: true    # redstone torch throws an airdrop above the player
+    activateKits: true        # kit selector (ender chest) and random kits
+    activateShop: true        # potion shop (composter) and its currency
+    activateTeams: true       # team selector (clock), team chat and team win
 
-  # ═══════════════════════════════════════════════════════
+  # ─────────────────────────────────────────────────────────────────────────
   # GLOBAL FEATURES
-  # ═══════════════════════════════════════════════════════
+  # These are global only, they cannot be set per lobby.
+  # ─────────────────────────────────────────────────────────────────────────
 
-  # Gameplay
-  activateDeathmatch: true      # Requires at least two deathmatch spawns on the arena;
-                                # without them the round has no deathmatch phase
+  # Deathmatch phase near the end of a round. Needs at least two deathmatch
+  # spawns on the arena (/pg adddeathmatch); without them the round simply
+  # ends normally and the flag has no effect.
+  activateDeathmatch: true
+
+  # Sidebar scoreboard with time, alive players, kills, coins and kit.
+  # false = no scoreboard at all.
   activateScoreboard: true
+
+  # true = broadcast "the game starts soon" to the whole server when a round
+  # starts. false = only the players in that lobby see it.
   broadcastStarting: false
+
+  # true = the plugin sets the arena world's gamerules while a round runs
+  # (no daylight/weather change, no mob spawning, no mob griefing, no fire
+  # spread, no advancements, immediate respawn, PvP on, difficulty EASY) and
+  # restores the old values afterwards. false = your server keeps its own
+  # gamerules and you have to configure them yourself.
   changeGamerules: true
+
+  # true  = players of the same team can hurt each other during a round
+  # false = team members cannot damage each other (deathmatch always allows it)
   friendlyFire: false
+
+  # true = a player who joins the server is put into a running round if one
+  # exists. false = joining players only land in the lobby.
   joinStarted: false
 
-  # Player behavior
+  # true  = players in a lobby may also write in the global chat
+  # false = lobby chat stays inside the lobby
   allowOutsideChat: false
-  compassOnSpawn: false        # Hand a Player-Finder compass to everyone at round start
-  playerFinder: true            # The compass points to the nearest opponent when used
+
+  # true = every player receives a Player-Finder compass when a round starts
+  # (the compass itself only works while playerFinder is true)
+  compassOnSpawn: false
+
+  # true  = a compass in the inventory points to the nearest opponent
+  # false = the compass keeps its vanilla behaviour
+  playerFinder: true
+
+  # true  = the round starts as soon as enough players joined the lobby,
+  #         without the normal countdown
+  # false = normal countdown
   startOnJoin: false
 
-  # Economy (optional, uses Vault). Without Vault the flags stay on but
-  # no money moves - the plugin does not disable itself.
+  # Economy through Vault (optional). Without Vault installed the rewards are
+  # simply not paid out, the plugin keeps running.
+  # true = killReward / winningReward are paid as money through Vault
   enableRewards: false
-  killReward: 10               # Coins per kill
-  winningReward: 100           # Coins for winning a round
+  killReward: 10        # money per kill (only with enableRewards: true)
+  winningReward: 100    # money for winning a round (only with enableRewards)
 
-  # Content limits
-  activeKits: 6                # How many kits.yml entries are selectable: 1 = one, 2 = two, ... 0 = none
-  activePotions: 19            # How many shop.yml entries are shown and buyable: 1 = one, 2 = two, ... 20 = all 20, 0 = none
+  # ─────────────────────────────────────────────────────────────────────────
+  # CONTENT LIMITS
+  # Both values are plain counts, not percentages:
+  #   1  = only the first entry of the file
+  #   2  = the first two entries
+  #   20 = the first twenty entries
+  #   0  = none at all (no selectable kit / empty shop)
+  # Values above the number of entries in the file are ignored.
+  # ─────────────────────────────────────────────────────────────────────────
 
-  # ═══════════════════════════════════════════════════════
-  # LEGACY KEYS
-  # Installs that still carry the pre-1.0 layout are migrated automatically:
+  # How many entries of kits.yml are selectable in the kit selector.
+  activeKits: 6
+
+  # How many entries of shop.yml are shown and buyable in the potion shop.
+  activePotions: 19
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # LEGACY IMPORT
+  # Old installations (pre 1.0) are migrated automatically on start:
   # pg.Lobby.coords, pg.Lobby.sign, pg.lobbySystem, pg.arenas and the old
-  # per-lobby keys under pg.lobbies.* are read once and written to the new
-  # files. They do not have to exist in this file.
-  # ═══════════════════════════════════════════════════════
+  # per-lobby keys under pg.lobbies.* are read once and written into the new
+  # files. Nothing has to be prepared here, the keys may stay absent.
+  # ─────────────────────────────────────────────────────────────────────────
 
-  # ═══════════════════════════════════════════════════════
+  # ─────────────────────────────────────────────────────────────────────────
   # STATS WALL (optional)
   # The plugin writes these keys itself when an admin runs
-  # /pg headp1|headp2|headp3 and /pg signp1|signp2|signp3 while
-  # looking at the block. They stay absent until the first use, so
-  # nothing has to be prepared here. Example of what gets written:
+  # /pg headp1 | headp2 | headp3 and /pg signp1 | signp2 | signp3 while
+  # looking at the block. They stay absent until the first use, so there is
+  # nothing to prepare. Example of what gets written:
   #
   # RankWall:
   #   headp1:
@@ -119,4 +200,4 @@ pg:
   #     z: -7.5
   #     pitch: 0.0
   #     yaw: 90.0
-  # ═══════════════════════════════════════════════════════
+  # ─────────────────────────────────────────────────────────────────────────
