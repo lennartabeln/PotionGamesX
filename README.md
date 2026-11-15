@@ -56,6 +56,7 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 
 | Command | Description | Permission |
 |---------|-------------|------------|
+| `/pg help` | List every command and permission (alias: `/pg commands`) | – |
 | `/pg join <id>` | Join a lobby | `pg.join` |
 | `/pg leave` | Leave current lobby | `pg.leave` |
 | `/pg list` | Open lobby GUI | `pg.list` |

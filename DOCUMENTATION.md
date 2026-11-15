@@ -50,10 +50,15 @@ Javac warnings fail the build (`failOnWarning` with `-Xlint:all`), so a green bu
 - `/pg reload` - Reload every config file
 - `/pg gameserver` - Toggle offline/online mode
 - `/pg database` - Switch MySQL/SQLite
-- `/pg broadcast` - Send announcements
 - `/pg kick` - Remove players from lobbies
-- `/pg top` - Show leaderboards
+- `/pg top [kills|deaths|wins|kd]` - Show leaderboards
+- `/pg start` / `/pg pause` / `/pg force <arena>` - Control the running round
+- `/pg build` - Toggle build mode in the lobby you stand in
+- `/pg sign <lobby>` - Turn the sign you look at into a join sign
+- `/pg setcountdown <seconds>` - Change the countdown (console: the global default)
 - `/pg version` - Show the plugin and the latest release version
+
+The complete command and permission table lives in [README.md](README.md).
 
 ## ⬆️ Upgrading from the legacy release (7.0.1)
 
@@ -84,6 +89,8 @@ All config files in `plugins/PotionGamesX/`:
 | **kits.yml** | Kit definitions |
 | **messages.yml** | Localized text messages |
 
+Every file documents its own keys in English - what each toggle does, which values are allowed and how to add an entry. An existing installation keeps its own values and comments; the shipped files are the reference.
+
 ## 📊 Build Status
 
 | Metric | Status |
@@ -92,7 +99,7 @@ All config files in `plugins/PotionGamesX/`:
 | Paper | 26.3+ required |
 | Compiler | Warning-free (`-Xlint:all`, `-Werror`) |
 | Tests | ✅ JUnit 5 unit tests (`mvn test`) |
-| JAR Size | ~0.27 MB |
+| JAR Size | ~0.30 MB (dependencies are downloaded by the server) |
 
 ## 🔗 Requirements
 
