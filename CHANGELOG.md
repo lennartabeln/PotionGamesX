@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.46] - 2026-11-15
+
+### Changed
+
+- Lobby protection is player based instead of state/world based: whoever is nearer to the lobby spawn than to the nearest arena spawn of that lobby gets no damage, no hunger and no PvP, while the arena side keeps damage, fall damage, hunger and PvP. Players in a running round are never treated as lobby players. No new setting.
+
 ## [1.0.0-dev.45] - 2026-11-15
 
 ### Fixed
