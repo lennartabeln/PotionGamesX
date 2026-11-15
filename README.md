@@ -189,7 +189,7 @@ Notable global toggles (`config.yml`):
 | `pg.singleLobby` | Single-lobby compatibility mode: setup commands may omit the lobby number (targets lobby 1) |
 | `pg.language` | Locale used by `messages.yml` (`en_US`, `de_DE`) |
 | `pg.joinStarted` | Late joiners spectate a running round instead of being rejected |
-| `pg.startOnJoin` | Auto-join the first open lobby on connect |
+| `pg.startOnJoin` | Auto-join the first open lobby on connect; also makes the plugin own the server-list MOTD and slot count (like `pg.gameServer` does) |
 | `pg.activateDeathmatch` | Switch a close round to the deathmatch arena |
 | `pg.activateScoreboard` | Per-player sidebar with map, team, kit, time and kills |
 | `pg.friendlyFire` | Allow teammates to damage each other outside `DEATHMATCH` |
