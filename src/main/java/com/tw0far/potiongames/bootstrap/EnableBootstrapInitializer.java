@@ -40,12 +40,14 @@ public final class EnableBootstrapInitializer {
         if (!plugin.getConfigManager().isGameServer()) {
             return;
         }
-        if (!com.tw0far.potiongames.util.BungeeConnector.available(plugin)) {
+        boolean leavesTheServer = plugin.getConfigManager().isLeaveOnRoundEnd()
+            || plugin.getConfigManager().isLeaveOnLeave();
+        if (leavesTheServer && !com.tw0far.potiongames.util.BungeeConnector.available(plugin)) {
             String hub = plugin.getConfig().getString("pg.bungeeServer", "hub");
-            plugin.getLogger().warning("[PotionGamesX] pg.gameServer is true but BungeeCord mode is off "
-                + "(spigot.yml -> settings.bungeecord: true) or no proxy is connected. "
-                + "Players cannot be sent to '" + hub + "' - /pg leave and the round end will "
-                + "disconnect them with the hub message instead.");
+            plugin.getLogger().warning("[PotionGamesX] pg.gameServer is true and players are meant to leave "
+                + "the server, but BungeeCord mode is off (spigot.yml -> settings.bungeecord: true) or no "
+                + "proxy is connected. Instead of a transfer to '" + hub + "' the players are disconnected "
+                + "with the hub message.");
         }
     }
 
