@@ -9,6 +9,7 @@ import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Participant;
 import com.tw0far.potiongames.models.PlayerStats;
 import com.tw0far.potiongames.models.Settings;
+import com.tw0far.potiongames.util.ShopEntries;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -535,10 +536,10 @@ public class GameItemListener implements Listener {
         List<String> shopItems = new ArrayList<>(itemStateManager.getShopItems());
         Participant participant = lobby.getParticipant(p);
         String kitName = participant != null && participant.getKit() != null ? participant.getKit().getName() : null;
-        // pg.activePotions caps how many of the configured potions are active
-        // (0 = all entries of shop.yml), like the legacy activePotions knob.
+        // pg.activePotions is a plain count: 1 shows one entry, 20 shows twenty,
+        // 0 shows none. Values above the file size are capped.
         int activePotions = plugin.getConfigManager().getActivePotions();
-        int entries = activePotions > 0 ? Math.min(shopItems.size(), activePotions) : shopItems.size();
+        int entries = ShopEntries.activeCount(activePotions, shopItems.size());
         int slots = Math.min(entries, inv.getSize());
         int placed = 0;
         for (int idx = 0; idx < slots; idx++) {
