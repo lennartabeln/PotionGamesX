@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.39] - 2026-11-15
+
+### Fixed
+
+- Chests roll their random potion effects again: the effect pool is seeded with the legacy list (23 effects) on enable and after a reload, so the 0-3 roll finds something to pick
+- The winner firework no longer damages the winner - firework and lightning damage is cancelled for every lobby player, not only during a running round
+- The shop tooltip shows `Price: <n> Coins` instead of a raw component dump
+
 ## [1.0.0-dev.38] - 2026-11-15
 
 ### Fixed
