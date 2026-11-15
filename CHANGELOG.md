@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.52] - 2026-11-15
+
+### Added
+
+- `docs/store/spigot-description.txt`: the README as a paste-ready BBCode description for SpigotMC, plus `docs/store/README.md` explaining which platform takes Markdown and which needs BBCode
+
 ## [1.0.0-dev.51] - 2026-11-15
 
 ### Changed
