@@ -1,7 +1,5 @@
 package com.tw0far.potiongames.models;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Arrays;
@@ -1524,8 +1522,11 @@ public class Lobby {
                 restoreBlocks();
                 restoreGameRules();
                 PotionGamesX plugin = PotionGamesX.getInstance();
-                // On a dedicated game server, send everyone back to the hub
-                if (plugin.getConfigManager().isGameServer()) {
+                // On a dedicated game server, send everyone back to the hub. Without proxy
+                // support the transfer would be dropped silently and the players would be
+                // stranded, so they simply stay in the lobby and the missing proxy is logged.
+                if (plugin.getConfigManager().isGameServer()
+                        && com.tw0far.potiongames.util.BungeeConnector.available(plugin)) {
                     String hubServer = plugin.getConfig().getString("pg.bungeeServer", "hub");
                     for (Player player : new ArrayList<>(activePlayers)) {
                         sendToServer(player, hubServer);
@@ -1879,16 +1880,7 @@ public class Lobby {
     }
 
     public void sendToServer(Player player, String server) {
-        if (player == null || !player.isOnline()) return;
-        try {
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(b);
-            out.writeUTF("Connect");
-            out.writeUTF(server);
-            player.sendPluginMessage(PotionGamesX.getInstance(), "BungeeCord", b.toByteArray());
-        } catch (Exception e) {
-            player.kick(Messages.LobbyConnecting(server));
-        }
+        com.tw0far.potiongames.util.BungeeConnector.send(PotionGamesX.getInstance(), player, server);
     }
 
     public void addPlacedBlock(Location location, Material material) {

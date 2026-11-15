@@ -42,8 +42,11 @@ pg:
   # false = every setup command needs the lobby number
   singleLobby: false
 
-  # Name of the proxy server players are sent back to when a round ends
-  # (only used when gameServer is true). Leave as "hub" without a proxy.
+  # Name of the proxy server players are sent back to when they leave or a round ends
+  # (only used when gameServer is true). This needs BungeeCord/Velocity:
+  # spigot.yml -> settings.bungeecord: true and a connected proxy. Without proxy support
+  # the plugin disconnects the player with the "connecting" message instead of leaving
+  # them on the game server, and logs a warning on start.
   bungeeServer: hub
 
   # ─────────────────────────────────────────────────────────────────────────

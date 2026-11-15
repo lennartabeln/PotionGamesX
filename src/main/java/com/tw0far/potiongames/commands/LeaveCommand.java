@@ -4,13 +4,12 @@ import org.bukkit.command.CommandSender;
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.util.BungeeConnector;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 
 /**
  * /pg leave - Leave current game
@@ -51,27 +50,12 @@ public class LeaveCommand implements ICommand {
 
         if (plugin.getConfigManager().isGameServer()) {
             String hub = plugin.getConfig().getString("pg.bungeeServer", "hub");
-            if (plugin.getConfigManager().isStartOnJoin()) {
-                player.kick(Messages.LobbyConnecting(hub));
-            } else {
-                sendToServer(player, hub);
-            }
+            // Both paths end on the hub: through the proxy when it is reachable, otherwise
+            // the player is disconnected instead of silently staying on the game server.
+            BungeeConnector.send(plugin, player, hub);
         }
 
         return true;
-    }
-
-    private void sendToServer(Player player, String server) {
-        if (player == null || !player.isOnline()) return;
-        try {
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(b);
-            out.writeUTF("Connect");
-            out.writeUTF(server);
-            player.sendPluginMessage(PotionGamesX.getInstance(), "BungeeCord", b.toByteArray());
-        } catch (Exception e) {
-            player.kick(Messages.LobbyConnecting(server));
-        }
     }
 
     @Override
