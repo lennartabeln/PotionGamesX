@@ -298,7 +298,7 @@ en_US:
       extremely_explosive: "Extremely explosive TNT"
     top:
       header: "Top 10 Players by %s"
-      usage: "Use /pg top [kills|deaths|wins|kd]"
+      usage: "Choose a leaderboard type: /pg top <kills|deaths|wins|kd>"
       unknown_type: "Unknown leaderboard type: %s"
       kills: "Kills"
       deaths: "Deaths"
@@ -635,7 +635,7 @@ de_DE:
       extremely_explosive: "Extrem explosives TNT"
     top:
       header: "Top 10 Spieler nach %s"
-      usage: "Nutze /pg top [kills|deaths|wins|kd]"
+      usage: "Wähle einen Ranglistentyp: /pg top <kills|deaths|wins|kd>"
       unknown_type: "Unbekannter Ranglistentyp: %s"
       kills: "Kills"
       deaths: "Tode"
