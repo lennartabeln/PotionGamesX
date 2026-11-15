@@ -95,7 +95,7 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 | `/pg delspawn <lobby> <arena>` | Remove last spawn | `pg.setup` |
 | `/pg adddeathmatch <lobby> <arena>` | Add deathmatch spawn | `pg.setup` |
 | `/pg deldeathmatch <lobby> <arena>` | Remove deathmatch spawn | `pg.setup` |
-| `/pg sign <lobby>` | Set the join sign (alias: `/pg joinsign`) | `pg.setup` |
+| `/pg sign <lobby>` | Set the join sign (look at a sign) | `pg.setup` |
 | `/pg setcountdown <seconds>` | Change the lobby countdown (console: global default) | `pg.setup` |
 | `/pg headp1\|p2\|p3` | Set stats wall head | `pg.setup` |
 | `/pg signp1\|p2\|p3` | Set stats wall sign | `pg.setup` |
@@ -112,6 +112,20 @@ With `pg.singleLobby: true` the setup commands also accept their legacy short fo
 * **Composter**: Potion shop (right-click during a round; prices are in coins and one glass bottle; `pg.activePotions` limits how many entries are active)
 
 Additional chest types and their loot can be defined in `chests.yml` (`pg.customchests.<id>` with `activate`, `chesttype`, `chestsize` and numbered slots).
+
+### Feature items
+
+A few items carry their own game logic. They are recognised **by material**, so it does not matter where a player gets them from - loot chests, a custom chest, the shop, a spawn item or another plugin:
+
+| Item | Behaviour | Gated by |
+| --- | --- | --- |
+| Compass | Points to the nearest opposing player ("Player-Finder") | `pg.playerFinder`; `lobbies.yml` → `settings.compassOnSpawn` decides whether one is handed out at round start |
+| Redstone torch | Throws an airdrop above the player (coordinates are broadcast to the lobby) | `pg.lobbies.<id>.settings.activateAirdrops` |
+| TNT | Explodes and damages players; blocks are protected by the arena guard | `pg.activateDeathmatch` is unrelated - TNT is always live |
+| Flint and steel, bow, arrows, fishing rod, shield | Vanilla behaviour, using the normal durability | - |
+| Milk bucket, stews | Clear effects / restore hunger (`handleStew`, `handleMilk`) | - |
+
+Because the behaviour is bound to the material, you can put any of these items into any loot pool in `chests.yml` (`MATERIAL:AMOUNT`), add them to a custom chest, or sell them in `shop.yml` - no plugin change needed. The legacy display names ("Player-Finder", "Extremely explosive TNT") and the almost used-up flint and steel are applied automatically when the item is seeded from `chests.yml`.
 
 ### Signs
 

@@ -250,6 +250,9 @@ public class GameItemListener implements Listener {
     }
 
     private void handlePlayerFinder(Player p, String s) {
+        if (!plugin.getConfigManager().isPlayerFinder()) {
+            return;
+        }
         GameStates state = plugin.getLobbyStateManager().getGameState(s);
         if (state != GameStates.INGAME && state != GameStates.DEATHMATCH) {
             return;

@@ -15,6 +15,7 @@ public class ConfigurationManager implements IConfigurationManager {
     private int maxPlayers = 24;
     private int activeKits = 6;
     private int activePotions = 0;
+    private boolean playerFinder = true;
     private int winningReward = 100;
     private int killReward = 10;
 
@@ -115,6 +116,7 @@ public class ConfigurationManager implements IConfigurationManager {
         allowOutsideChat = config.getBoolean("pg.allowOutsideChat", false);
         broadcastStarting = config.getBoolean("pg.broadcastStarting", false);
         compassOnSpawn = config.getBoolean("pg.compassOnSpawn", false);
+        playerFinder = config.getBoolean("pg.playerFinder", true);
         changeGamerules = config.getBoolean("pg.changeGamerules", true);
         friendlyFire = config.getBoolean("pg.friendlyFire", false);
         gameServer = config.getBoolean("pg.gameServer", false);
@@ -223,6 +225,8 @@ public class ConfigurationManager implements IConfigurationManager {
     public boolean isBroadcastStarting() { return broadcastStarting; }
 
     @Override
+    public boolean isPlayerFinder() { return playerFinder; }
+
     public boolean isCompassOnSpawn() { return compassOnSpawn; }
 
     @Override
