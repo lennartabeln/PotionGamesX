@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.40] - 2026-11-15
+
+### Added
+
+- Legacy command aliases `removearena`, `removelobby`, `removespawn` and `removedeathmatch`
+- Legacy permission node `pg.update` still receives the update notice on join and is declared in `plugin.yml`
+- A late joiner is told that they are spectating (`you.in_spectator_mode`)
+
 ## [1.0.0-dev.39] - 2026-11-15
 
 ### Fixed
