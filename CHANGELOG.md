@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.56] - 2026-11-15
+
+### Fixed
+
+- `/pg leave` and the round end no longer strand players on a game server without proxy mode: the transfer is checked (`spigot.yml -> settings.bungeecord` plus the registered channel), `/pg leave` disconnects with the hub message when no proxy is reachable, the round end keeps the players in the lobby instead, and the plugin warns once on startup and once when the fallback fires
+
 ## [1.0.0-dev.55] - 2026-11-15
 
 ### Changed
