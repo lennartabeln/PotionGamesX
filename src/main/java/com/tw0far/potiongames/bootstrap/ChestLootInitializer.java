@@ -26,6 +26,11 @@ public final class ChestLootInitializer {
     }
 
     public void seed() {
+        // Idempotent: seeding twice (enable + reload) must not double the pools.
+        plugin.getItemStateManager().clearFood();
+        plugin.getItemStateManager().clearArmor();
+        plugin.getItemStateManager().clearWeapons();
+
         // Load loot items from chests.yml
         var config = Settings.chests;
         if (config == null) {

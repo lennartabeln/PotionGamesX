@@ -49,9 +49,9 @@ public class ForceCommand implements ICommand {
             try {
                 Lobby lobby = plugin.getGame().getLobby(Integer.parseInt(lobbyId));
                 if (lobby != null) {
-                    if (lobby.getState() != GameStates.WAITING) {
-                        // Forcing the arena while the countdown runs would change
-                        // the announced map right before the teleport.
+                    if (!lobby.isVotingOpen()) {
+                        // Once the arena is announced ten seconds before the
+                        // teleport, forcing another map would change it again.
                         player.sendMessage(Messages.GameAlreadyStarted());
                         return true;
                     }

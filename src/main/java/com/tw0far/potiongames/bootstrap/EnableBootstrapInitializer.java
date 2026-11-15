@@ -13,6 +13,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public final class EnableBootstrapInitializer {
@@ -68,6 +70,54 @@ public final class EnableBootstrapInitializer {
         } catch (IOException ex) {
             sendError(ex);
         }
+
+        rebuildShopFromFileIfEmpty(ism);
+    }
+
+    /**
+     * Safety net for an empty in-memory shop (a reload that cleared the lists
+     * before seeding failed, a hand-edited shop.yml): read the entries straight
+     * from the file. Without it the shop GUI opens without a single item and
+     * looks broken.
+     */
+    private void rebuildShopFromFileIfEmpty(IItemStateManager ism) {
+        if (!ism.getShopItemsRaw().isEmpty()) {
+            return;
+        }
+        var potions = Settings.shopdata.getConfigurationSection("pg.potions");
+        if (potions == null) {
+            return;
+        }
+        List<String> shop = new ArrayList<>();
+        List<PotionEffect> effects = new ArrayList<>();
+        List<ItemStack> types = new ArrayList<>();
+        List<String> kits = new ArrayList<>();
+        List<Integer> costs = new ArrayList<>();
+        List<Integer> sales = new ArrayList<>();
+        for (String key : potions.getKeys(false)) {
+            var entry = potions.getConfigurationSection(key);
+            if (entry == null) {
+                continue;
+            }
+            String name = entry.getString("name", key);
+            PotionEffect effect = PotionSerialization.deserializePotionEffect(entry.get("shoppotion"), name);
+            ItemStack type = PotionSerialization.deserializeItemStack(entry.get("shoppotiontype"));
+            if (effect == null || type == null) {
+                continue;
+            }
+            shop.add(name);
+            effects.add(effect);
+            types.add(type);
+            kits.add(entry.getString("kit", ""));
+            costs.add(entry.getInt("cost", 4));
+            sales.add(entry.getInt("sale", 0));
+        }
+        if (shop.isEmpty()) {
+            plugin.getLogger().warning("[PotionGamesX] shop.yml has no usable entries - the shop GUI stays empty.");
+            return;
+        }
+        ism.replaceShop(shop, effects, types, kits, costs, sales);
+        plugin.getLogger().info("[PotionGamesX] Shop rebuilt from shop.yml: " + shop.size() + " entries.");
     }
 
     private void syncKits() {
