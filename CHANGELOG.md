@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.44] - 2026-11-15
+
+### Fixed
+
+- `pg.activePotions` defaults to the legacy value 19 instead of "all entries", so the shop shows 19 of the 20 configured potions like 7.0.1 did (`0` still means all)
+
 ## [1.0.0-dev.43] - 2026-11-15
 
 ### Changed
