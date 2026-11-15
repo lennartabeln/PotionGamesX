@@ -17,6 +17,62 @@
 #    /pg setlobbyspawn <lobby>           set the lobby spawn where you stand
 #    /pg sign <lobby>                    turn the sign you look at into a join sign
 #
+# ═══════════════════════════════════════════════════════════════════════════
+#  HOW TO OVERRIDE THE DEFAULTS FROM config.yml
+#
+#  config.yml -> pg.defaults.* holds the values every lobby starts with. A
+#  lobby only needs a "settings:" block for the keys that should differ. Every
+#  key you leave out is taken from pg.defaults, and if that is missing too, from
+#  the built in default - so this block is complete and valid with one entry:
+#
+#    pg:
+#      lobbies:
+#        1:
+#          settings:
+#            roundTime: 15          # this lobby plays 15 minutes, the rest default
+#
+#  A full example for one lobby (values differ from config.yml on purpose):
+#
+#    pg:
+#      lobbies:
+#        1:                                   # lobby id, also on the join sign
+#          spawn:                             # set by /pg setlobbyspawn
+#            ==: org.bukkit.Location
+#            world: world
+#            x: 0.5
+#            y: 65.0
+#            z: 0.5
+#            pitch: 0.0
+#            yaw: 0.0
+#          settings:                          # everything here is optional
+#            countdown: 30                    # seconds until the round starts
+#            roundTime: 15                    # MINUTES per round
+#            startDelay: 5                    # seconds frozen after the teleport
+#            maxPlayers: 16                   # capped by the arena spawn count
+#            minPlayers: 4                    # omit = half of maxPlayers
+#            teamSize: 2                      # players per team
+#            activateTeams: false             # no team selector, no team win
+#            activateKits: true               # kit selector + random kits
+#            activateShop: true               # potion shop + glass bottles in loot
+#            activateAirdrops: true           # redstone torch throws an airdrop
+#
+#  Rules of thumb:
+#    - Only list what you want to change; a partial block is normal and
+#      intended, nothing has to be repeated from config.yml.
+#    - The plugin writes exactly one key here itself: /pg setcountdown stores
+#      settings.countdown for the lobby the player stands in. Everything else
+#      stays yours. Deleting the block puts the lobby back onto pg.defaults.
+#    - Units: countdown/startDelay in seconds, roundTime in MINUTES, teamSize and
+#      the player limits in players.
+#    - minPlayers is the only derived default: without it half of maxPlayers is
+#      required, so a lobby with maxPlayers 16 needs 8 players.
+#    - Config changes apply on /pg reload or a restart; a lobby that is already
+#      in a round keeps its running round and uses the values next round.
+#    - Old installations may still carry these keys one level higher
+#      (pg.lobbies.<id>.countdown instead of ...settings.countdown). They are
+#      read as a fallback, but the settings block wins.
+# ═══════════════════════════════════════════════════════════════════════════
+#
 #  Resulting structure (locations are serialised Bukkit Locations):
 #
 #    pg:
