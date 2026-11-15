@@ -1801,8 +1801,7 @@ public class Lobby {
                 int reward = plugin.getConfigManager().getWinningReward();
                 EconomyResponse response = economy.depositPlayer(player, reward);
                 if (response.transactionSuccess()) {
-                    player.sendMessage(Messages.WinReward(reward)
-                        .append(Component.text(" " + economy.format(response.amount)).color(NamedTextColor.LIGHT_PURPLE)));
+                    player.sendMessage(Messages.WinReward(economy.format(response.amount)));
                 } else {
                     plugin.getLogger().warning("[PotionGamesX] Could not pay the win reward to "
                         + player.getName() + ": " + response.errorMessage);

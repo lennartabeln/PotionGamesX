@@ -18,7 +18,7 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 * Potion shop with kit-specific sale prices
 * Multiple lobbies with arena voting each round
 * Teams with custom team sizes — last team standing wins
-* Spectators: eliminated players (and late joiners via `joinStarted`) watch the round
+* Spectators: eliminated players (and late joiners via `spectateRunningRound`) watch the round
 * Deathmatch mode for final battles
 * Player statistics (SQLite or MySQL)
 * Top 3 stats wall display
@@ -132,7 +132,7 @@ A few items carry their own game logic. They are recognised **by material**, so 
 
 | Item | Behaviour | Gated by |
 | --- | --- | --- |
-| Compass | Points to the nearest opposing player ("Player-Finder") | `pg.playerFinder`; `lobbies.yml` → `settings.compassOnSpawn` decides whether one is handed out at round start |
+| Compass | Points to the nearest opposing player ("Player-Finder") | `pg.compass.tracking` enables the tracking, `pg.compass.spawnItem` hands one out at round start |
 | Redstone torch | Throws an airdrop above the player (coordinates are broadcast to the lobby) | `pg.lobbies.<id>.settings.activateAirdrops` |
 | TNT | Explodes and damages players; blocks are protected by the arena guard | `pg.activateDeathmatch` is unrelated - TNT is always live |
 | Flint and steel, bow, arrows, fishing rod, shield | Vanilla behaviour, using the normal durability | - |
@@ -188,15 +188,16 @@ Notable global toggles (`config.yml`):
 | `pg.kickOnLeave` | Kick the player off the server on `/pg leave` (`true`) or keep them in the lobby (`false`, default) |
 | `pg.singleLobby` | Single-lobby compatibility mode: setup commands may omit the lobby number (targets lobby 1) |
 | `pg.language` | Locale used by `messages.yml` (`en_US`, `de_DE`) |
-| `pg.joinStarted` | Late joiners spectate a running round instead of being rejected |
-| `pg.startOnJoin` | Auto-join the first open lobby on connect; also makes the plugin own the server-list MOTD and slot count (like `pg.gameServer` does) |
+| `pg.spectateRunningRound` | Late joiners spectate a running round instead of being rejected |
+| `pg.autoJoinOnConnect` | Auto-join the first open lobby on connect; also makes the plugin own the server-list MOTD and slot count (like `pg.gameServer` does) |
 | `pg.activateDeathmatch` | Switch a close round to the deathmatch arena |
 | `pg.activateScoreboard` | Per-player sidebar with map, team, kit, time and kills |
 | `pg.friendlyFire` | Allow teammates to damage each other outside `DEATHMATCH` |
-| `pg.broadcastStarting` | Broadcast a server-wide message when a lobby countdown starts |
-| `pg.compassOnSpawn` | Give everyone the player-finder compass at round start |
+| `pg.broadcastCountdown` | Broadcast a server-wide message when a lobby countdown starts |
+| `pg.compass.spawnItem` | Give everyone the player-finder compass at round start |
 | `pg.changeGamerules` | Freeze time, weather, fire spread, mob griefing and mob spawning in the arena world during rounds |
-| `pg.allowOutsideChat` | Players outside lobbies can see lobby chat |
+| `pg.lobbyChatInGlobalChat` | Players outside lobbies can see lobby chat |
+| `pg.rewards.enabled` / `.kill` / `.win` | Pay kill and win rewards through Vault (money per kill / per won round) |
 | `pg.activeKits` | Number of selectable kits (`kits.yml`) |
 | `pg.activePotions` | Shop entries shown and buyable, counted from `shop.yml` (`1` = first entry only, `20` = all twenty, `0` = none) |
 

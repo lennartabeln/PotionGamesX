@@ -226,7 +226,7 @@ public class PotionGamesX extends JavaPlugin {
 
     /**
      * (Re-)binds the Vault economy. Called on enable and from the reload, because turning
-     * {@code pg.enableRewards} on and running {@code /pg reload} used to leave the economy
+     * {@code pg.rewards.enabled} on and running {@code /pg reload} used to leave the economy
      * unbound - kills and wins paid nothing until the server restarted.
      */
     public void refreshEconomy() {
@@ -243,7 +243,7 @@ public class PotionGamesX extends JavaPlugin {
         // install must not disable the whole server. Every reward path
         // already checks getEconomy() for null.
         log.warning(String.format(
-            "[%s] pg.enableRewards is on, but no Vault economy was found - rewards stay inactive.",
+            "[%s] pg.rewards.enabled is on, but no Vault economy was found - rewards stay inactive.",
             getPluginMeta().getName()));
     }
 

@@ -31,7 +31,7 @@ Javac warnings fail the build (`failOnWarning` with `-Xlint:all`), so a green bu
 - ✅ Potion shop system with kit sale prices
 - ✅ Player kits
 - ✅ Deathmatch mode for final battles
-- ✅ Spectator mode for eliminated players and late joiners (`joinStarted`)
+- ✅ Spectator mode for eliminated players and late joiners (`spectateRunningRound`)
 - ✅ Player statistics (SQLite/MySQL)
 - ✅ Top 3 player display wall
 

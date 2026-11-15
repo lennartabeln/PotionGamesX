@@ -93,6 +93,29 @@ jobs:
         extract_section "$VERSION" > /tmp/version_section.txt
         if [ -s /tmp/version_section.txt ]; then
           cp /tmp/version_section.txt /tmp/release_body.txt
+          # A full release is the sum of the whole development line, so the
+          # complete changelog goes below the summary instead of only the
+          # hand-written version section.
+          if [ "$is_prerelease" = "false" ]; then
+            VERSION="$VERSION" python3 -c 'import os
+        version = os.environ["VERSION"]
+        prefix = "## ["
+        lines = open("CHANGELOG.md", encoding="utf-8").read().splitlines()
+        older, seen = [], False
+        for index, line in enumerate(lines):
+            if line.startswith(prefix):
+                if seen:
+                    older = lines[index:]
+                    break
+                if line.startswith(prefix + version + "]"):
+                    seen = True
+        if older:
+            out = ["", "", "<details><summary>Full changelog since the first development build</summary>", ""]
+            out.extend(older)
+            out.append("</details>")
+            print(chr(10) * 2 + chr(10).join(out).strip())
+            ' >> /tmp/release_body.txt
+          fi
         elif [ "$is_prerelease" = "true" ]; then
           extract_section "Unreleased" > /tmp/current_unreleased.txt
 

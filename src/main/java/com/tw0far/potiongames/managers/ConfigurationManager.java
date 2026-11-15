@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.managers;
 
 import com.tw0far.potiongames.PotionGamesX;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigurationManager implements IConfigurationManager {
@@ -102,8 +103,8 @@ public class ConfigurationManager implements IConfigurationManager {
             : Math.max(1, maxPlayers / 2);
         activeKits = config.getInt("pg.activeKits", 6);
         activePotions = config.getInt("pg.activePotions", 19);
-        winningReward = config.getInt("pg.winningReward", 100);
-        killReward = config.getInt("pg.killReward", 10);
+        winningReward = number(config, "pg.rewards.win", "pg.winningReward", 100);
+        killReward = number(config, "pg.rewards.kill", "pg.killReward", 10);
 
         activateTeams = config.getBoolean("pg.defaults.activateTeams", true);
         activateKits = config.getBoolean("pg.defaults.activateKits", true);
@@ -112,14 +113,16 @@ public class ConfigurationManager implements IConfigurationManager {
         activateMysql = config.getBoolean("pg.activateMySQL", false);
         activateScoreboard = config.getBoolean("pg.activateScoreboard", true);
         activateDeathmatch = config.getBoolean("pg.activateDeathmatch", true);
-        enableRewards = config.getBoolean("pg.enableRewards", false);
+        enableRewards = flag(config, "pg.rewards.enabled", "pg.enableRewards", false);
 
-        startOnJoin = config.getBoolean("pg.startOnJoin", false);
-        joinStarted = config.getBoolean("pg.joinStarted", false);
-        allowOutsideChat = config.getBoolean("pg.allowOutsideChat", false);
-        broadcastStarting = config.getBoolean("pg.broadcastStarting", false);
-        compassOnSpawn = config.getBoolean("pg.compassOnSpawn", false);
-        playerFinder = config.getBoolean("pg.playerFinder", true);
+        // New names first, the 1.0.0 development names keep working so an
+        // existing config.yml is never silently reset by the rename.
+        startOnJoin = flag(config, "pg.autoJoinOnConnect", "pg.startOnJoin", false);
+        joinStarted = flag(config, "pg.spectateRunningRound", "pg.joinStarted", false);
+        allowOutsideChat = flag(config, "pg.lobbyChatInGlobalChat", "pg.allowOutsideChat", false);
+        broadcastStarting = flag(config, "pg.broadcastCountdown", "pg.broadcastStarting", false);
+        compassOnSpawn = flag(config, "pg.compass.spawnItem", "pg.compassOnSpawn", false);
+        playerFinder = flag(config, "pg.compass.tracking", "pg.playerFinder", true);
         changeGamerules = config.getBoolean("pg.changeGamerules", true);
         friendlyFire = config.getBoolean("pg.friendlyFire", false);
         gameServer = config.getBoolean("pg.gameServer", false);
@@ -207,6 +210,31 @@ public class ConfigurationManager implements IConfigurationManager {
 
     @Override
     public void setActivateDeathmatch(boolean activate) { this.activateDeathmatch = activate; }
+
+    /**
+     * Reads a flag from its current path, falling back to the name the flag had
+     * before the 1.0.0 rename.
+     */
+    static boolean flag(ConfigurationSection cfg, String path, String legacyPath, boolean fallback) {
+        if (cfg.isSet(path)) {
+            return cfg.getBoolean(path, fallback);
+        }
+        if (legacyPath != null && cfg.isSet(legacyPath)) {
+            return cfg.getBoolean(legacyPath, fallback);
+        }
+        return fallback;
+    }
+
+    /** Same as {@link #flag(ConfigurationSection, String, String, boolean)} for numeric settings. */
+    static int number(ConfigurationSection cfg, String path, String legacyPath, int fallback) {
+        if (cfg.isSet(path)) {
+            return cfg.getInt(path, fallback);
+        }
+        if (legacyPath != null && cfg.isSet(legacyPath)) {
+            return cfg.getInt(legacyPath, fallback);
+        }
+        return fallback;
+    }
 
     @Override
     public boolean isStartOnJoin() { return startOnJoin; }
