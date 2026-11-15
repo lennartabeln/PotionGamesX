@@ -181,7 +181,7 @@ Notable global toggles (`config.yml`):
 | `pg.changeGamerules` | Freeze time, weather, fire spread, mob griefing and mob spawning in the arena world during rounds |
 | `pg.allowOutsideChat` | Players outside lobbies can see lobby chat |
 | `pg.activeKits` | Number of selectable kits (`kits.yml`) |
-| `pg.activePotions` | Shop entries shown and buyable (`0` = all entries of `shop.yml`) |
+| `pg.activePotions` | Shop entries shown and buyable, counted from `shop.yml` (`1` = first entry only, `20` = all twenty, `0` = none) |
 
 ## Development
 

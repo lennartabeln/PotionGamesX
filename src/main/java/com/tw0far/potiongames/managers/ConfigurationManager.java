@@ -14,7 +14,7 @@ public class ConfigurationManager implements IConfigurationManager {
     private int teamSize = 2;
     private int maxPlayers = 24;
     private int activeKits = 6;
-    /** Legacy shipped 19 active shop entries (entry 20 stays in the file). */
+    /** Number of shop entries shown and buyable; legacy shipped 19 of 20. */
     private int activePotions = 19;
     private boolean playerFinder = true;
     private int winningReward = 100;

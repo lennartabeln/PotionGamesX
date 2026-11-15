@@ -7,6 +7,7 @@ import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Participant;
 import com.tw0far.potiongames.models.Settings;
+import com.tw0far.potiongames.util.ShopEntries;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -260,8 +261,7 @@ public class GameInventoryListener implements Listener {
         var itemStateManager = plugin.getItemStateManager();
         List<String> shopItems = new ArrayList<>(itemStateManager.getShopItems());
         // Hidden entries must not be buyable either (see pg.activePotions).
-        int activePotions = plugin.getConfigManager().getActivePotions();
-        int entries = activePotions > 0 ? Math.min(shopItems.size(), activePotions) : shopItems.size();
+        int entries = ShopEntries.activeCount(plugin.getConfigManager().getActivePotions(), shopItems.size());
         for (int idx = 0; idx < entries; idx++) {
             if (!displayname.equals(shopItems.get(idx))) {
                 continue;
