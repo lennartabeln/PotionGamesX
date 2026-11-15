@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.43] - 2026-11-15
+
+### Changed
+
+- `/pg top` without a leaderboard kind no longer falls back to kills - it answers with `/pg top <kills|deaths|wins|kd>` (`top.usage`, EN/DE reworded)
+
 ## [1.0.0-dev.42] - 2026-11-15
 
 ### Changed
