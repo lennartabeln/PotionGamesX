@@ -9,6 +9,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0] - 2026-11-15
+
+First stable release of the rework. Everything below is in this build; the `dev.N` sections further
+down are the development history that led here.
+
+### Added
+
+- Multi-lobby minigames: lobbies, arenas, arena voting each round, per-lobby settings inherited from `pg.defaults.*`
+- Loot chests with weighted pools, custom chests with fixed content and the legacy feature items (compass player finder, airdrop torch, TNT, flint and steel)
+- Potion shop with kit prices, coins and glass bottles as currency, airdrops, teams with configurable size and a deathmatch phase
+- Spectators for eliminated players and late joiners (`pg.joinStarted`), player-based lobby protection (no damage, no hunger, no PvP outside a running round)
+- Statistics in SQLite or MySQL with async writes, a top-3 stats wall and `/pg top` leaderboards with a KD tie-break
+- Join signs with live state, GUI or sign to join, BungeeCord game-server mode with `pg.kickOnRoundEnd` / `pg.kickOnLeave`
+- Vault reward support (kill and win rewards), optional and inert without Vault
+- Automatic migration from the 7.x layout (`arenadata.yml`, `pg.Lobby.*`, `pg.arenas`, `pg.lobbySystem`)
+- Every `.yml` file documented inline in English; messages in `en_US` and `de_DE`
+- Update check against the GitHub releases with separate channels: dev builds see newer dev builds and the stable release, stable builds only see stable releases
+
+### Changed
+
+- Class-based architecture with manager delegation, one listener and one command class per topic
+- Lobby protection is decided per player from the game state instead of by world flags
+- Renamed the join sign command to `/pg sign`; `/pg joinsign` was removed
+- `pg.activeKits` and `pg.activePotions` are plain counts (`0` = none); both default to the legacy values
+- Build is warning-free (`-Xlint:all` + `-Werror`) and enforced in CI, with JUnit tests for the game rules
+
+### Fixed
+
+- PvP, gamerules and respawn parity with 7.0.1 (arena world PvP, difficulty, noon, immediate respawn)
+- Round start: random kits per player, team split that never leaves everyone in one team, arena abort on failed teleport
+- Shop and chest seeding idempotent, loot chests never empty after a reload, 23 legacy chest effects
+- Stats credited to the surviving team only, no blocking database calls on the tick thread
+- Proxy leave: players are transferred to the hub when a proxy is reachable and disconnected instead of being stranded otherwise
+
 ## [1.0.0-dev.60] - 2026-11-15
 
 ### Changed

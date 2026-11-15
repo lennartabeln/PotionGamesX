@@ -215,10 +215,10 @@ Publishing the plugin: [docs/store](docs/store/README.md) holds the ready-to-pas
 
 ## Release History
 
-Development builds are published as pre-releases (`1.0.0-dev.N`) with the changelog section of the commit; full releases use the `[version]` section of `CHANGELOG.md`.
+Development builds are published as pre-releases (`1.0.0-dev.N`) with the changelog section of the commit; full releases use the `[version]` section of `CHANGELOG.md`. The built-in update check follows the channel of the installed build: a `dev` build also sees the next stable release, a stable build only sees newer stable releases.
 
 ### v1.0 — PotionGamesX (Rework)
-Complete rework of the original PotionGames, now rebuilt as PotionGamesX.
+Complete rework of the original PotionGames, released as **1.0.0**.
 * Full class-based OOP refactor with manager delegation
 * Manager classes and separated event listeners / command classes
 * Configuration-driven design
