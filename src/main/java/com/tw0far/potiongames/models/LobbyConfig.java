@@ -24,7 +24,6 @@ public class LobbyConfig {
     private int teamSize;
     private int roundTime;
     private int startDelay;
-    private int safeRadius;
 
     private boolean activateTeams;
     private boolean activateKits;
@@ -72,10 +71,6 @@ public class LobbyConfig {
         this.roundTime = normalizeRoundTime(getLobbyInt("roundTime", lobbySettingsPath, lobbyRootPath, resolvedGlobalRoundTime));
         int resolvedGlobalStartDelay = getIntOrDefault(defaultsPath + ".startDelay", 10);
         this.startDelay = Math.max(1, getLobbyInt("startDelay", lobbySettingsPath, lobbyRootPath, resolvedGlobalStartDelay));
-
-        // Radius around the lobby spawn that stays safe even while a round runs.
-        int resolvedGlobalSafeRadius = Math.max(0, getIntOrDefault(defaultsPath + ".safeRadius", 16));
-        this.safeRadius = Math.max(0, getLobbyInt("safeRadius", lobbySettingsPath, lobbyRootPath, resolvedGlobalSafeRadius));
 
         this.activateTeams = getLobbyBoolean("activateTeams", lobbySettingsPath, lobbyRootPath, resolvedGlobalActivateTeams);
         this.activateKits = getLobbyBoolean("activateKits", lobbySettingsPath, lobbyRootPath, resolvedGlobalActivateKits);
@@ -149,10 +144,6 @@ public class LobbyConfig {
         return startDelay;
     }
 
-    /** Radius around the lobby spawn that stays damage-, hunger- and PvP-free. */
-    public int getSafeRadius() {
-        return safeRadius;
-    }
 
     public int getCountdown() {
         return countdown;

@@ -8,28 +8,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class SafeZoneTest {
 
     @Test
-    void insideTheRadiusIsProtected() {
-        assertTrue(SafeZone.within(0, 0, 16));
-        assertTrue(SafeZone.within(15, 0, 16));
-        assertTrue(SafeZone.within(0, -15, 16));
-        assertTrue(SafeZone.within(8, 8, 16));
+    void nearerToTheLobbyThanToTheArenaIsLobby() {
+        assertTrue(SafeZone.isLobbySide(4, 100));
+        assertTrue(SafeZone.isLobbySide(0, 1));
     }
 
     @Test
-    void outsideTheRadiusIsNotProtected() {
-        assertFalse(SafeZone.within(17, 0, 16));
-        assertFalse(SafeZone.within(0, 19, 16));
-        assertFalse(SafeZone.within(12, 12, 16));
+    void nearerToAnArenaIsNotLobby() {
+        assertFalse(SafeZone.isLobbySide(100, 4));
+        assertFalse(SafeZone.isLobbySide(1, 0));
     }
 
     @Test
-    void theEdgeCountsAsInside() {
-        assertTrue(SafeZone.within(16, 0, 16));
+    void theSameDistanceCountsAsArena() {
+        // Exactly in the middle: the arena wins, so a round never loses damage
+        // because of the zone.
+        assertFalse(SafeZone.isLobbySide(25, 25));
     }
 
     @Test
-    void zeroOrNegativeRadiusDisablesTheZone() {
-        assertFalse(SafeZone.within(0, 0, 0));
-        assertFalse(SafeZone.within(0, 0, -5));
+    void aLobbyWithoutArenasIsLobbyEverywhere() {
+        assertTrue(SafeZone.isLobbySide(250000, -1));
     }
 }

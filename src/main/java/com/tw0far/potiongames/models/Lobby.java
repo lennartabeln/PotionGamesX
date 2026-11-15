@@ -96,7 +96,6 @@ public class Lobby {
     private boolean deathmatch = false;
     /** Seconds the players stay frozen after the teleport into the arena. */
     private int startDelay = 10;
-    private int safeRadius = 16;
     /** Remaining lobby countdown seconds at which the arena is revealed (legacy). */
     private static final int REVEAL_SECONDS = 10;
     private int startTimer = 0;
@@ -162,7 +161,6 @@ public class Lobby {
         // Sync runtime fields from LobbyConfig for existing lobby accessors.
         this.countdown = lobbyConfig.getCountdown();
         this.startDelay = lobbyConfig.getStartDelay();
-        this.safeRadius = lobbyConfig.getSafeRadius();
         this.maxPlayers = lobbyConfig.getMaxPlayers();
         this.minPlayers = lobbyConfig.getMinPlayers();
         this.teamSize = lobbyConfig.getTeamSize();
@@ -198,7 +196,6 @@ public class Lobby {
             teamSize = lobbyConfig.getTeamSize();
             countdown = lobbyConfig.getCountdown();
             startDelay = lobbyConfig.getStartDelay();
-            safeRadius = lobbyConfig.getSafeRadius();
         } else {
             // Fallback loading directly from arena-data.yml when no LobbyConfig is provided.
             activateTeams = Settings.lobbies.getBoolean("pg.lobbies." + id + ".activateTeams");
@@ -1924,17 +1921,14 @@ public class Lobby {
         return this.spawn;
     }
 
-    /** Configured safe radius around the lobby spawn (0 disables the zone). */
-    public int getSafeRadius() {
-        return safeRadius;
-    }
-
     /**
-     * True when the player stands inside this lobby's safe zone. Lobby and arena
-     * may share a world, so the check is a horizontal distance to the spawn.
+     * True when the player stands on the lobby side of this lobby: nearer to the
+     * lobby spawn than to any arena spawn of this lobby, in the spawn's world.
+     * Lobby and arena can share a world, so the decision is made from the
+     * player's position instead of the world they are in.
      */
     public boolean isInSafeZone(Player player) {
-        if (player == null || safeRadius <= 0) {
+        if (player == null) {
             return false;
         }
         Location centre = this.spawn;
@@ -1945,8 +1939,30 @@ public class Lobby {
             return false;
         }
         Location loc = player.getLocation();
-        return com.tw0far.potiongames.util.SafeZone.within(
-            loc.getX() - centre.getX(), loc.getZ() - centre.getZ(), safeRadius);
+        double lobbyDistance = com.tw0far.potiongames.util.SafeZone.horizontalDistanceSquared(loc, centre);
+        double nearestArena = nearestArenaDistanceSquared(loc);
+        return com.tw0far.potiongames.util.SafeZone.isLobbySide(lobbyDistance, nearestArena);
+    }
+
+    /** Squared horizontal distance to the nearest arena spawn, or -1 without arenas. */
+    private double nearestArenaDistanceSquared(Location loc) {
+        double nearest = -1;
+        for (Arena arena : getArenas()) {
+            if (arena == null) {
+                continue;
+            }
+            for (Location spawnPoint : arena.getSpawns()) {
+                if (spawnPoint == null || spawnPoint.getWorld() == null
+                        || !spawnPoint.getWorld().equals(loc.getWorld())) {
+                    continue;
+                }
+                double distance = com.tw0far.potiongames.util.SafeZone.horizontalDistanceSquared(loc, spawnPoint);
+                if (nearest < 0 || distance < nearest) {
+                    nearest = distance;
+                }
+            }
+        }
+        return nearest;
     }
 
     public ArrayList<Participant> getParticipants() {
