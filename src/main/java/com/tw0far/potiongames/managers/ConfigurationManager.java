@@ -14,7 +14,8 @@ public class ConfigurationManager implements IConfigurationManager {
     private int teamSize = 2;
     private int maxPlayers = 24;
     private int activeKits = 6;
-    private int activePotions = 0;
+    /** Legacy shipped 19 active shop entries (entry 20 stays in the file). */
+    private int activePotions = 19;
     private boolean playerFinder = true;
     private int winningReward = 100;
     private int killReward = 10;
@@ -63,7 +64,7 @@ public class ConfigurationManager implements IConfigurationManager {
         FileConfiguration config = plugin.getConfig();
         boolean changed = false;
         if (!config.contains("pg.activePotions")) {
-            config.set("pg.activePotions", 0);
+            config.set("pg.activePotions", 19);
             changed = true;
         }
         if (!config.contains("pg.singleLobby") && !config.contains("pg.lobbySystem")) {
@@ -98,7 +99,7 @@ public class ConfigurationManager implements IConfigurationManager {
             ? Math.max(1, config.getInt("pg.defaults.minPlayers"))
             : Math.max(1, maxPlayers / 2);
         activeKits = config.getInt("pg.activeKits", 6);
-        activePotions = config.getInt("pg.activePotions", 0);
+        activePotions = config.getInt("pg.activePotions", 19);
         winningReward = config.getInt("pg.winningReward", 100);
         killReward = config.getInt("pg.killReward", 10);
 
