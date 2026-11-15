@@ -29,6 +29,17 @@ code tag.
 
 ## Keeping them in sync
 
-When the README changes, update `spigot-description.txt` in the same pull request: the features,
-command list and configuration files are the parts that drift first. The file has no version
-number on purpose, so it does not need a bump when nothing user-visible changed.
+The description is maintained by hand - a Markdown-to-BBCode converter produces broken tables and
+stray markers, which is why the platform itself tells authors to convert manually.
+
+`StoreDescriptionTest` guards it on every build (`mvn test`, and therefore CI and every release):
+
+- every command that has a `help.<command>` line in `messages.yml` must appear
+- all BBCode tags must be balanced, `[HR]` and `[*]` excluded
+- no Markdown leftovers (headings, `**`, backticks, `](http`)
+- the title must use the chat prefix colours (dark purple `Potion`, gold `Games`, dark aqua `X`)
+
+Publishing stays manual: SpigotMC has no API for resource descriptions, so a release cannot push
+the text. When the README changes, update `spigot-description.txt` in the same pull request and
+paste it again on the resource page. The file has no version number on purpose, so it needs no
+bump when nothing user-visible changed.
