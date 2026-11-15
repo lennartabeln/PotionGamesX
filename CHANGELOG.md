@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.45] - 2026-11-15
+
+### Fixed
+
+- A round can no longer start with every player in one team: picks that would leave a single team are dropped and the players spread over at least two teams (two players never end up together)
+- `pg.activePotions` counts entries as written: `1` activates the first entry, `20` all twenty, `0` none
+
 ## [1.0.0-dev.44] - 2026-11-15
 
 ### Fixed
