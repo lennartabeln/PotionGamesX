@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.50] - 2026-11-15
+
+### Changed
+
+- `lobbies.yml` documents how a lobby overrides the `config.yml` defaults: a one-line example, a complete `settings` block and the precedence (`settings` -> legacy root key -> `pg.defaults` -> built in default)
+
 ## [1.0.0-dev.49] - 2026-11-15
 
 ### Changed
