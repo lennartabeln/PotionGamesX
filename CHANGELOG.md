@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.47] - 2026-11-15
+
+### Changed
+
+- Lobby protection is decided per player from the game state: a lobby member is safe in `WAITING`, `PREPARING`, `ENDING` and `RESET` (no damage, no hunger, no PvP) and vulnerable in `INGAME` and `DEATHMATCH`. Players outside a lobby keep the normal server rules, spectators stay protected. The position based safe zone is gone.
+
 ## [1.0.0-dev.46] - 2026-11-15
 
 ### Changed
