@@ -7,26 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- Renamed the flags that were easy to mix up: `pg.joinStarted` → `pg.spectateRunningRound`, `pg.startOnJoin` → `pg.autoJoinOnConnect`, `pg.broadcastStarting` → `pg.broadcastCountdown`, `pg.allowOutsideChat` → `pg.lobbyChatInGlobalChat`; the compass pair moved into one block (`pg.compass.spawnItem`, `pg.compass.tracking`) and the rewards into another (`pg.rewards.enabled`, `pg.rewards.kill`, `pg.rewards.win`). The old names are still read as a fallback, so an existing `config.yml` keeps its values
-
-### Fixed
-
-- The reward message printed the amount twice (`you get 10 $10`): the kill and win messages now take the amount as formatted by the economy, so they read `you get $10` / `you get 10 Coins` depending on the economy
-- A full release now carries the complete changelog: the version summary is followed by every development section in a collapsible block instead of only the hand-written summary
+Nothing yet - new entries belong here and are moved into a version section on release.
 
 ## [1.0.0] - 2026-11-15
 
-First stable release of the rework. Everything below is in this build; the `dev.N` sections further
-down are the development history that led here.
+First stable release of the rework. Everything below is in this build; the release page additionally
+carries the complete `dev.N` development history in a collapsible block.
 
 ### Added
 
 - Multi-lobby minigames: lobbies, arenas, arena voting each round, per-lobby settings inherited from `pg.defaults.*`
 - Loot chests with weighted pools, custom chests with fixed content and the legacy feature items (compass player finder, airdrop torch, TNT, flint and steel)
 - Potion shop with kit prices, coins and glass bottles as currency, airdrops, teams with configurable size and a deathmatch phase
-- Spectators for eliminated players and late joiners (`pg.joinStarted`), player-based lobby protection (no damage, no hunger, no PvP outside a running round)
+- Spectators for eliminated players and late joiners, player-based lobby protection (no damage, no hunger, no PvP outside a running round)
 - Statistics in SQLite or MySQL with async writes, a top-3 stats wall and `/pg top` leaderboards with a KD tie-break
 - Join signs with live state, GUI or sign to join, BungeeCord game-server mode with `pg.kickOnRoundEnd` / `pg.kickOnLeave`
 - Vault reward support (kill and win rewards), optional and inert without Vault
@@ -36,7 +29,9 @@ down are the development history that led here.
 
 ### Changed
 
-- The server-list MOTD and slot count are also taken over when `pg.startOnJoin` is on without `pg.gameServer`; only a plain lobby server keeps the entry from `server.properties`
+- Flags that were easy to mix up are renamed - `pg.joinStarted` → `pg.spectateRunningRound`, `pg.startOnJoin` → `pg.autoJoinOnConnect`, `pg.broadcastStarting` → `pg.broadcastCountdown`, `pg.allowOutsideChat` → `pg.lobbyChatInGlobalChat` - and related ones grouped: `pg.compass.spawnItem` / `pg.compass.tracking` and `pg.rewards.enabled` / `.kill` / `.win`. The old names are still read as a fallback, an existing `config.yml` keeps its values
+- Spectators of a running round are enabled with `pg.spectateRunningRound`, joining players are put into a lobby with `pg.autoJoinOnConnect`
+- The server-list MOTD and slot count are also taken over when `pg.autoJoinOnConnect` is on without `pg.gameServer`; only a plain lobby server keeps the entry from `server.properties`
 - Class-based architecture with manager delegation, one listener and one command class per topic
 - Lobby protection is decided per player from the game state instead of by world flags
 - Renamed the join sign command to `/pg sign`; `/pg joinsign` was removed
@@ -45,6 +40,7 @@ down are the development history that led here.
 
 ### Fixed
 
+- The kill and win reward message printed the amount twice (`you get 10 $10`); it now shows the amount as formatted by the economy (`you get $10`, `you get 10 Coins`)
 - Existing `Stats` tables are healed on start: duplicate rows per UUID are merged (counters summed, KD recomputed) before the unique key is added, and an already present key is detected instead of logging a false "UUID is not unique" line on every restart
 - PvP, gamerules and respawn parity with 7.0.1 (arena world PvP, difficulty, noon, immediate respawn)
 - Round start: random kits per player, team split that never leaves everyone in one team, arena abort on failed teleport
