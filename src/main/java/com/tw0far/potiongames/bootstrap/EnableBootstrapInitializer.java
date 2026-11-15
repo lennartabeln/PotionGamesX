@@ -29,6 +29,24 @@ public final class EnableBootstrapInitializer {
         syncKits();
         configureCoin(plugin);
         initializeLobbies();
+        checkProxyMode();
+    }
+
+    /**
+     * A game server without proxy mode cannot move players to {@code pg.bungeeServer}; the
+     * plugin message is accepted and silently dropped, so nobody ever leaves the server.
+     */
+    private void checkProxyMode() {
+        if (!plugin.getConfigManager().isGameServer()) {
+            return;
+        }
+        if (!com.tw0far.potiongames.util.BungeeConnector.available(plugin)) {
+            String hub = plugin.getConfig().getString("pg.bungeeServer", "hub");
+            plugin.getLogger().warning("[PotionGamesX] pg.gameServer is true but BungeeCord mode is off "
+                + "(spigot.yml -> settings.bungeecord: true) or no proxy is connected. "
+                + "Players cannot be sent to '" + hub + "' - /pg leave and the round end will "
+                + "disconnect them with the hub message instead.");
+        }
     }
 
     private void syncShop() {

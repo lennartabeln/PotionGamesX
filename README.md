@@ -183,7 +183,7 @@ Feature defaults (`pg.defaults.*`, overridable per lobby):
 Notable global toggles (`config.yml`):
 | Setting | Effect |
 |---------|--------|
-| `pg.gameServer` | Dedicated game server: players are sent to `pg.bungeeServer` after a round |
+| `pg.gameServer` | Dedicated game server: players are sent to `pg.bungeeServer` when they leave or a round ends (needs `settings.bungeecord: true` in `spigot.yml` and a connected proxy; without it the player is disconnected instead) |
 | `pg.singleLobby` | Single-lobby compatibility mode: setup commands may omit the lobby number (targets lobby 1) |
 | `pg.language` | Locale used by `messages.yml` (`en_US`, `de_DE`) |
 | `pg.joinStarted` | Late joiners spectate a running round instead of being rejected |
