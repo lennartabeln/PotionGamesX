@@ -291,7 +291,7 @@ public class PotionGamesX extends JavaPlugin {
             return;
         }
 
-        if (configManager.isGameServer()) {
+        if (configManager.isGameServer() && configManager.isLeaveOnLeave()) {
             String hub = getConfig().getString("pg.bungeeServer", "hub");
             BungeeConnector.send(this, player, hub);
         }

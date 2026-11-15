@@ -42,12 +42,20 @@ pg:
   # false = every setup command needs the lobby number
   singleLobby: false
 
-  # Name of the proxy server players are sent back to when they leave or a round ends
-  # (only used when gameServer is true). This needs BungeeCord/Velocity:
-  # spigot.yml -> settings.bungeecord: true and a connected proxy. Without proxy support
-  # the plugin disconnects the player with the "connecting" message instead of leaving
-  # them on the game server, and logs a warning on start.
+  # Name of the proxy server players are sent back to (only used when gameServer is true).
+  # With BungeeCord/Velocity (spigot.yml -> settings.bungeecord: true and a connected proxy)
+  # the player is transferred there; without a reachable proxy the plugin disconnects the
+  # player with the "connecting" message instead of leaving them on the game server.
   bungeeServer: hub
+
+  # What happens to the players of a finished round on a game server. Both options are
+  # independent of each other and only apply when gameServer is true.
+  #   true  = leave the server: transfer to bungeeServer, or disconnect without a proxy
+  #   false = stay on the server and return to the lobby
+  leaveOnRoundEnd: false
+  # Same for /pg leave - true means the player always leaves the server, false keeps them
+  # in the lobby (useful on a single server that only uses the game server mode for the MOTD).
+  leaveOnLeave: true
 
   # ─────────────────────────────────────────────────────────────────────────
   # DATABASE

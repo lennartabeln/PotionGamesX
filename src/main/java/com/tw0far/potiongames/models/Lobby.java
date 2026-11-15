@@ -1559,11 +1559,11 @@ public class Lobby {
                 restoreBlocks();
                 restoreGameRules();
                 PotionGamesX plugin = PotionGamesX.getInstance();
-                // On a dedicated game server, send everyone back to the hub. Without proxy
-                // support the transfer would be dropped silently and the players would be
-                // stranded, so they simply stay in the lobby and the missing proxy is logged.
+                // Leaving the server at the round end is a decision, not a side effect of the
+                // proxy being reachable: pg.leaveOnRoundEnd. With a reachable proxy the players
+                // are transferred to pg.bungeeServer, without one they are disconnected.
                 if (plugin.getConfigManager().isGameServer()
-                        && com.tw0far.potiongames.util.BungeeConnector.available(plugin)) {
+                        && plugin.getConfigManager().isLeaveOnRoundEnd()) {
                     String hubServer = plugin.getConfig().getString("pg.bungeeServer", "hub");
                     for (Player player : new ArrayList<>(activePlayers)) {
                         sendToServer(player, hubServer);
