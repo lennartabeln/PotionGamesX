@@ -164,14 +164,7 @@ public class PotionGamesX extends JavaPlugin {
                 getComponentLogger().info(Messages.UpdateNotAvailableText(current));
             }
         });
-        if (configManager.isEnableRewards() && !setupEconomy()) {
-            // Rewards are a bonus, not the point of the plugin: a missing Vault
-            // install must not disable the whole server. Every reward path
-            // already checks getEconomy() for null.
-            log.warning(String.format(
-                "[%s] pg.enableRewards is on, but no Vault economy was found - rewards stay inactive.",
-                getPluginMeta().getName()));
-        }
+        refreshEconomy();
 
     }
 
@@ -229,6 +222,29 @@ public class PotionGamesX extends JavaPlugin {
         if (databaseManager != null) databaseManager.onDisable();
 
         getComponentLogger().info(Messages.PluginStoppedText());
+    }
+
+    /**
+     * (Re-)binds the Vault economy. Called on enable and from the reload, because turning
+     * {@code pg.enableRewards} on and running {@code /pg reload} used to leave the economy
+     * unbound - kills and wins paid nothing until the server restarted.
+     */
+    public void refreshEconomy() {
+        if (configManager == null || !configManager.isEnableRewards()) {
+            econ = null;
+            return;
+        }
+        if (setupEconomy()) {
+            getComponentLogger().info(Messages.EconomyBoundText(econ == null ? "?" : econ.getName()));
+            return;
+        }
+        econ = null;
+        // Rewards are a bonus, not the point of the plugin: a missing Vault
+        // install must not disable the whole server. Every reward path
+        // already checks getEconomy() for null.
+        log.warning(String.format(
+            "[%s] pg.enableRewards is on, but no Vault economy was found - rewards stay inactive.",
+            getPluginMeta().getName()));
     }
 
     private boolean setupEconomy() {
