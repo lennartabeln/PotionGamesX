@@ -34,6 +34,9 @@ permissions:
   pg.version:
     description: Show plugin version and receive update notifications
     default: op
+  pg.update:
+    description: Legacy alias - receive update notifications on join
+    default: op
   pg.setup:
     description: Set up lobbies, arenas and spawns
     default: op
@@ -84,6 +87,8 @@ permissions:
       pg.config: true
       pg.database: true
       pg.gameserver: true
+      pg.version: true
+      pg.update: true
   pg.database:
     description: Toggle database backend (MySQL/SQLite)
     default: op

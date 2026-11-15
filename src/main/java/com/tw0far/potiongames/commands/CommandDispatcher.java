@@ -32,7 +32,12 @@ public class CommandDispatcher implements CommandExecutor, TabCompleter {
     /** Legacy aliases that map onto an existing subcommand. */
     private static final Map<String, String> ALIASES = Map.of(
         "commands", "help",
-        "joinsign", "sign");
+        "joinsign", "sign",
+        // Legacy 7.x spellings of the remove commands
+        "removearena", "delarena",
+        "removelobby", "dellobby",
+        "removespawn", "delspawn",
+        "removedeathmatch", "deldeathmatch");
 
     public CommandDispatcher(PotionGamesX plugin) {
         this.plugin = plugin;

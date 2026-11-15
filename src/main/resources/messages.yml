@@ -328,6 +328,7 @@ en_US:
       label: "Wins"
       reward: "For winning the round you get"
     you:
+      in_spectator_mode: "You are in spectator mode."
       block_above: "You have a block above you!"
       not_empty_bottle: "You don't have an empty bottle!"
       not_enough_coins: "You don't have enough coins!"
@@ -662,6 +663,7 @@ de_DE:
       label: "Siege"
       reward: "Für den Sieg in dieser Runde erhältst du"
     you:
+      in_spectator_mode: "Du bist im Zuschauermodus."
       block_above: "Über dir befindet sich ein Block!"
       not_empty_bottle: "Du hast keine leere Flasche!"
       not_enough_coins: "Du hast nicht genug Münzen!"
