@@ -29,6 +29,7 @@ down are the development history that led here.
 
 ### Changed
 
+- The server-list MOTD and slot count are also taken over when `pg.startOnJoin` is on without `pg.gameServer`; only a plain lobby server keeps the entry from `server.properties`
 - Class-based architecture with manager delegation, one listener and one command class per topic
 - Lobby protection is decided per player from the game state instead of by world flags
 - Renamed the join sign command to `/pg sign`; `/pg joinsign` was removed

@@ -139,6 +139,7 @@ Per-lobby defaults ([FONT=Courier New]pg.defaults.*[/FONT], overridable per lobb
 Important switches in [FONT=Courier New]config.yml[/FONT]:
 [LIST]
 [*][FONT=Courier New]gameServer[/FONT] - dedicated game server: players join automatically, [FONT=Courier New]bungeeServer[/FONT] is the hub target
+[*][FONT=Courier New]startOnJoin[/FONT] - auto-join the first open lobby on connect; the plugin then also owns the server-list MOTD and slot count
 [*][FONT=Courier New]kickOnRoundEnd[/FONT] / [FONT=Courier New]kickOnLeave[/FONT] - kick players off the server after a round / on [FONT=Courier New]/pg leave[/FONT] (transfer to the hub when a proxy is reachable, disconnect otherwise); both off by default
 [*][FONT=Courier New]singleLobby[/FONT] - setup commands may omit the lobby number
 [*][FONT=Courier New]language[/FONT] - locale of [FONT=Courier New]messages.yml[/FONT] (en_US, de_DE)

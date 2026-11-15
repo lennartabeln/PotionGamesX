@@ -22,7 +22,9 @@ import java.util.Locale;
  * but only in game server mode ({@code pg.gameServer}). The rework tracks
  * lobbies instead, so the ping shows the state of the most relevant lobby (one
  * with players, otherwise one that is not waiting) and the summed capacity of
- * all configured lobbies. On a lobby/network server the entry is left alone.</p>
+ * all configured lobbies. The entry is left alone only when the plugin neither
+ * runs as a game server nor auto-joins players on connect ({@code pg.startOnJoin}),
+ * because in both cases the state belongs in the server list.</p>
  */
 public class ServerListPingEventListener implements Listener {
     private final PotionGamesX plugin;
@@ -31,13 +33,22 @@ public class ServerListPingEventListener implements Listener {
         this.plugin = plugin;
     }
 
+    /** The server list shows the round state on game servers and with auto-join on connect. */
+    static boolean shouldOverrideMotd(boolean gameServer, boolean startOnJoin) {
+        return gameServer || startOnJoin;
+    }
+
     @EventHandler
     public void onServerListPing(ServerListPingEvent event) {
-        // Only a dedicated game server owns the server-list entry. A lobby or
-        // network server (pg.gameServer: false, typically with several lobbies)
-        // keeps the MOTD and slot count from server.properties - the legacy
-        // 7.0.1 release behaved the same way.
-        if (plugin.getConfigManager() == null || !plugin.getConfigManager().isGameServer()) {
+        if (plugin.getConfigManager() == null) {
+            return;
+        }
+        // A dedicated game server and a server that auto-joins players on
+        // connect both own the server-list entry. A plain lobby server keeps
+        // the MOTD and slot count from server.properties.
+        if (!shouldOverrideMotd(
+                plugin.getConfigManager().isGameServer(),
+                plugin.getConfigManager().isStartOnJoin())) {
             return;
         }
 
