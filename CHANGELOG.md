@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.49] - 2026-11-15
+
+### Changed
+
+- Every `.yml` file is documented in English: what each toggle does, which values are allowed and how to add entries (`config.yml`, `chests.yml`, `shop.yml`, `kits.yml`, `lobbies.yml`, `messages.yml`, `plugin.yml`)
+
+### Fixed
+
+- Chest loot weights are read from `chests.yml` (the file they are documented in) instead of `config.yml`
+
 ## [1.0.0-dev.48] - 2026-11-15
 
 ### Fixed
