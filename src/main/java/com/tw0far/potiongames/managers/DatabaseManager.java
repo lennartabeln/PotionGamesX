@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -113,14 +115,108 @@ public class DatabaseManager implements IDatabaseManager {
     private void createTablesIfNotExist() {
         executeUpdate(CREATE_TABLE);
         // Databases created by older builds have no unique key, so the async
-        // join insert could duplicate a player's row.
-        if (mysql) {
+        // join insert could duplicate a player's row. Merge what accumulated
+        // before trying to add the key, so an upgrade heals itself instead of
+        // asking the admin to clean the table by hand.
+        enforceUniqueUuid();
+    }
+
+    /** Collapses duplicate rows per UUID, then adds the unique index once. */
+    private void enforceUniqueUuid() {
+        int merged = mergeDuplicateStats();
+        if (merged > 0) {
+            LOGGER.info("[PotionGamesX] Merged " + merged
+                + " duplicate stat rows with the same UUID before adding the unique key");
+        }
+        if (!hasUniqueIndexOn("Stats", "UUID") && !hasUniqueIndexOn("stats", "UUID")) {
             if (!tryUpdate("CREATE UNIQUE INDEX stats_uuid ON Stats (UUID)")) {
-                LOGGER.info("[PotionGamesX] Stats.UUID is not unique yet. Remove duplicate rows "
-                    + "and restart to enforce the unique key.");
+                LOGGER.warning("[PotionGamesX] Could not add the unique key on Stats.UUID. "
+                    + "Stats keep working, but duplicate rows may reappear.");
             }
-        } else {
-            executeUpdate("CREATE UNIQUE INDEX IF NOT EXISTS stats_uuid ON Stats (UUID)");
+        }
+    }
+
+    /** True when the table already carries a unique index that covers the column. */
+    private boolean hasUniqueIndexOn(String table, String column) {
+        synchronized (lock) {
+            if (!ensureConnection()) {
+                return false;
+            }
+            try (ResultSet rs = connection.getMetaData().getIndexInfo(null, null, table, true, false)) {
+                while (rs != null && rs.next()) {
+                    String indexed = rs.getString("COLUMN_NAME");
+                    if (indexed != null && indexed.equalsIgnoreCase(column)) {
+                        return true;
+                    }
+                }
+            } catch (SQLException e) {
+                LOGGER.log(Level.FINE, "[PotionGamesX] Index metadata unavailable for " + table, e);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Sums the counters of every UUID that has more than one row and keeps a
+     * single merged row.
+     *
+     * @return number of extra rows that were removed
+     */
+    private int mergeDuplicateStats() {
+        synchronized (lock) {
+            if (!ensureConnection()) {
+                return 0;
+            }
+            List<Object[]> merged = new ArrayList<>();
+            String select = "SELECT UUID, SUM(ROUNDS), SUM(WINS), SUM(LOSSES), SUM(KILLS), SUM(DEATHS)"
+                + " FROM Stats GROUP BY UUID HAVING COUNT(*) > 1";
+            try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(select)) {
+                while (rs.next()) {
+                    merged.add(new Object[] {
+                        rs.getString(1), rs.getInt(2), rs.getInt(3), rs.getInt(4), rs.getInt(5), rs.getInt(6)});
+                }
+            } catch (SQLException e) {
+                handleSqlFailure(e);
+                LOGGER.log(Level.FINE, "[PotionGamesX] No duplicate stats to merge", e);
+                return 0;
+            }
+            if (merged.isEmpty()) {
+                return 0;
+            }
+            int removed = 0;
+            for (Object[] row : merged) {
+                String uuid = (String) row[0];
+                int rounds = (Integer) row[1];
+                int wins = (Integer) row[2];
+                int losses = (Integer) row[3];
+                int kills = (Integer) row[4];
+                int deaths = (Integer) row[5];
+                double kd = deaths > 0 ? (double) kills / deaths : kills;
+                int before = countRows(uuid);
+                executeUpdate("DELETE FROM Stats WHERE UUID = ?", uuid);
+                executeUpdate("INSERT INTO Stats (UUID, ROUNDS, WINS, LOSSES, KILLS, DEATHS, KD)"
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?)", uuid, rounds, wins, losses, kills, deaths, kd);
+                removed += Math.max(0, before - 1);
+            }
+            return removed;
+        }
+    }
+
+    private int countRows(String uuid) {
+        synchronized (lock) {
+            if (!ensureConnection()) {
+                return 0;
+            }
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "SELECT COUNT(*) FROM Stats WHERE UUID = ?")) {
+                stmt.setString(1, uuid);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    return rs.next() ? rs.getInt(1) : 0;
+                }
+            } catch (SQLException e) {
+                handleSqlFailure(e);
+                return 0;
+            }
         }
     }
 

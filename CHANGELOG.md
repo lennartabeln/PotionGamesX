@@ -29,6 +29,7 @@ down are the development history that led here.
 
 ### Changed
 
+- The server-list MOTD and slot count are also taken over when `pg.startOnJoin` is on without `pg.gameServer`; only a plain lobby server keeps the entry from `server.properties`
 - Class-based architecture with manager delegation, one listener and one command class per topic
 - Lobby protection is decided per player from the game state instead of by world flags
 - Renamed the join sign command to `/pg sign`; `/pg joinsign` was removed
@@ -37,6 +38,7 @@ down are the development history that led here.
 
 ### Fixed
 
+- Existing `Stats` tables are healed on start: duplicate rows per UUID are merged (counters summed, KD recomputed) before the unique key is added, and an already present key is detected instead of logging a false "UUID is not unique" line on every restart
 - PvP, gamerules and respawn parity with 7.0.1 (arena world PvP, difficulty, noon, immediate respawn)
 - Round start: random kits per player, team split that never leaves everyone in one team, arena abort on failed teleport
 - Shop and chest seeding idempotent, loot chests never empty after a reload, 23 legacy chest effects
