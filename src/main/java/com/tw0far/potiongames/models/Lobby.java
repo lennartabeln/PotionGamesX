@@ -917,7 +917,6 @@ public class Lobby {
                 // only in green because nobody clicked anything.
                 player.sendMessage(Messages.KitSelectorSection());
                 player.sendMessage(Messages.KitNowHave(name));
-                player.sendMessage(Messages.KitSelectorSection());
             }
         }
     }
@@ -950,7 +949,6 @@ public class Lobby {
             player.sendMessage(Messages.TeamSelectorSection());
             player.sendMessage(Messages.TeamNowIn(team));
             player.sendMessage(Messages.TeamPlayers(lobbyteams.getOrDefault(teamId, 0), maxTeamPlayers));
-            player.sendMessage(Messages.TeamSelectorSection());
         }
     }
 
@@ -1560,10 +1558,10 @@ public class Lobby {
                 restoreGameRules();
                 PotionGamesX plugin = PotionGamesX.getInstance();
                 // Leaving the server at the round end is a decision, not a side effect of the
-                // proxy being reachable: pg.leaveOnRoundEnd. With a reachable proxy the players
+                // proxy being reachable: pg.kickOnRoundEnd. With a reachable proxy the players
                 // are transferred to pg.bungeeServer, without one they are disconnected.
                 if (plugin.getConfigManager().isGameServer()
-                        && plugin.getConfigManager().isLeaveOnRoundEnd()) {
+                        && plugin.getConfigManager().isKickOnRoundEnd()) {
                     String hubServer = plugin.getConfig().getString("pg.bungeeServer", "hub");
                     for (Player player : new ArrayList<>(activePlayers)) {
                         sendToServer(player, hubServer);

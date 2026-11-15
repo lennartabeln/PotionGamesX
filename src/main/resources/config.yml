@@ -50,12 +50,13 @@ pg:
 
   # What happens to the players of a finished round on a game server. Both options are
   # independent of each other and only apply when gameServer is true.
-  #   true  = leave the server: transfer to bungeeServer, or disconnect without a proxy
+  #   true  = kick the players off the server: transfer to bungeeServer, or disconnect
+  #           without a reachable proxy
   #   false = stay on the server and return to the lobby
-  leaveOnRoundEnd: false
-  # Same for /pg leave - true means the player always leaves the server, false keeps them
-  # in the lobby (useful on a single server that only uses the game server mode for the MOTD).
-  leaveOnLeave: true
+  kickOnRoundEnd: false
+  # Same for /pg leave - true kicks the player off the server, false keeps them in the
+  # lobby (useful on a single server that only uses game server mode for the MOTD).
+  kickOnLeave: true
 
   # ─────────────────────────────────────────────────────────────────────────
   # DATABASE

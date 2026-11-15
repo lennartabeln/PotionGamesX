@@ -17,28 +17,28 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * and when they use {@code /pg leave}. Both decisions are independent settings; the shipped
  * defaults must keep the round end in the lobby and make {@code /pg leave} leave the server.
  */
-class LeaveToHubConfigTest {
+class KickOnLeaveConfigTest {
 
     private static YamlConfiguration config;
 
     @BeforeAll
     static void load() throws Exception {
         config = new YamlConfiguration();
-        try (InputStream in = LeaveToHubConfigTest.class.getResourceAsStream("/config.yml")) {
+        try (InputStream in = KickOnLeaveConfigTest.class.getResourceAsStream("/config.yml")) {
             config.load(new InputStreamReader(in, StandardCharsets.UTF_8));
         }
     }
 
     @Test
     void roundEndStaysInTheLobbyByDefault() {
-        assertFalse(config.getBoolean("pg.leaveOnRoundEnd", false));
-        assertTrue(config.contains("pg.leaveOnRoundEnd"), "pg.leaveOnRoundEnd missing from config.yml");
+        assertFalse(config.getBoolean("pg.kickOnRoundEnd", false));
+        assertTrue(config.contains("pg.kickOnRoundEnd"), "pg.kickOnRoundEnd missing from config.yml");
     }
 
     @Test
     void leavingAlwaysLeavesTheServerByDefault() {
-        assertTrue(config.getBoolean("pg.leaveOnLeave", true));
-        assertTrue(config.contains("pg.leaveOnLeave"), "pg.leaveOnLeave missing from config.yml");
+        assertTrue(config.getBoolean("pg.kickOnLeave", true));
+        assertTrue(config.contains("pg.kickOnLeave"), "pg.kickOnLeave missing from config.yml");
     }
 
     @Test

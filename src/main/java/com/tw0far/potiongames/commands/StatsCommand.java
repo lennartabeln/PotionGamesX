@@ -68,7 +68,6 @@ public class StatsCommand implements ICommand {
         if (target == null) {
             player.sendMessage(Messages.StatsLabel());
             player.sendMessage(Messages.NoPlayerFound());
-            player.sendMessage(Messages.StatsLabel());
             return true;
         }
 
@@ -88,7 +87,6 @@ public class StatsCommand implements ICommand {
                 player.sendMessage(Messages.KillsLabel(stats.kills()));
                 player.sendMessage(Messages.DeathsLabel(stats.deaths()));
                 player.sendMessage(Messages.KDLabel(stats.kd()));
-                player.sendMessage(Messages.StatsLabel());
             }, () -> { }, 1L);
         });
     }

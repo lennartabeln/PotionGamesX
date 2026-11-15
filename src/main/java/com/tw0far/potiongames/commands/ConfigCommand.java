@@ -32,9 +32,6 @@ public class ConfigCommand implements ICommand {
     public boolean execute(CommandSender player, String[] args) {
         var config = plugin.getConfigManager();
 
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
-
         player.sendMessage(Settings.prefix.append(Component.text(Messages.ConfigHeaderText()).color(NamedTextColor.GOLD)));
 
         player.sendMessage(section(Messages.ConfigSectionCoreText()));
@@ -60,9 +57,6 @@ public class ConfigCommand implements ICommand {
         player.sendMessage(flagLine("  " + Messages.ConfigAirdropsText(), config.isActivateAirdrops()));
         player.sendMessage(flagLine("  " + Messages.ConfigDeathmatchText(), config.isActivateDeathmatch()));
         player.sendMessage(flagLine("  " + Messages.ConfigScoreboardText(), config.isActivateScoreboard()));
-
-        player.sendMessage(Component.text("").color(NamedTextColor.DARK_GRAY)
-            .append(Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY)));
 
         return true;
     }

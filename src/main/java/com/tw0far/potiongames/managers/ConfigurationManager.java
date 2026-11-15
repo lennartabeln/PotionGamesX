@@ -32,8 +32,8 @@ public class ConfigurationManager implements IConfigurationManager {
     private boolean startOnJoin = false;
     private boolean friendlyFire = false;
     private boolean gameServer = false;
-    private boolean leaveOnRoundEnd = false;
-    private boolean leaveOnLeave = true;
+    private boolean kickOnRoundEnd = false;
+    private boolean kickOnLeave = true;
     private boolean joinStarted = false;
     private boolean allowOutsideChat = false;
     private boolean broadcastStarting = false;
@@ -123,8 +123,8 @@ public class ConfigurationManager implements IConfigurationManager {
         changeGamerules = config.getBoolean("pg.changeGamerules", true);
         friendlyFire = config.getBoolean("pg.friendlyFire", false);
         gameServer = config.getBoolean("pg.gameServer", false);
-        leaveOnRoundEnd = config.getBoolean("pg.leaveOnRoundEnd", false);
-        leaveOnLeave = config.getBoolean("pg.leaveOnLeave", true);
+        kickOnRoundEnd = config.getBoolean("pg.kickOnRoundEnd", false);
+        kickOnLeave = config.getBoolean("pg.kickOnLeave", true);
         singleLobby = config.getBoolean("pg.singleLobby", false);
 
         host = config.getString("pg.mysql.host", "localhost");
@@ -218,10 +218,10 @@ public class ConfigurationManager implements IConfigurationManager {
     public boolean isGameServer() { return gameServer; }
 
     @Override
-    public boolean isLeaveOnRoundEnd() { return leaveOnRoundEnd; }
+    public boolean isKickOnRoundEnd() { return kickOnRoundEnd; }
 
     @Override
-    public boolean isLeaveOnLeave() { return leaveOnLeave; }
+    public boolean isKickOnLeave() { return kickOnLeave; }
 
     @Override
     public boolean isEnableRewards() { return enableRewards; }
@@ -249,9 +249,9 @@ public class ConfigurationManager implements IConfigurationManager {
     @Override
     public void setGameServer(boolean gameServer) { this.gameServer = gameServer; }
 
-    public void setLeaveOnRoundEnd(boolean leaveOnRoundEnd) { this.leaveOnRoundEnd = leaveOnRoundEnd; }
+    public void setKickOnRoundEnd(boolean kickOnRoundEnd) { this.kickOnRoundEnd = kickOnRoundEnd; }
 
-    public void setLeaveOnLeave(boolean leaveOnLeave) { this.leaveOnLeave = leaveOnLeave; }
+    public void setKickOnLeave(boolean kickOnLeave) { this.kickOnLeave = kickOnLeave; }
 
     @Override
     public String getHost() { return host; }

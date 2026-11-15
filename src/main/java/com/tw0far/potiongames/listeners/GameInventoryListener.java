@@ -102,7 +102,6 @@ public class GameInventoryListener implements Listener {
         p.sendMessage(Messages.ArenaSelector());
         p.sendMessage(Messages.VotedFor(displayname));
         p.sendMessage(Messages.VoteCount(plugin.getArenaStateManager().getLobbyVoteCount(s, displayname)));
-        p.sendMessage(Messages.ArenaSelector());
     }
 
     private void handleTeamSelection(InventoryClickEvent e, Player p, String s) {
@@ -152,7 +151,6 @@ public class GameInventoryListener implements Listener {
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
             p.sendMessage(Messages.TeamSelectorSection());
             p.sendMessage(Messages.TeamAlreadyFull());
-            p.sendMessage(Messages.TeamSelectorSection());
             return;
         }
         int rndTeam = available.get(new Random().nextInt(available.size()));
@@ -173,7 +171,6 @@ public class GameInventoryListener implements Listener {
         p.sendMessage(Messages.TeamSelectorSection());
         p.sendMessage(Messages.TeamNowIn(teamName));
         p.sendMessage(Messages.TeamPlayers(lobby.getTeamCounts().getOrDefault(teamId, 0), maxTeamPlayers));
-        p.sendMessage(Messages.TeamSelectorSection());
         p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
         applyTeamScoreboardValue(p, teamName);
     }
@@ -212,7 +209,6 @@ public class GameInventoryListener implements Listener {
                 p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
                 p.sendMessage(Messages.KitSelectorSection());
                 p.sendMessage(Messages.KitNowHave(kitName));
-                p.sendMessage(Messages.KitSelectorSection());
             }
         } else {
             for (int i = 1; i <= activeKits; i++) {
@@ -223,7 +219,6 @@ public class GameInventoryListener implements Listener {
                     p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
                     p.sendMessage(Messages.KitSelectorSection());
                     p.sendMessage(Messages.KitNowHave(kitName));
-                    p.sendMessage(Messages.KitSelectorSection());
                     break;
                 }
             }
