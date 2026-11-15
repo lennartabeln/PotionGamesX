@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.38] - 2026-11-15
+
+### Fixed
+
+- Loot chests stay filled after `/pg reload`: the reload re-seeds the chest loot pools, and seeding no longer doubles the pools
+- Opening a loot chest (portal frame) rolls 0-3 random potion effects from the legacy pool while the player has no active effect
+- Voting and `/pg force` stay open during the countdown until the arena is revealed (legacy decided the map at 10 seconds), instead of closing when the countdown starts
+- The shop rebuilds itself from `shop.yml` when the in-memory list is empty, and a startup line reports how many shop entries and loot items were loaded
+
 ## [1.0.0-dev.37] - 2026-11-14
 
 ### Changed
