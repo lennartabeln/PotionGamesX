@@ -33,13 +33,18 @@ public final class BootstrapInitializer {
         Settings.kitsFile = new File(plugin.getDataFolder() + File.separator + "kits.yml");
         Settings.shopFile = new File(plugin.getDataFolder() + File.separator + "shop.yml");
 
-        ensureFileExists(Settings.lobbiesFile, "lobbies.yml");
+        // Ship the documented file instead of an empty one: the comment block is the
+        // documentation an admin reads, and LobbyFileWriter keeps it on every save.
+        saveResourceIfMissing("lobbies.yml", Settings.lobbiesFile);
         saveResourceIfMissing("chests.yml", Settings.chestsFile);
         saveResourceIfMissing("messages.yml", Settings.messagesFile);
         saveResourceIfMissing("kits.yml", Settings.kitsFile);
         saveResourceIfMissing("shop.yml", Settings.shopFile);
 
         Settings.loadConfigurations();
+        // Bukkit's save writes plain YAML and drops comments, so an existing lobbies.yml
+        // without its header gets it back here.
+        com.tw0far.potiongames.util.LobbyFileWriter.ensureHeader();
         Settings.loadSettings(plugin);
         // Fill in what a legacy arenadata.yml / old lobbies.yml still holds, so
         // the lobbies loaded right below already contain the imported data.
@@ -62,17 +67,6 @@ public final class BootstrapInitializer {
         // The reload cleared every in-memory list, including the chest loot
         // pools; without this call all loot chests stayed empty until a restart.
         new ChestLootInitializer(plugin).seed();
-    }
-
-    private void ensureFileExists(File file, String name) {
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                plugin.getComponentLogger().info(Messages.FileSaveFailedText()
-                    .append(Component.text(": Could not create " + name + " - " + e.getMessage()).color(NamedTextColor.RED)));
-            }
-        }
     }
 
     private void saveResourceIfMissing(String resourceName, File targetFile) {

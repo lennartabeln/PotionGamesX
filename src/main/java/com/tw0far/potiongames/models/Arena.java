@@ -68,7 +68,7 @@ public class Arena {
     public boolean add() {
         Settings.lobbies.createSection("pg.lobbies." + lobbyId + ".arenas." + name);
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             return true;
         } catch (Exception ex) {
             PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
@@ -79,7 +79,7 @@ public class Arena {
     public boolean remove() {
         Settings.lobbies.set("pg.lobbies." + lobbyId + ".arenas." + name, null);
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             return true;
         } catch (Exception ex) {
             PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
@@ -113,7 +113,7 @@ public class Arena {
         Settings.lobbies.set(spawnPath, spawn);
 
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             return true;
         } catch (Exception ex) {
             PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
@@ -140,7 +140,7 @@ public class Arena {
         Settings.lobbies.set(spawnPath, null);
 
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             return true;
         } catch (Exception ex) {
             PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
@@ -184,7 +184,7 @@ public class Arena {
         Settings.lobbies.set(spawnPath, spawn);
 
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             return true;
         } catch (Exception ex) {
             PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
@@ -211,7 +211,7 @@ public class Arena {
         Settings.lobbies.set(spawnPath, null);
 
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             return true;
         } catch (Exception ex) {
             PotionGamesX.getInstance().getLogger().warning(ex.getMessage());

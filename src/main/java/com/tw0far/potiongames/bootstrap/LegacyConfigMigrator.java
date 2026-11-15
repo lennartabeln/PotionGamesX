@@ -93,11 +93,7 @@ public final class LegacyConfigMigrator {
         int settings = moveLobbySettings(Settings.lobbies);
 
         if (lobbies > 0 || arenas > 0 || settings > 0) {
-            try {
-                Settings.lobbies.save(Settings.lobbiesFile);
-            } catch (IOException ex) {
-                plugin.getLogger().warning("Could not save migrated lobbies.yml: " + ex.getMessage());
-            }
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
         }
 
         boolean singleLobby = enableSingleLobby(plugin.getConfig());
