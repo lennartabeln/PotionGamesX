@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.58] - 2026-11-15
+
+### Fixed
+
+- `lobbies.yml` keeps its documentation: the file is copied on first start instead of created empty, every save writes the comment header back (`LobbyFileWriter`), and an existing file without the header gets it on the next start - including the worked example of a per-lobby `settings:` block
+
 ## [1.0.0-dev.57] - 2026-11-15
 
 ### Fixed
