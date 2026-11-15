@@ -85,8 +85,7 @@ public class DeathEventListener implements Listener {
             if (plugin.getConfigManager().isEnableRewards() && PotionGamesX.getEconomy() != null) {
                 EconomyResponse r = PotionGamesX.getEconomy().depositPlayer(killer, plugin.getConfigManager().getKillReward());
                 if (r.transactionSuccess()) {
-                    killer.sendMessage(Messages.KillReward(plugin.getConfigManager().getKillReward())
-                        .append(Component.text(" " + PotionGamesX.getEconomy().format(r.amount)).color(NamedTextColor.LIGHT_PURPLE)));
+                    killer.sendMessage(Messages.KillReward(PotionGamesX.getEconomy().format(r.amount)));
                 }
             }
 

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- The reward message printed the amount twice (`you get 10 $10`): the kill and win messages now take the amount as formatted by the economy, so they read `you get $10` / `you get 10 Coins` depending on the economy
 - A full release now carries the complete changelog: the version summary is followed by every development section in a collapsible block instead of only the hand-written summary
 
 ## [1.0.0] - 2026-11-15

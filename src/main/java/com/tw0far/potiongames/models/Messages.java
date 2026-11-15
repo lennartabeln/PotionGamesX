@@ -531,7 +531,8 @@ public class Messages {
         return prefix(Component.text(get("kd.label", "K/D") + ": ").color(NamedTextColor.GREEN).append(Component.text(kd).color(NamedTextColor.AQUA)));
     }
 
-    public static Component KillReward(int amount) {
+    /** {@code amount} is already formatted by the economy, e.g. {@code $10} or {@code 10 Coins}. */
+    public static Component KillReward(String amount) {
         return prefix(Component.text(get("kill.reward", "For killing a player you get") + " " + amount).color(NamedTextColor.GOLD));
     }
 
@@ -987,7 +988,8 @@ public class Messages {
         return prefix(Component.text(get("you.block_above", "You have a block above you!")).color(NamedTextColor.YELLOW));
     }
 
-    public static Component WinReward(int amount) {
+    /** {@code amount} is already formatted by the economy, e.g. {@code $100} or {@code 100 Coins}. */
+    public static Component WinReward(String amount) {
         return prefix(Component.text(get("won.reward", "For winning the round you get") + " " + amount).color(NamedTextColor.GOLD));
     }
 
