@@ -1,3 +1,83 @@
-# Lobbies configuration file
-# Created automatically on first server start.
-# Manage lobbies through the setup wizard (/pg setup) or individual commands.
+# ═══════════════════════════════════════════════════════════════════════════
+#  PotionGamesX - lobbies, arenas and spawns
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#  This file is written by the plugin. Use the setup commands instead of editing
+#  it by hand - they validate the blocks you look at and keep the world data
+#  consistent:
+#
+#    /pg addlobby <name>                 create a lobby
+#    /pg dellobby <id>                   delete it
+#    /pg addarena <lobby> <name>         create an arena inside a lobby
+#    /pg delarena <lobby> <name>         delete it
+#    /pg addspawn <lobby> <arena>        add an arena spawn where you stand
+#    /pg delspawn <lobby> <arena>        remove the nearest spawn
+#    /pg adddeathmatch <lobby> <arena>   add a deathmatch spawn
+#    /pg deldeathmatch <lobby> <arena>   remove the nearest one
+#    /pg setlobbyspawn <lobby>           set the lobby spawn where you stand
+#    /pg sign <lobby>                    turn the sign you look at into a join sign
+#
+#  Resulting structure (locations are serialised Bukkit Locations):
+#
+#    pg:
+#      lobbies:
+#        1:                          # lobby id, also the number on the join sign
+#          spawn:                    # where players wait and respawn
+#            ==: org.bukkit.Location
+#            world: world
+#            x: 0.5
+#            y: 65.0
+#            z: 0.5
+#            pitch: 0.0
+#            yaw: 0.0
+#          settings:                 # optional per lobby, otherwise config.yml
+#            countdown: 60           # pg.defaults.* is used for missing keys
+#            maxPlayers: 24
+#            minPlayers: 12
+#            teamSize: 2
+#            roundTime: 30           # minutes
+#            startDelay: 10          # seconds frozen after the arena teleport
+#            activateTeams: true
+#            activateKits: true
+#            activateShop: true
+#            activateAirdrops: true
+#          arenas:
+#            arena1:                 # arena name, shown in the vote selector
+#              spawns:               # one entry per player slot
+#                1:
+#                  ==: org.bukkit.Location
+#                  world: world
+#                  x: 10.5
+#                  y: 64.0
+#                  z: 10.5
+#                  pitch: 0.0
+#                  yaw: 90.0
+#              deathmatch:           # optional, needed for the deathmatch phase
+#                1:
+#                  ==: org.bukkit.Location
+#                  world: world
+#                  x: 10.5
+#                  y: 64.0
+#                  z: -10.5
+#                  pitch: 0.0
+#                  yaw: 0.0
+#          joinSign:                 # set by /pg sign, not required
+#            ==: org.bukkit.Location
+#            world: world
+#            x: 2.0
+#            y: 65.0
+#            z: 2.0
+#            pitch: 0.0
+#            yaw: 0.0
+#
+#  Notes:
+#    - The lobby capacity is capped by the number of arena spawns: an arena with
+#      8 spawns never lets more than 8 players in, whatever maxPlayers says.
+#    - A round needs at least two arena spawns to start.
+#    - The deathmatch phase needs at least two deathmatch spawns
+#      (config.yml -> pg.activateDeathmatch must be true as well).
+#    - The join sign always shows the lobby number in its first line, so the
+#      plugin name belongs on a separate sign above it.
+#    - Old installations are migrated on start: pg.Lobby.coords, pg.Lobby.sign,
+#      pg.lobbySystem, pg.arenas and pg.lobbies.<id>.<n> are imported once.
+# ═══════════════════════════════════════════════════════════════════════════

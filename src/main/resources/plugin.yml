@@ -1,3 +1,22 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  PotionGamesX - plugin descriptor
+#  Managed by the build. Nothing here has to be edited - the file is shipped
+#  and overwritten with every update.
+# ═══════════════════════════════════════════════════════════════════════════
+#
+#  softdepend:  plugins that are used when present (Multiverse-Core for world
+#               names, Vault for the optional money rewards)
+#  libraries:   JDBC drivers downloaded by the server on first start; without
+#               them the statistics backend has no database driver
+#
+#  Permissions - "default" decides who has a permission out of the box:
+#    true  = every player
+#    op    = server operators only
+#    false = nobody, the permission has to be granted by a permission plugin
+#  A permission with "children" grants all listed permissions at once, so
+#  pg.admin is the one-stop node for administrators.
+# ═══════════════════════════════════════════════════════════════════════════
+
 name: PotionGamesX
 author: Tw0Far
 main: com.tw0far.potiongames.PotionGamesX

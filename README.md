@@ -161,6 +161,8 @@ Config files in `plugins/PotionGamesX/`:
 | **kits.yml** | Kit definitions |
 | **messages.yml** | Localized text messages |
 
+Every key in these files is documented inline, in English: what the toggle does, which values are allowed and how to add an entry. The shipped files are the reference; an existing installation keeps its own values and comments.
+
 Settings use a lobby-first model:
 - `pg.defaults.*` stores global defaults for every lobby
 - `pg.lobbies.<id>.settings.*` stores per-lobby overrides
