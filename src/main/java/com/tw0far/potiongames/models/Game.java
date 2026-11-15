@@ -157,6 +157,19 @@ public class Game {
         return false;
     }
 
+    /** True when the player stands in the safe zone of any lobby. */
+    public boolean isInSafeZone(org.bukkit.entity.Player player) {
+        if (player == null) {
+            return false;
+        }
+        for (Lobby lobby : getLobbies()) {
+            if (lobby != null && lobby.isInSafeZone(player)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public ArrayList<Lobby> getLobbies() {
         return lobbies;
     }

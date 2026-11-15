@@ -61,6 +61,12 @@ pg:
                                # required to start a round.
     teamSize: 2
 
+    # Lobby protection: radius (blocks, horizontal) around the lobby spawn that
+    # stays free of damage, hunger and PvP, even when the arena is in the same
+    # world. Players who are actively playing a round are never protected.
+    # 0 disables the zone (then only the lobby phases are safe).
+    safeRadius: 16
+
     # Feature flags
     activateAirdrops: true
     activateKits: true

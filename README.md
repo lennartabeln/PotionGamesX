@@ -181,6 +181,7 @@ Notable global toggles (`config.yml`):
 | `pg.changeGamerules` | Freeze time, weather, fire spread, mob griefing and mob spawning in the arena world during rounds |
 | `pg.allowOutsideChat` | Players outside lobbies can see lobby chat |
 | `pg.activeKits` | Number of selectable kits (`kits.yml`) |
+| `pg.defaults.safeRadius` / `settings.safeRadius` | Radius around the lobby spawn that is free of damage, hunger and PvP (default `16`, `0` = only the lobby phases are safe). Players in a running round are never protected |
 | `pg.activePotions` | Shop entries shown and buyable, counted from `shop.yml` (`1` = first entry only, `20` = all twenty, `0` = none) |
 
 ## Development

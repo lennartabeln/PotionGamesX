@@ -27,7 +27,11 @@ public class LobbyHungerListener implements Listener {
             return;
         }
         Lobby lobby = lobbyOf(player);
-        if (lobby == null || !lobby.getState().isLobbyPhase()) {
+        boolean playing = lobby != null
+            && (lobby.getState() == com.tw0far.potiongames.models.GameStates.INGAME
+                || lobby.getState() == com.tw0far.potiongames.models.GameStates.DEATHMATCH);
+        boolean inSafeZone = !playing && plugin.getGame().isInSafeZone(player);
+        if (!inSafeZone && (lobby == null || !lobby.getState().isLobbyPhase())) {
             return;
         }
         event.setCancelled(true);
