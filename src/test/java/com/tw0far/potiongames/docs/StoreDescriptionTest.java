@@ -105,6 +105,18 @@ class StoreDescriptionTest {
     }
 
     @Test
+    void bothDocumentsDescribeTheSameGame() throws Exception {
+        String readme = Files.readString(Path.of("README.md"), StandardCharsets.UTF_8);
+        for (String fact : List.of("End Portal Frame", "Target", "Netherite", "Composter",
+                "lobby protection", "Feature items", "Join Sign", "Stats Wall")) {
+            assertTrue(description.toLowerCase().contains(fact.toLowerCase()),
+                "store description is missing: " + fact);
+            assertTrue(readme.toLowerCase().contains(fact.toLowerCase()),
+                "README is missing: " + fact);
+        }
+    }
+
+    @Test
     void usesOnlyTagsThatXenForoSupports() {
         // Spigot runs XenForo 1.5, which has no [HR] tag - it comes from vBulletin/MyBB and shows
         // up as literal text in the preview.

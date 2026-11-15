@@ -26,6 +26,7 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 * BungeeCord / proxy support
 * GUI or sign to join lobbies
 * Rewards system (Vault)
+* Every config file documented in English
 * Class-based architecture with manager delegation
 
 ## Requirements
@@ -47,10 +48,12 @@ PotionGamesX is a minigames plugin that works like SurvivalGames but with potion
 ## Setup
 
 ### Quick Start
-1. Create a lobby: `/pg setup`
-2. Add arenas and spawns through the setup wizard
-3. Add chests to your arenas
-4. Configure settings in `config.yml`
+1. Create a lobby with `/pg setup` — it is created where you stand, that position is also the lobby spawn
+2. Add arenas and their spawns through the wizard (at least two spawns per arena)
+3. Place the chest blocks: end portal frame for loot, composter for the shop
+4. Optional: add deathmatch spawns with `/pg adddeathmatch`
+5. Set a join sign with `/pg sign <lobby>`, then test the round with two players
+6. Fine-tune the settings in `config.yml`
 
 ### Lobby Commands
 
@@ -107,7 +110,7 @@ With `pg.singleLobby: true` the setup commands also accept their legacy short fo
 
 ### Chest Types
 
-* **End Portal Frame**: Normal chest with probability-weighted loot (food, armour, weapons)
+* **End Portal Frame**: Normal loot chest with probability-weighted loot (food, armour, weapons, coins and glass bottles)
 * **Target**: Special chest with Flame Bow and Arrows
 * **Netherite Block**: Special chest with Netherite Ingots (Smithing Table upgrades diamond → netherite)
 * **Composter**: Potion shop (right-click during a round; prices are in coins and one glass bottle; `pg.activePotions` limits how many entries are active)
