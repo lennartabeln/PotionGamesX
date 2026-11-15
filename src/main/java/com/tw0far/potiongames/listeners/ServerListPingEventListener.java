@@ -23,7 +23,7 @@ import java.util.Locale;
  * lobbies instead, so the ping shows the state of the most relevant lobby (one
  * with players, otherwise one that is not waiting) and the summed capacity of
  * all configured lobbies. The entry is left alone only when the plugin neither
- * runs as a game server nor auto-joins players on connect ({@code pg.startOnJoin}),
+ * runs as a game server nor auto-joins players on connect ({@code pg.autoJoinOnConnect}),
  * because in both cases the state belongs in the server list.</p>
  */
 public class ServerListPingEventListener implements Listener {

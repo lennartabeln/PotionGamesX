@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Nothing yet - new entries belong here and are moved into a version section on release.
+### Changed
+
+- Renamed the flags that were easy to mix up: `pg.joinStarted` → `pg.spectateRunningRound`, `pg.startOnJoin` → `pg.autoJoinOnConnect`, `pg.broadcastStarting` → `pg.broadcastCountdown`, `pg.allowOutsideChat` → `pg.lobbyChatInGlobalChat`; the compass pair moved into one block (`pg.compass.spawnItem`, `pg.compass.tracking`) and the rewards into another (`pg.rewards.enabled`, `pg.rewards.kill`, `pg.rewards.win`). The old names are still read as a fallback, so an existing `config.yml` keeps its values
+
+### Fixed
+
+- A full release now carries the complete changelog: the version summary is followed by every development section in a collapsible block instead of only the hand-written summary
 
 ## [1.0.0] - 2026-11-15
 

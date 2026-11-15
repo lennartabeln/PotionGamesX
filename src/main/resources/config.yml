@@ -23,6 +23,13 @@
 # ═══════════════════════════════════════════════════════════════════════════
 
 pg:
+  # NOTE ON RENAMED FLAGS
+  # The development builds of 1.0.0 used different names for a few flags
+  # (startOnJoin, joinStarted, broadcastStarting, allowOutsideChat,
+  # compassOnSpawn, playerFinder, enableRewards, killReward, winningReward).
+  # They are still read as a fallback, so an existing config.yml keeps its
+  # settings; the names below are the ones that are written to new files.
+
   # ─────────────────────────────────────────────────────────────────────────
   # CORE
   # ─────────────────────────────────────────────────────────────────────────
@@ -131,7 +138,7 @@ pg:
 
   # true = broadcast "the game starts soon" to the whole server when a round
   # starts. false = only the players in that lobby see it.
-  broadcastStarting: false
+  broadcastCountdown: false
 
   # true = the plugin sets the arena world's gamerules while a round runs
   # (no daylight/weather change, no mob spawning, no mob griefing, no fire
@@ -144,33 +151,36 @@ pg:
   # false = team members cannot damage each other (deathmatch always allows it)
   friendlyFire: false
 
-  # true = a player who joins the server is put into a running round if one
-  # exists. false = joining players only land in the lobby.
-  joinStarted: false
+  # true = a player who joins the server spectates a round that is already
+  # running. false = joining players only land in the lobby.
+  spectateRunningRound: false
 
   # true  = players in a lobby may also write in the global chat
   # false = lobby chat stays inside the lobby
-  allowOutsideChat: false
+  lobbyChatInGlobalChat: false
 
-  # true = every player receives a Player-Finder compass when a round starts
-  # (the compass itself only works while playerFinder is true)
-  compassOnSpawn: false
+  # Player-Finder compass.
+  #   spawnItem: true = every player receives the compass when a round starts
+  #   tracking:  true = a compass in the inventory points to the nearest
+  #                     opponent; false = vanilla compass behaviour
+  compass:
+    spawnItem: false
+    tracking: true
 
-  # true  = a compass in the inventory points to the nearest opponent
-  # false = the compass keeps its vanilla behaviour
-  playerFinder: true
-
-  # true  = the round starts as soon as enough players joined the lobby,
-  #         without the normal countdown
-  # false = normal countdown
-  startOnJoin: false
+  # true  = a player who connects is put straight into the first open lobby
+  #         (the server-list MOTD and slot count are then owned by the plugin)
+  # false = players only join a lobby through /pg join, the GUI or a sign
+  autoJoinOnConnect: false
 
   # Economy through Vault (optional). Without Vault installed the rewards are
   # simply not paid out, the plugin keeps running.
-  # true = killReward / winningReward are paid as money through Vault
-  enableRewards: false
-  killReward: 10        # money per kill (only with enableRewards: true)
-  winningReward: 100    # money for winning a round (only with enableRewards)
+  #   enabled: true = kill and win rewards are paid as money through Vault
+  #   kill:    money per kill (only with enabled: true)
+  #   win:     money for winning a round (only with enabled: true)
+  rewards:
+    enabled: false
+    kill: 10
+    win: 100
 
   # ─────────────────────────────────────────────────────────────────────────
   # CONTENT LIMITS
