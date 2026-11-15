@@ -9,6 +9,7 @@ import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Participant;
 import com.tw0far.potiongames.models.PlayerStats;
 import com.tw0far.potiongames.models.Settings;
+import com.tw0far.potiongames.util.ChestEffects;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -286,17 +287,13 @@ public class GameItemListener implements Listener {
     }
 
     private void openArenaSelector(Player p, String s) {
-        GameStates state = plugin.getLobbyStateManager().getGameState(s);
-        if (state != GameStates.WAITING) {
-            // The arena is announced ten seconds before the teleport; a late vote
-            // would change the map after everybody has seen it (legacy closed
-            // voting when the countdown started).
+        Lobby lobby = plugin.getGame().getLobby(InteractionSupport.parseIntSafe(s));
+        if (lobby != null && !lobby.isVotingOpen()) {
             p.sendMessage(Messages.line(Messages.VoteClosedText(), NamedTextColor.RED));
             return;
         }
         Map<String, Integer> lobbyVotesMap = new HashMap<>();
         String randomVoteKey = Messages.RandomText();
-        Lobby lobby = plugin.getGame().getLobby(InteractionSupport.parseIntSafe(s));
         if (lobby != null) {
             for (Arena arena : lobby.getArenas()) {
                 lobbyVotesMap.put(arena.getName(), plugin.getArenaStateManager().getLobbyVoteCount(s, arena.getName()));
@@ -468,6 +465,8 @@ public class GameItemListener implements Listener {
             lobby.setChestInventory(loc, inv.getContents());
         }
         reopenStoredChest(p, lobby, loc);
+        // Legacy rolled a random effect (0..3) when the player had none.
+        ChestEffects.applyRandom(p, new Random());
 
         // Bonus random potion effect on first open of an empty-effects player
         if (p.getActivePotionEffects().isEmpty()) {
@@ -664,6 +663,7 @@ public class GameItemListener implements Listener {
         int baseRolls = rnd.nextInt(5) + 2;
         int rolls = Math.max(1, (int) Math.round(baseRolls * profile.factor));
 
+        int placed = 0;
         for (int i = 0; i < rolls && !emptySlots.isEmpty(); i++) {
             LootPool pool = pickLootPool(rnd, profile);
             if (pool == LootPool.SHOP && !shopActive) {
@@ -678,6 +678,13 @@ public class GameItemListener implements Listener {
             int slotIndex = rnd.nextInt(emptySlots.size());
             int slot = emptySlots.remove(slotIndex);
             inv.setItem(slot, loot);
+            placed++;
+        }
+        if (placed == 0) {
+            // All pools empty (or every roll hit an unloaded pool): say so once
+            // instead of opening a chest that looks broken.
+            plugin.getLogger().warning("[PotionGamesX] Loot chest stayed empty - no item matched the configured pools. "
+                + "Check chests.yml (pg.chestloot.*.items) and the seeded defaults.");
         }
     }
 

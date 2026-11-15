@@ -58,6 +58,9 @@ public final class BootstrapInitializer {
         Messages.seed();
         seedShopData();
         seedKitData();
+        // The reload cleared every in-memory list, including the chest loot
+        // pools; without this call all loot chests stayed empty until a restart.
+        new ChestLootInitializer(plugin).seed();
     }
 
     private void ensureFileExists(File file, String name) {

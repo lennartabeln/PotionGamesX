@@ -582,6 +582,18 @@ public class Lobby {
     }
 
     /**
+     * Voting stays open until the arena is revealed (legacy called
+     * {@code voteResultsLobby} at a countdown of 10 seconds), not only while the
+     * lobby is waiting.
+     */
+    public boolean isVotingOpen() {
+        if (state == GameStates.WAITING) {
+            return true;
+        }
+        return state == GameStates.PREPARING && prepareTimer > REVEAL_SECONDS;
+    }
+
+    /**
      * A player may actively join only while the lobby waits or counts down
      * and has free slots.
      */
