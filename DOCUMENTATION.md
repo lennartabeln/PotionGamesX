@@ -48,7 +48,7 @@ Javac warnings fail the build (`failOnWarning` with `-Xlint:all`), so a green bu
 - `/pg config` - View configuration
 - `/pg status` - Show server status and lobbies
 - `/pg reload` - Reload every config file
-- `/pg gameserver` - Toggle offline/online mode
+- `/pg gameserver` - Toggle game server mode (game server vs. hub/lobby server)
 - `/pg database` - Switch MySQL/SQLite
 - `/pg kick` - Remove players from lobbies
 - `/pg top [kills|deaths|wins|kd]` - Show leaderboards
