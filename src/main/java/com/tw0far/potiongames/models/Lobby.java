@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -977,9 +978,54 @@ public class Lobby {
             }
             recordTeamAssignment(player, Integer.toString(teamId));
         }
+        // A round in which every player shares one team would end on its very
+        // first tick (a single remaining team counts as the winner), so manual
+        // picks that all point at the same team are overridden and the players
+        // are spread over at least two teams.
+        if (distinctTeams() < 2 && activePlayers.size() >= 2 && amount >= 2) {
+            spreadOverTeams(size, amount);
+        }
+
         // distributeTeams() rebuilt the counters, so the selector state has to
         // be re-published; otherwise it stays empty for the whole round.
         publishTeamsToSelector();
+    }
+
+    /** Number of different teams that currently hold at least one player. */
+    private int distinctTeams() {
+        return new HashSet<>(lobbyteamplayernames.values()).size();
+    }
+
+    /**
+     * Round-robin team ids for {@code playerCount} players: at least two teams
+     * whenever the lobby offers them, and never more players per team than
+     * {@code size}. Two players therefore always end up in different teams,
+     * even when both picked the same one in the selector.
+     */
+    static List<Integer> spreadTeamIds(int playerCount, int amount, int size) {
+        List<Integer> ids = new ArrayList<>(Math.max(0, playerCount));
+        if (playerCount <= 0 || amount <= 0) {
+            return ids;
+        }
+        int safeSize = Math.max(1, size);
+        int teams = Math.min(amount, Math.max(2, (playerCount + safeSize - 1) / safeSize));
+        for (int i = 0; i < playerCount; i++) {
+            ids.add((i % teams) + 1);
+        }
+        return ids;
+    }
+
+    /** Drops the picks and spreads the active players over the teams. */
+    private void spreadOverTeams(int size, int amount) {
+        List<Player> players = new ArrayList<>(activePlayers);
+        List<Integer> ids = spreadTeamIds(players.size(), amount, size);
+        clearTeams();
+        for (int i = 1; i <= amount; i++) {
+            lobbyteams.put(i, 0);
+        }
+        for (int i = 0; i < players.size() && i < ids.size(); i++) {
+            recordTeamAssignment(players.get(i), Integer.toString(ids.get(i)));
+        }
     }
 
     /** Team with the fewest players that still has a free slot, or -1. */

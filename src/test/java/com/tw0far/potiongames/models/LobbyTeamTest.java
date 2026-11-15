@@ -3,6 +3,8 @@ package com.tw0far.potiongames.models;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -30,6 +32,27 @@ class LobbyTeamTest {
     void teamAmountNeverDropsBelowTwoTeams() {
         assertEquals(2, lobby(2, 2, 4).getTeamAmount());
         assertEquals(2, lobby(2, 1, 8).getTeamAmount());
+    }
+
+    @Test
+    void twoPlayersAlwaysEndUpInDifferentTeams() {
+        // Even when both picked the same team, the round must not be over on
+        // its first tick with a single team left.
+        assertEquals(List.of(1, 2), Lobby.spreadTeamIds(2, 12, 2));
+        assertEquals(List.of(1, 2), Lobby.spreadTeamIds(2, 2, 4));
+    }
+
+    @Test
+    void spreadKeepsTheTeamSizeAndTheTeamCount() {
+        assertEquals(List.of(1, 2, 3, 1, 2), Lobby.spreadTeamIds(5, 12, 2));
+        assertEquals(List.of(1, 2, 1, 2), Lobby.spreadTeamIds(4, 12, 2));
+        // A lobby with one team only cannot be split.
+        assertEquals(List.of(1, 1), Lobby.spreadTeamIds(2, 1, 2));
+    }
+
+    @Test
+    void spreadWithoutPlayersIsEmpty() {
+        assertEquals(List.of(), Lobby.spreadTeamIds(0, 12, 2));
     }
 
     @Test
