@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * On a game server the player can either leave the server or stay in the lobby when a round ends
- * and when they use {@code /pg leave}. Both decisions are independent settings; the shipped
- * defaults must keep the round end in the lobby and make {@code /pg leave} leave the server.
+ * On a game server a player can either be kicked off the server or stay in the lobby, both when a
+ * round ends and when they use {@code /pg leave}. The two settings are independent and both
+ * default to {@code false}, so an upgrade never kicks players that used to stay.
  */
 class KickOnLeaveConfigTest {
 
@@ -36,8 +36,8 @@ class KickOnLeaveConfigTest {
     }
 
     @Test
-    void leavingAlwaysLeavesTheServerByDefault() {
-        assertTrue(config.getBoolean("pg.kickOnLeave", true));
+    void leavingStaysInTheLobbyByDefault() {
+        assertFalse(config.getBoolean("pg.kickOnLeave", false));
         assertTrue(config.contains("pg.kickOnLeave"), "pg.kickOnLeave missing from config.yml");
     }
 

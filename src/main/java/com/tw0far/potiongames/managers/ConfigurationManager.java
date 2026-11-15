@@ -33,7 +33,7 @@ public class ConfigurationManager implements IConfigurationManager {
     private boolean friendlyFire = false;
     private boolean gameServer = false;
     private boolean kickOnRoundEnd = false;
-    private boolean kickOnLeave = true;
+    private boolean kickOnLeave = false;
     private boolean joinStarted = false;
     private boolean allowOutsideChat = false;
     private boolean broadcastStarting = false;
@@ -124,7 +124,7 @@ public class ConfigurationManager implements IConfigurationManager {
         friendlyFire = config.getBoolean("pg.friendlyFire", false);
         gameServer = config.getBoolean("pg.gameServer", false);
         kickOnRoundEnd = config.getBoolean("pg.kickOnRoundEnd", false);
-        kickOnLeave = config.getBoolean("pg.kickOnLeave", true);
+        kickOnLeave = config.getBoolean("pg.kickOnLeave", false);
         singleLobby = config.getBoolean("pg.singleLobby", false);
 
         host = config.getString("pg.mysql.host", "localhost");

@@ -54,9 +54,8 @@ pg:
   #           without a reachable proxy
   #   false = stay on the server and return to the lobby
   kickOnRoundEnd: false
-  # Same for /pg leave - true kicks the player off the server, false keeps them in the
-  # lobby (useful on a single server that only uses game server mode for the MOTD).
-  kickOnLeave: true
+  # Same for /pg leave - false keeps the player in the lobby, true kicks them off the server.
+  kickOnLeave: false
 
   # ─────────────────────────────────────────────────────────────────────────
   # DATABASE

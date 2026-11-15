@@ -185,7 +185,7 @@ Notable global toggles (`config.yml`):
 |---------|--------|
 | `pg.gameServer` | Dedicated game server: auto-join on connect and the `pg.kickOn*` options decide whether players leave the server (transfer to `pg.bungeeServer`, or disconnect without a reachable proxy) |
 | `pg.kickOnRoundEnd` | Kick the players off the server when a round ends (`true`) or return them to the lobby (`false`, default) |
-| `pg.kickOnLeave` | Kick the player off the server on `/pg leave` (`true`, default) or keep them in the lobby (`false`) |
+| `pg.kickOnLeave` | Kick the player off the server on `/pg leave` (`true`) or keep them in the lobby (`false`, default) |
 | `pg.singleLobby` | Single-lobby compatibility mode: setup commands may omit the lobby number (targets lobby 1) |
 | `pg.language` | Locale used by `messages.yml` (`en_US`, `de_DE`) |
 | `pg.joinStarted` | Late joiners spectate a running round instead of being rejected |
