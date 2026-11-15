@@ -97,7 +97,7 @@ public class SetCountdownCommand implements ICommand {
 
     private void saveLobbies() {
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
         } catch (Exception e) {
             plugin.getLogger().warning("Could not save lobbies.yml: " + e.getMessage());
         }

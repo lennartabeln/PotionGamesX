@@ -84,7 +84,7 @@ public final class EnableBootstrapInitializer {
 
         try {
             Settings.shopdata.save(Settings.shopFile);
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
         } catch (IOException ex) {
             sendError(ex);
         }
@@ -210,11 +210,7 @@ public final class EnableBootstrapInitializer {
         if (Settings.lobbies.get(path) == null) {
             Settings.lobbies.addDefault(path, defaultValue);
             Settings.lobbies.options().copyDefaults(true);
-            try {
-                Settings.lobbies.save(Settings.lobbiesFile);
-            } catch (IOException ex) {
-                sendError(ex);
-            }
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             return;
         }
         @SuppressWarnings("unchecked")

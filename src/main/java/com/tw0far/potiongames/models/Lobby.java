@@ -268,7 +268,7 @@ public class Lobby {
         // it gets its own pg.lobbies.<id>.settings.<key>.
         Settings.lobbies.set("pg.lobbies." + id + ".spawn", spawn);
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             load();
             syncTeamSelector();
             return true;
@@ -281,7 +281,7 @@ public class Lobby {
     public boolean remove() {
         Settings.lobbies.set("pg.lobbies." + id, null);
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             return true;
         } catch (Exception ex) {
             PotionGamesX.getInstance().getLogger().warning(ex.getMessage());
@@ -662,7 +662,7 @@ public class Lobby {
         joinSign = sign;
         Settings.lobbies.set("pg.lobbies." + id + ".joinSign", loc);
         try {
-            Settings.lobbies.save(Settings.lobbiesFile);
+            com.tw0far.potiongames.util.LobbyFileWriter.save();
             updateJoinSign();
             return true;
         } catch (Exception ex) {

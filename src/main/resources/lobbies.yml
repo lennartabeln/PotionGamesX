@@ -137,3 +137,10 @@
 #    - Old installations are migrated on start: pg.Lobby.coords, pg.Lobby.sign,
 #      pg.lobbySystem, pg.arenas and pg.lobbies.<id>.<n> are imported once.
 # ═══════════════════════════════════════════════════════════════════════════
+
+# ───────────────────────────────────────────────────────────────────────────
+#  LOBBY DATA BELOW - the plugin fills this in through the setup commands.
+#  Everything above is documentation; the block below is the real content.
+# ───────────────────────────────────────────────────────────────────────────
+pg:
+  lobbies: {}
