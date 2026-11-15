@@ -540,6 +540,7 @@ public class GameItemListener implements Listener {
         int activePotions = plugin.getConfigManager().getActivePotions();
         int entries = activePotions > 0 ? Math.min(shopItems.size(), activePotions) : shopItems.size();
         int slots = Math.min(entries, inv.getSize());
+        int placed = 0;
         for (int idx = 0; idx < slots; idx++) {
             int coinamount = itemStateManager.getShopPrice(idx, kitName);
             ItemStack potionType = itemStateManager.getShopPotionType(idx);
@@ -550,15 +551,24 @@ public class GameItemListener implements Listener {
             if (shopEntryMeta == null) {
                 continue;
             }
-            shopEntryMeta.displayName(Component.text(shopItems.get(idx)));
+            shopEntryMeta.displayName(Component.text(shopItems.get(idx)).color(NamedTextColor.AQUA));
             ArrayList<Component> lore = new ArrayList<>();
-            lore.add(Component.text(Messages.DurationText() + ": " + shopPotion.getDuration() / 20));
-            lore.add(Component.text(Messages.PriceLabel() + ": " + coinamount + " " + Messages.CoinsText()));
+            lore.add(Component.text(Messages.DurationText() + ": " + shopPotion.getDuration() / 20)
+                .color(NamedTextColor.GRAY));
+            lore.add(Component.text(Messages.PriceLabelText() + ": " + coinamount + " " + Messages.CoinsText())
+                .color(NamedTextColor.GOLD));
             shopEntryMeta.lore(lore);
             if (!shopEntry.setItemMeta(shopEntryMeta)) {
                 continue;
             }
             inv.setItem(idx, shopEntry);
+            placed++;
+        }
+        if (placed == 0) {
+            plugin.getLogger().warning("[PotionGamesX] Shop GUI is empty: entries=" + entries
+                + ", names=" + shopItems.size() + ", potions=" + itemStateManager.getShopPotionsRaw().size()
+                + ", types=" + itemStateManager.getShopPotionTypesRaw().size()
+                + " (pg.activePotions=" + activePotions + ")");
         }
         lobby.setChestInventory(loc, inv.getContents());
         p.openInventory(inv);

@@ -767,6 +767,11 @@ public class Messages {
         return prefix(Component.text(get("price.label", "Price")).color(NamedTextColor.GOLD));
     }
 
+    /** Plain label for item lore; {@link #PriceLabel()} carries the chat prefix. */
+    public static String PriceLabelText() {
+        return get("price.label", "Price");
+    }
+
     public static String RandomText() {
         return get("random.label", "Random");
     }
