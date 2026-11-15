@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.59] - 2026-11-15
+
+### Fixed
+
+- Kit, team and vote feedback use the legacy header/footer block (`--------------Kit-Selector--------------`) with green labels and light purple values, including the `Players: <n>/<max>` line and the "already full" block; the vote confirmation no longer prints the "Votes" label twice
+- Inventory titles (kit, team, arena, shop, lobby list) carry the chat prefix like the legacy release
+
 ## [1.0.0-dev.58] - 2026-11-15
 
 ### Fixed
