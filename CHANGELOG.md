@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.42] - 2026-11-15
+
+### Changed
+
+- `/pg joinsign` is gone, `/pg sign` is the only name
+- README documents the feature items (player-finder compass, airdrop torch, TNT, flint and steel, bow, milk bucket, stews) as material-bound features that can be placed in any loot pool, custom chest or shop
+
+### Added
+
+- `pg.playerFinder` to switch the compass tracking off (default `true`); the airdrop torch is still gated per lobby by `settings.activateAirdrops`
+
 ## [1.0.0-dev.41] - 2026-11-15
 
 ### Added
