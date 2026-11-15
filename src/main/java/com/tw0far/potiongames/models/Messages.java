@@ -380,6 +380,11 @@ public class Messages {
         return prefix(Component.text(get("coin.single", "Coin")).color(NamedTextColor.GOLD));
     }
 
+    /** Display name of the TNT found in loot chests (legacy naming). */
+    public static Component TntExtremelyExplosive() {
+        return Component.text(get("tnt.extremely_explosive", "Extremely explosive TNT")).color(NamedTextColor.RED);
+    }
+
     /** Hint for a player who joins a running round as spectator. */
     public static Component InSpectatorMode() {
         return prefix(Component.text(get("you.in_spectator_mode",

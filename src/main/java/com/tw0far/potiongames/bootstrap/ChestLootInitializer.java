@@ -2,6 +2,7 @@ package com.tw0far.potiongames.bootstrap;
 
 import com.tw0far.potiongames.PotionGamesX;
 import com.tw0far.potiongames.managers.IItemStateManager;
+import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -12,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -63,6 +65,33 @@ public final class ChestLootInitializer {
         seedLootPool(itemsConfig, "armour5", 5, false, true, false);
         seedLootPool(itemsConfig, "weapons1", 1, false, false, true);
         seedLootPool(itemsConfig, "weapons2", 2, false, false, true);
+    }
+
+    /**
+     * The two loot items the legacy release shipped with custom meta: a flint
+     * and steel that is almost used up (damage 60 of 64) and TNT with its own
+     * display name. The chests.yml format only stores material and amount, so
+     * the details are applied here.
+     */
+    private void applyLegacyMeta(ItemStack stack) {
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return;
+        }
+        // Legacy shipped the flint and steel almost used up (60 of 64 damage).
+        if (stack.getType() == Material.FLINT_AND_STEEL && meta instanceof Damageable damageable) {
+            damageable.setDamage(60);
+            stack.setItemMeta(damageable);
+            return;
+        }
+        if (stack.getType() == Material.TNT) {
+            meta.displayName(Messages.TntExtremelyExplosive());
+            stack.setItemMeta(meta);
+        } else if (stack.getType() == Material.COMPASS) {
+            // Legacy named the player finder, the loot and the spawn item share it.
+            meta.displayName(Messages.PlayerFinder());
+            stack.setItemMeta(meta);
+        }
     }
 
     /**
@@ -246,6 +275,7 @@ public final class ChestLootInitializer {
                 Material material = Material.valueOf(parts[0].toUpperCase());
                 int amount = Integer.parseInt(parts[1]);
                 ItemStack stack = new ItemStack(material, amount);
+                applyLegacyMeta(stack);
                 if (isFood) {
                     plugin.getItemStateManager().addFood(poolId, stack);
                 } else if (isArmor) {
