@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.55] - 2026-11-15
+
+### Changed
+
+- README and store description are aligned section by section: identical feature list (18 entries), the practical quick start in both, matching section names and the same chest type, sign, stats wall and configuration facts; `StoreDescriptionTest` fails when one document loses a section
+
 ## [1.0.0-dev.54] - 2026-11-15
 
 ### Fixed
