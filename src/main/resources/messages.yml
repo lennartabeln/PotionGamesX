@@ -294,6 +294,8 @@ en_US:
       to_lobby_in: "Teleporting to lobby in"
     time:
       label: "Time"
+    tnt:
+      extremely_explosive: "Extremely explosive TNT"
     top:
       header: "Top 10 Players by %s"
       usage: "Use /pg top [kills|deaths|wins|kd]"
@@ -629,6 +631,8 @@ de_DE:
       to_lobby_in: "Teleportiere in die Lobby in"
     time:
       label: "Zeit"
+    tnt:
+      extremely_explosive: "Extrem explosives TNT"
     top:
       header: "Top 10 Spieler nach %s"
       usage: "Nutze /pg top [kills|deaths|wins|kd]"
