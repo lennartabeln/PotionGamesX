@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.53] - 2026-11-15
+
+### Changed
+
+- The SpigotMC store description uses the chat prefix colours for the title (dark purple `Potion`, gold `Games`, dark aqua `X`)
+
+### Added
+
+- `StoreDescriptionTest` keeps the store description in sync on every build: every command with a help line must appear, BBCode tags must be balanced and no Markdown may leak in
+
 ## [1.0.0-dev.52] - 2026-11-15
 
 ### Added
