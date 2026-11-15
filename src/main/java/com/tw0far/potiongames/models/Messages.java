@@ -380,6 +380,12 @@ public class Messages {
         return prefix(Component.text(get("coin.single", "Coin")).color(NamedTextColor.GOLD));
     }
 
+    /** Hint for a player who joins a running round as spectator. */
+    public static Component InSpectatorMode() {
+        return prefix(Component.text(get("you.in_spectator_mode",
+            "You are in spectator mode.")).color(NamedTextColor.GRAY));
+    }
+
     public static String CoinsText() {
         return get("coins.label", "Coins");
     }

@@ -634,6 +634,8 @@ public class Lobby {
         if (target != null) {
             p.teleport(target);
         }
+        // Legacy told a late joiner that they are watching, not playing.
+        p.sendMessage(Messages.InSpectatorMode());
     }
 
     public void leave(Player p) {

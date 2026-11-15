@@ -29,7 +29,8 @@ public class PlayerEventListener implements Listener {
         // DB write runs off the join thread
         org.bukkit.Bukkit.getAsyncScheduler().runNow(plugin, task ->
             plugin.getDatabaseManager().createPlayer(p.getUniqueId().toString()));
-        if (p.hasPermission("pg.version")) {
+        // Legacy gated the update notice with pg.update; keep accepting it.
+        if (p.hasPermission("pg.version") || p.hasPermission("pg.update")) {
             new UpdateChecker(plugin).getVersion(version -> {
                 String current = plugin.getPluginMeta().getVersion();
                 if (version != null && PluginVersion.isNewer(version, current)) {
