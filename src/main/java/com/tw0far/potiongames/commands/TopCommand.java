@@ -21,8 +21,6 @@ import java.util.UUID;
  * Permission: pg.top
  */
 public class TopCommand implements ICommand {
-    private static final String DIVIDER = "──────────────────────────────────";
-
     private final PotionGamesX plugin;
 
     public TopCommand(PotionGamesX plugin) {
@@ -73,8 +71,7 @@ public class TopCommand implements ICommand {
         final String query = "SELECT UUID, " + column + " FROM Stats ORDER BY " + column + " DESC"
             + tieBreak + " LIMIT 10";
 
-        sender.sendMessage(Component.text(DIVIDER).color(NamedTextColor.DARK_GRAY));
-        sender.sendMessage(Component.text(String.format(Messages.TopHeaderText(), label)).color(NamedTextColor.GOLD));
+        sender.sendMessage(Component.text(String.format(Messages.TopHeaderText(), label)).color(NamedTextColor.GRAY));
 
         // Query runs asynchronously; results are delivered on the sender's thread.
         // Message lookups stay on that thread too - Messages reads the YAML config,
@@ -115,7 +112,7 @@ public class TopCommand implements ICommand {
                         sender.sendMessage(Component.text(line).color(NamedTextColor.GRAY));
                     }
                 }
-                sender.sendMessage(Component.text(DIVIDER).color(NamedTextColor.DARK_GRAY));
+
             };
             deliverOnSenderThread(sender, deliver);
         });

@@ -33,11 +33,11 @@ class SelectorFeedbackTest {
     }
 
     @Test
-    void sectionLineIsDashedAndPrefixed() {
-        assertEquals("[PotionGamesX] --------------Team-Selector--------------",
-            plain(Messages.TeamSelectorSection(net.kyori.adventure.text.format.NamedTextColor.GRAY)));
-        assertEquals("[PotionGamesX] --------------Kit-Selector--------------",
-            plain(Messages.KitSelectorSection(net.kyori.adventure.text.format.NamedTextColor.GREEN)));
+    void sectionHeaderIsThePlainNameWithoutDashes() {
+        // The dashed legacy line went past the chat width, so the name alone is printed.
+        assertEquals("[PotionGamesX] Team-Selector", plain(Messages.TeamSelectorSection()));
+        assertEquals("[PotionGamesX] Kit-Selector", plain(Messages.KitSelectorSection()));
+        assertEquals("[PotionGamesX] Arena-Selector", plain(Messages.ArenaSelector()));
     }
 
     @Test

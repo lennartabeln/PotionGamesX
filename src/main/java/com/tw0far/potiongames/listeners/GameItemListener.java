@@ -661,7 +661,6 @@ public class GameItemListener implements Listener {
                 lines.add(Messages.KillsLabel(stats.kills()));
                 lines.add(Messages.DeathsLabel(stats.deaths()));
                 lines.add(Messages.KDLabel(stats.kd()));
-                lines.add(Messages.StatsLabel());
                 lines.forEach(p::sendMessage);
             }, () -> { }, 1L);
         });

@@ -42,11 +42,11 @@ public interface IConfigurationManager extends IManager {
     boolean isFriendlyFire();
     boolean isGameServer();
 
-    /** Leave the game server when a round ends (proxy transfer, otherwise disconnect). */
-    boolean isLeaveOnRoundEnd();
+    /** Kick players off the server when a round ends (proxy transfer, otherwise disconnect). */
+    boolean isKickOnRoundEnd();
 
-    /** Leave the game server when a player uses /pg leave. */
-    boolean isLeaveOnLeave();
+    /** Kick the player off the server when they use /pg leave. */
+    boolean isKickOnLeave();
     boolean isEnableRewards();
 
     // Gameplay toggles

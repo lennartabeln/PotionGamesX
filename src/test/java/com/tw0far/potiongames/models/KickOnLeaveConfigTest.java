@@ -13,32 +13,32 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * On a game server the player can either leave the server or stay in the lobby when a round ends
- * and when they use {@code /pg leave}. Both decisions are independent settings; the shipped
- * defaults must keep the round end in the lobby and make {@code /pg leave} leave the server.
+ * On a game server a player can either be kicked off the server or stay in the lobby, both when a
+ * round ends and when they use {@code /pg leave}. The two settings are independent and both
+ * default to {@code false}, so an upgrade never kicks players that used to stay.
  */
-class LeaveToHubConfigTest {
+class KickOnLeaveConfigTest {
 
     private static YamlConfiguration config;
 
     @BeforeAll
     static void load() throws Exception {
         config = new YamlConfiguration();
-        try (InputStream in = LeaveToHubConfigTest.class.getResourceAsStream("/config.yml")) {
+        try (InputStream in = KickOnLeaveConfigTest.class.getResourceAsStream("/config.yml")) {
             config.load(new InputStreamReader(in, StandardCharsets.UTF_8));
         }
     }
 
     @Test
     void roundEndStaysInTheLobbyByDefault() {
-        assertFalse(config.getBoolean("pg.leaveOnRoundEnd", false));
-        assertTrue(config.contains("pg.leaveOnRoundEnd"), "pg.leaveOnRoundEnd missing from config.yml");
+        assertFalse(config.getBoolean("pg.kickOnRoundEnd", false));
+        assertTrue(config.contains("pg.kickOnRoundEnd"), "pg.kickOnRoundEnd missing from config.yml");
     }
 
     @Test
-    void leavingAlwaysLeavesTheServerByDefault() {
-        assertTrue(config.getBoolean("pg.leaveOnLeave", true));
-        assertTrue(config.contains("pg.leaveOnLeave"), "pg.leaveOnLeave missing from config.yml");
+    void leavingStaysInTheLobbyByDefault() {
+        assertFalse(config.getBoolean("pg.kickOnLeave", false));
+        assertTrue(config.contains("pg.kickOnLeave"), "pg.kickOnLeave missing from config.yml");
     }
 
     @Test

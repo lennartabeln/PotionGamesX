@@ -40,8 +40,8 @@ public final class EnableBootstrapInitializer {
         if (!plugin.getConfigManager().isGameServer()) {
             return;
         }
-        boolean leavesTheServer = plugin.getConfigManager().isLeaveOnRoundEnd()
-            || plugin.getConfigManager().isLeaveOnLeave();
+        boolean leavesTheServer = plugin.getConfigManager().isKickOnRoundEnd()
+            || plugin.getConfigManager().isKickOnLeave();
         if (leavesTheServer && !com.tw0far.potiongames.util.BungeeConnector.available(plugin)) {
             String hub = plugin.getConfig().getString("pg.bungeeServer", "hub");
             plugin.getLogger().warning("[PotionGamesX] pg.gameServer is true and players are meant to leave "

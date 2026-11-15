@@ -35,7 +35,6 @@ public class StatusCommand implements ICommand {
         int active = game.getActivePlayers().size();
         int spectators = game.getSpectatorPlayers().size();
 
-        sender.sendMessage(divider());
         sender.sendMessage(Messages.line(Messages.StatusTitleText(), NamedTextColor.GOLD));
 
         sender.sendMessage(section(Messages.StatusServerText()));
@@ -68,7 +67,6 @@ public class StatusCommand implements ICommand {
             .append(Component.text(connected ? Messages.StatusConnectedText() : Messages.StatusDisconnectedText())
                 .color(connected ? NamedTextColor.GREEN : NamedTextColor.RED)));
 
-        sender.sendMessage(divider());
         return true;
     }
 
@@ -81,10 +79,6 @@ public class StatusCommand implements ICommand {
                 .color(NamedTextColor.DARK_AQUA);
         }
         return Component.text(" · " + Messages.StatusNoDeathmatchText()).color(NamedTextColor.GRAY);
-    }
-
-    private Component divider() {
-        return Component.text("════════════════════════════════════════").color(NamedTextColor.DARK_GRAY);
     }
 
     private Component section(String label) {

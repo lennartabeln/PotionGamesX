@@ -355,28 +355,28 @@ public class Messages {
     }
 
     public static Component ArenaSelector() {
-        return prefix(Component.text("--------------" + get("arena.selector", "Arena-Selector") + "--------------").color(NamedTextColor.GRAY));
+        return ArenaSelectorSection();
     }
 
     /**
-     * Dashed line around a selector confirmation, exactly like the legacy release:
-     * {@code --------------Team-Selector--------------}. Grey for a player action, green
-     * when the round start hands out teams and kits.
+     * Header line of a section or selector: just the name in grey, prefixed. The legacy release
+     * wrapped it in dashes, which pushed the line past the chat width (especially "Arena-Selector"),
+     * so the name alone is used everywhere.
      */
-    public static Component SelectorSection(String label, NamedTextColor colour) {
-        return prefix(Component.text("--------------" + label + "--------------").color(colour));
+    public static Component SectionHeader(String label) {
+        return prefix(Component.text(label).color(NamedTextColor.GRAY));
     }
 
-    public static Component ArenaSelectorSection(NamedTextColor colour) {
-        return SelectorSection(ArenaSelectorText(), colour);
+    public static Component ArenaSelectorSection() {
+        return SectionHeader(ArenaSelectorText());
     }
 
-    public static Component TeamSelectorSection(NamedTextColor colour) {
-        return SelectorSection(SelectorTeamText(), colour);
+    public static Component TeamSelectorSection() {
+        return SectionHeader(SelectorTeamText());
     }
 
-    public static Component KitSelectorSection(NamedTextColor colour) {
-        return SelectorSection(KitSelectorText(), colour);
+    public static Component KitSelectorSection() {
+        return SectionHeader(KitSelectorText());
     }
 
     /** "You have voted for: <arena>" - green label, light purple value. */
@@ -437,7 +437,7 @@ public class Messages {
     }
 
     public static Component CommandsLabel() {
-        return prefix(Component.text("--------------" + get("commands.label",  "Commands") + "--------------").color(NamedTextColor.GRAY));
+        return prefix(Component.text(get("commands.label", "Commands")).color(NamedTextColor.GRAY));
     }
 
     public static Component DeathmatchStarted() {
@@ -892,7 +892,7 @@ public class Messages {
     }
 
     public static Component StatsLabel() {
-        return prefix(Component.text("--------------" + StatsText() + "--------------").color(NamedTextColor.GRAY));
+        return prefix(Component.text(StatsText()).color(NamedTextColor.GRAY));
     }
 
     public static Component StatsItem() {
