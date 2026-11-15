@@ -56,13 +56,6 @@ public class CombatEventListener implements Listener {
             return;
         }
 
-        // Nobody inside a lobby safe zone can be hit, and nobody inside it can hit.
-        if (!e.isCancelled() && (plugin.getGame().isInSafeZone(p)
-                || (e.getDamager() instanceof Player d0 && plugin.getGame().isInSafeZone(d0)))) {
-            e.setCancelled(true);
-            return;
-        }
-
         // TNT deals bonus damage inside active games
         if (!e.isCancelled() && inActiveGame && e.getDamager() instanceof TNTPrimed) {
             e.setDamage(e.getDamage() + 4.0);

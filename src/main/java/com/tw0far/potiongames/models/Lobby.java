@@ -1921,50 +1921,6 @@ public class Lobby {
         return this.spawn;
     }
 
-    /**
-     * True when the player stands on the lobby side of this lobby: nearer to the
-     * lobby spawn than to any arena spawn of this lobby, in the spawn's world.
-     * Lobby and arena can share a world, so the decision is made from the
-     * player's position instead of the world they are in.
-     */
-    public boolean isInSafeZone(Player player) {
-        if (player == null) {
-            return false;
-        }
-        Location centre = this.spawn;
-        if (centre == null || centre.getWorld() == null || player.getWorld() == null) {
-            return false;
-        }
-        if (!centre.getWorld().equals(player.getWorld())) {
-            return false;
-        }
-        Location loc = player.getLocation();
-        double lobbyDistance = com.tw0far.potiongames.util.SafeZone.horizontalDistanceSquared(loc, centre);
-        double nearestArena = nearestArenaDistanceSquared(loc);
-        return com.tw0far.potiongames.util.SafeZone.isLobbySide(lobbyDistance, nearestArena);
-    }
-
-    /** Squared horizontal distance to the nearest arena spawn, or -1 without arenas. */
-    private double nearestArenaDistanceSquared(Location loc) {
-        double nearest = -1;
-        for (Arena arena : getArenas()) {
-            if (arena == null) {
-                continue;
-            }
-            for (Location spawnPoint : arena.getSpawns()) {
-                if (spawnPoint == null || spawnPoint.getWorld() == null
-                        || !spawnPoint.getWorld().equals(loc.getWorld())) {
-                    continue;
-                }
-                double distance = com.tw0far.potiongames.util.SafeZone.horizontalDistanceSquared(loc, spawnPoint);
-                if (nearest < 0 || distance < nearest) {
-                    nearest = distance;
-                }
-            }
-        }
-        return nearest;
-    }
-
     public ArrayList<Participant> getParticipants() {
         return this.participants;
     }

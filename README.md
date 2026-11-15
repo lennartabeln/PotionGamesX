@@ -115,12 +115,12 @@ Additional chest types and their loot can be defined in `chests.yml` (`pg.custom
 
 ### Lobby protection
 
-Protection is player based, not world based, so a lobby and its arenas can share one world:
+Protection is decided per player and then by the game state, so lobby and arena can share one world:
 
-- Whoever is nearer to the lobby spawn than to the nearest arena spawn of that lobby is in the lobby: no damage, no hunger drain, no PvP - independent of the game state.
-- Outside that line the arena rules apply: damage, fall damage, hunger and PvP (friendly fire and team rules as configured).
-- Players who are actively playing a round are never treated as lobby players, so a map that reaches towards the spawn still fights normally.
-- Spectators stay protected.
+- A player who is in a lobby is safe while no round is running: waiting, counting down, the cleanup after a round and the reset all mean no damage, no hunger drain and no PvP.
+- Only a running round (`INGAME`, `DEATHMATCH`) takes the protection away - damage, fall damage, hunger and PvP follow the round rules (friendly fire, teams, deathmatch).
+- Players who are in no lobby at all keep the normal server rules.
+- Spectators stay protected in every state.
 
 ### Feature items
 
