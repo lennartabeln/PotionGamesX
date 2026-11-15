@@ -46,7 +46,13 @@ public class TopCommand implements ICommand {
             return true;
         }
 
-        String type = args.length > 1 ? args[1].toLowerCase(Locale.ROOT) : "kills";
+        // Without a type we cannot know which board the sender means, so ask.
+        if (args.length < 2) {
+            sender.sendMessage(Messages.line(Messages.TopUsageText(), NamedTextColor.YELLOW));
+            return true;
+        }
+
+        String type = args[1].toLowerCase(Locale.ROOT);
         String column;
         String label;
         switch (type) {

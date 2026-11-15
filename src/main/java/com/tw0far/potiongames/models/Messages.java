@@ -1133,6 +1133,7 @@ public class Messages {
     public static String GameServerDisabledText() { return get("gameserver.disabled", "disabled"); }
 
     public static String TopHeaderText() { return get("top.header", "Top 10 Players by %s"); }
+    public static String TopUsageText() { return get("top.usage", "Choose a leaderboard type: /pg top <kills|deaths|wins|kd>"); }
     public static String TopUnknownTypeText() { return get("top.unknown_type", "Unknown leaderboard type: %s"); }
     public static String TopKillsText() { return get("top.kills", "Kills"); }
     public static String TopDeathsText() { return get("top.deaths", "Deaths"); }
