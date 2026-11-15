@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.57] - 2026-11-15
+
+### Fixed
+
+- The leave item works for a spectator of a running round (`pg.joinStarted`): `/pg leave` and the item now share one leave flow that also clears the lobby bookkeeping
+
 ## [1.0.0-dev.56] - 2026-11-15
 
 ### Fixed
