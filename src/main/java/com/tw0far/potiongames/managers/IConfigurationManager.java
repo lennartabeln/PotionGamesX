@@ -47,6 +47,9 @@ public interface IConfigurationManager extends IManager {
     boolean isAllowOutsideChat();
     boolean isBroadcastStarting();
     boolean isCompassOnSpawn();
+
+    /** Compass tracks the nearest opponent (Player-Finder). */
+    boolean isPlayerFinder();
     boolean isChangeGamerules();
     /** Single-lobby compatibility mode: setup commands may omit the lobby number. */
     boolean isSingleLobby();

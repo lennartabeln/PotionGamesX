@@ -82,7 +82,8 @@ pg:
 
   # Player behavior
   allowOutsideChat: false
-  compassOnSpawn: false
+  compassOnSpawn: false        # Hand a Player-Finder compass to everyone at round start
+  playerFinder: true            # The compass points to the nearest opponent when used
   startOnJoin: false
 
   # Economy (optional, uses Vault). Without Vault the flags stay on but
