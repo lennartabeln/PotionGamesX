@@ -94,7 +94,7 @@ pg:
 
   # Content limits
   activeKits: 6                # Selectable kits, counted from the entries in kits.yml
-  activePotions: 19            # Shop entries shown and buyable, counted from shop.yml (1 = only the first, 20 = all 20, 0 = none)
+  activePotions: 19            # How many shop.yml entries are shown and buyable: 1 = one, 2 = two, ... 20 = all 20, 0 = none
 
   # ═══════════════════════════════════════════════════════
   # LEGACY KEYS

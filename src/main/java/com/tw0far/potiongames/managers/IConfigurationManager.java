@@ -16,7 +16,7 @@ public interface IConfigurationManager extends IManager {
     int getTeamSize();
     int getMaxPlayers();
     int getActiveKits();
-    /** Shop entries shown and buyable; 0 or less means "all entries of shop.yml". */
+    /** How many entries of shop.yml are shown and buyable: 1 = one, 20 = all twenty, 0 = none. */
     int getActivePotions();
     int getWinningReward();
     int getKillReward();
