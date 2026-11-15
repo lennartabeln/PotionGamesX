@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.60] - 2026-11-15
+
+### Changed
+
+- Section headers are plain grey names (`Arena-Selector`, `Stats`, `Commands`, `Top …`) without the dashed line and without the duplicated footer line; the blank banners in `/pg config` and `/pg status` are gone
+- The game server flags are called `pg.kickOnRoundEnd` and `pg.kickOnLeave`, both defaulting to `false`: players stay in the lobby after a round and after `/pg leave` unless the admin turns the kick on (with a reachable proxy the player is transferred to `pg.bungeeServer` instead of being disconnected)
+
 ## [1.0.0-dev.59] - 2026-11-15
 
 ### Fixed
