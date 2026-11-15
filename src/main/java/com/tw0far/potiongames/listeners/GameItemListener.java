@@ -165,8 +165,12 @@ public class GameItemListener implements Listener {
             openKitSelector(p, s);
         } else if (mainHand == Material.MAGMA_CREAM) {
             GameStates state = plugin.getLobbyStateManager().getGameState(s);
-            if (state == GameStates.WAITING || state == GameStates.PREPARING) {
-                plugin.onLeaveLobby(p, s);
+            boolean lobbyPhase = state == GameStates.WAITING || state == GameStates.PREPARING;
+            // A late joiner (pg.joinStarted) keeps the lobby items while watching a
+            // running round, so the leave item has to work there as well.
+            boolean spectating = plugin.getGame().isSpectatorPlayer(p);
+            if (lobbyPhase || spectating) {
+                plugin.leaveLobby(p);
             }
         } else if (mainHand == Material.EMERALD) {
             if (p.hasPermission("pg.stats")) {

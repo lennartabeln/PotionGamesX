@@ -21,6 +21,7 @@ import com.tw0far.potiongames.managers.*;
 import com.tw0far.potiongames.models.Game;
 import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
+import com.tw0far.potiongames.util.BungeeConnector;
 import com.tw0far.potiongames.util.PluginVersion;
 import com.tw0far.potiongames.util.UpdateChecker;
 
@@ -268,6 +269,32 @@ public class PotionGamesX extends JavaPlugin {
         }
         game.removePlayerLobby(p);
         game.removeSpectatorLobby(p);
+    }
+
+    /**
+     * Full leave flow used by {@code /pg leave} and the leave item: drop the
+     * lobby membership, tell the player and, on a game server, move them to the
+     * hub. Spectators of a running round use the same path.
+     */
+    public void leaveLobby(Player player) {
+        if (player == null) {
+            return;
+        }
+        Lobby lobby = game.getLobbyByPlayer(player);
+        if (lobby != null) {
+            lobby.leave(player);
+            game.removePlayerLobby(player);
+            game.removeSpectatorLobby(player);
+            player.sendMessage(Messages.LeaveSuccess());
+        } else if (!configManager.isGameServer()) {
+            player.sendMessage(Messages.NotInLobby());
+            return;
+        }
+
+        if (configManager.isGameServer()) {
+            String hub = getConfig().getString("pg.bungeeServer", "hub");
+            BungeeConnector.send(this, player, hub);
+        }
     }
 
     public ItemStack getCoin() { return coin; }
