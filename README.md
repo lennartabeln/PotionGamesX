@@ -104,6 +104,8 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 | `/pg headp1\|p2\|p3` | Set stats wall head | `pg.setup` |
 | `/pg signp1\|p2\|p3` | Set stats wall sign | `pg.setup` |
 
+**Permissions:** every command needs the node listed above. Writing a `[PG]` sign by hand additionally needs `pg.sign` (players without it are told they may not use it), and `pg.admin` grants all administrative nodes at once. `pg.update` is still accepted as the legacy node for `/pg version` and the join update notice.
+
 With `pg.singleLobby: true` the setup commands also accept their legacy short form without a lobby number (`/pg addarena <arena>`, `/pg addspawn <arena>`, `/pg sign`) and always target lobby 1.
 
 **Upgrading from the legacy release:** on startup the plugin looks for an `arenadata.yml` in `plugins/PotionGamesX/` and migrates it automatically — lobbies from `pg.lobbies.<id>` are created (spawn from `coords`, settings moved into `settings.*`), a legacy single-lobby server gets its `pg.Lobby.coords`/`pg.Lobby.sign` from `config.yml` turned into lobby 1, the global `pg.arenas.<n>` are copied into every lobby that has no arena yet, and a legacy `pg.lobbySystem: false` enables `pg.singleLobby`. Nothing is ever overwritten: arenas a lobby already has (same name) are skipped. Once the migration is done, delete `arenadata.yml` — otherwise its arenas are checked again on every start (an arena you deleted on purpose would come back).

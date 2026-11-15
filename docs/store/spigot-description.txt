@@ -137,6 +137,8 @@ Put any of them into a loot pool in [FONT=Courier New]chests.yml[/FONT] ([FONT=C
 Per-lobby defaults ([FONT=Courier New]pg.defaults.*[/FONT], overridable per lobby): [FONT=Courier New]countdown[/FONT] (seconds), [FONT=Courier New]roundTime[/FONT] (minutes, values above 300 are read as seconds), [FONT=Courier New]startDelay[/FONT], [FONT=Courier New]maxPlayers[/FONT] / [FONT=Courier New]minPlayers[/FONT] / [FONT=Courier New]teamSize[/FONT] and the switches [FONT=Courier New]activateTeams[/FONT], [FONT=Courier New]activateKits[/FONT], [FONT=Courier New]activateShop[/FONT], [FONT=Courier New]activateAirdrops[/FONT].
 
 Important switches in [FONT=Courier New]config.yml[/FONT]:
+Every command uses the permission listed in [FONT=Courier New]/pg help[/FONT]; creating a join sign by hand (first line [FONT=Courier New]PG[/FONT] or [FONT=Courier New]PotionGamesX[/FONT]) additionally needs [FONT=Courier New]pg.sign[/FONT], and [FONT=Courier New]pg.admin[/FONT] grants all administrative nodes at once.
+
 [LIST]
 [*][FONT=Courier New]gameServer[/FONT] - dedicated game server: players join automatically, [FONT=Courier New]bungeeServer[/FONT] is the hub target
 [*][FONT=Courier New]autoJoinOnConnect[/FONT] - auto-join the first open lobby on connect; the plugin then also owns the server-list MOTD and slot count
