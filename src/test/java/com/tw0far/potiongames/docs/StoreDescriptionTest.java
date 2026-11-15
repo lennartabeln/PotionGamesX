@@ -55,6 +55,24 @@ class StoreDescriptionTest {
         assertTrue(missing.isEmpty(), "commands missing from the store description: " + missing);
     }
 
+    /** Tags XenForo 1.5 (Spigot's forum software) actually understands. */
+    private static final java.util.Set<String> SUPPORTED_TAGS = java.util.Set.of(
+        "B", "I", "U", "S", "COLOR", "SIZE", "FONT", "CENTER", "LEFT", "RIGHT",
+        "INDENT", "LIST", "QUOTE", "CODE", "SPOILER", "URL", "IMG", "MEDIA", "*");
+
+    @Test
+    void usesNoUnknownTags() {
+        Matcher matcher = TAG.matcher(description);
+        List<String> unknown = new ArrayList<>();
+        while (matcher.find()) {
+            String tag = matcher.group(2);
+            if (!SUPPORTED_TAGS.contains(tag)) {
+                unknown.add(tag);
+            }
+        }
+        assertTrue(unknown.isEmpty(), "tags Spigot does not know: " + unknown);
+    }
+
     @Test
     void hasBalancedBbCodeTags() {
         Map<String, Integer> balance = new java.util.HashMap<>();
@@ -68,6 +86,13 @@ class StoreDescriptionTest {
             balance.merge(tag, delta, Integer::sum);
         }
         balance.forEach((tag, delta) -> assertTrue(delta == 0, "unbalanced [" + tag + "]: " + delta));
+    }
+
+    @Test
+    void usesOnlyTagsThatXenForoSupports() {
+        // Spigot runs XenForo 1.5, which has no [HR] tag - it comes from vBulletin/MyBB and shows
+        // up as literal text in the preview.
+        assertFalse(description.contains("[HR]"), "[HR] is not supported by Spigot's BBCode");
     }
 
     @Test
