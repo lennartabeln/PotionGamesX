@@ -4,11 +4,11 @@ public enum GameStates {
     WAITING, PREPARING, INGAME, DEATHMATCH, ENDING, RESET;
 
     /**
-     * True while the players sit in the lobby instead of playing: waiting,
-     * counting down or being reset. Nothing may hurt or change them there
-     * (legacy kept the lobby world on PEACEFUL with no fall damage).
+     * True while a round is actually played. Every other state - waiting,
+     * counting down, the cleanup after a round and the reset - counts as lobby,
+     * where players take no damage, do not get hungry and cannot fight.
      */
-    public boolean isLobbyPhase() {
-        return this == WAITING || this == PREPARING || this == RESET;
+    public boolean isRunning() {
+        return this == INGAME || this == DEATHMATCH;
     }
 }

@@ -1,6 +1,7 @@
 package com.tw0far.potiongames.listeners;
 
 import com.tw0far.potiongames.PotionGamesX;
+import com.tw0far.potiongames.models.GameStates;
 import com.tw0far.potiongames.models.Lobby;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,12 +27,13 @@ public class LobbyHungerListener implements Listener {
         if (!(event.getEntity() instanceof Player player)) {
             return;
         }
+        // Same rule as for damage: lobby members do not get hungry until their
+        // round is running. Players outside a lobby keep the normal behaviour.
         Lobby lobby = lobbyOf(player);
-        boolean playing = lobby != null
-            && (lobby.getState() == com.tw0far.potiongames.models.GameStates.INGAME
-                || lobby.getState() == com.tw0far.potiongames.models.GameStates.DEATHMATCH);
-        boolean inSafeZone = !playing && plugin.getGame().isInSafeZone(player);
-        if (!inSafeZone && (lobby == null || !lobby.getState().isLobbyPhase())) {
+        if (lobby == null) {
+            return;
+        }
+        if (lobby.getState().isRunning()) {
             return;
         }
         event.setCancelled(true);

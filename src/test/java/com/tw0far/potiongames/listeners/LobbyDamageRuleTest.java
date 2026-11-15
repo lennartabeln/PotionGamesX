@@ -6,24 +6,27 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Players are damage free while they are in the lobby, not during a round. */
+/**
+ * Lobby members are damage free until their round runs: only INGAME and
+ * DEATHMATCH count as a running round, everything else is lobby.
+ */
 class LobbyDamageRuleTest {
 
     @Test
     void waitingAndPreparingAreSafe() {
-        assertTrue(GameStates.WAITING.isLobbyPhase());
-        assertTrue(GameStates.PREPARING.isLobbyPhase());
+        assertFalse(GameStates.WAITING.isRunning());
+        assertFalse(GameStates.PREPARING.isRunning());
     }
 
     @Test
-    void resetIsSafeAgain() {
-        assertTrue(GameStates.RESET.isLobbyPhase());
+    void theCleanupAfterARoundIsSafeAgain() {
+        assertFalse(GameStates.ENDING.isRunning());
+        assertFalse(GameStates.RESET.isRunning());
     }
 
     @Test
-    void roundsKeepDamage() {
-        assertFalse(GameStates.INGAME.isLobbyPhase());
-        assertFalse(GameStates.DEATHMATCH.isLobbyPhase());
-        assertFalse(GameStates.ENDING.isLobbyPhase());
+    void onlyRoundStatesKeepDamage() {
+        assertTrue(GameStates.INGAME.isRunning());
+        assertTrue(GameStates.DEATHMATCH.isRunning());
     }
 }
