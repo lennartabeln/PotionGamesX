@@ -48,6 +48,7 @@ public final class BootstrapInitializer {
 
         Messages.seed();
         seedShopData();
+        warnAboutEmptyShop();
         seedKitData();
     }
 
@@ -77,6 +78,26 @@ public final class BootstrapInitializer {
     private void saveResourceIfMissing(String resourceName, File targetFile) {
         if (!targetFile.exists() && resourceName != null) {
             plugin.saveResource(resourceName, false);
+        }
+    }
+
+    /**
+     * A shop with {@code pg.activePotions: 0} is empty by definition, which is
+     * easy to miss after updating an old config. Warn once on startup.
+     */
+    private void warnAboutEmptyShop() {
+        int active = plugin.getConfigManager().getActivePotions();
+        int entries = plugin.getItemStateManager().getShopItemsRaw().size();
+        if (active <= 0 && entries > 0) {
+            plugin.getLogger().warning("[PotionGamesX] pg.activePotions is 0, so the potion shop stays empty. "
+                + "Set it to the number of entries you want to sell (1-" + entries + ", shop.yml has " + entries + ").");
+        }
+
+        int activeKits = plugin.getConfigManager().getActiveKits();
+        int kits = plugin.getItemStateManager().getKitsRaw().size();
+        if (activeKits <= 0 && kits > 0) {
+            plugin.getLogger().warning("[PotionGamesX] pg.activeKits is 0, so no kit can be chosen. "
+                + "Set it to the number of selectable kits (1-" + kits + ", kits.yml has " + kits + ").");
         }
     }
 

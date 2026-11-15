@@ -892,13 +892,13 @@ public class Lobby {
             return;
         }
         List<String> names = new ArrayList<>(plugin.getItemStateManager().getKitsRaw());
-        int active = plugin.getConfigManager().getActiveKits();
-        if (active > 0 && names.size() > active) {
-            names = new ArrayList<>(names.subList(0, active));
-        }
-        if (names.isEmpty()) {
+        // pg.activeKits is a plain count: 1 = first kit only, 0 = no kits at all.
+        int active = com.tw0far.potiongames.util.EntryLimits.activeCount(
+            plugin.getConfigManager().getActiveKits(), names.size());
+        if (active <= 0) {
             return;
         }
+        names = new ArrayList<>(names.subList(0, active));
         // Players without a choice draw their own random kit.
         List<String> pool = new ArrayList<>();
         for (Participant participant : participants) {
