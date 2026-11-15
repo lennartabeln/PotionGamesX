@@ -7,7 +7,7 @@ import com.tw0far.potiongames.models.Lobby;
 import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Participant;
 import com.tw0far.potiongames.models.Settings;
-import com.tw0far.potiongames.util.ShopEntries;
+import com.tw0far.potiongames.util.EntryLimits;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -200,7 +200,11 @@ public class GameInventoryListener implements Listener {
         if (lobby == null || !lobby.isActivateKits()) return;
         Participant participant = lobby.getParticipant(p);
         if (participant == null) return;
-        int activeKits = plugin.getConfigManager().getActiveKits();
+        int configuredKits = 0;
+        while (Settings.kitdata.getString("pg.kits." + (configuredKits + 1) + ".name") != null) {
+            configuredKits++;
+        }
+        int activeKits = EntryLimits.activeCount(plugin.getConfigManager().getActiveKits(), configuredKits);
         if (displayname.equals(Messages.RandomText())) {
             if (activeKits < 1) return;
             int randomKitIndex = new Random().nextInt(activeKits) + 1;
@@ -261,7 +265,7 @@ public class GameInventoryListener implements Listener {
         var itemStateManager = plugin.getItemStateManager();
         List<String> shopItems = new ArrayList<>(itemStateManager.getShopItems());
         // Hidden entries must not be buyable either (see pg.activePotions).
-        int entries = ShopEntries.activeCount(plugin.getConfigManager().getActivePotions(), shopItems.size());
+        int entries = EntryLimits.activeCount(plugin.getConfigManager().getActivePotions(), shopItems.size());
         for (int idx = 0; idx < entries; idx++) {
             if (!displayname.equals(shopItems.get(idx))) {
                 continue;

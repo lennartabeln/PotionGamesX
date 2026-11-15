@@ -92,6 +92,13 @@ public final class BootstrapInitializer {
             plugin.getLogger().warning("[PotionGamesX] pg.activePotions is 0, so the potion shop stays empty. "
                 + "Set it to the number of entries you want to sell (1-" + entries + ", shop.yml has " + entries + ").");
         }
+
+        int activeKits = plugin.getConfigManager().getActiveKits();
+        int kits = plugin.getItemStateManager().getKitsRaw().size();
+        if (activeKits <= 0 && kits > 0) {
+            plugin.getLogger().warning("[PotionGamesX] pg.activeKits is 0, so no kit can be chosen. "
+                + "Set it to the number of selectable kits (1-" + kits + ", kits.yml has " + kits + ").");
+        }
     }
 
     private void seedShopData() {

@@ -15,6 +15,7 @@ public interface IConfigurationManager extends IManager {
     int getMinPlayers();
     int getTeamSize();
     int getMaxPlayers();
+    /** How many entries of kits.yml are selectable: 1 = one, 6 = six, 0 = none. */
     int getActiveKits();
     /** How many entries of shop.yml are shown and buyable: 1 = one, 20 = all twenty, 0 = none. */
     int getActivePotions();

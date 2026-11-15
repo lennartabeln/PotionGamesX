@@ -9,7 +9,7 @@ import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Participant;
 import com.tw0far.potiongames.models.PlayerStats;
 import com.tw0far.potiongames.models.Settings;
-import com.tw0far.potiongames.util.ShopEntries;
+import com.tw0far.potiongames.util.EntryLimits;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -407,7 +407,14 @@ public class GameItemListener implements Listener {
         }
         Inventory inv = Bukkit.createInventory(null, 9 * 3, Messages.KitSelector());
         inv.setItem(0, randombarrier);
-        int kitSlots = Math.min(plugin.getConfigManager().getActiveKits(), inv.getSize() - 1);
+        // Same counting rule as the shop: 1 = first kit, 0 = none. The usable
+        // slots are capped by the entries kits.yml really has.
+        int configuredKits = 0;
+        while (Settings.kitdata.getString("pg.kits." + (configuredKits + 1) + ".name") != null) {
+            configuredKits++;
+        }
+        int kitSlots = Math.min(EntryLimits.activeCount(plugin.getConfigManager().getActiveKits(), configuredKits),
+            inv.getSize() - 1);
         for (int i = 1; i <= kitSlots; i++) {
             String kitName = Settings.kitdata.getString("pg.kits." + i + ".name");
             if (kitName == null) {
@@ -539,7 +546,7 @@ public class GameItemListener implements Listener {
         // pg.activePotions is a plain count: 1 shows one entry, 20 shows twenty,
         // 0 shows none. Values above the file size are capped.
         int activePotions = plugin.getConfigManager().getActivePotions();
-        int entries = ShopEntries.activeCount(activePotions, shopItems.size());
+        int entries = EntryLimits.activeCount(activePotions, shopItems.size());
         int slots = Math.min(entries, inv.getSize());
         int placed = 0;
         for (int idx = 0; idx < slots; idx++) {
