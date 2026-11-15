@@ -1,7 +1,7 @@
 [CENTER][SIZE=6][B][COLOR=#555555][[/COLOR][COLOR=#AA00AA]Potion[/COLOR][COLOR=#FFAA00]Games[/COLOR][COLOR=#00AAAA]X[/COLOR][COLOR=#555555]][/COLOR][/B][/SIZE]
 [SIZE=4]A minigames plugin for Paper servers - SurvivalGames with potions and effects[/SIZE][/CENTER]
 
-[HR][/HR]
+[CENTER][COLOR=#555555]----------------------------------------------------------------------[/COLOR][/CENTER]
 
 PotionGamesX is a complete rework of the original PotionGames. Players loot chests for potions, gear and coins, buy extra effects in a potion shop and fight until one team is left. Everything is configurable - loot tables, chest types, kits, shop prices, messages and per-lobby settings.
 
@@ -128,7 +128,7 @@ Every key is documented inside the files: what the toggle does, which values are
 [SIZE=5][B][COLOR=#FFAA00]Upgrading from PotionGames 7.x[/COLOR][/B][/SIZE]
 Copy your old [FONT=Courier New]arenadata.yml[/FONT] and [FONT=Courier New]config.yml[/FONT] into [FONT=Courier New]plugins/PotionGamesX/[/FONT] and start the server. Lobbies, arenas, spawns and settings are migrated automatically, nothing that already exists is overwritten. Delete [FONT=Courier New]arenadata.yml[/FONT] afterwards so deleted arenas do not come back.
 
-[HR][/HR]
+[CENTER][COLOR=#555555]----------------------------------------------------------------------[/COLOR][/CENTER]
 
 [SIZE=5][B][COLOR=#FFAA00]Links[/COLOR][/B][/SIZE]
 [LIST]
