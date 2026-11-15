@@ -89,6 +89,22 @@ class StoreDescriptionTest {
     }
 
     @Test
+    void readmeMentionsEveryCommandAsWell() throws Exception {
+        // README and store description describe the same plugin; a command that only exists in one
+        // of them is the drift the user notices first.
+        Path readme = Path.of("README.md");
+        assertTrue(Files.exists(readme), "README.md missing");
+        String text = Files.readString(readme, StandardCharsets.UTF_8);
+        List<String> missing = new ArrayList<>();
+        for (String key : helpKeys.keySet()) {
+            if (!text.contains("/pg " + key)) {
+                missing.add(key);
+            }
+        }
+        assertTrue(missing.isEmpty(), "commands missing from README.md: " + missing);
+    }
+
+    @Test
     void usesOnlyTagsThatXenForoSupports() {
         // Spigot runs XenForo 1.5, which has no [HR] tag - it comes from vBulletin/MyBB and shows
         // up as literal text in the preview.

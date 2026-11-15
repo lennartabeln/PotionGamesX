@@ -19,7 +19,7 @@ PotionGamesX is a complete rework of the original PotionGames. Players loot ches
 [*]Deathmatch phase for the final fight
 [*]Player statistics in SQLite or MySQL
 [*]Top 3 stats wall made of player heads and signs
-[*]Join signs with live player counts
+[*]Join signs with live player counts, GUI or sign to join lobbies
 [*]BungeeCord / proxy support
 [*]Vault rewards for kills and wins
 [*]Every config file documented in English
@@ -85,7 +85,7 @@ PotionGamesX is a complete rework of the original PotionGames. Players loot ches
 [*][FONT=Courier New]/pg addarena <lobby> <name>[/FONT] / [FONT=Courier New]/pg delarena <lobby> <name>[/FONT]
 [*][FONT=Courier New]/pg addspawn <lobby> <arena>[/FONT] / [FONT=Courier New]/pg delspawn <lobby> <arena>[/FONT]
 [*][FONT=Courier New]/pg adddeathmatch <lobby> <arena>[/FONT] / [FONT=Courier New]/pg deldeathmatch <lobby> <arena>[/FONT]
-[*][FONT=Courier New]/pg setlobbyspawn <lobby>[/FONT] - set the lobby spawn
+[*][FONT=Courier New]/pg addlobby <id>[/FONT] - create a lobby where you stand (this is its spawn)
 [*][FONT=Courier New]/pg sign <lobby>[/FONT] - turn the sign you look at into a join sign
 [*][FONT=Courier New]/pg setcountdown <seconds>[/FONT] - change the lobby countdown
 [*][FONT=Courier New]/pg headp1|2|3[/FONT] and [FONT=Courier New]/pg signp1|2|3[/FONT] - build the stats wall

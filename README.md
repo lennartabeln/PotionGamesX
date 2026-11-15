@@ -88,7 +88,7 @@ Alternative to the `/pg setup` wizard — individual commands for manual setup:
 
 | Command | Description | Permission |
 |---------|-------------|------------|
-| `/pg addlobby <id>` | Create lobby | `pg.setup` |
+| `/pg addlobby <id>` | Create a lobby at your position (also stores the lobby spawn) | `pg.setup` |
 | `/pg dellobby <id>` | Remove lobby | `pg.setup` |
 | `/pg addarena <lobby> <name>` | Add arena | `pg.setup` |
 | `/pg delarena <lobby> <name>` | Remove arena | `pg.setup` |

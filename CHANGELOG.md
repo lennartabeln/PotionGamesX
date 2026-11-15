@@ -14,6 +14,8 @@ Nothing yet - new entries belong here and are moved into a version section on re
 ### Fixed
 
 - The store description no longer uses `[HR][/HR]` (vBulletin syntax, Spigot shows it as literal text) - the dividers are a centered line of dashes now, and the store test rejects any tag outside the XenForo 1.5 whitelist
+- The store description listed a `/pg setlobbyspawn` command that does not exist, and its feature list lacked the GUI join; `/pg addlobby <id>` creates the lobby at the player's position and stores that as the lobby spawn (now stated in the description, `lobbies.yml` and the README)
+- `StoreDescriptionTest` also checks that the README names every command, so both documents stay in step
 
 ## [1.0.0-dev.53] - 2026-11-15
 

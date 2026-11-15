@@ -14,7 +14,7 @@
 #    /pg delspawn <lobby> <arena>        remove the nearest spawn
 #    /pg adddeathmatch <lobby> <arena>   add a deathmatch spawn
 #    /pg deldeathmatch <lobby> <arena>   remove the nearest one
-#    /pg setlobbyspawn <lobby>           set the lobby spawn where you stand
+#    /pg addlobby <name>                 also stores your position as lobby spawn
 #    /pg sign <lobby>                    turn the sign you look at into a join sign
 #
 # ═══════════════════════════════════════════════════════════════════════════
@@ -36,7 +36,7 @@
 #    pg:
 #      lobbies:
 #        1:                                   # lobby id, also on the join sign
-#          spawn:                             # set by /pg setlobbyspawn
+#          spawn:                             # set by /pg addlobby (player position)
 #            ==: org.bukkit.Location
 #            world: world
 #            x: 0.5
