@@ -358,12 +358,54 @@ public class Messages {
         return prefix(Component.text("--------------" + get("arena.selector", "Arena-Selector") + "--------------").color(NamedTextColor.GRAY));
     }
 
+    /**
+     * Dashed line around a selector confirmation, exactly like the legacy release:
+     * {@code --------------Team-Selector--------------}. Grey for a player action, green
+     * when the round start hands out teams and kits.
+     */
+    public static Component SelectorSection(String label, NamedTextColor colour) {
+        return prefix(Component.text("--------------" + label + "--------------").color(colour));
+    }
+
+    public static Component ArenaSelectorSection(NamedTextColor colour) {
+        return SelectorSection(ArenaSelectorText(), colour);
+    }
+
+    public static Component TeamSelectorSection(NamedTextColor colour) {
+        return SelectorSection(SelectorTeamText(), colour);
+    }
+
+    public static Component KitSelectorSection(NamedTextColor colour) {
+        return SelectorSection(KitSelectorText(), colour);
+    }
+
+    /** "You have voted for: <arena>" - green label, light purple value. */
+    public static Component VotedFor(String arena) {
+        return prefix(Component.text(get("vote.you_voted_for", "You have voted for") + ": ")
+            .color(NamedTextColor.GREEN))
+            .append(Component.text(arena == null ? "" : arena).color(NamedTextColor.LIGHT_PURPLE));
+    }
+
+    /** "Votes: <n>" - green label, aqua value. */
+    public static Component VoteCount(int votes) {
+        return prefix(Component.text(get("vote.label", "Votes") + ": ").color(NamedTextColor.GREEN))
+            .append(Component.text(String.valueOf(votes)).color(NamedTextColor.AQUA));
+    }
+
+    /** "Players: <current>/<max>" - green label, aqua numbers. */
+    public static Component TeamPlayers(int current, int max) {
+        return prefix(Component.text(get("team.players", "Players") + ": ").color(NamedTextColor.GREEN))
+            .append(Component.text(String.valueOf(current)).color(NamedTextColor.AQUA))
+            .append(Component.text("/").color(NamedTextColor.GRAY))
+            .append(Component.text(String.valueOf(max)).color(NamedTextColor.AQUA));
+    }
+
     public static String ArenaSelectorText() {
         return get("arena.selector", "Arena-Selector");
     }
 
     public static Component ArenaSelectorTitle() {
-        return Component.text(ArenaSelectorText()).color(NamedTextColor.DARK_AQUA);
+        return prefix(Component.text(ArenaSelectorText()).color(NamedTextColor.DARK_AQUA));
     }
 
     public static Component ArenaSelectorItem() {
@@ -539,8 +581,11 @@ public class Messages {
         return prefix(Component.text(get("kit.now_have", "You now have the kit")).color(NamedTextColor.GREEN));
     }
 
+    /** "You now have the kit: <kit>" - green label, light purple value (legacy layout). */
     public static Component KitNowHave(String kitName) {
-        return prefix(Component.text(get("kit.now_have", "You now have the kit") + " " + kitName).color(NamedTextColor.GREEN));
+        return prefix(Component.text(get("kit.now_have", "You now have the kit") + ": ")
+            .color(NamedTextColor.GREEN))
+            .append(Component.text(kitName == null ? "" : kitName).color(NamedTextColor.LIGHT_PURPLE));
     }
 
     public static String KitSelectorText() {
@@ -548,7 +593,7 @@ public class Messages {
     }
 
     public static Component KitSelector() {
-        return Component.text(KitSelectorText()).color(NamedTextColor.DARK_AQUA);
+        return prefix(Component.text(KitSelectorText()).color(NamedTextColor.DARK_AQUA));
     }
 
     public static Component KitSelectorItem() {
@@ -690,7 +735,7 @@ public class Messages {
     }
 
     public static Component LobbyListTitle() {
-        return Component.text(get("lobby.list", "Lobby List")).color(NamedTextColor.DARK_AQUA);
+        return prefix(Component.text(get("lobby.list", "Lobby List")).color(NamedTextColor.DARK_AQUA));
     }
 
     public static Component ChooseLobbyFirst() {
@@ -814,12 +859,8 @@ public class Messages {
         return prefix(Component.text(get("rounds.label", "Rounds") + ": ").color(NamedTextColor.GREEN).append(Component.text(rounds).color(NamedTextColor.AQUA)));
     }
 
-    public static Component SelectorTeam() {
-        return prefix(Component.text(SelectorTeamText()).color(NamedTextColor.AQUA));
-    }
-
     public static Component SelectorTeamTitle() {
-        return Component.text(SelectorTeamText()).color(NamedTextColor.DARK_AQUA);
+        return prefix(Component.text(SelectorTeamText()).color(NamedTextColor.DARK_AQUA));
     }
 
     public static String SelectorTeamText() {
@@ -839,7 +880,7 @@ public class Messages {
     }
 
     public static Component ShopTitle() {
-        return Component.text(ShopText()).color(NamedTextColor.DARK_AQUA);
+        return prefix(Component.text(ShopText()).color(NamedTextColor.DARK_AQUA));
     }
 
     public static Component SignSet() {
@@ -862,8 +903,11 @@ public class Messages {
         return prefix(Component.text(get("team.already_full", "This team is already full!")).color(NamedTextColor.RED));
     }
 
+    /** "You are now in team: <team>" - green label, light purple value (legacy layout). */
     public static Component TeamNowIn(String teamName) {
-        return prefix(Component.text(get("team.now_in", "You are now in team") + " " + teamName).color(NamedTextColor.GREEN));
+        return prefix(Component.text(get("team.now_in", "You are now in team") + ": ")
+            .color(NamedTextColor.GREEN))
+            .append(Component.text(teamName == null ? "" : teamName).color(NamedTextColor.LIGHT_PURPLE));
     }
 
     public static String TeamNowInText() {

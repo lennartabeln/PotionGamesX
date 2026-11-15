@@ -337,6 +337,7 @@ en_US:
       label: "Team"
       already_full: "This team is already full!"
       now_in: "You are now in team"
+      players: "Players"
     teleport:
       to_lobby_in: "Teleporting to lobby in"
     time:
@@ -367,6 +368,7 @@ en_US:
       not_available: "You are running the latest version."
     vote:
       label: "Votes"
+      you_voted_for: "You have voted for"
       results_header: "Votes (%d)"
       result_line: "%s: %d"
       closed: "Voting is closed for this round."
@@ -651,6 +653,7 @@ de_DE:
       label: "Team"
       already_full: "Dieses Team ist bereits voll!"
       now_in: "Du bist jetzt im Team"
+      players: "Spieler"
     teleport:
       to_lobby_in: "Teleportiere in die Lobby in"
     time:
@@ -681,6 +684,7 @@ de_DE:
       not_available: "Du verwendest bereits die neueste Version."
     vote:
       label: "Stimmen"
+      you_voted_for: "Du hast gestimmt für"
       results_header: "Stimmen (%d)"
       result_line: "%s: %d"
       closed: "Die Abstimmung für diese Runde ist geschlossen."

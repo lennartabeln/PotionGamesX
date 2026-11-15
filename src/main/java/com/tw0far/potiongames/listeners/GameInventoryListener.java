@@ -100,8 +100,8 @@ public class GameInventoryListener implements Listener {
         // Send feedback messages
         p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
         p.sendMessage(Messages.ArenaSelector());
-        p.sendMessage(Settings.prefix.append(Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(displayname).color(NamedTextColor.LIGHT_PURPLE)));
-        p.sendMessage(Settings.prefix.append(Component.text(Messages.VoteText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(String.valueOf(plugin.getArenaStateManager().getLobbyVoteCount(s, displayname))).color(NamedTextColor.AQUA)));
+        p.sendMessage(Messages.VotedFor(displayname));
+        p.sendMessage(Messages.VoteCount(plugin.getArenaStateManager().getLobbyVoteCount(s, displayname)));
         p.sendMessage(Messages.ArenaSelector());
     }
 
@@ -150,9 +150,9 @@ public class GameInventoryListener implements Listener {
         if (available.isEmpty()) {
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
-            p.sendMessage(Messages.SelectorTeam());
+            p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
             p.sendMessage(Messages.TeamAlreadyFull());
-            p.sendMessage(Messages.SelectorTeam());
+            p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
             return;
         }
         int rndTeam = available.get(new Random().nextInt(available.size()));
@@ -163,20 +163,17 @@ public class GameInventoryListener implements Listener {
         if (!lobby.assignTeam(p, teamId, maxTeamPlayers)) {
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
-            p.sendMessage(Messages.SelectorTeam());
+            p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
             p.sendMessage(Messages.TeamAlreadyFull());
-            p.sendMessage(Messages.SelectorTeam());
+            p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
             return;
         }
         p.closeInventory();
         String teamName = Integer.toString(teamId);
-        p.sendMessage(Messages.SelectorTeam());
-        p.sendMessage(Settings.prefix.append(Component.text(Messages.TeamNowInText() + ": ").color(NamedTextColor.GREEN)).append(Component.text(teamName).color(NamedTextColor.LIGHT_PURPLE)));
-        p.sendMessage(Settings.prefix.append(Component.text(Messages.PlayersText() + ": ").color(NamedTextColor.GREEN))
-                .append(Component.text(String.valueOf(lobby.getTeamCounts().getOrDefault(teamId, 0))).color(NamedTextColor.AQUA))
-                .append(Component.text("/").color(NamedTextColor.GRAY))
-                .append(Component.text(String.valueOf(maxTeamPlayers)).color(NamedTextColor.AQUA)));
-        p.sendMessage(Messages.SelectorTeam());
+        p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
+        p.sendMessage(Messages.TeamNowIn(teamName));
+        p.sendMessage(Messages.TeamPlayers(lobby.getTeamCounts().getOrDefault(teamId, 0), maxTeamPlayers));
+        p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
         p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
         applyTeamScoreboardValue(p, teamName);
     }
@@ -213,7 +210,9 @@ public class GameInventoryListener implements Listener {
                 participant.setKit(new Kit(kitName));
                 p.closeInventory();
                 p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
+                p.sendMessage(Messages.KitSelectorSection(NamedTextColor.GRAY));
                 p.sendMessage(Messages.KitNowHave(kitName));
+                p.sendMessage(Messages.KitSelectorSection(NamedTextColor.GRAY));
             }
         } else {
             for (int i = 1; i <= activeKits; i++) {
@@ -222,7 +221,9 @@ public class GameInventoryListener implements Listener {
                     participant.setKit(new Kit(kitName));
                     p.closeInventory();
                     p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
+                    p.sendMessage(Messages.KitSelectorSection(NamedTextColor.GRAY));
                     p.sendMessage(Messages.KitNowHave(kitName));
+                    p.sendMessage(Messages.KitSelectorSection(NamedTextColor.GRAY));
                     break;
                 }
             }

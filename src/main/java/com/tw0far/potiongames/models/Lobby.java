@@ -913,8 +913,44 @@ public class Lobby {
             participant.setKit(new Kit(name));
             Player player = participant.getPlayer();
             if (player != null && player.isOnline()) {
+                // Legacy announced the kit at round start inside the same dashed block,
+                // only in green because nobody clicked anything.
+                player.sendMessage(Messages.KitSelectorSection(NamedTextColor.GREEN));
                 player.sendMessage(Messages.KitNowHave(name));
+                player.sendMessage(Messages.KitSelectorSection(NamedTextColor.GREEN));
             }
+        }
+    }
+
+    /**
+     * Tells every player their team at round start, in the legacy layout: dashed header,
+     * the team, the player count of that team and the same dashed footer - green because
+     * it was not a click.
+     */
+    private void announceTeams() {
+        if (!activateTeams) {
+            return;
+        }
+        int maxTeamPlayers = Math.max(1, teamSize);
+        for (Participant participant : participants) {
+            Player player = participant.getPlayer();
+            if (player == null || !player.isOnline()) {
+                continue;
+            }
+            String team = lobbyteamplayernames.get(player);
+            if (team == null) {
+                continue;
+            }
+            int teamId;
+            try {
+                teamId = Integer.parseInt(team);
+            } catch (NumberFormatException ignored) {
+                continue;
+            }
+            player.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GREEN));
+            player.sendMessage(Messages.TeamNowIn(team));
+            player.sendMessage(Messages.TeamPlayers(lobbyteams.getOrDefault(teamId, 0), maxTeamPlayers));
+            player.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GREEN));
         }
     }
 
@@ -1388,6 +1424,7 @@ public class Lobby {
                     if (currentArena != null) {
                         distributeTeams();
                         distributeKits();
+                        announceTeams();
                         if (!currentArena.teleport(participants)) {
                             abortRoundStart(currentArena);
                             break;
