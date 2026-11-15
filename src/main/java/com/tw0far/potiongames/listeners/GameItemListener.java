@@ -9,7 +9,6 @@ import com.tw0far.potiongames.models.Messages;
 import com.tw0far.potiongames.models.Participant;
 import com.tw0far.potiongames.models.PlayerStats;
 import com.tw0far.potiongames.models.Settings;
-import com.tw0far.potiongames.util.ChestEffects;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -465,10 +464,8 @@ public class GameItemListener implements Listener {
             lobby.setChestInventory(loc, inv.getContents());
         }
         reopenStoredChest(p, lobby, loc);
-        // Legacy rolled a random effect (0..3) when the player had none.
-        ChestEffects.applyRandom(p, new Random());
 
-        // Bonus random potion effect on first open of an empty-effects player
+        // Legacy rolled a random effect (0..3) when the player had none. on first open of an empty-effects player
         if (p.getActivePotionEffects().isEmpty()) {
             Random effect = new Random();
             int tries = effect.nextInt(4); // 0..3 effects

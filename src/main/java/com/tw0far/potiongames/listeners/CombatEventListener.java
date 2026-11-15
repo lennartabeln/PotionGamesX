@@ -47,9 +47,10 @@ public class CombatEventListener implements Listener {
         String victimLobby = plugin.getGame().getPlayerLobby(p);
         boolean inActiveGame = victimLobby != null && isGameState(plugin.getLobbyStateManager().getGameState(victimLobby));
 
-        // Lightning/firework damage is disabled inside active games
-        if (!e.isCancelled()
-                && inActiveGame
+        // Lightning and fireworks never hurt a lobby player. Legacy cancelled both
+        // unconditionally in its arena worlds; the win firework explodes right on
+        // the winner, which is exactly the state where no round is running.
+        if (!e.isCancelled() && victimLobby != null
                 && (e.getDamager() instanceof LightningStrike || e.getDamager() instanceof Firework)) {
             e.setCancelled(true);
             return;
