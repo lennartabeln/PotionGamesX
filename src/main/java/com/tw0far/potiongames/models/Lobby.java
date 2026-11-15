@@ -915,9 +915,9 @@ public class Lobby {
             if (player != null && player.isOnline()) {
                 // Legacy announced the kit at round start inside the same dashed block,
                 // only in green because nobody clicked anything.
-                player.sendMessage(Messages.KitSelectorSection(NamedTextColor.GREEN));
+                player.sendMessage(Messages.KitSelectorSection());
                 player.sendMessage(Messages.KitNowHave(name));
-                player.sendMessage(Messages.KitSelectorSection(NamedTextColor.GREEN));
+                player.sendMessage(Messages.KitSelectorSection());
             }
         }
     }
@@ -947,10 +947,10 @@ public class Lobby {
             } catch (NumberFormatException ignored) {
                 continue;
             }
-            player.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GREEN));
+            player.sendMessage(Messages.TeamSelectorSection());
             player.sendMessage(Messages.TeamNowIn(team));
             player.sendMessage(Messages.TeamPlayers(lobbyteams.getOrDefault(teamId, 0), maxTeamPlayers));
-            player.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GREEN));
+            player.sendMessage(Messages.TeamSelectorSection());
         }
     }
 

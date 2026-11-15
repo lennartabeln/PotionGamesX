@@ -150,9 +150,9 @@ public class GameInventoryListener implements Listener {
         if (available.isEmpty()) {
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
-            p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
+            p.sendMessage(Messages.TeamSelectorSection());
             p.sendMessage(Messages.TeamAlreadyFull());
-            p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
+            p.sendMessage(Messages.TeamSelectorSection());
             return;
         }
         int rndTeam = available.get(new Random().nextInt(available.size()));
@@ -163,17 +163,17 @@ public class GameInventoryListener implements Listener {
         if (!lobby.assignTeam(p, teamId, maxTeamPlayers)) {
             p.closeInventory();
             p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_HURT, 1f, 1f);
-            p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
+            p.sendMessage(Messages.TeamSelectorSection());
             p.sendMessage(Messages.TeamAlreadyFull());
-            p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
+            p.sendMessage(Messages.TeamSelectorSection());
             return;
         }
         p.closeInventory();
         String teamName = Integer.toString(teamId);
-        p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
+        p.sendMessage(Messages.TeamSelectorSection());
         p.sendMessage(Messages.TeamNowIn(teamName));
         p.sendMessage(Messages.TeamPlayers(lobby.getTeamCounts().getOrDefault(teamId, 0), maxTeamPlayers));
-        p.sendMessage(Messages.TeamSelectorSection(NamedTextColor.GRAY));
+        p.sendMessage(Messages.TeamSelectorSection());
         p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
         applyTeamScoreboardValue(p, teamName);
     }
@@ -210,9 +210,9 @@ public class GameInventoryListener implements Listener {
                 participant.setKit(new Kit(kitName));
                 p.closeInventory();
                 p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
-                p.sendMessage(Messages.KitSelectorSection(NamedTextColor.GRAY));
+                p.sendMessage(Messages.KitSelectorSection());
                 p.sendMessage(Messages.KitNowHave(kitName));
-                p.sendMessage(Messages.KitSelectorSection(NamedTextColor.GRAY));
+                p.sendMessage(Messages.KitSelectorSection());
             }
         } else {
             for (int i = 1; i <= activeKits; i++) {
@@ -221,9 +221,9 @@ public class GameInventoryListener implements Listener {
                     participant.setKit(new Kit(kitName));
                     p.closeInventory();
                     p.playSound(p.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1f, 1f);
-                    p.sendMessage(Messages.KitSelectorSection(NamedTextColor.GRAY));
+                    p.sendMessage(Messages.KitSelectorSection());
                     p.sendMessage(Messages.KitNowHave(kitName));
-                    p.sendMessage(Messages.KitSelectorSection(NamedTextColor.GRAY));
+                    p.sendMessage(Messages.KitSelectorSection());
                     break;
                 }
             }
