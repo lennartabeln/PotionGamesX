@@ -14,10 +14,6 @@ libraries:
 commands:
   pg:
     description: Get list of commands + permissions
-    aliases:
-      - potiongames
-      - pgames
-      - potiong
 permissions:
   pg.join:
     description: Join lobbies (/pg join)

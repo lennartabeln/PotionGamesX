@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Nothing yet - new entries belong here and are moved into a version section on release.
 
+## [1.0.0-dev.41] - 2026-11-15
+
+### Added
+
+- The legacy loot item details: TNT named "Extremely explosive TNT", the player-finder compass keeps its name in chests and the flint and steel comes with 60/64 durability (new message key `tnt.extremely_explosive`)
+
+### Removed
+
+- The legacy `removearena`/`removelobby`/`removespawn`/`removedeathmatch` aliases - `del*` is shorter and is the documented name
+- The `/pg` command aliases `potiongames`, `pgames` and `potiong`
+
 ## [1.0.0-dev.40] - 2026-11-15
 
 ### Added
