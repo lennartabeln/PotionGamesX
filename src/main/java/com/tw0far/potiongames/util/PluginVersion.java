@@ -43,6 +43,11 @@ public final class PluginVersion {
         return compareTokens(left[1], right[1]);
     }
 
+    /** True when the version carries a pre-release qualifier ({@code 1.0.0-dev.20}). */
+    public static boolean isPreRelease(String version) {
+        return version != null && version.indexOf('-') > 0;
+    }
+
     /** True when {@code candidate} is strictly newer than {@code current}. */
     public static boolean isNewer(String candidate, String current) {
         return compare(candidate, current) > 0;

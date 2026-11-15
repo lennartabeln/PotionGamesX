@@ -19,6 +19,10 @@ import java.util.logging.Level;
  * <p>Versions come from the GitHub releases of the project. The legacy SpigotMC
  * resource is not used any more: it still carries the old {@code 7.x} line, so
  * every 1.x install was told to "update" to an older build.</p>
+ *
+ * <p>Two channels: a development build ({@code 1.0.0-dev.N}) is told about newer
+ * development builds and about the stable release, a stable build only about newer
+ * stable releases.</p>
  */
 public record UpdateChecker(JavaPlugin plugin, String repository) {
 
@@ -54,7 +58,12 @@ public record UpdateChecker(JavaPlugin plugin, String repository) {
                      Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8)) {
                     body = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
                 }
-                consumer.accept(newestTagIn(body));
+                // A development build watches both channels, so it hears about the next dev
+                // build and about the stable release that ends the line. A stable install only
+                // watches stable releases and is never pointed at a dev build.
+                boolean includePreReleases = PluginVersion.isPreRelease(
+                    plugin.getPluginMeta().getVersion());
+                consumer.accept(newestTagIn(body, includePreReleases));
             } catch (IOException | URISyntaxException e) {
                 plugin.getLogger().log(Level.INFO, "Cannot look for updates: " + e.getMessage());
                 consumer.accept(null);
@@ -70,6 +79,16 @@ public record UpdateChecker(JavaPlugin plugin, String repository) {
      * denial-of-service risk (CodeQL {@code java/polynomial-redos}).</p>
      */
     static String newestTagIn(String body) {
+        return newestTagIn(body, true);
+    }
+
+    /**
+     * Newest non-draft tag in a GitHub releases response.
+     *
+     * @param includePreReleases false to ignore {@code -dev.N} style tags, which is what a
+     *                           stable install must do
+     */
+    static String newestTagIn(String body, boolean includePreReleases) {
         String newest = null;
         int cursor = 0;
         while (cursor < body.length()) {
@@ -82,6 +101,7 @@ public record UpdateChecker(JavaPlugin plugin, String repository) {
 
             String tag = quotedValueAfter(body, tagKey + TAG_KEY.length(), limit);
             if (tag != null && !isDraft(body, tagKey, limit)
+                && (includePreReleases || !PluginVersion.isPreRelease(tag))
                 && (newest == null || PluginVersion.isNewer(tag, newest))) {
                 newest = tag;
             }

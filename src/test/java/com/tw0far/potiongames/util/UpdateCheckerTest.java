@@ -36,6 +36,35 @@ class UpdateCheckerTest {
     }
 
     @Test
+    void aDevelopmentBuildAlsoSeesTheStableRelease() {
+        String json = body(
+            release("1.0.0-dev.60", false),
+            release("1.0.0", false));
+        assertEquals("1.0.0", UpdateChecker.newestTagIn(json, true));
+    }
+
+    @Test
+    void aStableInstallIgnoresDevelopmentBuilds() {
+        String json = body(
+            release("0.9.0", false),
+            release("1.0.0-dev.60", false));
+        assertEquals("0.9.0", UpdateChecker.newestTagIn(json, false));
+    }
+
+    @Test
+    void aStableInstallWithoutAnyStableReleaseSeesNothing() {
+        String json = body(release("1.0.0-dev.60", false));
+        assertNull(UpdateChecker.newestTagIn(json, false));
+    }
+
+    @Test
+    void preReleaseDetectionUsesTheQualifier() {
+        org.junit.jupiter.api.Assertions.assertTrue(PluginVersion.isPreRelease("1.0.0-dev.60"));
+        org.junit.jupiter.api.Assertions.assertFalse(PluginVersion.isPreRelease("1.0.0"));
+        org.junit.jupiter.api.Assertions.assertFalse(PluginVersion.isPreRelease(null));
+    }
+
+    @Test
     void skipsDraftReleases() {
         String json = body(
             release("1.0.0-dev.20", false),

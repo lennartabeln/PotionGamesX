@@ -70,8 +70,12 @@ public class ReloadHandler {
             plugin.getLogger().info("7. Reconnecting to database...");
             reloadSucceeded &= runReloadStep("database reconnect", this::reconnectDatabase);
 
-            // Step 8: Reload game data
-            plugin.getLogger().info("8. Reloading game data...");
+            // Step 8: Re-bind the Vault economy (the reward flag may have changed)
+            plugin.getLogger().info("8. Refreshing the economy...");
+            reloadSucceeded &= runReloadStep("economy", () -> plugin.refreshEconomy());
+
+            // Step 9: Reload game data
+            plugin.getLogger().info("9. Reloading game data...");
             reloadSucceeded &= runReloadStep("game data", this::reloadGameData);
 
             if (!reloadSucceeded) {

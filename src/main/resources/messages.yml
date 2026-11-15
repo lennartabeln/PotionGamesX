@@ -139,6 +139,8 @@ en_US:
       label: "Deaths"
     duration:
       label: "Duration"
+    economy:
+      bound: "Vault economy bound: %s"
     error:
       generic: "An error occurred"
     file:
@@ -455,6 +457,8 @@ de_DE:
       label: "Tode"
     duration:
       label: "Dauer"
+    economy:
+      bound: "Vault economy gebunden: %s"
     error:
       generic: "Ein Fehler ist aufgetreten"
     file:
