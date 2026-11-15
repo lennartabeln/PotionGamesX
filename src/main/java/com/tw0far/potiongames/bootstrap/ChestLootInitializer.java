@@ -6,6 +6,8 @@ import com.tw0far.potiongames.models.Settings;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -30,6 +32,8 @@ public final class ChestLootInitializer {
         plugin.getItemStateManager().clearFood();
         plugin.getItemStateManager().clearArmor();
         plugin.getItemStateManager().clearWeapons();
+        plugin.getItemStateManager().clearPotions();
+        seedChestEffects();
 
         // Load loot items from chests.yml
         var config = Settings.chests;
@@ -59,6 +63,38 @@ public final class ChestLootInitializer {
         seedLootPool(itemsConfig, "armour5", 5, false, true, false);
         seedLootPool(itemsConfig, "weapons1", 1, false, false, true);
         seedLootPool(itemsConfig, "weapons2", 2, false, false, true);
+    }
+
+    /**
+     * The random potion effects a loot chest can roll. Taken verbatim from the
+     * legacy {@code pg.potions} pool; the chest interaction picks 0..3 of them
+     * while the player has no active effect.
+     */
+    private void seedChestEffects() {
+        var ism = plugin.getItemStateManager();
+        ism.addPotion(new PotionEffect(PotionEffectType.SPEED, 40 * 20, 2));
+        ism.addPotion(new PotionEffect(PotionEffectType.SLOWNESS, 40 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.STRENGTH, 40 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.INSTANT_HEALTH, 1, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.INSTANT_DAMAGE, 1, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.JUMP_BOOST, 40 * 20, 3));
+        ism.addPotion(new PotionEffect(PotionEffectType.NAUSEA, 40 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.REGENERATION, 20 * 20, 1));
+        ism.addPotion(new PotionEffect(PotionEffectType.RESISTANCE, 40 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 60 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.INVISIBILITY, 40 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.HUNGER, 10 * 20, 1));
+        ism.addPotion(new PotionEffect(PotionEffectType.WEAKNESS, 60 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.POISON, 10 * 20, 1));
+        ism.addPotion(new PotionEffect(PotionEffectType.WITHER, 10 * 20, 1));
+        ism.addPotion(new PotionEffect(PotionEffectType.ABSORPTION, 60 * 20, 2));
+        ism.addPotion(new PotionEffect(PotionEffectType.GLOWING, 20 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.HEALTH_BOOST, 60 * 20, 2));
+        ism.addPotion(new PotionEffect(PotionEffectType.DOLPHINS_GRACE, 60 * 20, 2));
+        ism.addPotion(new PotionEffect(PotionEffectType.SATURATION, 40 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.NIGHT_VISION, 60 * 20, 0));
+        ism.addPotion(new PotionEffect(PotionEffectType.WATER_BREATHING, 60 * 20, 2));
     }
 
     /**
