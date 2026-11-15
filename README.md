@@ -113,6 +113,15 @@ With `pg.singleLobby: true` the setup commands also accept their legacy short fo
 
 Additional chest types and their loot can be defined in `chests.yml` (`pg.customchests.<id>` with `activate`, `chesttype`, `chestsize` and numbered slots).
 
+### Lobby protection
+
+Protection is player based, not world based, so a lobby and its arenas can share one world:
+
+- Whoever is nearer to the lobby spawn than to the nearest arena spawn of that lobby is in the lobby: no damage, no hunger drain, no PvP - independent of the game state.
+- Outside that line the arena rules apply: damage, fall damage, hunger and PvP (friendly fire and team rules as configured).
+- Players who are actively playing a round are never treated as lobby players, so a map that reaches towards the spawn still fights normally.
+- Spectators stay protected.
+
 ### Feature items
 
 A few items carry their own game logic. They are recognised **by material**, so it does not matter where a player gets them from - loot chests, a custom chest, the shop, a spawn item or another plugin:

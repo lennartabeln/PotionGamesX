@@ -38,6 +38,16 @@ public class DamageEventListener implements Listener {
 
         boolean isActive = plugin.getGame().isActivePlayer(p);
         boolean isSpectator = plugin.getGame().isSpectatorPlayer(p);
+        Lobby playerLobby = lobbyOf(p);
+        boolean playing = playerLobby != null && isPlaying(playerLobby);
+
+        // The lobby safe zone protects everyone standing in it - but never a
+        // player who is actively fighting in a round, so a map that overlaps the
+        // radius keeps working.
+        if (!(isActive && playing) && plugin.getGame().isInSafeZone(p)) {
+            e.setCancelled(true);
+            return;
+        }
 
         if (!isActive && !isSpectator) {
             return;
@@ -52,8 +62,7 @@ public class DamageEventListener implements Listener {
         // Lobby phase: no damage at all. Legacy switched the lobby world to
         // PEACEFUL with FALL_DAMAGE=false while waiting, so a fall off the lobby
         // platform or a stray hit cannot hurt (or kill) anyone before the round.
-        Lobby lobby = lobbyOf(p);
-        if (lobby != null && lobby.getState().isLobbyPhase()) {
+        if (playerLobby != null && playerLobby.getState().isLobbyPhase()) {
             e.setCancelled(true);
         }
     }
